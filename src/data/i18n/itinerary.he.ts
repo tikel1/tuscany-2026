@@ -1,4 +1,4 @@
-import type { Day } from "../types";
+import type { Day, ItalianWord } from "../types";
 
 interface DayHEActivity {
   time?: string;
@@ -6,12 +6,28 @@ interface DayHEActivity {
   description?: string;
 }
 
+/** Translatable fields of the per-day Italian word card. The Italian
+ *  `word` and `example` stay as-is; only the meaning + the example's
+ *  translation get localized. We also let HE override `pronounce` so
+ *  Hebrew speakers can read a Hebrew-letter transliteration. */
+type WordOfTheDayHE = Partial<
+  Pick<ItalianWord, "pronounce" | "meaning" | "exampleMeaning">
+>;
+
 export interface DayHE
   extends Partial<
-    Pick<Day, "title" | "subtitle" | "base" | "driveNotes" | "gear" | "dayTips">
+    Pick<Day, "title" | "subtitle" | "base" | "driveNotes" | "dayTips">
   > {
   /** Translated activities, in the same order as the English data. */
   activities?: DayHEActivity[];
+  /** Translated gear descriptions, positionally aligned with the English
+   *  `gear` array. We only translate the human-readable `item` text — the
+   *  optional `for: <attraction-id>` reference is universal and stays on
+   *  the EN GearItem. The merge in `localizeDay` overlays these strings
+   *  onto the EN objects by index. */
+  gear?: string[];
+  /** Translated parts of the Italian-word-of-the-day card. */
+  wordOfTheDay?: WordOfTheDayHE;
 }
 
 export const itineraryHE: Record<number, DayHE> = {
@@ -46,7 +62,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "לוודא עם חברת ההשכרה אם המדיניות היא מלא־למלא או מלא־לריק",
       "השכרה באיטליה דורשת רישיון נהיגה בינלאומי — לשמור עם הרישיון",
       "לכוון לצאת מאזור FCO לפני 16:00 כדי להתחמק מפקקי שישי דרומה"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "אַנדְיָאמוֹ",
+      meaning: "בואו נלך!",
+      exampleMeaning: "בואו ניסע לטוסקנה!"
+    }
   },
   2: {
     title: "קניון טורקיז, גשר השטן ומסלולי חבלים ביער",
@@ -85,7 +106,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "ארוחת צהריים מוקדמת בבורגו א מוצאנו: רוב המטבחים סוגרים ב־14:30",
       "סלבה דל בופארדלו ביער ערמונים בגובה 850 מ׳ — להביא חולצה ארוכה",
       "מזומן לבר חטיפים הקטן בפארק ההרפתקאות"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "אָקווָה",
+      meaning: "מים",
+      exampleMeaning: "המים קרירים!"
+    }
   },
   3: {
     title: "סופט ראפטינג + עצירה קצרה בפיזה",
@@ -122,7 +148,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "השכרת אופניים בלוקה מ־€4 לשעה; להביא תעודה לפיקדון",
       "הטיפוס למגדל בפיזה דורש כרטיס מתוזמן — להזמין רק אם באמת רוצים לטפס",
       "האור של אחר הצהריים על החומות הוא הרגע הצילומי — לכוון ל־17:00"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "פֶּנדֶנְטֶה",
+      meaning: "נטוי, משופע",
+      exampleMeaning: "המגדל הנטוי של פיזה."
+    }
   },
   4: {
     title: "מעל העננים — רכבל אבטונה",
@@ -158,7 +189,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "מסעדות ההר נסגרות בצהריים; לארוז פיקניק במקום",
       "מזומן לרכבל — האשראי לפעמים בעייתי בקופה",
       "להשתמש בחצי הקריר של היום לטיול הרכס; לרדת עד 15:00 כדי להתחיל לארוז"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "מוֹנְטָאנְיָה",
+      meaning: "הר",
+      exampleMeaning: "אנחנו עולים להרים."
+    }
   },
   5: {
     title: "טיול נחל דרומה, מתמקמים בווילה",
@@ -190,7 +226,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "לוודא חלון צ׳ק־אין בקורטווקיה עם המארחים לפני היציאה",
       "אין שירותים ציבוריים בתחילת השביל — לעצור בקולה די ואל ד׳אלסה קודם",
       "לתכנן הגעה בשעת ערב מוקדמת; לא רוצים לגלות את דרך החצץ בחושך"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "סֶנטיֶירוֹ",
+      meaning: "שביל, מסלול",
+      exampleMeaning: "השביל עובר בתוך הנהר."
+    }
   },
   6: {
     title: "קברניטים ליום — סירה ושנורקלינג בארג'נטריו",
@@ -223,7 +264,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "דלק ימי עולה €40–80 נוספים — מזומן למשאבת המזח",
       "לעגון בקאלה דל ג׳סו מוקדם — בצהריים זה מתמלא בסירות יום",
       "מלטמי חזק = גלים: לבדוק תחזית בערב הקודם, לדחות אם סוער"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "מָארֶה",
+      meaning: "ים",
+      exampleMeaning: "יום בים."
+    }
   },
   7: {
     title: "אדרנלין טהור — אקוואוילג׳ פולוניקה",
@@ -249,7 +295,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "אוכל מבחוץ מותר באזור הפיקניק; צידנית = חוסך הרבה €",
       "להגיע בפתיחה (10:00) — תורים למגלשות משולשים אחרי 13:00",
       "לוחות הופעות הפולינזיות תלויים בכניסה; לא לפספס את ההופעה של הערב"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "שִיווֹלוֹ",
+      meaning: "מגלשה",
+      exampleMeaning: "המגלשה הכי גבוהה, בבקשה!"
+    }
   },
   8: {
     title: "סוסי המרמה ומבוך הסלעים האטרוסקי",
@@ -287,7 +338,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "בית הכנסת בפיטיליאנו נסגר מוקדם בשישי — להגיע לפני הצהריים אם זה שישי",
       "השביל ב־Vie Cave מוצל אבל לא אחיד — רק נעליים עם אחיזה",
       "לקנות ׳סְפְרַטוֹ דֵיי גוֹיִים׳ במאפייה הכשרה בפיטיליאנו"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "קָוואלוֹ",
+      meaning: "סוס",
+      exampleMeaning: "סוס מהמרמה."
+    }
   },
   9: {
     title: "מעיינות חמים בזריחה, שחייה באגם, העיר הצפה",
@@ -324,7 +380,12 @@ export const itineraryHE: Record<number, DayHE> = {
       "לשטוף בגדי ים היטב בבולסנה — גופרית מכתימה בדים בהירים",
       "כרטיס לגשר בצ׳יביטה ~€5 למבוגר, מזומן בלבד",
       "ארוחת צהריים עד 13:30 — מטבחים בכפרים סוגרים בחוזקה ב־14:30"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "טֶרְמֶה",
+      meaning: "מעיינות חמים, בית מרחץ",
+      exampleMeaning: "מעיינות סאטורניה בזריחה."
+    }
   },
   10: {
     title: "טסים הביתה",
@@ -354,6 +415,11 @@ export const itineraryHE: Record<number, DayHE> = {
       "להחזיר את הרכב עם מכל מלא — תחנה 24/7 הקרובה ב־Via Portuense",
       "להקצות 10–15 דק׳ לשאטל מהחזרת הרכב לטרמינל",
       "אגרות שדה התעופה אונליין — לדלג על תור הבריח ביציאה"
-    ]
+    ],
+    wordOfTheDay: {
+      pronounce: "אָרִיוֶודֵרְצִ'י",
+      meaning: "להתראות (עד שניפגש שוב)",
+      exampleMeaning: "להתראות, טוסקנה!"
+    }
   }
 };

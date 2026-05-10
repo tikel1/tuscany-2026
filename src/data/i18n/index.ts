@@ -32,6 +32,16 @@ function mergeIfDefined<T extends object>(
   return out as T;
 }
 
+/** Drop keys whose value is undefined so a spread `{ ...defaults, ...he }`
+ *  doesn't accidentally clobber a defined English value with `undefined`. */
+function stripUndefined<T extends object>(obj: T): Partial<T> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined) out[k] = v;
+  }
+  return out as Partial<T>;
+}
+
 /* ---------- Attractions / POIs (incl. stays + services) ---------- */
 
 export function localizePoi(p: POI, lang: "en" | "he"): POI {
@@ -58,13 +68,28 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
   if (lang === "en") return d;
   const he = itineraryHE[d.dayNumber];
   if (!he) return d;
+
+  const localizedGear =
+    he.gear && d.gear
+      ? d.gear.map((g, i) => ({ ...g, item: he.gear?.[i] ?? g.item }))
+      : d.gear;
+
+  /* Italian word of the day: keep `word` and `example` as the original
+     Italian, but let HE override the human-readable bits (pronunciation
+     in Hebrew letters, meaning, example translation). */
+  const localizedWord =
+    d.wordOfTheDay && he.wordOfTheDay
+      ? { ...d.wordOfTheDay, ...stripUndefined(he.wordOfTheDay) }
+      : d.wordOfTheDay;
+
   const baseMerged = mergeIfDefined(d, {
     title: he.title,
     subtitle: he.subtitle,
     base: he.base,
     driveNotes: he.driveNotes,
-    gear: he.gear,
-    dayTips: he.dayTips
+    gear: localizedGear,
+    dayTips: he.dayTips,
+    wordOfTheDay: localizedWord
   });
   if (!he.activities) return baseMerged;
   const activities = d.activities.map((a, i) => {

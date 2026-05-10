@@ -49,5 +49,33 @@ export const tips: Tip[] = [
     body:
       "In Italy, boats up to 40 hp / under 10 m can be rented without a nautical licence. Most operators in Porto Santo Stefano (Argentario Boat Rental, Yes Boat, etc.) offer a Gozzo or gommone in this class. Confirm 'senza patente' when you book.",
     severity: "info"
+  },
+  {
+    id: "ferragosto-closures",
+    title: "Ferragosto — many shops are still closed for ferie",
+    body:
+      "Italians take their summer holidays in August, especially the week around Ferragosto (15 Aug). Family-run trattorie, bakeries, butchers, even some petrol stations on smaller roads shut for one or two weeks with a hand-written 'Chiuso per ferie' sign on the door. Our trip starts 17 Aug — most places will be reopening, but check Google Maps the night before for current hours, especially in the smaller villages (Larciano, Pitigliano, Manciano).",
+    severity: "warning"
+  },
+  {
+    id: "august-crowds",
+    title: "Peak season — time-shift the famous spots",
+    body:
+      "August is the busiest month in Italy: locals on holiday plus everyone else. Pisa's Tower square, Saturnia, the Argentario beaches and Civita di Bagnoregio hit maximum density between 10:00 and 17:00. Trick: arrive just before opening or in the last 90 minutes of light. Saturnia by 07:30, Pisa at 08:00 or after 18:00, beaches before 10:00 or after 16:00 — crowds halve and the light turns honey-gold for the photos.",
+    severity: "warning"
+  },
+  {
+    id: "riposo",
+    title: "Riposo — shops and kitchens shut midday",
+    body:
+      "Italians eat lunch at 13:00 sharp, then the country folds for a few hours. Smaller shops and family bakeries close 13:00–16:00 (some until 17:00). Restaurant kitchens close hard at 14:30 — turn up at 14:35 and the answer is 'la cucina è chiusa' even if other diners are still finishing. Dinner kitchens reopen at 19:30. Plan provisioning for 09:00–12:30 and meals for 12:30–14:00 or 19:30–22:00, and the day flows.",
+    severity: "info"
+  },
+  {
+    id: "tipping",
+    title: "Tipping isn't really a thing — coperto already covers it",
+    body:
+      "Italian restaurants are not the US or Israel. Most charge a 'coperto' (€2–4 per person bread / cover) printed on the menu, and the bill often says 'servizio incluso'. You don't need to leave 15–20%. Round up to the next euro for a casual lunch; leave €5–10 in cash on the folder for a great dinner you really loved. Tip in cash, after the bill is paid — most card terminals don't even ask, and the staff would rather have the cash anyway.",
+    severity: "info"
   }
 ];

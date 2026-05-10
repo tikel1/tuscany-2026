@@ -18,7 +18,9 @@ import {
   Info,
   Activity,
   Backpack,
-  StickyNote
+  StickyNote,
+  Quote,
+  Volume2
 } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
@@ -278,6 +280,17 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
     .filter((p): p is POI => !!p)
     .map(localizePoi);
 
+  /* Lookup table for the per-day pack list: when a gear item references a
+     specific attraction (`for: "canyon-park"`) we need its localized name
+     for the small chip and a way to scroll to that activity row. */
+  const attractionNameById = new Map<string, string>(
+    dayPois.map(p => [p.id, p.name])
+  );
+  const scrollToActivity = (attractionId: string) => {
+    const el = document.getElementById(`activity-${attractionId}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const accent =
     day.region === "south"
       ? "text-gold-400"
@@ -448,6 +461,119 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
         </header>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12 sm:space-y-16">
+          {/* Day pack — moved to the top so the first thing you see when
+              opening a day is "what do I need to bring?". Each item that
+              ties to a specific stop shows a small chip the reader can tap
+              to jump straight to that activity row below. */}
+          {localDay.gear && localDay.gear.length > 0 && (
+            <section>
+              <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
+              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+                {t("gear_kicker")}
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-2.5">
+                {localDay.gear.map((g, i) => {
+                  const forName = g.for ? attractionNameById.get(g.for) : undefined;
+                  return (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+                    >
+                      <span
+                        className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center ${
+                          g.for
+                            ? "bg-terracotta-500/12 text-terracotta-600"
+                            : "bg-olive-500/12 text-olive-700"
+                        }`}
+                      >
+                        <Backpack size={14} strokeWidth={1.8} />
+                      </span>
+                      <div className="min-w-0 pt-0.5 flex-1">
+                        <div className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-snug">
+                          {g.item}
+                        </div>
+                        {g.for && forName && (
+                          <button
+                            type="button"
+                            onClick={() => scrollToActivity(g.for!)}
+                            className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-terracotta-500/10 text-terracotta-700 text-[10px] uppercase tracking-[0.16em] font-medium hover:bg-terracotta-500/18 transition-colors"
+                            title={forName}
+                          >
+                            <Activity size={9} strokeWidth={2.2} />
+                            <span className="normal-case tracking-normal text-[11px] font-normal">
+                              {t("gear_for_label")} {forName}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
+
+          {/* Italian word of the day — a small magazine flashcard with the
+              word picked to fit the day's mood (water words on water days,
+              "arrivederci" on the flight home, etc.). */}
+          {localDay.wordOfTheDay && (
+            <section>
+              <article
+                className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cream-50 via-cream-100 to-gold-400/10 ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]"
+              >
+                {/* Decorative oversized quote glyph in the corner */}
+                <Quote
+                  size={140}
+                  strokeWidth={1}
+                  className="absolute -top-6 end-0 text-terracotta-500/8 pointer-events-none rtl:scale-x-[-1]"
+                  aria-hidden
+                />
+
+                <div className="relative px-5 sm:px-8 py-6 sm:py-8">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.32em] text-terracotta-600/85 font-medium">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-terracotta-500" />
+                    {t("word_eyebrow")}
+                  </div>
+
+                  <div className="mt-4 sm:mt-5 flex items-baseline flex-wrap gap-x-4 gap-y-2">
+                    <h2 className="font-serif italic text-4xl sm:text-6xl text-ink-900 leading-none">
+                      {localDay.wordOfTheDay.word}
+                    </h2>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cream-50 ring-1 ring-cream-300/80 text-ink-700/75">
+                      <Volume2 size={11} strokeWidth={2} className="opacity-70" />
+                      <span className="text-[12px] sm:text-[13px] font-medium tracking-wide">
+                        {localDay.wordOfTheDay.pronounce}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 text-[15px] sm:text-[17px] text-ink-700/90 leading-snug">
+                    <span className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium me-2">
+                      {t("word_meaning_label")}
+                    </span>
+                    {localDay.wordOfTheDay.meaning}
+                  </p>
+
+                  {localDay.wordOfTheDay.example && (
+                    <div className="mt-5 pt-5 border-t border-cream-300/60">
+                      <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
+                        {t("word_use_label")}
+                      </div>
+                      <p className="mt-1.5 font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug">
+                        “{localDay.wordOfTheDay.example}”
+                      </p>
+                      {localDay.wordOfTheDay.exampleMeaning && (
+                        <p className="mt-1 text-[13px] sm:text-[14px] text-ink-700/70 leading-snug">
+                          {localDay.wordOfTheDay.exampleMeaning}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </article>
+            </section>
+          )}
+
           {/* Activities */}
           <section>
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
@@ -512,31 +638,6 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                   </li>
                 ))}
               </ol>
-            </section>
-          )}
-
-          {/* Day pack — what to bring for this specific day */}
-          {localDay.gear && localDay.gear.length > 0 && (
-            <section>
-              <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("gear_kicker")}
-              </p>
-              <ul className="grid sm:grid-cols-2 gap-2.5">
-                {localDay.gear.map((item, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
-                  >
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-olive-500/12 text-olive-700 flex items-center justify-center">
-                      <Backpack size={14} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-snug pt-0.5">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
             </section>
           )}
 
@@ -685,7 +786,10 @@ function ActivityRow({
   const hasMoreInfo = !!att;
 
   return (
-    <li className="grid grid-cols-[40px_1fr] sm:grid-cols-[64px_1fr] gap-3 sm:gap-6">
+    <li
+      id={activity.attractionId ? `activity-${activity.attractionId}` : undefined}
+      className="grid grid-cols-[40px_1fr] sm:grid-cols-[64px_1fr] gap-3 sm:gap-6 scroll-mt-24"
+    >
       <div className="relative">
         <div
           className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${

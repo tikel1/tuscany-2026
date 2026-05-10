@@ -309,6 +309,13 @@ export const DICT = {
     en: "A small kit, picked for the day's mix",
     he: "ערכה קטנה שנבחרה לפי המיקס של היום"
   },
+  gear_for_label: { en: "for", he: "ל־" },
+  gear_for_general: { en: "general", he: "כללי" },
+
+  word_eyebrow: { en: "Italian word of the day", he: "המילה האיטלקית של היום" },
+  word_pronounce_label: { en: "Pronounce it", he: "איך אומרים" },
+  word_meaning_label: { en: "Meaning", he: "פירוש" },
+  word_use_label: { en: "Try it", he: "נסו לומר" },
   daytips_eyebrow: { en: "Notes for the day", he: "הערות ליום" },
   daytips_title: { en: "Good to know", he: "טוב לדעת" },
   daytips_kicker: {

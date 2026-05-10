@@ -85,6 +85,33 @@ export interface DayActivity {
   tag?: AttractionTag;
 }
 
+/** A single item on the per-day pack list. `item` is the description that
+ *  gets translated; `for` (optional) is the attraction id this item is
+ *  there for, so the UI can show a "for Canyon Park" chip and let the
+ *  reader jump to that activity. Items without `for` are general-purpose
+ *  (think: hat, water, cash) and apply to the whole day. */
+export interface GearItem {
+  item: string;
+  for?: string;
+}
+
+/** A small phrase-of-the-day flashcard, picked to fit the day's mood
+ *  (water words on water days, "arrivederci" on departure day, etc.).
+ *  Italian and the spoken pronunciation are universal; meaning + the
+ *  example translation get translated per language. */
+export interface ItalianWord {
+  /** The Italian word or short phrase, e.g. "Acqua". */
+  word: string;
+  /** Pronunciation in plain phonetics, e.g. "AH-kwah". Universal. */
+  pronounce: string;
+  /** Plain-language meaning in the active language ("Water" / "מים"). */
+  meaning: string;
+  /** Optional example sentence in Italian — "L'acqua è fresca!". */
+  example?: string;
+  /** Translation of the example in the active language. */
+  exampleMeaning?: string;
+}
+
 export interface Day {
   dayNumber: number;
   date: string;
@@ -98,11 +125,15 @@ export interface Day {
   /** Lead photo for the chapter when no activity in the day has an image. */
   leadImage?: string;
   leadImageCredit?: ImageCredit;
-  /** Suggested clothing & gear for this day's mix of activities. */
-  gear?: string[];
+  /** Suggested clothing & gear for this day's mix of activities.
+   *  Items can optionally reference the specific attraction they're for. */
+  gear?: GearItem[];
   /** Day-specific advice (timing, money, mood) that doesn't belong to
    *  a single attraction — the things you'd whisper at breakfast. */
   dayTips?: string[];
+  /** A small Italian word or phrase picked to fit the day — rendered as
+   *  a magazine-style flashcard near the top of the chapter page. */
+  wordOfTheDay?: ItalianWord;
 }
 
 /* ---------- Food & Wine ---------- */

@@ -30,18 +30,25 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "FCO → Larciano ≈ 3 h 30 min via A1 + A11",
     gear: [
-      "Comfortable travel layers (FCO is air-conditioned, the car will be hot)",
-      "Slip-on shoes for security",
-      "Refillable water bottles (empty for security, fill at FCO)",
-      "Sunglasses & a hat — late August sun is brutal at the rest stops",
-      "Swimwear in the carry-on, not the hold (in case bags arrive late)"
+      { item: "Comfortable travel layers (FCO is air-conditioned, the car will be hot)" },
+      { item: "Slip-on shoes for security" },
+      { item: "Refillable water bottles (empty for security, fill at FCO)" },
+      { item: "Sunglasses & a hat — late August sun is brutal at the rest stops" },
+      { item: "Swimwear in the carry-on, not the hold (in case bags arrive late)" }
     ],
     dayTips: [
       "Keep €40–50 cash for autostrada tolls (A1 + A11)",
       "Confirm with the rental whether the tank policy is full-to-full or full-to-empty",
       "Italian rentals require an International Driving Permit — keep it with the licence",
       "Aim to clear the FCO area before 16:00 to dodge Friday rush southbound"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Andiamo!",
+      pronounce: "ahn-DYAH-moh",
+      meaning: "Let's go!",
+      example: "Andiamo in Toscana!",
+      exampleMeaning: "Let's go to Tuscany!"
+    }
   },
   {
     dayNumber: 2,
@@ -75,19 +82,26 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Larciano ↔ Bagni di Lucca ≈ 1 h",
     gear: [
-      "Quick-dry swimwear under your clothes — saves a wet changing room",
-      "Closed-toe water shoes for the SUP & rocks",
-      "Dry bag for phone, keys & wallet",
-      "Closed-toe trainers for the ropes course (no sandals!)",
-      "A change of dry clothes for the drive home",
-      "Reef-safe sunscreen & a wide-brim hat"
+      { item: "Quick-dry swimwear under your clothes — saves a wet changing room", for: "canyon-park" },
+      { item: "Closed-toe water shoes for the SUP & rocks", for: "canyon-park" },
+      { item: "Dry bag for phone, keys & wallet", for: "canyon-park" },
+      { item: "Closed-toe trainers for the ropes course (no sandals!)", for: "selva-buffardello" },
+      { item: "A change of dry clothes for the drive home" },
+      { item: "Reef-safe sunscreen & a wide-brim hat" }
     ],
     dayTips: [
       "Big SUP slot fills up fast — book by phone the night before",
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Acqua",
+      pronounce: "AH-kwah",
+      meaning: "Water",
+      example: "L'acqua è fresca!",
+      exampleMeaning: "The water is cool!"
+    }
   },
   {
     dayNumber: 3,
@@ -121,18 +135,25 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
     gear: [
-      "Swimwear under your clothes for the rafting",
-      "Water shoes; dry change of clothes & towels in a sealed bag",
-      "Light cycling-friendly shoes for the Lucca walls",
-      "Sun hats (zero shade in Piazza dei Miracoli at midday)",
-      "Cash for parking, bike rental & gelato"
+      { item: "Swimwear under your clothes for the rafting", for: "soft-rafting-serchio" },
+      { item: "Water shoes; dry change of clothes & towels in a sealed bag", for: "soft-rafting-serchio" },
+      { item: "Light cycling-friendly shoes for the Lucca walls", for: "lucca-walls" },
+      { item: "Sun hats (zero shade in Piazza dei Miracoli at midday)", for: "pisa" },
+      { item: "Cash for parking, bike rental & gelato" }
     ],
     dayTips: [
       "Park Pisa at 'Via Pietrasantina' (€2/hr) — free shuttle to the square",
       "Lucca walls bike rentals from €4/hr; bring an ID for the deposit",
       "Tower climb at Pisa is timed — only book if you actually want the climb",
       "Late-afternoon light on the walls is the postcard moment — aim for 17:00"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Pendente",
+      pronounce: "pen-DEN-teh",
+      meaning: "Leaning, slanted",
+      example: "La torre pendente di Pisa.",
+      exampleMeaning: "The leaning tower of Pisa."
+    }
   },
   {
     dayNumber: 4,
@@ -162,18 +183,25 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Larciano ↔ Abetone ≈ 1 h",
     gear: [
-      "Long sleeves & a light jacket — 12–15 °C cooler at 1,900 m",
-      "Long trousers for the ridge walk (sunburn at altitude is real)",
-      "Hiking-grade trail shoes, not sandals",
-      "A proper picnic kit: bread, cheese, fruit, water, a knife",
-      "Sunscreen, sunglasses & a windbreaker for the gondola ride"
+      { item: "Long sleeves & a light jacket — 12–15 °C cooler at 1,900 m", for: "abetone-monte-gomito" },
+      { item: "Long trousers for the ridge walk (sunburn at altitude is real)", for: "abetone-monte-gomito" },
+      { item: "Hiking-grade trail shoes, not sandals", for: "abetone-monte-gomito" },
+      { item: "A proper picnic kit: bread, cheese, fruit, water, a knife" },
+      { item: "Sunscreen, sunglasses & a windbreaker for the gondola ride", for: "abetone-monte-gomito" }
     ],
     dayTips: [
       "First gondola ~09:30, last descent ~17:00 — set a phone alarm",
       "Mountain restaurants close mid-afternoon; pack the picnic instead",
       "Cash for the gondola — card sometimes flaky at the booth",
       "Use the cool half of the day for the ridge walk; descend by 15:00 to start packing"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Montagna",
+      pronounce: "mon-TAH-nyah",
+      meaning: "Mountain",
+      example: "Andiamo in montagna.",
+      exampleMeaning: "We're heading to the mountains."
+    }
   },
   {
     dayNumber: 5,
@@ -199,18 +227,25 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min",
     gear: [
-      "Closed-toe water shoes — mandatory at Sentierelsa",
-      "Swimwear under your clothes; quick-change towel",
-      "Dry bag for phones (the river is the trail)",
-      "Light hiking shoes for the trail back from the river",
-      "Snacks & water for the long drive south"
+      { item: "Closed-toe water shoes — mandatory at Sentierelsa", for: "sentierelsa" },
+      { item: "Swimwear under your clothes; quick-change towel", for: "sentierelsa" },
+      { item: "Dry bag for phones (the river is the trail)", for: "sentierelsa" },
+      { item: "Light hiking shoes for the trail back from the river", for: "sentierelsa" },
+      { item: "Snacks & water for the long drive south" }
     ],
     dayTips: [
       "Fuel up before the A1 entry — autostrada gas is +20–30 c/L",
       "Confirm Cortevecchia check-in window with the host before you leave",
       "No public toilets at Sentierelsa trailhead — go in Colle di Val d'Elsa first",
       "Plan an early-evening arrival; you don't want to discover the gravel road in the dark"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Sentiero",
+      pronounce: "sen-TYAIR-oh",
+      meaning: "Trail, path",
+      example: "Il sentiero passa nel fiume.",
+      exampleMeaning: "The trail runs through the river."
+    }
   },
   {
     dayNumber: 6,
@@ -235,19 +270,26 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Cortevecchia ↔ Porto Santo Stefano ≈ 1 h 15 min",
     gear: [
-      "Swimwear (a dry second set for the drive home)",
-      "Snorkel masks — bring your own; rentals are pricey at the marina",
-      "Reef-safe sunscreen, rash guards & sun-shirts (shade on the boat is minimal)",
-      "Floating phone case + waterproof dry bag",
-      "A cooler with sandwiches, fruit, lots of water — no shops at the coves",
-      "Cash for the harbour parking & marine fuel top-up"
+      { item: "Swimwear (a dry second set for the drive home)", for: "porto-santo-stefano" },
+      { item: "Snorkel masks — bring your own; rentals are pricey at the marina", for: "porto-santo-stefano" },
+      { item: "Reef-safe sunscreen, rash guards & sun-shirts (shade on the boat is minimal)", for: "porto-santo-stefano" },
+      { item: "Floating phone case + waterproof dry bag", for: "porto-santo-stefano" },
+      { item: "A cooler with sandwiches, fruit, lots of water — no shops at the coves", for: "porto-santo-stefano" },
+      { item: "Cash for the harbour parking & marine fuel top-up", for: "porto-santo-stefano" }
     ],
     dayTips: [
       "No license needed for engines under 40 hp (your rental qualifies)",
       "Marine fuel runs €40–80 extra — keep cash for the dock pump",
       "Anchor at Cala del Gesso early — by midday it fills with day boats",
       "Strong meltemi wind = waves: check forecast the night before, reschedule if rough"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Mare",
+      pronounce: "MAH-reh",
+      meaning: "Sea",
+      example: "Una giornata in mare.",
+      exampleMeaning: "A day at sea."
+    }
   },
   {
     dayNumber: 7,
@@ -267,19 +309,26 @@ export const itinerary: Day[] = [
     ],
     driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
     gear: [
-      "Two sets of swimwear per person (one dry for the drive)",
-      "Waterproof phone case",
-      "Swim shirts / rash guards for kids — sun is harsh on the slides",
-      "Water shoes — pavement around the wave pool gets very hot",
-      "Beach towels (rentals are paid)",
-      "A €1 coin for the locker"
+      { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
+      { item: "Waterproof phone case", for: "acqua-village-follonica" },
+      { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
+      { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
+      { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
+      { item: "A €1 coin for the locker", for: "acqua-village-follonica" }
     ],
     dayTips: [
       "Online tickets meaningfully cheaper — buy them the night before",
       "Outside food allowed in the picnic zone; cooler bag = saves €€€",
       "Arrive at opening (10:00) — slide queues triple after 13:00",
       "Polynesian show times are posted at the gate; don't miss the evening one"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Scivolo",
+      pronounce: "SHEE-voh-loh",
+      meaning: "Slide",
+      example: "Lo scivolo più alto, per favore!",
+      exampleMeaning: "The tallest slide, please!"
+    }
   },
   {
     dayNumber: 8,
@@ -312,19 +361,26 @@ export const itinerary: Day[] = [
       }
     ],
     gear: [
-      "Long pants (jeans) for the horseback ride",
-      "Closed-toe shoes for everything today — riding, caves, cobbles",
-      "Sun hats & long-sleeve light shirts for the open ride",
-      "Headlamps if doing Vitozza (one per person)",
-      "A light layer for the cool tufa corridors",
-      "Water bottles and snacks — gaps between food stops"
+      { item: "Long pants (jeans) for the horseback ride", for: "maremma-horseback" },
+      { item: "Closed-toe shoes for everything today — riding, caves, cobbles" },
+      { item: "Sun hats & long-sleeve light shirts for the open ride", for: "maremma-horseback" },
+      { item: "Headlamps if doing Vitozza (one per person)", for: "vitozza" },
+      { item: "A light layer for the cool tufa corridors", for: "via-cava-san-giuseppe" },
+      { item: "Water bottles and snacks — gaps between food stops" }
     ],
     dayTips: [
       "Riding helmets are provided; minimum age usually 6",
       "Pitigliano synagogue closes early on Friday — go before lunch if it's a Friday",
       "Vie Cave footing is shaded but uneven — grippy soles only",
       "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Cavallo",
+      pronounce: "kah-VAH-loh",
+      meaning: "Horse",
+      example: "Un cavallo della Maremma.",
+      exampleMeaning: "A Maremma horse."
+    }
   },
   {
     dayNumber: 9,
@@ -358,19 +414,26 @@ export const itinerary: Day[] = [
       }
     ],
     gear: [
-      "Swimwear under your clothes for Saturnia (skip the queue)",
-      "Microfibre towel — quick to dry between stops",
-      "Sandals you don't mind smelling sulphury for a day",
-      "Beach mat for Bolsena's pebble shore",
-      "Comfortable walking shoes for the steep Civita climb",
-      "Sun hats, sunscreen, refilled water bottles"
+      { item: "Swimwear under your clothes for Saturnia (skip the queue)", for: "saturnia" },
+      { item: "Microfibre towel — quick to dry between stops" },
+      { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
+      { item: "Beach mat for Bolsena's pebble shore", for: "lago-di-bolsena" },
+      { item: "Comfortable walking shoes for the steep Civita climb", for: "civita-di-bagnoregio" },
+      { item: "Sun hats, sunscreen, refilled water bottles" }
     ],
     dayTips: [
       "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
       "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
       "Civita footbridge ticket ~€5/adult, cash only",
       "Eat lunch by 13:30 — village kitchens close hard at 14:30"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Terme",
+      pronounce: "TAIR-meh",
+      meaning: "Thermal baths, hot springs",
+      example: "Le terme di Saturnia all'alba.",
+      exampleMeaning: "The Saturnia hot springs at dawn."
+    }
   },
   {
     dayNumber: 10,
@@ -399,17 +462,24 @@ export const itinerary: Day[] = [
       }
     ],
     gear: [
-      "Light layers — FCO is air-conditioned & the flight is cold",
-      "Passports + International Driving Permit easily reachable",
-      "Empty refillable bottle (fill after security)",
-      "Snacks for the kids — early flights, sleepy mood",
-      "All gels & liquids re-decanted to ≤ 100 ml"
+      { item: "Light layers — FCO is air-conditioned & the flight is cold" },
+      { item: "Passports + International Driving Permit easily reachable" },
+      { item: "Empty refillable bottle (fill after security)" },
+      { item: "Snacks for the kids — early flights, sleepy mood" },
+      { item: "All gels & liquids re-decanted to ≤ 100 ml" }
     ],
     dayTips: [
       "Bag drop opens exactly 2 h before departure — be there at 03:30",
       "Return the rental with a full tank — closest 24/7 pump is on Via Portuense",
       "Allow 10–15 min for the rental shuttle from car return to terminal",
       "Pre-pay airport tolls online to skip the boom-gate queue at exit"
-    ]
+    ],
+    wordOfTheDay: {
+      word: "Arrivederci",
+      pronounce: "ah-ree-veh-DAIR-chee",
+      meaning: "Goodbye (until we meet again)",
+      example: "Arrivederci, Toscana!",
+      exampleMeaning: "Goodbye, Tuscany!"
+    }
   }
 ];
