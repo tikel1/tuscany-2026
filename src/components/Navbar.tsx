@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getTripState } from "../lib/tripState";
 import { useT, type DictKey } from "../lib/dict";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -16,7 +15,6 @@ const links: { id: string; key: DictKey }[] = [
 export default function Navbar() {
   const t = useT();
   const [scrolled, setScrolled] = useState(false);
-  const [state] = useState(() => getTripState());
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -29,13 +27,6 @@ export default function Navbar() {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  const badge =
-    state.phase === "before"
-      ? t("badge_d_until", { n: state.daysUntil })
-      : state.phase === "during"
-      ? t("badge_day_n", { n: state.today.dayNumber })
-      : t("badge_done");
 
   return (
     <nav
@@ -75,19 +66,6 @@ export default function Navbar() {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher onDark={!scrolled} />
-
-          {/* mobile-only countdown badge */}
-          <div className="md:hidden">
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                scrolled
-                  ? "bg-terracotta-500 text-cream-50"
-                  : "bg-cream-50/95 text-terracotta-700 shadow-sm"
-              }`}
-            >
-              {badge}
-            </span>
-          </div>
         </div>
       </div>
     </nav>
