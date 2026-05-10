@@ -220,7 +220,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 pb-8 sm:pb-10 flex items-end justify-between gap-4"
+        className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 pb-8 sm:pb-10 flex flex-col sm:flex-row items-center sm:items-end justify-center sm:justify-between gap-4"
       >
         <div className="hidden sm:block flex-1 max-w-md">
           <WeatherStrip variant="glass" />
@@ -230,16 +230,16 @@ export default function Hero() {
           onClick={() =>
             document.getElementById("trip")?.scrollIntoView({ behavior: "smooth", block: "start" })
           }
-          className="group flex flex-col items-center gap-1 text-cream-50/85 hover:text-cream-50 transition-colors"
-          aria-label="Scroll to itinerary"
+          className="group flex flex-col items-center gap-1 text-cream-50/90 hover:text-cream-50 transition-colors"
+          aria-label="Scroll to the plan"
         >
-          <span className="font-serif italic text-xs sm:text-sm">read the itinerary</span>
-          <ChevronDown size={18} className="animate-bounce group-hover:animate-none" />
+          <span className="font-serif italic text-sm sm:text-sm tracking-wide">the plan</span>
+          <ChevronDown size={20} className="animate-bounce group-hover:animate-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
         </button>
       </motion.div>
 
-      {/* Mobile: weather glass strip just above the scroll cue */}
-      <div className="sm:hidden absolute inset-x-5 bottom-20 z-10">
+      {/* Mobile: weather glass strip sits just above the scroll cue */}
+      <div className="sm:hidden absolute inset-x-5 bottom-24 z-10">
         <WeatherStrip variant="glass" />
       </div>
     </header>

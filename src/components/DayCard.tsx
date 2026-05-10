@@ -113,7 +113,7 @@ export default function DayCard({ day }: { day: Day }) {
       } transition-shadow duration-500`}
     >
       {/* Hero photo */}
-      <div className="relative aspect-[21/10] sm:aspect-[21/9] overflow-hidden bg-ink-900">
+      <div className="relative aspect-[16/7] sm:aspect-[21/9] overflow-hidden bg-ink-900">
         <div className="absolute inset-0 transition-transform duration-[1500ms] ease-out group-hover:scale-[1.04]">
           <PoiImage
             src={lead.src}
@@ -134,31 +134,31 @@ export default function DayCard({ day }: { day: Day }) {
         )}
 
         {/* Top: chapter mark */}
-        <div className="absolute top-4 sm:top-6 left-5 sm:left-8 right-5 sm:right-8 flex items-start justify-between gap-3 text-cream-50">
-          <div className="flex items-baseline gap-3">
-            <div className="font-serif text-3xl sm:text-4xl leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
+        <div className="absolute top-3 sm:top-6 left-4 sm:left-8 right-4 sm:right-8 flex items-start justify-between gap-3 text-cream-50">
+          <div className="flex items-baseline gap-2 sm:gap-3">
+            <div className="font-serif text-2xl sm:text-4xl leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
               {ROMAN[day.dayNumber]}
             </div>
-            <div className="h-px w-10 sm:w-16 bg-cream-50/40 mb-1.5" />
-            <div className={`text-[10px] uppercase tracking-[0.28em] font-medium ${accentText}`}>
+            <div className="hidden sm:block h-px w-16 bg-cream-50/40 mb-1.5" />
+            <div className={`text-[9px] sm:text-[10px] uppercase tracking-[0.24em] sm:tracking-[0.28em] font-medium ${accentText}`}>
               Chapter {String(day.dayNumber).padStart(2, "0")}
             </div>
           </div>
           {isToday && (
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-terracotta-500 text-cream-50 text-[10px] uppercase tracking-[0.22em] font-bold shadow-[0_4px_18px_rgba(196,90,61,0.5)]">
-              <Sun size={11} /> Today
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-terracotta-500 text-cream-50 text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold shadow-[0_4px_18px_rgba(196,90,61,0.5)]">
+              <Sun size={10} /> Today
             </div>
           )}
         </div>
 
         {/* Bottom: title + meta */}
-        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 text-cream-50 pr-32 sm:pr-44">
-          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-cream-50/85 font-medium flex-wrap">
+        <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-8 text-cream-50 pr-3.5 sm:pr-44">
+          <div className="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-cream-50/85 font-medium flex-wrap">
             <span>{day.weekday}</span>
             <span aria-hidden>·</span>
             <span>{formatDate(day.date)}</span>
-            <span aria-hidden>·</span>
-            <span>{regionLabel[day.region]}</span>
+            <span aria-hidden className="hidden sm:inline">·</span>
+            <span className="hidden sm:inline">{regionLabel[day.region]}</span>
             {day.base && (
               <>
                 <span aria-hidden className="hidden sm:inline">·</span>
@@ -168,25 +168,20 @@ export default function DayCard({ day }: { day: Day }) {
               </>
             )}
           </div>
-          <h3 className="mt-2 font-serif text-3xl sm:text-5xl leading-[1.04] tracking-tight max-w-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+          <h3 className="mt-1 sm:mt-2 font-serif text-xl sm:text-5xl leading-[1.05] tracking-tight max-w-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
             {day.title}
           </h3>
           {day.subtitle && (
-            <p className="mt-2 font-serif italic text-cream-50/85 text-base sm:text-lg max-w-xl">
+            <p className="hidden sm:block mt-2 font-serif italic text-cream-50/85 text-base sm:text-lg max-w-xl">
               {day.subtitle}
             </p>
-          )}
-          {day.base && (
-            <div className="sm:hidden mt-3 inline-flex items-center gap-1 text-xs text-cream-50/85">
-              <MapPin size={11} className="opacity-70" /> {day.base}
-            </div>
           )}
         </div>
       </div>
 
       {/* Activity body */}
-      <div className="px-5 sm:px-10 py-7 sm:py-10">
-        <ol className="space-y-6 sm:space-y-8">
+      <div className="px-4 sm:px-10 py-5 sm:py-10">
+        <ol className="space-y-4 sm:space-y-8">
           {previewActivities.map((a, i) => (
             <ActivityRow
               key={i}
@@ -231,7 +226,7 @@ export default function DayCard({ day }: { day: Day }) {
         )}
 
         {day.driveNotes && (
-          <div className="mt-8 sm:mt-10 pt-6 border-t border-cream-300/60 flex items-start gap-3">
+          <div className="mt-6 sm:mt-10 pt-4 sm:pt-6 border-t border-cream-300/60 flex items-start gap-3">
             <span className="shrink-0 w-9 h-9 rounded-full bg-olive-500/10 text-olive-700 flex items-center justify-center">
               <Car size={15} />
             </span>
@@ -269,26 +264,26 @@ function ActivityRow({
   const hasMoreInfo = !!att;
 
   return (
-    <li className="grid grid-cols-[44px_1fr] sm:grid-cols-[60px_1fr] gap-4 sm:gap-6">
+    <li className="grid grid-cols-[36px_1fr] sm:grid-cols-[60px_1fr] gap-3 sm:gap-6">
       <div className="relative">
         <div
-          className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${
+          className={`w-9 h-9 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${
             isToday
               ? "bg-terracotta-500 text-cream-50"
               : "bg-cream-100 text-terracotta-600 ring-1 ring-cream-300/80"
           }`}
         >
-          <Icon size={18} className="sm:w-5 sm:h-5" strokeWidth={1.6} />
+          <Icon size={15} className="sm:w-5 sm:h-5" strokeWidth={1.7} />
         </div>
         {activity.time && (
-          <div className="absolute -bottom-5 left-0 right-0 text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-ink-700/55 font-medium text-center">
-            {activity.time.length > 12 ? activity.time.slice(0, 12) + "…" : activity.time}
+          <div className="absolute -bottom-4 sm:-bottom-5 left-0 right-0 text-[8px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-ink-700/55 font-medium text-center">
+            {activity.time.length > 10 ? activity.time.slice(0, 10) + "…" : activity.time}
           </div>
         )}
       </div>
 
-      <div className="min-w-0 pt-1">
-        <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+      <div className="min-w-0 pt-0.5 sm:pt-1">
+        <div className="flex items-baseline flex-wrap gap-x-2.5 gap-y-1">
           <span className="text-[9px] uppercase tracking-[0.22em] text-ink-700/45 font-medium">
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -298,16 +293,16 @@ function ActivityRow({
             </span>
           )}
         </div>
-        <h4 className="mt-1 font-serif text-xl sm:text-[24px] text-ink-900 leading-snug">
+        <h4 className="mt-0.5 sm:mt-1 font-serif text-[17px] sm:text-[24px] text-ink-900 leading-snug">
           {activity.title}
         </h4>
         {activity.description && (
-          <p className="mt-2 text-[14px] sm:text-[15px] text-ink-700/85 leading-relaxed">
+          <p className="mt-1.5 sm:mt-2 text-[13.5px] sm:text-[15px] text-ink-700/85 leading-relaxed">
             {activity.description}
           </p>
         )}
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           {hasMoreInfo && (
             <button
               onClick={() => setOpen(o => !o)}
