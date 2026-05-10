@@ -18,7 +18,7 @@ export const wineries: Winery[] = [
     address: "Via di Capezzana 100, Carmignano (PO)",
     coords: [43.8233, 11.0242],
     bookingNote: "Email or book online a few days ahead — small group tastings.",
-    image: "/images/wine-capezzana.jpg",
+    image: "./images/wine-capezzana.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -36,7 +36,7 @@ export const wineries: Winery[] = [
     address: "Via Fontemorana 179, Carmignano (PO)",
     coords: [43.8275, 11.0167],
     bookingNote: "Call ahead — sometimes closed for harvest in late August.",
-    image: "/images/wine-bacchereto.jpg",
+    image: "./images/wine-bacchereto.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -54,7 +54,7 @@ export const wineries: Winery[] = [
     address: "Via le Poggia 10, Artimino, Carmignano (PO)",
     coords: [43.7978, 11.0489],
     bookingNote: "Online booking; tasting rooms open most afternoons.",
-    image: "/images/wine-artimino.jpg",
+    image: "./images/wine-artimino.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -72,7 +72,7 @@ export const wineries: Winery[] = [
     address: "Via di Petrognano 3, Pomino (FI)",
     coords: [43.8911, 11.4231],
     bookingNote: "Walk-ins for tastings most afternoons; call ahead in August.",
-    image: "/images/wine-petrognano.jpg",
+    image: "./images/wine-petrognano.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -94,7 +94,7 @@ export const wineries: Winery[] = [
     address: "Loc. Pereta, Magliano in Toscana (GR)",
     coords: [42.5742, 11.3522],
     bookingNote: "Book by email a week ahead — Elisabetta's team does a great visit.",
-    image: "/images/wine-le-pupille.jpg",
+    image: "./images/wine-le-pupille.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -112,7 +112,7 @@ export const wineries: Winery[] = [
     address: "Loc. Banditaccia, Scansano (GR)",
     coords: [42.6864, 11.3389],
     bookingNote: "Walk-ins welcome; call ahead in peak August.",
-    image: "/images/wine-roccapesta.jpg",
+    image: "./images/wine-roccapesta.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -130,7 +130,7 @@ export const wineries: Winery[] = [
     address: "Loc. Pian dei Bichi, Magliano in Toscana (GR)",
     coords: [42.5878, 11.2942],
     bookingNote: "Online bookings, English-speaking staff, easy with kids.",
-    image: "/images/wine-tenuta-ammiraglia.jpg",
+    image: "./images/wine-tenuta-ammiraglia.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -148,7 +148,7 @@ export const wineries: Winery[] = [
     address: "Via N. Ciacci 974, Pitigliano (GR)",
     coords: [42.6303, 11.6736],
     bookingNote: "Drop in during shop hours — no booking needed.",
-    image: "/images/wine-cantine-pitigliano.jpg",
+    image: "./images/wine-cantine-pitigliano.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
@@ -166,7 +166,7 @@ export const wineries: Winery[] = [
     address: "Loc. Pian di Conati 52, Sovana, Sorano (GR)",
     coords: [42.6661, 11.6256],
     bookingNote: "Email ahead — Edoardo & Carla pour personally.",
-    image: "/images/wine-sassotondo.jpg",
+    image: "./images/wine-sassotondo.jpg",
     imageCredit: {
       author: "Wikimedia Commons",
       license: "CC BY-SA",
