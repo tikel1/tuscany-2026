@@ -66,12 +66,6 @@ export const stays: Stay[] = [
       "~30 min from Pitigliano and the Vie Cave",
       "Big private pool, kitchen built for a chef-at-home night",
       "Total privacy — historic restored buildings"
-    ],
-    warnings: [
-      "Confirm in writing that AC is working in your specific apartment",
-      "Isolated — no walkable restaurants or supermarket, car required",
-      "~1h15 to Porto Santo Stefano (boat day)",
-      "~1h20 to Acqua Village Follonica"
     ]
   }
 ];
