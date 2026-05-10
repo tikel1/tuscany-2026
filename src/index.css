@@ -205,3 +205,19 @@ html[dir="rtl"] .leaflet-control-attribution {
   font-family: var(--font-sans) !important;
   background: var(--color-cream-100) !important;
 }
+
+/* "You are here" marker pulse — the inner blue dot stays put while a
+   translucent ring expands and fades around it. Reduced-motion users
+   get a subtle static halo instead. */
+@keyframes user-location-pulse {
+  0%   { transform: scale(0.6); opacity: 0.85; }
+  80%  { opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tuscany-user-marker [style*="user-location-pulse"] {
+    animation: none !important;
+    transform: scale(1.6) !important;
+    opacity: 0.25 !important;
+  }
+}

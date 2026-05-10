@@ -1,7 +1,7 @@
 import { useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles, Grape } from "lucide-react";
+import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles, Grape, Locate } from "lucide-react";
 import { attractions } from "../data/attractions";
 import { stays } from "../data/stays";
 import { services } from "../data/services";
@@ -76,6 +76,52 @@ function shade(hex: string, percent: number): string {
   const G = Math.max(0, Math.min(255, ((num >> 8) & 0xff) + amt));
   const B = Math.max(0, Math.min(255, (num & 0xff) + amt));
   return "#" + (0x1000000 + (R << 16) + (G << 8) + B).toString(16).slice(1);
+}
+
+/* Generous bounding box for "is the device currently in Italy?".
+   Includes the islands (Sicily, Sardinia) and a safety margin so we
+   don't accidentally reject a user near the border. */
+const ITALY_BBOX = { south: 35.4, north: 47.5, west: 6.4, east: 19.0 };
+
+function isInItaly(lat: number, lon: number): boolean {
+  return (
+    lat >= ITALY_BBOX.south &&
+    lat <= ITALY_BBOX.north &&
+    lon >= ITALY_BBOX.west &&
+    lon <= ITALY_BBOX.east
+  );
+}
+
+/* "You are here" marker — Apple-Maps-style blue dot with a soft pulsing
+   ring. The keyframes live in index.css. */
+function makeUserLocationIcon(): L.DivIcon {
+  const html = `
+    <div style="position:relative;width:18px;height:18px;">
+      <div style="
+        position:absolute;
+        top:50%;left:50%;
+        width:18px;height:18px;
+        margin:-9px 0 0 -9px;
+        border-radius:50%;
+        background:rgba(58,124,235,0.35);
+        animation:user-location-pulse 2.2s ease-out infinite;
+        pointer-events:none;
+      "></div>
+      <div style="
+        position:absolute;inset:0;
+        border-radius:50%;
+        background:#3A7CEB;
+        border:3px solid #FBF7EC;
+        box-shadow:0 2px 6px rgba(0,0,0,0.3);
+      "></div>
+    </div>`;
+  return L.divIcon({
+    html,
+    className: "tuscany-user-marker",
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -10]
+  });
 }
 
 function categoryGlyph(cat: Category): string {
@@ -158,6 +204,7 @@ const ROUTE_SEGMENTS: RouteSegment[] = [
 interface FlyHandle {
   flyToId: (id: string) => void;
   fitAll: () => void;
+  flyToCoords: (coords: [number, number], zoom?: number) => void;
 }
 
 const MapController = forwardRef<
@@ -181,6 +228,9 @@ const MapController = forwardRef<
         if (pois.length === 0) return;
         const bounds = L.latLngBounds(pois.map(p => p.coords));
         map.flyToBounds(bounds, { padding: [40, 40], duration: 1.1, maxZoom: 11 });
+      },
+      flyToCoords: (coords, zoom = 12) => {
+        map.flyTo(coords, Math.max(map.getZoom(), zoom), { duration: 1.0 });
       }
     }),
     [map, pois, markersRef]
@@ -248,6 +298,71 @@ export default function MapView({ registerFocus }: Props) {
   const [showRoute, setShowRoute] = useState(true);
   const [showSpokes, setShowSpokes] = useState(true);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
+
+  // Geolocation: live "you are here" dot. We use watchPosition so the
+  // marker stays current as we drive around during the trip; centering
+  // the map on it only happens the first time we detect we're inside
+  // Italy (so the pre-trip view from Israel doesn't snap the map away
+  // from Tuscany).
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
+  const [geolocBlocked, setGeolocBlocked] = useState(false);
+  const userIcon = useMemo(() => makeUserLocationIcon(), []);
+  const hasAutoCentered = useRef(false);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    const watchId = navigator.geolocation.watchPosition(
+      pos => {
+        const coords: [number, number] = [
+          pos.coords.latitude,
+          pos.coords.longitude
+        ];
+        setUserLocation(coords);
+        setGeolocBlocked(false);
+        if (!hasAutoCentered.current && isInItaly(coords[0], coords[1])) {
+          hasAutoCentered.current = true;
+          // Small delay so the map has finished its initial render and
+          // isn't fighting our flyTo with its own center transition.
+          setTimeout(() => flyRef.current?.flyToCoords(coords, 11), 350);
+        }
+      },
+      err => {
+        // Permission denied / unavailable / timeout — silently ignore;
+        // the map still works, the user-location dot just won't show.
+        if (err.code === err.PERMISSION_DENIED) setGeolocBlocked(true);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
+    );
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  const handleLocateClick = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const coords: [number, number] = [
+          pos.coords.latitude,
+          pos.coords.longitude
+        ];
+        setUserLocation(coords);
+        setGeolocBlocked(false);
+        // Manual button still respects the "only auto-centre in Italy"
+        // rule — clicking it from Tel Aviv would otherwise zoom out of
+        // the trip area, which isn't useful pre-trip.
+        if (isInItaly(coords[0], coords[1])) {
+          flyRef.current?.flyToCoords(coords, 13);
+        }
+      },
+      err => {
+        if (err.code === err.PERMISSION_DENIED) setGeolocBlocked(true);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
 
   /* Day-trip "spokes": from each base stay out to every attraction in the
      same region. Lets you see at a glance which excursions belong to which
@@ -455,6 +570,23 @@ export default function MapView({ registerFocus }: Props) {
               );
             })}
 
+          {/* "You are here" — soft pulsing blue dot. Sits above all
+              other markers via Leaflet's default z-index handling. */}
+          {userLocation && (
+            <Marker position={userLocation} icon={userIcon} keyboard={false}>
+              <Popup>
+                <div className="font-sans p-2">
+                  <div className="font-serif text-base text-ink-900 leading-tight">
+                    {t("map_you_here")}
+                  </div>
+                  <div className="text-[11px] text-ink-700/65 mt-0.5">
+                    {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
           {visible.map(poi => {
             // mark the airport + stays as 'hero' (slightly bigger ringed pin)
             const isHero = poi.category === "stay" || poi.category === "airport";
@@ -520,6 +652,25 @@ export default function MapView({ registerFocus }: Props) {
           className="absolute top-3 end-3 z-[400] w-10 h-10 rounded-full bg-cream-50/95 backdrop-blur ring-1 ring-cream-300/70 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition flex items-center justify-center text-ink-800"
         >
           <Maximize2 size={16} />
+        </button>
+
+        {/* Floating Locate-me button — request / refresh user location.
+            Lights up blue once we have a fix; greyed-out (but still
+            tappable) if permission was denied so the user can retry. */}
+        <button
+          type="button"
+          onClick={handleLocateClick}
+          aria-label={t("map_locate_me")}
+          aria-pressed={!!userLocation}
+          className={`absolute top-[60px] end-3 z-[400] w-10 h-10 rounded-full backdrop-blur ring-1 shadow-md transition flex items-center justify-center ${
+            userLocation
+              ? "bg-[#3A7CEB] text-cream-50 ring-[#3A7CEB]/60"
+              : geolocBlocked
+                ? "bg-cream-50/80 text-ink-700/40 ring-cream-300/70"
+                : "bg-cream-50/95 text-ink-800 ring-cream-300/70 hover:bg-[#3A7CEB] hover:text-cream-50 hover:ring-[#3A7CEB]/60"
+          }`}
+        >
+          <Locate size={16} strokeWidth={1.9} />
         </button>
       </div>
 

@@ -176,6 +176,8 @@ export const DICT = {
     he: "ג'/ד' · 25–26 באוגוסט"
   },
   map_zoom_fit: { en: "Zoom to fit all locations", he: "התאם תצוגה לכל המיקומים" },
+  map_locate_me: { en: "Show my location", he: "הצג את המיקום שלי" },
+  map_you_here: { en: "You are here", he: "אתה כאן" },
 
   /* Map categories */
   cat_stay: { en: "Stays", he: "לינה" },
