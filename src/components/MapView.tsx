@@ -361,18 +361,15 @@ export default function MapView({ registerFocus }: Props) {
           scrollWheelZoom={true}
           className="h-[70svh] sm:h-[600px] w-full"
         >
-          {/* Stamen Watercolor base — painterly Tuscan-postcard feel.
-              Hosted by Stadia Maps; free for personal/dev use. */}
+          {/* CartoDB Voyager — warm, editorial off-cream tiles that pair
+              nicely with the Tuscan palette. Free for low-traffic personal
+              use, no API key required (Stadia's Stamen Watercolor blocks
+              non-localhost without an account, which is why we moved off it). */}
           <TileLayer
-            attribution='Map tiles by <a href="https://stamen.com/" target="_blank" rel="noopener">Stamen Design</a>, hosted by <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> · CC BY 4.0. Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'
-            url="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
-            maxZoom={16}
-          />
-          {/* Toner Labels overlay — keeps place names legible above the watercolor wash */}
-          <TileLayer
-            url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            subdomains="abcd"
             maxZoom={20}
-            opacity={0.85}
           />
           <MapController pois={allPOIs} markersRef={markersRef} ref={flyRef} />
 
