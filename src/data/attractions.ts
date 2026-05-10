@@ -141,7 +141,12 @@ export const attractions: POI[] = [
     description:
       "Often called the most beautiful cove on Monte Argentario — a small white-pebble beach below sheer cliffs, a tiny Spanish watchtower, and water so clear it looks fake. Reachable on foot via a steep path, but the easy way is to anchor your rental boat just offshore and swim in.",
     image: "./images/cala-del-gesso.jpg",
-    imageCredit: wmCredit("Monte_Argentario"),
+    imageCredit: {
+      author: "Cristina Gottardi (Unsplash)",
+      license: "CC0 / Public Domain",
+      source: "https://unsplash.com/photos/7_APbY7Afsg",
+      licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
     address: "Monte Argentario (GR)",
     coords: [42.3642, 11.1233],
     tags: ["water", "nature", "view"]
