@@ -1,14 +1,14 @@
 import { useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles, Grape, Locate } from "lucide-react";
+import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, ExternalLink, Maximize2, Route, Sparkles, Grape, Locate } from "lucide-react";
 import { attractions } from "../data/attractions";
 import { stays } from "../data/stays";
 import { services } from "../data/services";
 import { wineries } from "../data/wineries";
 import type { POI, Category } from "../data/types";
 import Section from "./Section";
-import { navUrl } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import { useT, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { useLocalizePoi, useLocalizeWinery } from "../data/i18n";
@@ -616,15 +616,8 @@ export default function MapView({ registerFocus }: Props) {
                           {poi.shortDescription}
                         </p>
                       )}
-                      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                        <a
-                          href={navUrl(poi.coords)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-terracotta-600 hover:text-terracotta-700"
-                        >
-                          <Navigation size={11} /> {t("navigate")}
-                        </a>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <NavigateLinks coords={poi.coords} size={11} />
                         {poi.website && (
                           <a
                             href={poi.website}

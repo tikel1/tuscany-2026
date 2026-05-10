@@ -8,7 +8,6 @@ import {
   Wine,
   Coffee,
   ExternalLink,
-  Navigation,
   CalendarCheck,
   Grape
 } from "lucide-react";
@@ -18,7 +17,7 @@ import Section from "./Section";
 import PoiImage from "./PoiImage";
 import { useT, type DictKey } from "../lib/dict";
 import { useLocalizeDish, useLocalizeWinery } from "../data/i18n";
-import { navUrl } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import type { DishCategory } from "../data/types";
 
 type RegionFilter = "north" | "south" | "tuscany";
@@ -241,16 +240,7 @@ export default function FoodAndWineSection() {
                             <ExternalLink size={12} /> {t("website")}
                           </a>
                         )}
-                        {w.coords && (
-                          <a
-                            href={navUrl(w.coords)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="icon-link"
-                          >
-                            <Navigation size={12} /> {t("navigate")}
-                          </a>
-                        )}
+                        {w.coords && <NavigateLinks coords={w.coords} />}
                       </div>
                     </div>
                   </li>

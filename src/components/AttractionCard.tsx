@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ExternalLink,
   MapPin,
-  Navigation,
   Plus,
   X,
   Lightbulb,
@@ -11,7 +10,7 @@ import {
 } from "lucide-react";
 import type { Difficulty, POI } from "../data/types";
 import { useMapFocus } from "../lib/mapContext";
-import { navUrl } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import { useT, type DictKey } from "../lib/dict";
 import { useLocalizePoi } from "../data/i18n";
 import PoiImage from "./PoiImage";
@@ -249,14 +248,7 @@ export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
                   <ExternalLink size={13} /> {t("website")}
                 </a>
               )}
-              <a
-                href={navUrl(poi.coords)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="icon-link"
-              >
-                <Navigation size={13} /> {t("navigate")}
-              </a>
+              <NavigateLinks coords={poi.coords} size={13} />
               <button onClick={() => focusOn(poi.id)} className="icon-link">
                 <MapPin size={13} /> {t("on_the_map_short")}
               </button>

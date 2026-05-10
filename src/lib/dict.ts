@@ -191,6 +191,16 @@ export const DICT = {
 
   /* Map popup */
   navigate: { en: "Navigate", he: "ניווט" },
+  navigate_google: { en: "Maps", he: "מפות" },
+  navigate_waze: { en: "Waze", he: "וויז" },
+  navigate_google_aria: {
+    en: "Open in Google Maps and start navigating",
+    he: "פתח ב־Google Maps והתחל ניווט"
+  },
+  navigate_waze_aria: {
+    en: "Open in Waze and start navigating",
+    he: "פתח ב־Waze והתחל ניווט"
+  },
   website: { en: "Website", he: "אתר" },
   show_on_map: { en: "Show on the map", he: "הצג על המפה" },
   on_the_map_short: { en: "On the map", he: "על המפה" },

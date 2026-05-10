@@ -5,7 +5,6 @@ import {
   Sun,
   ChevronDown,
   ExternalLink,
-  Navigation,
   Plus,
   X
 } from "lucide-react";
@@ -13,7 +12,8 @@ import { useState } from "react";
 import type { Day, ImageCredit, POI } from "../data/types";
 import { getAttraction } from "../data/attractions";
 import { useMapFocus } from "../lib/mapContext";
-import { formatDate, navUrl } from "../lib/nav";
+import { formatDate } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import PoiImage from "./PoiImage";
@@ -373,14 +373,7 @@ function ActivityRow({
                         <ExternalLink size={12} /> Website
                       </a>
                     )}
-                    <a
-                      href={navUrl(att.coords)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="icon-link"
-                    >
-                      <Navigation size={12} /> Navigate
-                    </a>
+                    <NavigateLinks coords={att.coords} />
                     <button onClick={() => focusOn(att.id)} className="icon-link">
                       <MapPin size={12} /> Show on the map
                     </button>

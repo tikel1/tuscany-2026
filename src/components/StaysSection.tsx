@@ -1,12 +1,12 @@
-import { ExternalLink, Navigation, MapPin, AlertTriangle, Check } from "lucide-react";
+import { ExternalLink, MapPin, AlertTriangle, Check } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { stays } from "../data/stays";
 import type { Stay } from "../data/types";
 import Section from "./Section";
 import { useMapFocus } from "../lib/mapContext";
-import { navUrl } from "../lib/nav";
 import { useT, localizeShortDate } from "../lib/dict";
+import NavigateLinks from "./NavigateLinks";
 import { useLang } from "../lib/i18n";
 import { useLocalizeStay } from "../data/i18n";
 import PoiImage from "./PoiImage";
@@ -192,9 +192,7 @@ export default function StaysSection() {
                     <ExternalLink size={13} /> {t("stay_open_booking")}
                   </a>
                 )}
-                <a href={navUrl(s.coords)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                  <Navigation size={13} /> {t("navigate")}
-                </a>
+                <NavigateLinks coords={s.coords} size={13} />
                 <button onClick={() => focusOn(s.id)} className="icon-link">
                   <MapPin size={13} /> {t("show_on_map")}
                 </button>

@@ -9,7 +9,6 @@ import {
   Car,
   Sun,
   ExternalLink,
-  Navigation,
   Plus,
   X,
   Lightbulb,
@@ -32,7 +31,7 @@ import type {
   POI,
   Tip
 } from "../data/types";
-import { navUrl } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import { tipsForDay } from "../lib/tipsForDay";
@@ -574,14 +573,9 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                           {p.address}
                         </div>
                       )}
-                      <a
-                        href={navUrl(p.coords)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.16em] text-terracotta-600 hover:text-terracotta-700 mt-1.5 font-medium"
-                      >
-                        <Navigation size={11} /> {t("navigate")}
-                      </a>
+                      <div className="mt-1.5">
+                        <NavigateLinks coords={p.coords} size={11} />
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -917,14 +911,7 @@ function ActivityRow({
                         <ExternalLink size={12} /> {t("website")}
                       </a>
                     )}
-                    <a
-                      href={navUrl(att.coords)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="icon-link"
-                    >
-                      <Navigation size={12} /> {t("navigate")}
-                    </a>
+                    <NavigateLinks coords={att.coords} />
                   </div>
                 </div>
               </div>

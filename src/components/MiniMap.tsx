@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Navigation } from "lucide-react";
 import type { POI } from "../data/types";
-import { navUrl } from "../lib/nav";
 import { useT } from "../lib/dict";
+import NavigateLinks from "./NavigateLinks";
 
 const COLOR_BY_CATEGORY: Record<string, string> = {
   stay: "#C45A3D",
@@ -112,14 +111,9 @@ export default function MiniMap({ pois }: { pois: POI[] }) {
                       {poi.shortDescription}
                     </p>
                   )}
-                  <a
-                    href={navUrl(poi.coords)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-terracotta-600 hover:text-terracotta-700 mt-1.5"
-                  >
-                    <Navigation size={11} /> {t("navigate")}
-                  </a>
+                  <div className="mt-1.5">
+                    <NavigateLinks coords={poi.coords} size={11} />
+                  </div>
                 </div>
               </Popup>
             </Marker>

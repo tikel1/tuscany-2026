@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Utensils, ShoppingCart, Fuel, MapPin, Navigation } from "lucide-react";
+import { Utensils, ShoppingCart, Fuel, MapPin } from "lucide-react";
 import { services } from "../data/services";
 import Section from "./Section";
 import { useMapFocus } from "../lib/mapContext";
-import { navUrl } from "../lib/nav";
+import NavigateLinks from "./NavigateLinks";
 import { useT, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { useLocalizeService } from "../data/i18n";
@@ -109,15 +109,8 @@ export default function ServicesSection() {
                           {it.hours}
                         </div>
                       )}
-                      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                        <a
-                          href={navUrl(it.coords)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="icon-link"
-                        >
-                          <Navigation size={11} /> {t("navigate")}
-                        </a>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <NavigateLinks coords={it.coords} size={11} />
                         <button onClick={() => focusOn(it.id)} className="icon-link">
                           <MapPin size={11} /> {t("on_the_map_short")}
                         </button>
