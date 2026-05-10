@@ -148,38 +148,40 @@ export default function MapView({ registerFocus }: Props) {
       title="The Map"
       intro="Stays, attractions, restaurants, supermarkets and gas stations — colour-coded and filterable."
     >
-      <div className="flex flex-wrap gap-2 mb-4">
-        {(["stay", "attraction", "restaurant", "supermarket", "gas", "airport"] as Category[]).map(c => {
-          const cfg = CATEGORY_CONFIG[c];
-          const on = activeCats.has(c);
-          const Icon = cfg.Icon;
-          return (
-            <button
-              key={c}
-              onClick={() => toggle(c)}
-              className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${
-                on
-                  ? "text-cream-50 shadow-sm"
-                  : "bg-cream-50 text-ink-700 border-cream-300 opacity-60 hover:opacity-100"
-              }`}
-              style={on ? { backgroundColor: cfg.color, borderColor: cfg.color } : undefined}
-            >
-              <Icon size={12} />
-              {cfg.label}
-              <span className={`text-[10px] ${on ? "text-cream-200" : "text-ink-700/60"}`}>
-                {allPOIs.filter(p => p.category === c).length}
-              </span>
-            </button>
-          );
-        })}
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-4">
+        <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          {(["stay", "attraction", "restaurant", "supermarket", "gas", "airport"] as Category[]).map(c => {
+            const cfg = CATEGORY_CONFIG[c];
+            const on = activeCats.has(c);
+            const Icon = cfg.Icon;
+            return (
+              <button
+                key={c}
+                onClick={() => toggle(c)}
+                className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium transition-all whitespace-nowrap min-h-9 ${
+                  on
+                    ? "text-cream-50 shadow-sm"
+                    : "bg-cream-50 text-ink-700 border-cream-300 opacity-60 hover:opacity-100 active:opacity-100"
+                }`}
+                style={on ? { backgroundColor: cfg.color, borderColor: cfg.color } : undefined}
+              >
+                <Icon size={13} />
+                {cfg.label}
+                <span className={`text-[10px] ${on ? "text-cream-200" : "text-ink-700/60"}`}>
+                  {allPOIs.filter(p => p.category === c).length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="card-paper overflow-hidden">
+      <div className="card-paper overflow-hidden -mx-4 sm:mx-0 rounded-none sm:rounded-2xl">
         <MapContainer
           center={[42.95, 11.3]}
           zoom={8}
           scrollWheelZoom={true}
-          className="h-[560px] w-full"
+          className="h-[70svh] sm:h-[560px] w-full"
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

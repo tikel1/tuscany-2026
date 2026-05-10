@@ -105,35 +105,37 @@ export default function ChecklistSection() {
       title="Checklists"
       intro="A pre-trip booking list and a packing list. Your ticks are saved on this device."
     >
-      <div className="flex flex-wrap gap-2 mb-2">
-        <button
-          onClick={() => setTab("booking")}
-          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-            tab === "booking"
-              ? "bg-ink-900 text-cream-50"
-              : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
-          }`}
-        >
-          <ClipboardCheck size={14} />
-          Pre-trip bookings
-          <span className={`text-xs ${tab === "booking" ? "text-cream-200" : "text-ink-700/60"}`}>
-            {bookingChecklist.filter(i => checked[i.id]).length}/{bookingChecklist.length}
-          </span>
-        </button>
-        <button
-          onClick={() => setTab("packing")}
-          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-            tab === "packing"
-              ? "bg-ink-900 text-cream-50"
-              : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
-          }`}
-        >
-          <Briefcase size={14} />
-          Packing
-          <span className={`text-xs ${tab === "packing" ? "text-cream-200" : "text-ink-700/60"}`}>
-            {packingChecklist.filter(i => checked[i.id]).length}/{packingChecklist.length}
-          </span>
-        </button>
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-2">
+        <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          <button
+            onClick={() => setTab("booking")}
+            className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap min-h-11 ${
+              tab === "booking"
+                ? "bg-ink-900 text-cream-50"
+                : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
+            }`}
+          >
+            <ClipboardCheck size={14} />
+            Pre-trip bookings
+            <span className={`text-xs ${tab === "booking" ? "text-cream-200" : "text-ink-700/60"}`}>
+              {bookingChecklist.filter(i => checked[i.id]).length}/{bookingChecklist.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setTab("packing")}
+            className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap min-h-11 ${
+              tab === "packing"
+                ? "bg-ink-900 text-cream-50"
+                : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
+            }`}
+          >
+            <Briefcase size={14} />
+            Packing
+            <span className={`text-xs ${tab === "packing" ? "text-cream-200" : "text-ink-700/60"}`}>
+              {packingChecklist.filter(i => checked[i.id]).length}/{packingChecklist.length}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="text-xs text-ink-700/60 mb-6">

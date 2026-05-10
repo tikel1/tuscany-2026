@@ -29,23 +29,25 @@ export default function ServicesSection() {
       intro="Restaurants, supermarkets and gas stations within an easy drive of each base."
       toned
     >
-      <div className="flex flex-wrap gap-2 mb-8">
-        {BASES.map(b => (
-          <button
-            key={b.id}
-            onClick={() => setBase(b.id)}
-            className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-              base === b.id
-                ? "bg-ink-900 text-cream-50"
-                : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
-            }`}
-          >
-            <span>{b.label}</span>
-            <span className={`ml-2 text-xs ${base === b.id ? "text-cream-200" : "text-ink-700/60"}`}>
-              · {b.sub}
-            </span>
-          </button>
-        ))}
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
+        <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          {BASES.map(b => (
+            <button
+              key={b.id}
+              onClick={() => setBase(b.id)}
+              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-11 ${
+                base === b.id
+                  ? "bg-ink-900 text-cream-50"
+                  : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
+              }`}
+            >
+              <span>{b.label}</span>
+              <span className={`ml-2 text-xs ${base === b.id ? "text-cream-200" : "text-ink-700/60"}`}>
+                · {b.sub}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">

@@ -19,7 +19,12 @@ export default function StaysSection() {
         {stays.map(s => (
           <article key={s.id} className="card-paper card-paper-hover overflow-hidden flex flex-col">
             <div className="aspect-[16/10] overflow-hidden bg-cream-200">
-              <PoiImage src={s.image} alt={s.name} region={s.region} />
+              <PoiImage
+                src={s.image}
+                alt={s.name}
+                region={s.region}
+                category={s.category}
+              />
             </div>
             <div className="p-5 flex-1 flex flex-col">
               <div className="flex items-start justify-between gap-3">

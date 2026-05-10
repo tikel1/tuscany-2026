@@ -29,23 +29,25 @@ export default function ItinerarySection() {
       title="The Itinerary"
       intro="Ten days split between the cool, active north and the wild, watery south. Each day links to the relevant attractions on the map."
     >
-      <div className="flex flex-wrap gap-2 mb-8">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-              tab === t.id
-                ? "bg-ink-900 text-cream-50 shadow-sm"
-                : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40 hover:text-terracotta-600"
-            }`}
-          >
-            <span>{t.label}</span>
-            <span className={`ml-2 text-xs ${tab === t.id ? "text-cream-200" : "text-ink-700/60"}`}>
-              · {t.sub}
-            </span>
-          </button>
-        ))}
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
+        <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          {TABS.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-11 ${
+                tab === t.id
+                  ? "bg-ink-900 text-cream-50 shadow-sm"
+                  : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40 hover:text-terracotta-600"
+              }`}
+            >
+              <span>{t.label}</span>
+              <span className={`ml-2 text-xs ${tab === t.id ? "text-cream-200" : "text-ink-700/60"}`}>
+                · {t.sub}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">

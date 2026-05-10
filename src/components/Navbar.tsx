@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { getTripState } from "../lib/tripState";
 
 const links = [
   { id: "trip", label: "Trip" },
@@ -13,7 +13,7 @@ const links = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [state] = useState(() => getTripState());
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -23,10 +23,16 @@ export default function Navbar() {
   }, []);
 
   const handleClick = (id: string) => {
-    setOpen(false);
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const badge =
+    state.phase === "before"
+      ? `${state.daysUntil}d`
+      : state.phase === "during"
+      ? `Day ${state.today.dayNumber}`
+      : "Done";
 
   return (
     <nav
@@ -35,16 +41,17 @@ export default function Navbar() {
           ? "bg-cream-50/85 backdrop-blur-md border-b border-cream-300/60 shadow-sm"
           : "bg-transparent"
       }`}
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
         <button
           onClick={() => handleClick("hero")}
-          className="flex items-baseline gap-2 group"
+          className="flex items-baseline gap-2 group min-h-11"
         >
-          <span className="font-serif text-2xl text-ink-900 group-hover:text-terracotta-600 transition-colors">
+          <span className={`font-serif text-xl sm:text-2xl ${scrolled ? "text-ink-900" : "text-ink-900 sm:text-cream-50 sm:drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]"} group-hover:text-terracotta-600 transition-colors`}>
             Tuscany
           </span>
-          <span className="font-serif italic text-terracotta-600 text-lg">'26</span>
+          <span className="font-serif italic text-terracotta-600 text-base sm:text-lg">'26</span>
         </button>
 
         <div className="hidden md:flex items-center gap-1">
@@ -59,30 +66,19 @@ export default function Navbar() {
           ))}
         </div>
 
-        <button
-          aria-label="Menu"
-          className="md:hidden p-2 text-ink-800"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
-
-      {open && (
-        <div className="md:hidden bg-cream-50 border-t border-cream-300/60">
-          <div className="max-w-6xl mx-auto px-4 py-2 flex flex-col">
-            {links.map(l => (
-              <button
-                key={l.id}
-                onClick={() => handleClick(l.id)}
-                className="text-left px-3 py-3 text-base font-medium text-ink-800 border-b border-cream-200 last:border-b-0"
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
+        {/* mobile-only countdown badge */}
+        <div className="md:hidden">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+              scrolled
+                ? "bg-terracotta-500 text-cream-50"
+                : "bg-cream-50/95 text-terracotta-700 shadow-sm"
+            }`}
+          >
+            {badge}
+          </span>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

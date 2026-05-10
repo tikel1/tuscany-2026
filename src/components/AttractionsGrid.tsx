@@ -39,52 +39,56 @@ export default function AttractionsGrid() {
       intro="Hand-picked stops, organised by region. Tap a card for the official site, navigation, or to find it on the map."
       toned
     >
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        {REGION_TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setRegion(t.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              region === t.id
-                ? "bg-ink-900 text-cream-50"
-                : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
-            }`}
-          >
-            {t.label}
-            <span className={`ml-2 text-xs ${region === t.id ? "text-cream-200" : "text-ink-700/60"}`}>
-              {t.count}
-            </span>
-          </button>
-        ))}
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-3">
+        <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          {REGION_TABS.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setRegion(t.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-10 ${
+                region === t.id
+                  ? "bg-ink-900 text-cream-50"
+                  : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
+              }`}
+            >
+              {t.label}
+              <span className={`ml-2 text-xs ${region === t.id ? "text-cream-200" : "text-ink-700/60"}`}>
+                {t.count}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-8">
-        <span className="text-xs uppercase tracking-[0.2em] text-ink-700/60 mr-1">
-          Filter
-        </span>
-        <button
-          onClick={() => setTag(null)}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            !tag
-              ? "bg-terracotta-500 text-cream-50"
-              : "bg-cream-50 border border-cream-300 text-ink-700 hover:border-terracotta-500/40"
-          }`}
-        >
-          any
-        </button>
-        {ALL_TAGS.map(t => (
+      <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
+          <span className="hidden sm:inline text-xs uppercase tracking-[0.2em] text-ink-700/60 mr-1">
+            Filter
+          </span>
           <button
-            key={t}
-            onClick={() => setTag(tag === t ? null : t)}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-              tag === t
+            onClick={() => setTag(null)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap min-h-9 ${
+              !tag
                 ? "bg-terracotta-500 text-cream-50"
                 : "bg-cream-50 border border-cream-300 text-ink-700 hover:border-terracotta-500/40"
             }`}
           >
-            {t}
+            any
           </button>
-        ))}
+          {ALL_TAGS.map(t => (
+            <button
+              key={t}
+              onClick={() => setTag(tag === t ? null : t)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap min-h-9 ${
+                tag === t
+                  ? "bg-terracotta-500 text-cream-50"
+                  : "bg-cream-50 border border-cream-300 text-ink-700 hover:border-terracotta-500/40"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
       </div>
 
       <AnimatePresence mode="popLayout">

@@ -22,7 +22,13 @@ export default function AttractionCard({ poi }: { poi: POI }) {
   return (
     <article className="card-paper card-paper-hover overflow-hidden flex flex-col h-full">
       <div className="aspect-[4/3] overflow-hidden bg-cream-200">
-        <PoiImage src={poi.image} alt={poi.name} region={poi.region} />
+        <PoiImage
+          src={poi.image}
+          alt={poi.name}
+          region={poi.region}
+          category={poi.category}
+          tags={poi.tags}
+        />
       </div>
 
       <div className="p-5 flex-1 flex flex-col">
