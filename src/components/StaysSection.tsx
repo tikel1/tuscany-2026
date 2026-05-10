@@ -11,9 +11,10 @@ export default function StaysSection() {
   return (
     <Section
       id="stays"
-      eyebrow="Where we sleep"
-      title="The Stays"
-      intro="Two bases plus an airport hotel for the early flight home."
+      eyebrow="Home base"
+      title="Where we sleep"
+      kicker="Two bases. One airport pillow."
+      intro="A hill-perched home in Larciano for the active north, then a country tenuta near Manciano for the slower, watery south."
     >
       <div className="grid gap-5 lg:grid-cols-3">
         {stays.map(s => (

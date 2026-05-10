@@ -13,10 +13,37 @@ export default function EmergencySection() {
     <Section
       id="emergency"
       eyebrow="Just in case"
-      title="Emergency"
-      intro="Numbers, hospitals, pharmacies, and consular contacts. The single number to remember anywhere in the EU is 112."
+      title="If something goes sideways"
+      kicker="One number does most of the work."
+      intro="Hospitals, pharmacies, embassy and the catch-all line for any emergency in the EU. Save it before you need it."
       toned
     >
+      {/* Hero 112 banner */}
+      <a
+        href="tel:112"
+        className="group block mb-8 sm:mb-10 rounded-2xl overflow-hidden bg-terracotta-500 text-cream-50 shadow-[0_18px_40px_-18px_rgba(196,90,61,0.55)] hover:shadow-[0_22px_48px_-18px_rgba(196,90,61,0.7)] transition-shadow"
+      >
+        <div className="px-6 sm:px-10 py-7 sm:py-9 flex items-center gap-6 sm:gap-10">
+          <div className="shrink-0 p-3 sm:p-4 rounded-full bg-cream-50/15 backdrop-blur-sm">
+            <Phone size={26} className="sm:w-8 sm:h-8" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] sm:text-xs uppercase tracking-[0.32em] opacity-90 font-medium">
+              Anywhere in the EU
+            </div>
+            <div className="font-serif text-5xl sm:text-7xl leading-none mt-1">
+              112
+            </div>
+            <div className="font-serif italic text-sm sm:text-base mt-2 opacity-95">
+              Police · Ambulance · Fire — one number, every language.
+            </div>
+          </div>
+          <div className="hidden sm:block text-xs uppercase tracking-[0.2em] opacity-85 group-hover:translate-x-1 transition-transform">
+            tap to call
+          </div>
+        </div>
+      </a>
+
       <div className="grid gap-5 md:grid-cols-2">
         {emergencyGroups.map(g => (
           <div key={g.title} className="card-paper p-5">

@@ -34,9 +34,10 @@ export default function AttractionsGrid() {
   return (
     <Section
       id="attractions"
-      eyebrow="What to do"
-      title="Attractions"
-      intro="Hand-picked stops, organised by region. Tap a card for the official site, navigation, or to find it on the map."
+      eyebrow="The places"
+      title="Postcards from Tuscany"
+      kicker="Tap a card to read its short story."
+      intro="Hand-picked, region-tagged, opening-hours-checked. Hover (or tap) any card for the description, the official site, and a one-tap pin on the map."
       toned
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-3">

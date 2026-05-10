@@ -24,9 +24,10 @@ export default function TipsSection() {
   return (
     <Section
       id="tips"
-      eyebrow="Local know-how"
-      title="Tips & Warnings"
-      intro="The things you only know once you've already been bitten by them."
+      eyebrow="The fine print"
+      title="Things Tuscany doesn't tell you"
+      kicker="Five small briefings worth memorizing."
+      intro="Nine times out of ten the trip goes smoothly. Here are the reminders for the tenth."
     >
       <div className="grid gap-4 md:grid-cols-2">
         {tips.map(tip => {

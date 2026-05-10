@@ -14,14 +14,14 @@ interface RegionWeather {
 }
 
 const SPOTS = [
-  { key: "north", label: "North · Larciano", lat: 43.8267, lon: 10.8978 },
-  { key: "south", label: "South · Saturnia", lat: 42.6483, lon: 11.5089 }
+  { key: "north", label: "Larciano", lat: 43.8267, lon: 10.8978 },
+  { key: "south", label: "Saturnia", lat: 42.6483, lon: 11.5089 }
 ] as const;
 
-const CACHE_KEY = "tuscany-weather-v1";
+const CACHE_KEY = "tuscany-weather-v2";
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
-function iconFor(code: number, size = 18) {
+function iconFor(code: number, size = 14) {
   if (code === 0) return <Sun size={size} className="text-gold-500" />;
   if (code <= 2) return <CloudSun size={size} className="text-gold-400" />;
   if (code <= 48) return <Cloud size={size} className="text-ink-700/70" />;
@@ -34,9 +34,16 @@ function dayLabel(iso: string, idx: number): string {
   return d.toLocaleDateString("en-GB", { weekday: "short" });
 }
 
-export default function WeatherStrip() {
+interface Props {
+  variant?: "paper" | "glass";
+}
+
+export default function WeatherStrip({ variant = "paper" }: Props = {}) {
   const [data, setData] = useState<Record<string, RegionWeather> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const isGlass = variant === "glass";
 
   useEffect(() => {
     let cancelled = false;
@@ -53,7 +60,6 @@ export default function WeatherStrip() {
             return;
           }
         }
-
         const result: Record<string, RegionWeather> = {};
         await Promise.all(
           SPOTS.map(async spot => {
@@ -72,7 +78,6 @@ export default function WeatherStrip() {
             };
           })
         );
-
         if (!cancelled) {
           setData(result);
           setLoading(false);
@@ -93,50 +98,95 @@ export default function WeatherStrip() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-3 text-sm text-ink-700/70">
-        <Loader2 className="animate-spin" size={14} /> Loading weather…
+      <div
+        className={`px-3 py-2 inline-flex items-center gap-2 text-xs ${
+          isGlass
+            ? "rounded-full bg-cream-50/15 backdrop-blur-md text-cream-50/85 border border-cream-50/20"
+            : "card-paper text-ink-700/70"
+        }`}
+      >
+        <Loader2 className="animate-spin" size={12} /> Weather…
       </div>
     );
   }
 
   if (!data) return null;
 
+  const wrapperClasses = isGlass
+    ? "rounded-2xl bg-cream-50/12 backdrop-blur-md text-cream-50 border border-cream-50/20 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.35)]"
+    : "card-paper";
+  const labelText = isGlass ? "text-cream-50/70" : "text-ink-700/60";
+  const tempStrong = isGlass ? "text-cream-50" : "text-ink-900";
+  const tempMuted = isGlass ? "text-cream-50/70" : "text-ink-700/55";
+  const triggerHint = isGlass ? "text-gold-300" : "text-terracotta-600";
+  const dividerClass = isGlass ? "border-cream-50/15" : "border-cream-300/70";
+  const dayLabelClass = isGlass ? "text-cream-50/75" : "text-ink-700/65";
+  const dayTempStrong = isGlass ? "text-cream-50" : "text-ink-900";
+  const dayTempMuted = isGlass ? "text-cream-50/65" : "text-ink-700/55";
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {SPOTS.map(spot => {
-        const w = data[spot.key];
-        if (!w) return null;
-        return (
-          <div
-            key={spot.key}
-            className="card-paper p-4 flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              {iconFor(w.days[0]?.code ?? 0, 28)}
-              <div className="min-w-0">
-                <div className="text-xs uppercase tracking-[0.2em] text-terracotta-600 font-medium">
+    <div className={wrapperClasses}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between gap-3 px-3.5 py-2 text-left"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-3 sm:gap-5 min-w-0 overflow-x-auto scrollbar-hide">
+          {SPOTS.map(spot => {
+            const w = data[spot.key];
+            if (!w) return null;
+            return (
+              <div key={spot.key} className="flex items-center gap-1.5 shrink-0">
+                {iconFor(w.days[0]?.code ?? 0, 14)}
+                <span className={`text-[10px] uppercase tracking-[0.16em] font-medium ${labelText}`}>
                   {spot.label}
-                </div>
-                <div className="text-2xl font-serif text-ink-900 leading-none mt-1">
-                  {w.current !== null ? `${Math.round(w.current)}°C` : "—"}
-                </div>
+                </span>
+                <span className={`text-sm font-semibold tabular-nums ${tempStrong}`}>
+                  {w.current !== null ? `${Math.round(w.current)}°` : "—"}
+                </span>
+                <span className={`text-xs tabular-nums ${tempMuted}`}>
+                  {w.days[0]?.tMax}°/{w.days[0]?.tMin}°
+                </span>
               </div>
-            </div>
-            <div className="flex gap-3 text-xs">
-              {w.days.slice(0, 4).map((d, i) => (
-                <div key={d.date} className="flex flex-col items-center gap-1">
-                  <span className="text-ink-700/70 font-medium">{dayLabel(d.date, i)}</span>
-                  {iconFor(d.code, 14)}
-                  <span className="text-ink-800 font-medium">
-                    {d.tMax}°
-                    <span className="text-ink-700/60">/{d.tMin}°</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+        <span className={`text-[10px] uppercase tracking-[0.18em] font-medium shrink-0 hidden sm:inline ${triggerHint}`}>
+          {open ? "Hide" : "Forecast"}
+        </span>
+        <span
+          className={`transition-transform shrink-0 ${open ? "rotate-180" : ""} ${
+            isGlass ? "text-cream-50/70" : "text-ink-700/50"
+          }`}
+          aria-hidden
+        >
+          ▾
+        </span>
+      </button>
+
+      {open && (
+        <div className={`border-t px-3.5 py-3 grid grid-cols-2 gap-x-6 ${dividerClass}`}>
+          {SPOTS.map(spot => {
+            const w = data[spot.key];
+            if (!w) return null;
+            return (
+              <div key={spot.key} className="flex justify-between gap-2">
+                {w.days.slice(0, 4).map((d, i) => (
+                  <div key={d.date} className="flex flex-col items-center gap-1 text-[11px]">
+                    <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i)}</span>
+                    {iconFor(d.code, 13)}
+                    <span className={`font-medium tabular-nums ${dayTempStrong}`}>
+                      {d.tMax}°
+                      <span className={dayTempMuted}>/{d.tMin}°</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

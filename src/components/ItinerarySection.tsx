@@ -25,9 +25,10 @@ export default function ItinerarySection() {
   return (
     <Section
       id="trip"
-      eyebrow="The plan, day by day"
-      title="The Itinerary"
-      intro="Ten days split between the cool, active north and the wild, watery south. Each day links to the relevant attractions on the map."
+      eyebrow="The plan"
+      title="Ten days, two regions"
+      kicker="A summer read in chapters."
+      intro="Cool mornings in the wooded north, long afternoons in the watery south. Each chapter links to the day's attractions and the moves between bases."
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
@@ -57,7 +58,7 @@ export default function ItinerarySection() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.25 }}
-          className="grid gap-4"
+          className="grid gap-5 sm:gap-7"
         >
           {days.map(d => (
             <DayCard key={d.dayNumber} day={d} />

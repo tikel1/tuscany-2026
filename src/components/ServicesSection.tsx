@@ -24,9 +24,10 @@ export default function ServicesSection() {
   return (
     <Section
       id="services"
-      eyebrow="Practical near each base"
-      title="Eat, Shop, Refuel"
-      intro="Restaurants, supermarkets and gas stations within an easy drive of each base."
+      eyebrow="The neighborhood"
+      title="Eat, shop, refuel"
+      kicker="Five-star pasta, last-minute groceries, the right pump."
+      intro="A short list of the places worth driving to from each base — local trattorias, full-service supermarkets, and the closest gas stations for the morning runs."
       toned
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">

@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { getTripState } from "../lib/tripState";
 
 const links = [
-  { id: "trip", label: "Trip" },
+  { id: "trip", label: "Plan" },
   { id: "map", label: "Map" },
-  { id: "attractions", label: "Attractions" },
   { id: "stays", label: "Stays" },
-  { id: "services", label: "Eat & Shop" },
+  { id: "attractions", label: "Places" },
+  { id: "services", label: "Neighborhood" },
   { id: "tips", label: "Tips" },
-  { id: "checklist", label: "Checklist" }
+  { id: "checklist", label: "List" }
 ];
 
 export default function Navbar() {

@@ -144,9 +144,10 @@ export default function MapView({ registerFocus }: Props) {
   return (
     <Section
       id="map"
-      eyebrow="Everything in one place"
-      title="The Map"
-      intro="Stays, attractions, restaurants, supermarkets and gas stations — colour-coded and filterable."
+      eyebrow="The atlas"
+      title="The whole trip on one map"
+      kicker="Tap a pin. Filter the rest."
+      intro="Every stay, attraction, restaurant, supermarket and gas station — color-coded by category, switchable on and off, and reachable from anywhere on the page."
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-4">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">

@@ -1,8 +1,8 @@
 import { useCallback, useRef } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import WeatherStrip from "./components/WeatherStrip";
-import TripStateCard from "./components/TripStateCard";
+import HighlightsCarousel from "./components/HighlightsCarousel";
+import TripStats from "./components/TripStats";
 import ItinerarySection from "./components/ItinerarySection";
 import MapView from "./components/MapView";
 import AttractionsGrid from "./components/AttractionsGrid";
@@ -14,6 +14,7 @@ import EmergencySection from "./components/EmergencySection";
 import Footer from "./components/Footer";
 import MobileBottomNav from "./components/MobileBottomNav";
 import FloatingMapButton from "./components/FloatingMapButton";
+import SectionOrnament from "./components/SectionOrnament";
 import { MapFocusContext } from "./lib/mapContext";
 
 export default function App() {
@@ -32,19 +33,32 @@ export default function App() {
       <Navbar />
       <Hero />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-14 relative z-10 space-y-3 sm:space-y-4">
-        <TripStateCard />
-        <WeatherStrip />
-      </div>
+      {/* Slim editorial band right under the hero — "in this issue" */}
+      <section className="relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-2 sm:pb-4 space-y-10 sm:space-y-12">
+          <HighlightsCarousel />
+          <TripStats />
+        </div>
+      </section>
+
+      <SectionOrnament className="my-2" />
 
       <ItinerarySection />
+      <SectionOrnament />
       <MapView registerFocus={registerFocus} />
-      <AttractionsGrid />
+      <SectionOrnament />
       <StaysSection />
+      <SectionOrnament />
+      <AttractionsGrid />
+      <SectionOrnament />
       <ServicesSection />
+      <SectionOrnament />
       <TipsSection />
+      <SectionOrnament />
       <ChecklistSection />
+      <SectionOrnament />
       <EmergencySection />
+
       <Footer />
 
       {/* Spacer so content above the bottom nav isn't hidden on mobile */}

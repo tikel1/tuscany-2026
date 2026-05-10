@@ -101,9 +101,10 @@ export default function ChecklistSection() {
   return (
     <Section
       id="checklist"
-      eyebrow="Don't forget"
-      title="Checklists"
-      intro="A pre-trip booking list and a packing list. Your ticks are saved on this device."
+      eyebrow="The list"
+      title="Things to book, things to pack"
+      kicker="Tick as you go. The list remembers."
+      intro="A pre-trip booking list and a what-fits-in-the-suitcase list. Your progress is saved on this device — no account, no nagging."
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-2">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
@@ -138,8 +139,41 @@ export default function ChecklistSection() {
         </div>
       </div>
 
-      <div className="text-xs text-ink-700/60 mb-6">
-        {doneCount}/{list.length} done
+      <div className="mb-6 flex items-center gap-3">
+        {/* progress ring */}
+        <div className="relative w-10 h-10 shrink-0" aria-hidden>
+          <svg viewBox="0 0 36 36" className="w-10 h-10 -rotate-90">
+            <circle
+              cx="18"
+              cy="18"
+              r="15.9"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              className="text-cream-300/80"
+            />
+            <circle
+              cx="18"
+              cy="18"
+              r="15.9"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              className="text-terracotta-500 transition-[stroke-dasharray] duration-500"
+              strokeDasharray={`${
+                list.length === 0 ? 0 : (doneCount / list.length) * 100
+              } 100`}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-ink-900">
+            {Math.round((doneCount / Math.max(1, list.length)) * 100)}%
+          </div>
+        </div>
+        <div className="text-sm text-ink-700/85">
+          <span className="font-semibold text-ink-900">{doneCount}</span> of{" "}
+          {list.length} done · {list.length - doneCount === 0 ? "you're set" : `${list.length - doneCount} to go`}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
