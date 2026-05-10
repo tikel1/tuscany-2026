@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { useT, type DictKey } from "../lib/dict";
 import LanguageSwitcher from "./LanguageSwitcher";
 
+// Nav order requested by the user: Plan → Places → Food → Map →
+// Neighborhood → Tips → Lists → Emergency. Services (local gas /
+// supermarket) intentionally lives on the page but not in the nav.
 const links: { id: string; key: DictKey }[] = [
-  { id: "trip", key: "nav_plan" },
-  { id: "map", key: "nav_map" },
-  { id: "stays", key: "nav_stays" },
+  { id: "trip",        key: "nav_plan" },
   { id: "attractions", key: "nav_attractions" },
-  { id: "services", key: "nav_services" },
-  { id: "food", key: "nav_food" },
-  { id: "tips", key: "nav_tips" },
-  { id: "checklist", key: "nav_checklist" }
+  { id: "food",        key: "nav_food" },
+  { id: "map",         key: "nav_map" },
+  { id: "stays",       key: "nav_stays" },
+  { id: "tips",        key: "nav_tips" },
+  { id: "checklist",   key: "nav_checklist" },
+  { id: "emergency",   key: "nav_emergency" }
 ];
 
 export default function Navbar() {

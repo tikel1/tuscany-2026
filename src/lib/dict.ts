@@ -55,12 +55,17 @@ export const DICT = {
   /* ---------- Navbar ---------- */
   nav_plan: { en: "Plan", he: "תוכנית" },
   nav_map: { en: "Map", he: "מפה" },
-  nav_stays: { en: "Stays", he: "לינה" },
+  // The two stays — Larciano & Cortevecchia — are the trip's two
+  // "neighborhoods", which is what we surface in the nav.
+  nav_stays: { en: "Neighborhood", he: "שכונה" },
   nav_attractions: { en: "Places", he: "מקומות" },
-  nav_services: { en: "Neighborhood", he: "סביבה" },
+  // Services (gas / supermarket / nearby restaurants) is no longer in
+  // the nav, but the section still lives on the page; keeping a clean
+  // label here in case it returns later.
+  nav_services: { en: "Local", he: "מקומי" },
   nav_food: { en: "Food", he: "אוכל" },
   nav_tips: { en: "Tips", he: "טיפים" },
-  nav_checklist: { en: "List", he: "רשימה" },
+  nav_checklist: { en: "Lists", he: "רשימות" },
   nav_emergency: { en: "Emergency", he: "חירום" },
 
   badge_done: { en: "Done", he: "סיום" },

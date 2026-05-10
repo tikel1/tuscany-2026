@@ -1,28 +1,52 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Map, Home, Utensils, MoreHorizontal } from "lucide-react";
+import { CalendarDays, Map, Compass, Utensils, MoreHorizontal } from "lucide-react";
 import { useT, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 
+// Primary 4 tabs are the "exploring the trip" essentials; the rest of
+// the requested nav order lives in the More overlay below.
 const TABS: { id: string; key: DictKey; Icon: typeof CalendarDays }[] = [
-  { id: "trip",     key: "nav_plan",    Icon: CalendarDays },
-  { id: "map",      key: "nav_map",     Icon: Map },
-  { id: "stays",    key: "nav_stays",   Icon: Home },
-  { id: "services", key: "nav_services", Icon: Utensils },
-  { id: "more",     key: "nav_attractions", Icon: MoreHorizontal } // overridden below
+  { id: "trip",        key: "nav_plan",        Icon: CalendarDays },
+  { id: "attractions", key: "nav_attractions", Icon: Compass },
+  { id: "food",        key: "nav_food",        Icon: Utensils },
+  { id: "map",         key: "nav_map",         Icon: Map },
+  { id: "more",        key: "nav_attractions", Icon: MoreHorizontal } // label overridden below
 ];
 
 const MORE_LINKS: { id: string; key: DictKey }[] = [
-  { id: "attractions", key: "nav_attractions" },
-  { id: "food",        key: "nav_food" },
-  { id: "tips",        key: "nav_tips" },
-  { id: "checklist",   key: "nav_checklist" },
-  { id: "emergency",   key: "nav_emergency" }
+  { id: "stays",     key: "nav_stays" },
+  { id: "tips",      key: "nav_tips" },
+  { id: "checklist", key: "nav_checklist" },
+  { id: "emergency", key: "nav_emergency" }
 ];
 
 const MORE_LABEL: Record<"en" | "he", string> = { en: "More", he: "עוד" };
 
-const SECTION_IDS = ["trip", "map", "attractions", "stays", "services", "food", "tips", "checklist", "emergency"];
+// Every section that has an anchor on the home page (services has no
+// nav entry but still exists on the page, so we track it for active
+// highlight detection).
+const SECTION_IDS = [
+  "trip",
+  "map",
+  "attractions",
+  "services",
+  "food",
+  "stays",
+  "tips",
+  "checklist",
+  "emergency"
+];
+
+// Anything that isn't a primary tab collapses to the "More" tab when
+// it's the active section while scrolling.
+const MORE_SECTION_IDS = new Set([
+  "stays",
+  "services",
+  "tips",
+  "checklist",
+  "emergency"
+]);
 
 export default function MobileBottomNav() {
   const t = useT();
@@ -38,12 +62,7 @@ export default function MobileBottomNav() {
         const el = document.getElementById(id);
         if (el && el.offsetTop <= fromTop) current = id;
       }
-      // collapse "more" categories under MORE tab
-      if (["attractions", "food", "tips", "checklist", "emergency"].includes(current)) {
-        setActive("more");
-      } else {
-        setActive(current);
-      }
+      setActive(MORE_SECTION_IDS.has(current) ? "more" : current);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
