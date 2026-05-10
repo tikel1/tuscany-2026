@@ -9,13 +9,12 @@ export const itinerary: Day[] = [
     base: "Larciano",
     title: "Land in Rome, drive north",
     subtitle: "Arrive FCO 14:00, pick up the rental car, head to Tuscany",
-    leadImage: "./images/stay-larciano.jpg",
+    leadImage: "./images/stay-larciano-sunflowers.png",
     leadImageCredit: {
-      author: "Vignaccia76",
-      license: "CC BY-SA 3.0",
-      source:
-        "https://commons.wikimedia.org/wiki/File:Larciano_-_panoramica.JPG",
-      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/"
+      author: "Host photo",
+      license: "Airbnb listing",
+      source: "https://www.airbnb.com/rooms/1554711",
+      licenseUrl: "https://www.airbnb.com/help/article/2855"
     },
     activities: [
       {
