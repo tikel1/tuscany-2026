@@ -7,7 +7,10 @@ export type Category =
   | "supermarket"
   | "gas"
   | "airport"
-  | "hospital";
+  | "hospital"
+  // Wineries from data/wineries.ts get projected onto the map as POIs
+  // under this category (off by default in the filter UI).
+  | "winery";
 
 export type AttractionTag =
   | "water"

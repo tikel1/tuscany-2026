@@ -1,16 +1,17 @@
 import { useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles } from "lucide-react";
+import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles, Grape } from "lucide-react";
 import { attractions } from "../data/attractions";
 import { stays } from "../data/stays";
 import { services } from "../data/services";
+import { wineries } from "../data/wineries";
 import type { POI, Category } from "../data/types";
 import Section from "./Section";
 import { navUrl } from "../lib/nav";
 import { useT, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
-import { useLocalizePoi } from "../data/i18n";
+import { useLocalizePoi, useLocalizeWinery } from "../data/i18n";
 
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl: unknown })._getIconUrl;
 
@@ -32,7 +33,8 @@ const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
   supermarket: { id: "supermarket", labelKey: "cat_supermarket", color: "#587A8E", bg: "#587A8E", Icon: ShoppingCart }, // soft slate
   gas:         { id: "gas",         labelKey: "cat_gas",         color: "#8B6F4A", bg: "#8B6F4A", Icon: Fuel },         // caramel sienna
   airport:     { id: "airport",     labelKey: "cat_airport",     color: "#3D4F65", bg: "#3D4F65", Icon: Plane },        // twilight indigo
-  hospital:    { id: "hospital",    labelKey: "cat_hospital",    color: "#8C2E25", bg: "#8C2E25", Icon: Plane }         // deep oxblood
+  hospital:    { id: "hospital",    labelKey: "cat_hospital",    color: "#8C2E25", bg: "#8C2E25", Icon: Plane },        // deep oxblood
+  winery:      { id: "winery",      labelKey: "cat_winery",      color: "#7A2E3F", bg: "#7A2E3F", Icon: Grape }         // deep burgundy
 };
 
 function makeIcon(cat: Category, isHero = false): L.DivIcon {
@@ -84,6 +86,7 @@ function categoryGlyph(cat: Category): string {
     case "supermarket": return "&#128722;";
     case "gas": return "&#9981;";
     case "airport": return "&#9992;";
+    case "winery": return "&#127815;"; // grapes
     default: return "&#9679;";
   }
 }
@@ -193,9 +196,39 @@ export default function MapView({ registerFocus }: Props) {
   const t = useT();
   const { lang } = useLang();
   const localizePoi = useLocalizePoi();
+  const localizeWinery = useLocalizeWinery();
+
+  /* Wineries live in their own data file (not as POIs) — project the
+     ones with coords onto the map under category "winery". The
+     appellation doubles as the popup short-description. We localize
+     here (rather than via localizePoi) since wineries have their own
+     translation dictionary. */
+  const wineryPOIs: POI[] = useMemo(
+    () =>
+      wineries
+        .filter(w => w.coords)
+        .map(raw => {
+          const w = localizeWinery(raw);
+          return {
+            id: w.id,
+            name: w.name,
+            category: "winery" as const,
+            region: w.region,
+            description: w.description,
+            shortDescription: w.appellation,
+            image: w.image,
+            imageCredit: w.imageCredit,
+            website: w.website,
+            address: w.address,
+            coords: w.coords as [number, number]
+          };
+        }),
+    [localizeWinery]
+  );
+
   const allPOIs: POI[] = useMemo(
-    () => [...stays, ...attractions, ...services, AIRPORT_POI],
-    []
+    () => [...stays, ...attractions, ...services, ...wineryPOIs, AIRPORT_POI],
+    [wineryPOIs]
   );
   const localizedPOIs = useMemo(
     () =>
@@ -206,6 +239,9 @@ export default function MapView({ registerFocus }: Props) {
     [allPOIs, localizePoi, lang]
   );
 
+  // Default-on layers: stays, attractions, airport. Restaurants,
+  // supermarkets, gas and wineries are off by default — they're there
+  // when you want them but don't crowd the map on first load.
   const [activeCats, setActiveCats] = useState<Set<Category>>(
     new Set<Category>(["stay", "attraction", "airport"])
   );
@@ -272,7 +308,7 @@ export default function MapView({ registerFocus }: Props) {
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-3">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
-          {(["stay", "attraction", "restaurant", "supermarket", "gas", "airport"] as Category[]).map(
+          {(["stay", "attraction", "restaurant", "winery", "supermarket", "gas", "airport"] as Category[]).map(
             c => {
               const cfg = CATEGORY_CONFIG[c];
               const on = activeCats.has(c);

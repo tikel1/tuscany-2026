@@ -185,6 +185,7 @@ export const DICT = {
   cat_gas: { en: "Gas", he: "דלק" },
   cat_airport: { en: "Airport", he: "שדה תעופה" },
   cat_hospital: { en: "Hospital", he: "בית חולים" },
+  cat_winery: { en: "Wineries", he: "יקבים" },
 
   /* Map popup */
   navigate: { en: "Navigate", he: "ניווט" },
