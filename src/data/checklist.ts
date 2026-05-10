@@ -30,10 +30,9 @@ export const bookingChecklist: ChecklistItem[] = [
     urgent: true
   },
   {
-    id: "book-hellosky",
-    text: "Book HelloSky family room (25–26 Aug)",
-    detail: "Inside Fiumicino terminal — connected by covered walkway. Saves the 03:00 panic.",
-    link: "https://www.hellosky.it/en/",
+    id: "book-fco-overnight",
+    text: "Sort the FCO overnight (25–26 Aug)",
+    detail: "Pick a quiet hotel within 10 min of Fiumicino, or plan a late-evening drive straight to the terminal. Goal: be at check-in by 03:30 with zero stress.",
     urgent: true
   },
   {

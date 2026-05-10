@@ -20,6 +20,17 @@ export type AttractionTag =
   | "cave"
   | "village";
 
+export interface ImageCredit {
+  /** Display name of the photographer / source. */
+  author: string;
+  /** Short license id, e.g. "CC BY-SA 4.0", "CC BY 2.0", "Public Domain". */
+  license: string;
+  /** URL to the original source page (e.g. Wikimedia Commons). */
+  source?: string;
+  /** URL to the license terms. */
+  licenseUrl?: string;
+}
+
 export interface POI {
   id: string;
   name: string;
@@ -28,6 +39,7 @@ export interface POI {
   description: string;
   shortDescription?: string;
   image?: string;
+  imageCredit?: ImageCredit;
   website?: string;
   address?: string;
   coords: [number, number];
@@ -70,6 +82,9 @@ export interface Day {
   base?: string;
   activities: DayActivity[];
   driveNotes?: string;
+  /** Lead photo for the chapter when no activity in the day has an image. */
+  leadImage?: string;
+  leadImageCredit?: ImageCredit;
 }
 
 export interface ChecklistItem {

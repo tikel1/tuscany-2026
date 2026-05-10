@@ -8,7 +8,12 @@ import PoiImage from "./PoiImage";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
-export default function TripStrip() {
+interface Props {
+  /** Compact = the slim sticky bar; default = the big intro ribbon */
+  compact?: boolean;
+}
+
+export default function TripStrip({ compact = false }: Props) {
   const tripState = getTripState();
   const todayNumber =
     tripState.phase === "during" ? tripState.today.dayNumber : null;
@@ -16,7 +21,6 @@ export default function TripStrip() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
 
-  // Highlight the current chapter as the user scrolls through the itinerary
   useEffect(() => {
     const onScroll = () => {
       const fromTop = window.scrollY + window.innerHeight * 0.35;
@@ -32,6 +36,18 @@ export default function TripStrip() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Auto-center the active pill in the compact strip
+  useEffect(() => {
+    if (!compact || activeIdx === null) return;
+    const sc = scrollerRef.current;
+    if (!sc) return;
+    const el = sc.querySelector<HTMLElement>(`[data-pill="${activeIdx}"]`);
+    if (el) {
+      const targetLeft = el.offsetLeft - sc.offsetWidth / 2 + el.offsetWidth / 2;
+      sc.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
+    }
+  }, [compact, activeIdx]);
+
   const scroll = (dir: "left" | "right") => {
     const sc = scrollerRef.current;
     if (!sc) return;
@@ -44,13 +60,66 @@ export default function TripStrip() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  if (compact) {
+    return (
+      <div className="relative">
+        <div
+          ref={scrollerRef}
+          className="overflow-x-auto scrollbar-hide -mx-4 sm:-mx-6 px-4 sm:px-6"
+        >
+          <ol className="flex items-center gap-1.5 min-w-max">
+            {itinerary.map(day => {
+              const isToday = day.dayNumber === todayNumber;
+              const isActive = activeIdx === day.dayNumber;
+              const region = day.region;
+              const dot =
+                region === "south"
+                  ? "bg-gold-500"
+                  : region === "transit"
+                  ? "bg-terracotta-500"
+                  : "bg-olive-500";
+              return (
+                <li key={day.dayNumber}>
+                  <button
+                    data-pill={day.dayNumber}
+                    onClick={() => jumpTo(day.dayNumber)}
+                    className={`group relative inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all whitespace-nowrap min-h-9 ${
+                      isActive
+                        ? "bg-ink-900 text-cream-50 shadow-[0_4px_14px_rgba(58,28,15,0.25)]"
+                        : isToday
+                        ? "bg-terracotta-500/10 text-terracotta-700 ring-1 ring-terracotta-500/30 hover:bg-terracotta-500/20"
+                        : "bg-cream-50 text-ink-700 ring-1 ring-cream-300 hover:bg-cream-100"
+                    }`}
+                    title={day.title}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden />
+                    <span className="font-serif text-[13px] leading-none">
+                      {ROMAN[day.dayNumber]}
+                    </span>
+                    <span className="hidden sm:inline opacity-80">
+                      {day.weekday.slice(0, 3)} {day.date.slice(8)}
+                    </span>
+                    {isToday && (
+                      <span className="text-[8px] uppercase tracking-[0.2em] font-bold ml-0.5">
+                        today
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       {/* Edge fades */}
       <div className="pointer-events-none hidden sm:block absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-cream-100 to-transparent z-10" />
       <div className="pointer-events-none hidden sm:block absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-cream-100 to-transparent z-10" />
 
-      {/* Scroll buttons (desktop) */}
       <button
         type="button"
         onClick={() => scroll("left")}
@@ -73,10 +142,11 @@ export default function TripStrip() {
         className="-mx-4 sm:mx-0 px-4 sm:px-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
       >
         <ol className="flex gap-3 sm:gap-4 min-w-max sm:min-w-0">
-          {itinerary.map((day, i) => {
+          {itinerary.map(day => {
             const lead = day.activities
               .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
-              .find(a => !!a);
+              .find(a => !!a?.image);
+            const fallbackImage = lead?.image ?? day.leadImage;
             const isToday = day.dayNumber === todayNumber;
             const isActive = activeIdx === day.dayNumber;
             const region = day.region;
@@ -89,10 +159,7 @@ export default function TripStrip() {
                 : "text-olive-300";
 
             return (
-              <li
-                key={day.dayNumber}
-                className="snap-center shrink-0"
-              >
+              <li key={day.dayNumber} className="snap-center shrink-0">
                 <motion.button
                   whileHover={{ y: -3 }}
                   whileTap={{ scale: 0.98 }}
@@ -107,7 +174,7 @@ export default function TripStrip() {
                 >
                   <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.06]">
                     <PoiImage
-                      src={lead?.image}
+                      src={fallbackImage}
                       alt={day.title}
                       region={region === "transit" ? "north" : region}
                       category={lead?.category}
@@ -116,10 +183,11 @@ export default function TripStrip() {
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/40 to-ink-900/15" />
 
-                  {/* Chapter mark */}
                   <div className="absolute top-2.5 left-3 right-3 flex items-start justify-between text-cream-50">
                     <div>
-                      <div className={`text-[9px] uppercase tracking-[0.28em] font-medium ${accentText}`}>
+                      <div
+                        className={`text-[9px] uppercase tracking-[0.28em] font-medium ${accentText}`}
+                      >
                         Chapter
                       </div>
                       <div className="font-serif text-2xl leading-none mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
@@ -133,7 +201,6 @@ export default function TripStrip() {
                     )}
                   </div>
 
-                  {/* Title at bottom */}
                   <div className="absolute bottom-0 inset-x-0 p-3 text-cream-50">
                     <div className="text-[9px] uppercase tracking-[0.22em] opacity-90">
                       {day.weekday.slice(0, 3)} · {day.date.slice(8)} Aug
@@ -143,11 +210,6 @@ export default function TripStrip() {
                     </div>
                   </div>
                 </motion.button>
-
-                {/* Connecting tick — visual rhythm */}
-                {i < itinerary.length - 1 && (
-                  <span className="hidden sm:block absolute" aria-hidden />
-                )}
               </li>
             );
           })}

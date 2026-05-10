@@ -1,13 +1,23 @@
-import { motion } from "framer-motion";
-import { MapPin, Car, Sun, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MapPin,
+  Car,
+  Sun,
+  ChevronDown,
+  ExternalLink,
+  Navigation,
+  Plus,
+  X
+} from "lucide-react";
 import { useState } from "react";
-import type { Day } from "../data/types";
+import type { Day, ImageCredit, POI } from "../data/types";
 import { getAttraction } from "../data/attractions";
 import { useMapFocus } from "../lib/mapContext";
-import { formatDate } from "../lib/nav";
+import { formatDate, navUrl } from "../lib/nav";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import PoiImage from "./PoiImage";
+import PhotoCredit from "./PhotoCredit";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -29,15 +39,53 @@ const regionLabel: Record<string, string> = {
   transit: "Transit"
 };
 
+interface ResolvedLead {
+  src?: string;
+  alt: string;
+  credit?: ImageCredit;
+  category?: POI["category"];
+  tags?: POI["tags"];
+}
+
+function resolveLead(day: Day): ResolvedLead {
+  const fromActivity = day.activities
+    .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
+    .find(a => !!a?.image);
+  if (fromActivity?.image) {
+    return {
+      src: fromActivity.image,
+      alt: fromActivity.name,
+      credit: fromActivity.imageCredit,
+      category: fromActivity.category,
+      tags: fromActivity.tags
+    };
+  }
+  if (day.leadImage) {
+    return {
+      src: day.leadImage,
+      alt: day.title,
+      credit: day.leadImageCredit
+    };
+  }
+  // Last resort: any activity attraction (with no image) — for icon hint
+  const anyAtt = day.activities
+    .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
+    .find(a => !!a);
+  return {
+    src: undefined,
+    alt: day.title,
+    category: anyAtt?.category,
+    tags: anyAtt?.tags
+  };
+}
+
 export default function DayCard({ day }: { day: Day }) {
   const { focusOn } = useMapFocus();
   const tripState = getTripState();
   const isToday =
     tripState.phase === "during" && tripState.today.dayNumber === day.dayNumber;
 
-  const leadAttraction = day.activities
-    .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
-    .find(a => !!a);
+  const lead = resolveLead(day);
 
   const [showAll, setShowAll] = useState(false);
   const previewActivities = day.activities.slice(0, 2);
@@ -64,21 +112,28 @@ export default function DayCard({ day }: { day: Day }) {
           : "ring-1 ring-cream-300/70 shadow-[0_18px_40px_-22px_rgba(58,28,15,0.18)] hover:shadow-[0_28px_60px_-26px_rgba(58,28,15,0.3)]"
       } transition-shadow duration-500`}
     >
-      {/* Hero photo with overlay */}
+      {/* Hero photo */}
       <div className="relative aspect-[21/10] sm:aspect-[21/9] overflow-hidden bg-ink-900">
         <div className="absolute inset-0 transition-transform duration-[1500ms] ease-out group-hover:scale-[1.04]">
           <PoiImage
-            src={leadAttraction?.image}
-            alt={leadAttraction?.name ?? day.title}
+            src={lead.src}
+            alt={lead.alt}
             region={day.region === "transit" ? "north" : day.region}
-            category={leadAttraction?.category}
-            tags={leadAttraction?.tags}
+            category={lead.category}
+            tags={lead.tags}
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/55 to-ink-900/15" />
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-900/40 to-transparent" />
 
-        {/* Top corner: chapter mark */}
+        {/* Photo credit (bottom-right of image) */}
+        {lead.credit && (
+          <div className="absolute bottom-2 right-3 px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+            <PhotoCredit credit={lead.credit} variant="light" />
+          </div>
+        )}
+
+        {/* Top: chapter mark */}
         <div className="absolute top-4 sm:top-6 left-5 sm:left-8 right-5 sm:right-8 flex items-start justify-between gap-3 text-cream-50">
           <div className="flex items-baseline gap-3">
             <div className="font-serif text-3xl sm:text-4xl leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
@@ -96,9 +151,9 @@ export default function DayCard({ day }: { day: Day }) {
           )}
         </div>
 
-        {/* Bottom block: title + meta */}
-        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 text-cream-50">
-          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-cream-50/85 font-medium">
+        {/* Bottom: title + meta */}
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 text-cream-50 pr-32 sm:pr-44">
+          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-cream-50/85 font-medium flex-wrap">
             <span>{day.weekday}</span>
             <span aria-hidden>·</span>
             <span>{formatDate(day.date)}</span>
@@ -208,10 +263,13 @@ function ActivityRow({
 }) {
   const Icon = activityIcon(activity);
   const att = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
+  const [open, setOpen] = useState(false);
+
+  // Only attractions with bonus content (or any place we want to highlight) show "Read more"
+  const hasMoreInfo = !!att;
 
   return (
     <li className="grid grid-cols-[44px_1fr] sm:grid-cols-[60px_1fr] gap-4 sm:gap-6">
-      {/* Icon column */}
       <div className="relative">
         <div
           className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${
@@ -229,7 +287,6 @@ function ActivityRow({
         )}
       </div>
 
-      {/* Body */}
       <div className="min-w-0 pt-1">
         <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
           <span className="text-[9px] uppercase tracking-[0.22em] text-ink-700/45 font-medium">
@@ -249,14 +306,98 @@ function ActivityRow({
             {activity.description}
           </p>
         )}
-        {att && (
-          <button
-            onClick={() => focusOn(att.id)}
-            className="mt-3 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-medium text-terracotta-600 hover:text-terracotta-700"
-          >
-            <MapPin size={12} /> Show on the map
-          </button>
-        )}
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          {hasMoreInfo && (
+            <button
+              onClick={() => setOpen(o => !o)}
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-medium text-terracotta-600 hover:text-terracotta-700 transition-colors"
+              aria-expanded={open}
+            >
+              {open ? <X size={12} /> : <Plus size={12} />}
+              {open ? "Hide details" : "More about this place"}
+            </button>
+          )}
+          {att && !open && (
+            <button
+              onClick={() => focusOn(att.id)}
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-medium text-ink-700/65 hover:text-terracotta-700"
+            >
+              <MapPin size={12} /> On the map
+            </button>
+          )}
+        </div>
+
+        <AnimatePresence initial={false}>
+          {open && att && (
+            <motion.div
+              key="details"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 rounded-2xl bg-cream-100/80 ring-1 ring-cream-300/70 overflow-hidden grid sm:grid-cols-[180px_1fr]">
+                {/* Thumbnail */}
+                <div className="relative aspect-[4/3] sm:aspect-auto bg-cream-200 overflow-hidden">
+                  <PoiImage
+                    src={att.image}
+                    alt={att.name}
+                    region={att.region}
+                    category={att.category}
+                    tags={att.tags}
+                  />
+                  {att.image && att.imageCredit && (
+                    <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
+                      <PhotoCredit credit={att.imageCredit} variant="light" />
+                    </div>
+                  )}
+                </div>
+                {/* Body */}
+                <div className="p-4 sm:p-5 flex flex-col">
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
+                    About this place
+                  </div>
+                  <h5 className="mt-1 font-serif text-lg text-ink-900 leading-tight">
+                    {att.name}
+                  </h5>
+                  <p className="mt-2 text-[13px] sm:text-[14px] text-ink-700/85 leading-relaxed">
+                    {att.description}
+                  </p>
+                  {(att.openingNote || att.bookingNote) && (
+                    <div className="mt-3 text-xs text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug">
+                      {att.openingNote || att.bookingNote}
+                    </div>
+                  )}
+                  <div className="mt-auto pt-4 flex flex-wrap gap-x-4 gap-y-2">
+                    {att.website && (
+                      <a
+                        href={att.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="icon-link"
+                      >
+                        <ExternalLink size={12} /> Website
+                      </a>
+                    )}
+                    <a
+                      href={navUrl(att.coords)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="icon-link"
+                    >
+                      <Navigation size={12} /> Navigate
+                    </a>
+                    <button onClick={() => focusOn(att.id)} className="icon-link">
+                      <MapPin size={12} /> Show on the map
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </li>
   );

@@ -63,7 +63,7 @@ export default function ItinerarySection() {
           </p>
         </motion.header>
 
-        {/* Trip strip — table of contents */}
+        {/* Big TOC ribbon */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -106,6 +106,20 @@ export default function ItinerarySection() {
           </div>
         </div>
 
+        {/* Sticky compact chapter navigation — pinned while scrolling chapters */}
+        <div className="mt-10 sm:mt-14 sticky top-14 sm:top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 bg-cream-100/85 backdrop-blur-md border-y border-cream-300/60">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline-block text-[9px] uppercase tracking-[0.28em] text-ink-700/55 font-medium shrink-0">
+                Jump to chapter
+              </span>
+              <div className="flex-1 min-w-0">
+                <TripStrip compact />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Chapter cards */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -114,7 +128,7 @@ export default function ItinerarySection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3 }}
-            className="mt-10 sm:mt-14 grid gap-7 sm:gap-10"
+            className="mt-6 sm:mt-8 grid gap-7 sm:gap-10"
           >
             {days.map(d => (
               <DayCard key={d.dayNumber} day={d} />

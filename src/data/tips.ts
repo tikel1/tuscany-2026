@@ -19,7 +19,7 @@ export const tips: Tip[] = [
     id: "car-return-night-before",
     title: "Return the rental car the night before",
     body:
-      "A 5 a.m. flight after a 3 a.m. car return is a recipe for panic — queues at the rental desk, damage inspection in the dark, the constant fear of missing the plane. Drop the car at FCO around 21:00 the night before, walk to HelloSky inside the terminal, sleep, and stroll to check-in at 03:00.",
+      "A 5 a.m. flight after a 3 a.m. car return is a recipe for panic — queues at the rental desk, damage inspection in the dark, the constant fear of missing the plane. Drop the car at FCO around 21:00 the night before, sleep close by, and roll up to check-in calmly at 03:30.",
     severity: "warning"
   },
   {

@@ -10,6 +10,13 @@ export const stays: Stay[] = [
     description:
       "Your base for the active northern week. Larciano sits between Pistoia and Lucca, putting you within an easy drive of Bagni di Lucca, Pisa, Abetone and the Sentierelsa river walk.",
     image: "./images/stay-larciano.jpg",
+    imageCredit: {
+      author: "Vignaccia76",
+      license: "CC BY-SA 3.0",
+      source:
+        "https://commons.wikimedia.org/wiki/File:Larciano_-_panoramica.JPG",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
     website: "https://www.airbnb.com/rooms/1554711",
     bookingLink: "https://www.airbnb.com/rooms/1554711",
     address: "Larciano (PT), Tuscany",
@@ -32,6 +39,13 @@ export const stays: Stay[] = [
     description:
       "A 2,000-hectare organic estate in the rolling Maremma hills, just 12 km from the Saturnia hot springs. Apartment-style stays with private pool, perfect for an evening with a private chef. Remote setting — bring everything you need from Manciano.",
     image: "./images/stay-cortevecchia.jpg",
+    imageCredit: {
+      author: "LigaDue",
+      license: "CC BY-SA 4.0",
+      source:
+        "https://commons.wikimedia.org/wiki/File:Semproniano_-_panorama.jpg",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
     website: "https://tenutacortevecchia.it/en/",
     bookingLink: "https://tenutacortevecchia.it/en/",
     address: "Località Cortevecchia, 58055 Semproniano (GR)",
@@ -50,28 +64,6 @@ export const stays: Stay[] = [
       "Isolated — no walkable restaurants or supermarket, car required",
       "~1h15 to Porto Santo Stefano (boat day)",
       "~1h20 to Acqua Village Follonica"
-    ]
-  },
-  {
-    id: "stay-hellosky",
-    name: "HelloSky Air Rooms — Fiumicino",
-    category: "stay",
-    region: "transit",
-    shortDescription: "Inside-the-airport room for the 5 a.m. flight home.",
-    description:
-      "Connected directly to Fiumicino Terminal 3 by a covered walkway. Drop the rental car at FCO the evening before, walk in, sleep, and stroll to check-in at 03:00 with zero stress.",
-    image: "./images/stay-hellosky.jpg",
-    website: "https://www.hellosky.it/en/",
-    bookingLink: "https://www.hellosky.it/en/",
-    address: "Aeroporto Leonardo da Vinci, Fiumicino (RM)",
-    coords: [41.7997, 12.2462],
-    checkIn: "2026-08-25",
-    checkOut: "2026-08-26",
-    nights: 1,
-    highlights: [
-      "5-minute walk to FCO check-in desks",
-      "Return rental car the evening before — no 3am queue",
-      "Light dinner on site, then sleep"
     ]
   }
 ];

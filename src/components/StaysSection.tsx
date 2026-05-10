@@ -4,6 +4,7 @@ import Section from "./Section";
 import { useMapFocus } from "../lib/mapContext";
 import { navUrl, formatDate } from "../lib/nav";
 import PoiImage from "./PoiImage";
+import PhotoCredit from "./PhotoCredit";
 
 export default function StaysSection() {
   const { focusOn } = useMapFocus();
@@ -13,19 +14,24 @@ export default function StaysSection() {
       id="stays"
       eyebrow="Home base"
       title="Where we sleep"
-      kicker="Two bases. One airport pillow."
+      kicker="Two homes for ten nights."
       intro="A hill-perched home in Larciano for the active north, then a country tenuta near Manciano for the slower, watery south."
     >
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid gap-5 lg:grid-cols-2">
         {stays.map(s => (
           <article key={s.id} className="card-paper card-paper-hover overflow-hidden flex flex-col">
-            <div className="aspect-[16/10] overflow-hidden bg-cream-200">
+            <div className="relative aspect-[16/10] overflow-hidden bg-cream-200">
               <PoiImage
                 src={s.image}
                 alt={s.name}
                 region={s.region}
                 category={s.category}
               />
+              {s.image && s.imageCredit && (
+                <div className="absolute bottom-2 right-2 px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                  <PhotoCredit credit={s.imageCredit} variant="light" />
+                </div>
+              )}
             </div>
             <div className="p-5 flex-1 flex flex-col">
               <div className="flex items-start justify-between gap-3">

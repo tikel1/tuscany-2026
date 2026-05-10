@@ -33,29 +33,35 @@ export default function App() {
       <Navbar />
       <Hero />
 
-      {/* Slim editorial band right under the hero — "in this issue" */}
-      <section className="relative">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-2 sm:pb-4 space-y-10 sm:space-y-12">
+      {/* The Plan — the magazine's main feature, leads everything else */}
+      <ItinerarySection />
+
+      <SectionOrnament />
+      <MapView registerFocus={registerFocus} />
+
+      <SectionOrnament />
+      <StaysSection />
+
+      {/* "In this issue" teaser — sits between the curated Stays and the full catalog */}
+      <section className="relative py-14 sm:py-20 bg-cream-100/40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-12">
           <HighlightsCarousel />
           <TripStats />
         </div>
       </section>
 
-      <SectionOrnament className="my-2" />
-
-      <ItinerarySection />
-      <SectionOrnament />
-      <MapView registerFocus={registerFocus} />
-      <SectionOrnament />
-      <StaysSection />
       <SectionOrnament />
       <AttractionsGrid />
+
       <SectionOrnament />
       <ServicesSection />
+
       <SectionOrnament />
       <TipsSection />
+
       <SectionOrnament />
       <ChecklistSection />
+
       <SectionOrnament />
       <EmergencySection />
 

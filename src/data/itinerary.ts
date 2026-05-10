@@ -9,6 +9,14 @@ export const itinerary: Day[] = [
     base: "Larciano",
     title: "Land in Rome, drive north",
     subtitle: "Arrive FCO 14:00, pick up the rental car, head to Tuscany",
+    leadImage: "./images/stay-larciano.jpg",
+    leadImageCredit: {
+      author: "Vignaccia76",
+      license: "CC BY-SA 3.0",
+      source:
+        "https://commons.wikimedia.org/wiki/File:Larciano_-_panoramica.JPG",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
     activities: [
       {
         time: "14:00",
@@ -227,7 +235,7 @@ export const itinerary: Day[] = [
     region: "south",
     base: "Cortevecchia → Fiumicino",
     title: "Hot springs at dawn, lake swim, the floating city",
-    subtitle: "Big day — finishes at the airport hotel",
+    subtitle: "Big day — finishes near the airport for the early flight",
     activities: [
       {
         time: "07:30 (critical)",
@@ -253,12 +261,12 @@ export const itinerary: Day[] = [
       {
         time: "19:00",
         title: "Drive to Fiumicino",
-        description: "≈ 1 h 15 min. Return the rental car at FCO this evening — not at 03:00 tomorrow."
+        description: "≈ 1 h 15 min from Civita. Return the rental car at FCO this evening — not at 03:00 tomorrow."
       },
       {
-        time: "21:00",
-        title: "Check in at HelloSky inside the terminal",
-        description: "Walk straight from the rental return to the airport hotel. Light dinner. Sleep."
+        time: "Late evening",
+        title: "Bed-down near FCO",
+        description: "Find any quiet hotel within 10 min of the terminal — the goal is to be at check-in by 03:30 with zero stress."
       }
     ],
     driveNotes: "Civita → FCO ≈ 1 h 30 min"
@@ -272,9 +280,9 @@ export const itinerary: Day[] = [
     title: "Fly home",
     activities: [
       {
-        time: "03:00",
-        title: "Wake, walk 5 min to check-in",
-        description: "Hotel is connected to the terminal by a covered bridge. No taxi, no stress."
+        time: "03:30",
+        title: "At FCO check-in",
+        description: "Bag-drop opens 2 hours before departure. Aim to be in line by 03:30 — even at 5am, FCO has queues."
       },
       {
         time: "05:00",
