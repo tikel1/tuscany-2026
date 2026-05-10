@@ -16,7 +16,6 @@ import { dishes } from "../data/dishes";
 import { wineries } from "../data/wineries";
 import Section from "./Section";
 import PoiImage from "./PoiImage";
-import PhotoCredit from "./PhotoCredit";
 import { useT, type DictKey } from "../lib/dict";
 import { useLocalizeDish, useLocalizeWinery } from "../data/i18n";
 import { navUrl } from "../lib/nav";
@@ -140,14 +139,10 @@ export default function FoodAndWineSection() {
                           {t(meta.key)}
                         </span>
                       </div>
-                      {dish.image && dish.imageCredit && (
-                        <div className="absolute bottom-1.5 end-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
-                          <PhotoCredit
-                            credit={dish.imageCredit}
-                            variant="light"
-                          />
-                        </div>
-                      )}
+                      {/* Credit intentionally omitted on these small
+                          banners — the source URL lives in the data
+                          file and surfaces on the larger gallery
+                          contexts where the photo dominates. */}
                     </div>
                     <div className="p-4 sm:p-5 flex-1 flex flex-col">
                       <h4 className="font-serif text-[20px] sm:text-[22px] text-ink-900 leading-tight">
@@ -200,14 +195,9 @@ export default function FoodAndWineSection() {
                         alt={w.name}
                         region={w.region}
                       />
-                      {w.image && w.imageCredit && (
-                        <div className="absolute bottom-1.5 end-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
-                          <PhotoCredit
-                            credit={w.imageCredit}
-                            variant="light"
-                          />
-                        </div>
-                      )}
+                      {/* Credit omitted on the side thumbnail — the
+                          appellation Wikipedia link in the source URL
+                          lives in the data file. */}
                     </div>
                     <div className="p-4 sm:p-5 flex flex-col">
                       <div className="flex items-start gap-2.5">

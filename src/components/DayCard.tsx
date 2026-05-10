@@ -126,9 +126,9 @@ export default function DayCard({ day }: { day: Day }) {
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/55 to-ink-900/15" />
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-900/40 to-transparent" />
 
-        {/* Photo credit (bottom-right of image) */}
+        {/* Photo credit — minimal © glyph in the corner. */}
         {lead.credit && (
-          <div className="absolute bottom-2 right-3 px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+          <div className="absolute bottom-1.5 right-2 px-1.5 py-[3px] rounded-full bg-ink-900/45 backdrop-blur-sm">
             <PhotoCredit credit={lead.credit} variant="light" />
           </div>
         )}
@@ -343,11 +343,8 @@ function ActivityRow({
                     category={att.category}
                     tags={att.tags}
                   />
-                  {att.image && att.imageCredit && (
-                    <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
-                      <PhotoCredit credit={att.imageCredit} variant="light" />
-                    </div>
-                  )}
+                  {/* Credit omitted on this small attraction thumb —
+                      shown on the larger lead carousel above instead. */}
                 </div>
                 {/* Body */}
                 <div className="p-4 sm:p-5 flex flex-col">

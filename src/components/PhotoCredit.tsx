@@ -1,4 +1,3 @@
-import { Camera } from "lucide-react";
 import type { ImageCredit } from "../data/types";
 
 interface Props {
@@ -8,42 +7,53 @@ interface Props {
   className?: string;
 }
 
-export default function PhotoCredit({ credit, variant = "light", className }: Props) {
+/* Minimal attribution glyph for CC photos — renders as `© BY-SA` (or
+ * just `©` when no license id is present) and links to the source. The
+ * full author + license read out in the aria-label / hover title, so
+ * screen readers and curious viewers still get the full credit while
+ * the on-image footprint stays as small as possible. */
+export default function PhotoCredit({
+  credit,
+  variant = "light",
+  className
+}: Props) {
   if (!credit) return null;
 
-  const baseClass =
+  const tone =
     variant === "light"
       ? "text-cream-50/85 hover:text-cream-50"
       : "text-ink-700/65 hover:text-ink-900";
 
+  // "CC BY-SA 4.0" → "BY-SA 4.0", "Public Domain" → "PD"
+  const shortLicense = credit.license
+    .replace(/^CC\s+/i, "")
+    .replace(/^Public Domain$/i, "PD");
+
+  const ariaLabel = `${credit.author} · ${credit.license}`;
+
   const inner = (
-    <span className="inline-flex items-center gap-1.5">
-      <Camera size={9} className="opacity-70" />
-      <span className="font-serif italic normal-case tracking-normal">
-        {credit.author}
-      </span>
-      <span aria-hidden className="opacity-60">·</span>
-      <span className="opacity-90">{credit.license}</span>
+    <span
+      data-compact-ui
+      title={ariaLabel}
+      aria-label={ariaLabel}
+      className={`inline-flex items-center gap-0.5 text-[9px] leading-none font-medium tracking-wide transition-colors ${tone} ${className ?? ""}`}
+    >
+      <span aria-hidden>©</span>
+      {shortLicense && <span>{shortLicense}</span>}
     </span>
   );
 
-  return (
-    <span
-      className={`inline-flex items-center text-[9px] sm:text-[10px] uppercase tracking-[0.16em] font-medium transition-colors ${baseClass} ${className ?? ""}`}
-    >
-      {credit.source ? (
-        <a
-          href={credit.source}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline-offset-2 hover:underline"
-          aria-label={`Photo credit: ${credit.author}, ${credit.license}. Open source.`}
-        >
-          {inner}
-        </a>
-      ) : (
-        inner
-      )}
-    </span>
-  );
+  if (credit.source) {
+    return (
+      <a
+        href={credit.source}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="leading-none"
+      >
+        {inner}
+      </a>
+    );
+  }
+  return inner;
 }

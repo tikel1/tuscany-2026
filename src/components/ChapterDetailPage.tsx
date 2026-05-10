@@ -407,7 +407,7 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                   </div>
                 )}
                 {currentSlide.credit && (
-                  <div className="px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                  <div className="px-1.5 py-[3px] rounded-full bg-ink-900/45 backdrop-blur-sm">
                     <PhotoCredit credit={currentSlide.credit} variant="light" />
                   </div>
                 )}
@@ -856,11 +856,8 @@ function ActivityRow({
                     category={att.category}
                     tags={att.tags}
                   />
-                  {att.image && att.imageCredit && (
-                    <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
-                      <PhotoCredit credit={att.imageCredit} variant="light" />
-                    </div>
-                  )}
+                  {/* Credit omitted on this small thumb — shown on the
+                      hero carousel above where the photo dominates. */}
                 </div>
                 <div className="p-4 sm:p-5 flex flex-col">
                   <div className="flex items-center gap-2 flex-wrap">

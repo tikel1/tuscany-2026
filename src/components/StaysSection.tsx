@@ -127,7 +127,7 @@ export default function StaysSection() {
             <div className="relative aspect-[16/10] overflow-hidden bg-cream-200">
               <StayHero stay={s} />
               {s.image && s.imageCredit && (
-                <div className="absolute bottom-2 end-2 z-10 px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                <div className="absolute bottom-1.5 end-2 z-10 px-1.5 py-[3px] rounded-full bg-ink-900/45 backdrop-blur-sm">
                   <PhotoCredit credit={s.imageCredit} variant="light" />
                 </div>
               )}
