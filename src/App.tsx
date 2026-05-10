@@ -47,14 +47,11 @@ export default function App() {
       <SectionOrnament />
       <MapView registerFocus={registerFocus} />
 
-      <SectionOrnament />
-      <StaysSection />
-
-      {/* "In this issue" teaser — sits between the curated Stays and the full catalog */}
+      {/* "In this issue" teaser — a curated peek at the trip's highlights
+          right before we open the full attractions catalog. */}
       <section className="relative py-14 sm:py-20 bg-cream-100/40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <HighlightsCarousel />
-          <TripStats />
         </div>
       </section>
 
@@ -68,6 +65,9 @@ export default function App() {
       <FoodAndWineSection />
 
       <SectionOrnament />
+      <StaysSection />
+
+      <SectionOrnament />
       <TipsSection />
 
       <SectionOrnament />
@@ -75,6 +75,13 @@ export default function App() {
 
       <SectionOrnament />
       <EmergencySection />
+
+      {/* By the numbers — the trip in stats, as a closing flourish */}
+      <section className="relative py-14 sm:py-20 bg-cream-100/40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <TripStats />
+        </div>
+      </section>
 
       <Footer />
 
