@@ -1,11 +1,12 @@
+import { motion } from "framer-motion";
+import { MapPin, Car, Sun, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Car, ChevronDown, Sun } from "lucide-react";
 import type { Day } from "../data/types";
 import { getAttraction } from "../data/attractions";
 import { useMapFocus } from "../lib/mapContext";
 import { formatDate } from "../lib/nav";
 import { getTripState } from "../lib/tripState";
+import { activityIcon } from "../lib/activityIcon";
 import PoiImage from "./PoiImage";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
@@ -23,8 +24,8 @@ const tagLabel: Record<string, string> = {
 };
 
 const regionLabel: Record<string, string> = {
-  north: "North",
-  south: "South",
+  north: "North Tuscany",
+  south: "South Tuscany",
   transit: "Transit"
 };
 
@@ -34,55 +35,70 @@ export default function DayCard({ day }: { day: Day }) {
   const isToday =
     tripState.phase === "during" && tripState.today.dayNumber === day.dayNumber;
 
-  // Find lead photo from first attraction with an image
   const leadAttraction = day.activities
     .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
     .find(a => !!a);
 
-  const [open, setOpen] = useState(isToday);
+  const [showAll, setShowAll] = useState(false);
+  const previewActivities = day.activities.slice(0, 2);
+  const restActivities = day.activities.slice(2);
+  const hasMore = restActivities.length > 0;
 
-  const accent =
+  const accentText =
     day.region === "south"
-      ? "bg-gold-500"
-      : day.region === "north"
-      ? "bg-olive-500"
-      : "bg-terracotta-500";
+      ? "text-gold-400"
+      : day.region === "transit"
+      ? "text-terracotta-300"
+      : "text-olive-300";
 
   return (
-    <article
-      className={`relative group rounded-2xl overflow-hidden transition-all duration-500 ${
+    <motion.article
+      id={`day-${day.dayNumber}`}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`group relative scroll-mt-32 rounded-3xl overflow-hidden bg-cream-50 ${
         isToday
-          ? "bg-gradient-to-br from-terracotta-500/8 via-cream-50 to-cream-50 ring-1 ring-terracotta-500/40 shadow-[0_18px_40px_-18px_rgba(196,90,61,0.45)]"
-          : "bg-cream-50 ring-1 ring-cream-300/60 hover:ring-terracotta-500/25 hover:shadow-[0_18px_40px_-22px_rgba(58,28,15,0.18)]"
-      }`}
+          ? "ring-2 ring-terracotta-500 shadow-[0_30px_60px_-30px_rgba(196,90,61,0.55)]"
+          : "ring-1 ring-cream-300/70 shadow-[0_18px_40px_-22px_rgba(58,28,15,0.18)] hover:shadow-[0_28px_60px_-26px_rgba(58,28,15,0.3)]"
+      } transition-shadow duration-500`}
     >
-      {/* Left accent stripe */}
-      <span className={`absolute left-0 top-0 bottom-0 w-1 ${accent}`} aria-hidden />
+      {/* Hero photo with overlay */}
+      <div className="relative aspect-[21/10] sm:aspect-[21/9] overflow-hidden bg-ink-900">
+        <div className="absolute inset-0 transition-transform duration-[1500ms] ease-out group-hover:scale-[1.04]">
+          <PoiImage
+            src={leadAttraction?.image}
+            alt={leadAttraction?.name ?? day.title}
+            region={day.region === "transit" ? "north" : day.region}
+            category={leadAttraction?.category}
+            tags={leadAttraction?.tags}
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/55 to-ink-900/15" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-900/40 to-transparent" />
 
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        className="w-full text-left grid md:grid-cols-[1fr_320px]"
-        aria-expanded={open}
-      >
-        {/* Left: chapter header */}
-        <div className="px-5 sm:px-7 py-6 sm:py-8 min-w-0">
+        {/* Top corner: chapter mark */}
+        <div className="absolute top-4 sm:top-6 left-5 sm:left-8 right-5 sm:right-8 flex items-start justify-between gap-3 text-cream-50">
           <div className="flex items-baseline gap-3">
-            <div
-              className={`font-serif text-2xl leading-none ${
-                isToday ? "text-terracotta-700" : "text-terracotta-600"
-              }`}
-              aria-hidden
-            >
+            <div className="font-serif text-3xl sm:text-4xl leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
               {ROMAN[day.dayNumber]}
             </div>
-            <div className="h-px flex-1 bg-cream-300/80 max-w-12" />
-            <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/70 font-medium">
+            <div className="h-px w-10 sm:w-16 bg-cream-50/40 mb-1.5" />
+            <div className={`text-[10px] uppercase tracking-[0.28em] font-medium ${accentText}`}>
               Chapter {String(day.dayNumber).padStart(2, "0")}
             </div>
           </div>
+          {isToday && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-terracotta-500 text-cream-50 text-[10px] uppercase tracking-[0.22em] font-bold shadow-[0_4px_18px_rgba(196,90,61,0.5)]">
+              <Sun size={11} /> Today
+            </div>
+          )}
+        </div>
 
-          <div className="mt-3 flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-ink-700/65">
+        {/* Bottom block: title + meta */}
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 text-cream-50">
+          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-cream-50/85 font-medium">
             <span>{day.weekday}</span>
             <span aria-hidden>·</span>
             <span>{formatDate(day.date)}</span>
@@ -90,151 +106,158 @@ export default function DayCard({ day }: { day: Day }) {
             <span>{regionLabel[day.region]}</span>
             {day.base && (
               <>
-                <span aria-hidden>·</span>
-                <span className="inline-flex items-center gap-1 normal-case tracking-normal text-ink-700/80">
+                <span aria-hidden className="hidden sm:inline">·</span>
+                <span className="hidden sm:inline-flex items-center gap-1 normal-case tracking-normal text-cream-50/85">
                   <MapPin size={11} className="opacity-70" /> {day.base}
                 </span>
               </>
             )}
           </div>
-
-          <h3
-            className={`mt-3 font-serif leading-[1.05] text-3xl sm:text-4xl ${
-              isToday ? "text-terracotta-700" : "text-ink-900"
-            }`}
-          >
+          <h3 className="mt-2 font-serif text-3xl sm:text-5xl leading-[1.04] tracking-tight max-w-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
             {day.title}
           </h3>
           {day.subtitle && (
-            <p className="mt-2 font-serif italic text-ink-700/85 text-base sm:text-lg">
+            <p className="mt-2 font-serif italic text-cream-50/85 text-base sm:text-lg max-w-xl">
               {day.subtitle}
             </p>
           )}
-
-          {isToday && (
-            <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta-500 text-cream-50 text-[10px] uppercase tracking-[0.22em] font-medium">
-              <Sun size={11} /> Today
+          {day.base && (
+            <div className="sm:hidden mt-3 inline-flex items-center gap-1 text-xs text-cream-50/85">
+              <MapPin size={11} className="opacity-70" /> {day.base}
             </div>
           )}
+        </div>
+      </div>
 
-          <div className="mt-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-ink-700/55 md:hidden">
-            <ChevronDown
-              size={14}
-              className={`transition-transform ${open ? "rotate-180" : ""}`}
+      {/* Activity body */}
+      <div className="px-5 sm:px-10 py-7 sm:py-10">
+        <ol className="space-y-6 sm:space-y-8">
+          {previewActivities.map((a, i) => (
+            <ActivityRow
+              key={i}
+              activity={a}
+              index={i}
+              isToday={isToday}
+              focusOn={focusOn}
             />
-            {open ? "hide the day" : "see the day"}
+          ))}
+          {showAll &&
+            restActivities.map((a, i) => (
+              <motion.div
+                key={i + 2}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.04 }}
+              >
+                <ActivityRow
+                  activity={a}
+                  index={i + 2}
+                  isToday={isToday}
+                  focusOn={focusOn}
+                />
+              </motion.div>
+            ))}
+        </ol>
+
+        {hasMore && (
+          <div className="mt-7 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAll(s => !s)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cream-100 hover:bg-terracotta-500/10 text-ink-700 hover:text-terracotta-700 text-[11px] uppercase tracking-[0.2em] font-medium transition-colors"
+            >
+              {showAll ? "Show less" : `Show ${restActivities.length} more`}
+              <ChevronDown
+                size={13}
+                className={`transition-transform ${showAll ? "rotate-180" : ""}`}
+              />
+            </button>
           </div>
-
-          {!open && (
-            <p className="mt-3 text-sm text-ink-700/70 line-clamp-1 md:hidden">
-              {day.activities[0]?.time} · {day.activities[0]?.title}
-              {day.activities.length > 1 && ` · +${day.activities.length - 1} more`}
-            </p>
-          )}
-        </div>
-
-        {/* Right: lead photo (desktop) */}
-        <div className="hidden md:block relative bg-cream-200">
-          <div className="absolute inset-0">
-            <PoiImage
-              src={leadAttraction?.image}
-              alt={leadAttraction?.name ?? day.title}
-              region={day.region === "transit" ? "north" : day.region}
-              category={leadAttraction?.category}
-              tags={leadAttraction?.tags}
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-l from-cream-50/0 via-cream-50/0 to-cream-50/30" />
-        </div>
-      </button>
-
-      {/* Mobile lead photo (always visible, slim) */}
-      {leadAttraction?.image && (
-        <div className="md:hidden h-44 -mt-2 mx-5 mb-2 rounded-xl overflow-hidden ring-1 ring-cream-300/60">
-          <PoiImage
-            src={leadAttraction.image}
-            alt={leadAttraction.name}
-            region={day.region === "transit" ? "north" : day.region}
-            category={leadAttraction.category}
-            tags={leadAttraction.tags}
-          />
-        </div>
-      )}
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 sm:px-7 pb-6 sm:pb-8">
-              {/* Ornament divider */}
-              <div className="my-2 flex items-center gap-2 text-cream-400">
-                <div className="h-px flex-1 bg-cream-300/70" />
-                <span className="font-serif text-xs italic">the day</span>
-                <div className="h-px flex-1 bg-cream-300/70" />
-              </div>
-
-              <ol className="mt-3 space-y-5">
-                {day.activities.map((a, i) => {
-                  const att = a.attractionId ? getAttraction(a.attractionId) : undefined;
-                  return (
-                    <li key={i} className="grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] gap-3 sm:gap-5 group/act">
-                      <div className="text-right">
-                        <div
-                          className={`font-serif text-lg sm:text-xl leading-none ${
-                            isToday ? "text-terracotta-700" : "text-terracotta-600"
-                          }`}
-                        >
-                          {a.time ?? "—"}
-                        </div>
-                        <div className="text-[9px] uppercase tracking-[0.22em] text-ink-700/45 font-medium mt-1">
-                          stop {String(i + 1).padStart(2, "0")}
-                        </div>
-                      </div>
-                      <div className="min-w-0 border-l border-cream-300/70 pl-4 sm:pl-5 -ml-2 sm:-ml-3">
-                        <div className="font-serif text-lg sm:text-xl text-ink-900 leading-snug">
-                          {a.title}
-                        </div>
-                        <p className="text-[14px] text-ink-700/85 mt-1 leading-relaxed">
-                          {a.description}
-                        </p>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.16em] text-ink-700/55">
-                          {a.tag && <span>· {tagLabel[a.tag] ?? a.tag}</span>}
-                          {att && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                focusOn(att.id);
-                              }}
-                              className="inline-flex items-center gap-1 text-terracotta-600 hover:text-terracotta-700 active:text-terracotta-800"
-                            >
-                              <MapPin size={11} /> on the map
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-
-              {day.driveNotes && (
-                <div className="mt-6 pt-5 border-t border-cream-300/60 flex items-start gap-3">
-                  <Car size={14} className="text-olive-500 mt-1 shrink-0" />
-                  <p className="font-serif italic text-sm text-ink-700/80 leading-relaxed">
-                    {day.driveNotes}
-                  </p>
-                </div>
-              )}
-            </div>
-          </motion.div>
         )}
-      </AnimatePresence>
-    </article>
+
+        {day.driveNotes && (
+          <div className="mt-8 sm:mt-10 pt-6 border-t border-cream-300/60 flex items-start gap-3">
+            <span className="shrink-0 w-9 h-9 rounded-full bg-olive-500/10 text-olive-700 flex items-center justify-center">
+              <Car size={15} />
+            </span>
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.24em] text-olive-700/80 font-medium">
+                On the road
+              </div>
+              <p className="mt-0.5 font-serif italic text-ink-700/85 text-[15px] leading-relaxed">
+                {day.driveNotes}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.article>
+  );
+}
+
+function ActivityRow({
+  activity,
+  index,
+  isToday,
+  focusOn
+}: {
+  activity: Day["activities"][number];
+  index: number;
+  isToday: boolean;
+  focusOn: (id: string) => void;
+}) {
+  const Icon = activityIcon(activity);
+  const att = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
+
+  return (
+    <li className="grid grid-cols-[44px_1fr] sm:grid-cols-[60px_1fr] gap-4 sm:gap-6">
+      {/* Icon column */}
+      <div className="relative">
+        <div
+          className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${
+            isToday
+              ? "bg-terracotta-500 text-cream-50"
+              : "bg-cream-100 text-terracotta-600 ring-1 ring-cream-300/80"
+          }`}
+        >
+          <Icon size={18} className="sm:w-5 sm:h-5" strokeWidth={1.6} />
+        </div>
+        {activity.time && (
+          <div className="absolute -bottom-5 left-0 right-0 text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-ink-700/55 font-medium text-center">
+            {activity.time.length > 12 ? activity.time.slice(0, 12) + "…" : activity.time}
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="min-w-0 pt-1">
+        <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+          <span className="text-[9px] uppercase tracking-[0.22em] text-ink-700/45 font-medium">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          {activity.tag && (
+            <span className="text-[9px] uppercase tracking-[0.22em] text-terracotta-600/85 font-medium">
+              · {tagLabel[activity.tag] ?? activity.tag}
+            </span>
+          )}
+        </div>
+        <h4 className="mt-1 font-serif text-xl sm:text-[24px] text-ink-900 leading-snug">
+          {activity.title}
+        </h4>
+        {activity.description && (
+          <p className="mt-2 text-[14px] sm:text-[15px] text-ink-700/85 leading-relaxed">
+            {activity.description}
+          </p>
+        )}
+        {att && (
+          <button
+            onClick={() => focusOn(att.id)}
+            className="mt-3 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] font-medium text-terracotta-600 hover:text-terracotta-700"
+          >
+            <MapPin size={12} /> Show on the map
+          </button>
+        )}
+      </div>
+    </li>
   );
 }
