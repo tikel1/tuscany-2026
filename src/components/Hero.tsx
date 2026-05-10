@@ -1,11 +1,47 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { getTripState, TRIP_START } from "../lib/tripState";
 import type { TripState } from "../lib/tripState";
 import { formatDate } from "../lib/nav";
 import LiveCountdown from "./LiveCountdown";
 import WeatherStrip from "./WeatherStrip";
+
+interface HeroPhoto {
+  src: string;
+  caption: string;
+  region: "north" | "south";
+}
+
+const HERO_PHOTOS: HeroPhoto[] = [
+  {
+    src: "./images/saturnia.jpg",
+    caption: "Saturnia · Cascate del Mulino",
+    region: "south"
+  },
+  {
+    src: "./images/pitigliano.jpg",
+    caption: "Pitigliano · the tufa city",
+    region: "south"
+  },
+  {
+    src: "./images/cala-del-gesso.jpg",
+    caption: "Cala del Gesso · Argentario",
+    region: "south"
+  },
+  {
+    src: "./images/civita.jpg",
+    caption: "Civita di Bagnoregio · the dying city",
+    region: "south"
+  },
+  {
+    src: "./images/abetone.jpg",
+    caption: "Monte Gomito · 1,892 m",
+    region: "north"
+  }
+];
+
+const PHOTO_DURATION_MS = 7000;
 
 function useTripStateLive() {
   const [state, setState] = useState<TripState>(() => getTripState());
@@ -15,6 +51,22 @@ function useTripStateLive() {
     return () => window.clearInterval(id);
   }, []);
   return state;
+}
+
+function useHeroPhoto() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    // Preload all hero photos once on mount so crossfades are seamless.
+    HERO_PHOTOS.forEach(p => {
+      const img = new Image();
+      img.src = p.src;
+    });
+    const id = window.setInterval(() => {
+      setIdx(i => (i + 1) % HERO_PHOTOS.length);
+    }, PHOTO_DURATION_MS);
+    return () => window.clearInterval(id);
+  }, []);
+  return { photo: HERO_PHOTOS[idx], idx };
 }
 
 function HeroBody({ state }: { state: TripState }) {
@@ -87,24 +139,48 @@ function HeroBody({ state }: { state: TripState }) {
 
 export default function Hero() {
   const state = useTripStateLive();
+  const { photo, idx } = useHeroPhoto();
 
   return (
     <header
       id="hero"
-      className="relative min-h-[100svh] flex flex-col overflow-hidden text-cream-50"
+      className="relative min-h-[100svh] flex flex-col overflow-hidden text-cream-50 bg-ink-900"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      {/* Ken-Burns photo backdrop */}
-      <motion.div
-        initial={{ scale: 1.06 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-        className="absolute inset-0 bg-cover bg-center will-change-transform"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1568797629192-789acf8e4df3?auto=format&fit=crop&w=2400&q=80')"
-        }}
-      />
+      {/* Crossfading hero photos with gentle Ken-Burns drift */}
+      <AnimatePresence mode="sync">
+        <motion.div
+          key={photo.src}
+          initial={{ opacity: 0, scale: 1.08 }}
+          animate={{ opacity: 1, scale: 1.0 }}
+          exit={{ opacity: 0, scale: 1.0 }}
+          transition={{
+            opacity: { duration: 1.6, ease: "easeInOut" },
+            scale: { duration: PHOTO_DURATION_MS / 1000 + 1.6, ease: "linear" }
+          }}
+          className="absolute inset-0 bg-cover bg-center will-change-transform"
+          style={{ backgroundImage: `url('${photo.src}')` }}
+        />
+      </AnimatePresence>
+
+      {/* Hero photo caption — small italic credit at the bottom-left */}
+      <div className="absolute left-5 sm:left-8 bottom-3 sm:bottom-4 z-10 hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-cream-50/70 font-medium pointer-events-none">
+        <span className="w-1.5 h-1.5 rounded-full bg-cream-50/60" aria-hidden />
+        <span className="font-serif italic normal-case tracking-normal text-[12px] text-cream-50/85">
+          {photo.caption}
+        </span>
+        <span className="ml-2 flex gap-1" aria-hidden>
+          {HERO_PHOTOS.map((_, i) => (
+            <span
+              key={i}
+              className={`block h-px transition-all ${
+                i === idx ? "w-5 bg-cream-50/85" : "w-2 bg-cream-50/35"
+              }`}
+            />
+          ))}
+        </span>
+      </div>
+
       <div className="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/15 to-ink-900/75" />
       {/* Top-bottom edge fades */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink-900/40 to-transparent pointer-events-none" />
