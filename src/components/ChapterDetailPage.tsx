@@ -461,61 +461,9 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
         </header>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12 sm:space-y-16">
-          {/* Day pack — moved to the top so the first thing you see when
-              opening a day is "what do I need to bring?". Each item that
-              ties to a specific stop shows a small chip the reader can tap
-              to jump straight to that activity row below. */}
-          {localDay.gear && localDay.gear.length > 0 && (
-            <section>
-              <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("gear_kicker")}
-              </p>
-              <ul className="grid sm:grid-cols-2 gap-2.5">
-                {localDay.gear.map((g, i) => {
-                  const forName = g.for ? attractionNameById.get(g.for) : undefined;
-                  return (
-                    <li
-                      key={i}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
-                    >
-                      <span
-                        className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center ${
-                          g.for
-                            ? "bg-terracotta-500/12 text-terracotta-600"
-                            : "bg-olive-500/12 text-olive-700"
-                        }`}
-                      >
-                        <Backpack size={14} strokeWidth={1.8} />
-                      </span>
-                      <div className="min-w-0 pt-0.5 flex-1">
-                        <div className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-snug">
-                          {g.item}
-                        </div>
-                        {g.for && forName && (
-                          <button
-                            type="button"
-                            onClick={() => scrollToActivity(g.for!)}
-                            className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-terracotta-500/10 text-terracotta-700 text-[10px] uppercase tracking-[0.16em] font-medium hover:bg-terracotta-500/18 transition-colors"
-                            title={forName}
-                          >
-                            <Activity size={9} strokeWidth={2.2} />
-                            <span className="normal-case tracking-normal text-[11px] font-normal">
-                              {t("gear_for_label")} {forName}
-                            </span>
-                          </button>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          )}
-
-          {/* Italian word of the day — a small magazine flashcard with the
-              word picked to fit the day's mood (water words on water days,
-              "arrivederci" on the flight home, etc.). */}
+          {/* Italian word of the day — opens the chapter with a small
+              magazine flashcard, picked to fit the day's mood (water words
+              on water days, "arrivederci" on the flight home, etc.). */}
           {localDay.wordOfTheDay && (
             <section>
               <article
@@ -638,6 +586,57 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                   </li>
                 ))}
               </ol>
+            </section>
+          )}
+
+          {/* Day pack — what to bring, sitting between the plan and the
+              day-notes. Items can reference a specific stop with a small
+              chip the reader can tap to scroll back up to that activity. */}
+          {localDay.gear && localDay.gear.length > 0 && (
+            <section>
+              <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
+              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+                {t("gear_kicker")}
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-2.5">
+                {localDay.gear.map((g, i) => {
+                  const forName = g.for ? attractionNameById.get(g.for) : undefined;
+                  return (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+                    >
+                      <span
+                        className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center ${
+                          g.for
+                            ? "bg-terracotta-500/12 text-terracotta-600"
+                            : "bg-olive-500/12 text-olive-700"
+                        }`}
+                      >
+                        <Backpack size={14} strokeWidth={1.8} />
+                      </span>
+                      <div className="min-w-0 pt-0.5 flex-1">
+                        <div className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-snug">
+                          {g.item}
+                        </div>
+                        {g.for && forName && (
+                          <button
+                            type="button"
+                            onClick={() => scrollToActivity(g.for!)}
+                            className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-terracotta-500/10 text-terracotta-700 text-[10px] uppercase tracking-[0.16em] font-medium hover:bg-terracotta-500/18 transition-colors"
+                            title={forName}
+                          >
+                            <Activity size={9} strokeWidth={2.2} />
+                            <span className="normal-case tracking-normal text-[11px] font-normal">
+                              {t("gear_for_label")} {forName}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </section>
           )}
 
