@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-cream-50: #FBF7EC;
+  --color-cream-100: #F5EFE0;
+  --color-cream-200: #EDE3CB;
+  --color-cream-300: #DFD2B0;
+  --color-terracotta-400: #D87154;
+  --color-terracotta-500: #C45A3D;
+  --color-terracotta-600: #A8472D;
+  --color-terracotta-700: #8B3622;
+  --color-olive-400: #8A9A6B;
+  --color-olive-500: #6B7A4B;
+  --color-olive-600: #525E39;
+  --color-olive-700: #3D4729;
+  --color-sienna-500: #8B4513;
+  --color-sienna-600: #6F3710;
+  --color-ink-700: #4A3A30;
+  --color-ink-800: #2A1F1A;
+  --color-ink-900: #1A120E;
+  --color-gold-400: #D9A441;
+  --color-gold-500: #B8862C;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", "Georgia", ui-serif, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink-800);
+  background-color: var(--color-cream-50);
+  background-image:
+    radial-gradient(at 20% 0%, rgba(196, 90, 61, 0.06) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, rgba(107, 122, 75, 0.06) 0px, transparent 50%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+@layer components {
+  .section-title {
+    @apply font-serif text-4xl sm:text-5xl text-ink-900 leading-tight;
+  }
+
+  .section-eyebrow {
+    @apply uppercase tracking-[0.25em] text-xs font-medium text-terracotta-600 mb-3;
+  }
+
+  .underline-terracotta::after {
+    content: "";
+    display: block;
+    width: 3.5rem;
+    height: 2px;
+    background: var(--color-terracotta-500);
+    margin-top: 0.75rem;
+  }
+
+  .card-paper {
+    @apply bg-cream-50 border border-cream-300/70 rounded-2xl shadow-[0_1px_2px_rgba(42,31,26,0.04),0_8px_24px_-12px_rgba(42,31,26,0.12)];
+  }
+
+  .card-paper-hover {
+    @apply transition-all duration-300 hover:shadow-[0_2px_4px_rgba(42,31,26,0.06),0_16px_32px_-12px_rgba(42,31,26,0.18)] hover:-translate-y-0.5;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  .pill-olive {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-olive-500/10 text-olive-700;
+  }
+  .pill-terracotta {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-terracotta-500/10 text-terracotta-700;
+  }
+  .pill-gold {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-gold-500/10 text-sienna-600;
+  }
+  .pill-ink {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-ink-800/10 text-ink-800;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-terracotta-500 px-4 py-2 text-sm font-medium text-cream-50 transition-colors hover:bg-terracotta-600 focus:outline-none focus:ring-2 focus:ring-terracotta-500/40;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-cream-300 bg-cream-50/60 px-4 py-2 text-sm font-medium text-ink-800 transition-colors hover:bg-cream-100 hover:border-cream-300;
+  }
+
+  .icon-link {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium text-ink-700 hover:text-terracotta-600 transition-colors;
+  }
+}
+
+/* Leaflet popup styling override */
+.leaflet-popup-content-wrapper {
+  background: var(--color-cream-50) !important;
+  color: var(--color-ink-800) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--color-cream-300) !important;
+  box-shadow: 0 16px 32px -12px rgba(42, 31, 26, 0.2) !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--color-cream-50) !important;
+  border: 1px solid var(--color-cream-300) !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 240px !important;
+}
+
+.leaflet-container {
+  font-family: var(--font-sans) !important;
+  background: var(--color-cream-100) !important;
+}
