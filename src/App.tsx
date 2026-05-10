@@ -8,6 +8,7 @@ import MapView from "./components/MapView";
 import AttractionsGrid from "./components/AttractionsGrid";
 import StaysSection from "./components/StaysSection";
 import ServicesSection from "./components/ServicesSection";
+import FoodAndWineSection from "./components/FoodAndWineSection";
 import ChecklistSection from "./components/ChecklistSection";
 import TipsSection from "./components/TipsSection";
 import EmergencySection from "./components/EmergencySection";
@@ -62,6 +63,9 @@ export default function App() {
 
       <SectionOrnament />
       <ServicesSection />
+
+      <SectionOrnament />
+      <FoodAndWineSection />
 
       <SectionOrnament />
       <TipsSection />

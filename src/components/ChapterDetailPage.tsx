@@ -15,11 +15,21 @@ import {
   Lightbulb,
   AlertTriangle,
   AlertOctagon,
-  Info
+  Info,
+  Activity,
+  Backpack,
+  StickyNote
 } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
-import type { Day, DayActivity, ImageCredit, POI, Tip } from "../data/types";
+import type {
+  Day,
+  DayActivity,
+  Difficulty,
+  ImageCredit,
+  POI,
+  Tip
+} from "../data/types";
 import { navUrl } from "../lib/nav";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
@@ -136,6 +146,30 @@ function resolveSlides(day: Day, getPoi: (p: POI) => POI): ChapterSlide[] {
 }
 
 const SLIDE_DURATION_MS = 6500;
+
+const DIFFICULTY_DETAIL_STYLE: Record<
+  Difficulty,
+  { dot: string; text: string; bg: string; key: DictKey }
+> = {
+  easy: {
+    dot: "bg-olive-500",
+    text: "text-olive-700",
+    bg: "bg-olive-500/12",
+    key: "difficulty_easy"
+  },
+  moderate: {
+    dot: "bg-gold-500",
+    text: "text-sienna-600",
+    bg: "bg-gold-400/15",
+    key: "difficulty_moderate"
+  },
+  challenging: {
+    dot: "bg-terracotta-500",
+    text: "text-terracotta-700",
+    bg: "bg-terracotta-500/12",
+    key: "difficulty_challenging"
+  }
+};
 
 const SEVERITY_STYLES: Record<
   Tip["severity"],
@@ -481,6 +515,56 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
             </section>
           )}
 
+          {/* Day pack — what to bring for this specific day */}
+          {localDay.gear && localDay.gear.length > 0 && (
+            <section>
+              <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
+              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+                {t("gear_kicker")}
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-2.5">
+                {localDay.gear.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+                  >
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-olive-500/12 text-olive-700 flex items-center justify-center">
+                      <Backpack size={14} strokeWidth={1.8} />
+                    </span>
+                    <span className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-snug pt-0.5">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Day notes — money, timing, mood */}
+          {localDay.dayTips && localDay.dayTips.length > 0 && (
+            <section>
+              <SectionLabel eyebrow={t("daytips_eyebrow")} title={t("daytips_title")} />
+              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+                {t("daytips_kicker")}
+              </p>
+              <ul className="space-y-2.5">
+                {localDay.dayTips.map((line, i) => (
+                  <li
+                    key={i}
+                    className="relative ps-10 pe-4 py-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+                  >
+                    <span className="absolute start-3 top-3 w-7 h-7 rounded-full bg-gold-400/15 text-sienna-600 flex items-center justify-center">
+                      <StickyNote size={13} strokeWidth={1.8} />
+                    </span>
+                    <p className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-relaxed">
+                      {line}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {/* Tips */}
           {tips.length > 0 && (
             <section>
@@ -676,8 +760,18 @@ function ActivityRow({
                   )}
                 </div>
                 <div className="p-4 sm:p-5 flex flex-col">
-                  <div className="text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-                    {t("about_this_place")}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
+                      {t("about_this_place")}
+                    </div>
+                    {att.difficulty && (
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-[0.18em] font-medium ${DIFFICULTY_DETAIL_STYLE[att.difficulty].bg} ${DIFFICULTY_DETAIL_STYLE[att.difficulty].text}`}
+                      >
+                        <Activity size={10} strokeWidth={2.2} />
+                        {t(DIFFICULTY_DETAIL_STYLE[att.difficulty].key)}
+                      </div>
+                    )}
                   </div>
                   <h5 className="mt-1 font-serif text-lg text-ink-900 leading-tight">
                     {att.name}
@@ -688,6 +782,28 @@ function ActivityRow({
                   {(att.openingNote || att.bookingNote) && (
                     <div className="mt-3 text-xs text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug">
                       {att.openingNote || att.bookingNote}
+                    </div>
+                  )}
+                  {att.tips && att.tips.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-cream-300/70">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-olive-700 font-medium">
+                        <Lightbulb size={11} strokeWidth={1.9} />
+                        {t("insider_tips_label")}
+                      </div>
+                      <ul className="mt-2 space-y-1">
+                        {att.tips.map((tip, i) => (
+                          <li
+                            key={i}
+                            className="text-[12.5px] leading-snug text-ink-700/85 flex gap-2"
+                          >
+                            <span
+                              className="shrink-0 mt-[6px] w-1 h-1 rounded-full bg-terracotta-500/70"
+                              aria-hidden
+                            />
+                            <span>{tip}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                   <div className="mt-auto pt-4 flex flex-wrap gap-x-4 gap-y-2">

@@ -54,8 +54,11 @@ const unsplash = (photoId, w = 1600) =>
 
 const TARGETS = [
   // ---------- North attractions ----------
-  // Big SUP — group of people on paddle boards, by Brody Childs (Unsplash, free)
-  ["canyon-park.jpg",        { url: unsplash("photo-1731707485070-dbf45803f3b9") }],
+  // Big SUP — small boats threading a narrow turquoise gorge between sheer
+  // ridges (Takachiho Gorge, Japan, by Luo Jin Hong on Unsplash). Visually
+  // matches the Lima river canyon at Bagni di Lucca better than a flat-lake
+  // SUP shot — the whole point of Canyon Park is the canyon walls.
+  ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
   // Forest ropes course — rope bridges between tall trees (Unsplash, free)
   ["selva-buffardello.jpg",  { url: unsplash("photo-1775647423221-ac87d3ec338b") }],

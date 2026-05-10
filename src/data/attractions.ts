@@ -19,16 +19,23 @@ export const attractions: POI[] = [
       "An adventure park tucked into the Lima river gorge near Bagni di Lucca. The signature Big SUP experience puts the whole family on one giant paddleboard to glide through a narrow canyon of glowing turquoise water — calm enough for kids and unforgettable for adults. Book the XL/Big SUP slot ahead of time; spots are very limited per day.",
     image: "./images/canyon-park.jpg",
     imageCredit: {
-      author: "Brody Childs (Unsplash)",
+      author: "Luo Jin Hong (Unsplash)",
       license: "Unsplash License",
-      source: "https://unsplash.com/photos/V3xBoeOSQBk",
+      source: "https://unsplash.com/photos/1qJ_l5O4OXo",
       licenseUrl: "https://unsplash.com/license"
     },
     website: "https://www.canyonpark.it/",
     address: "Località il Pianello, Bagni di Lucca (LU)",
     coords: [44.0167, 10.5833],
     tags: ["water", "extreme", "family"],
-    bookingNote: "Reserve Big SUP / XL SUP slot in advance — limited daily availability."
+    bookingNote: "Reserve Big SUP / XL SUP slot in advance — limited daily availability.",
+    difficulty: "easy",
+    tips: [
+      "Book the Big SUP slot the night before — only a handful per day",
+      "All ages welcome on the SUP; life vests provided for everyone",
+      "Phones stay onshore — bring a small dry bag for keys & sun cream",
+      "Quick-dry swimwear and water shoes; expect to be soaked"
+    ]
   },
   {
     id: "ponte-del-diavolo",
@@ -43,7 +50,13 @@ export const attractions: POI[] = [
     website: "https://www.visittuscany.com/en/attractions/ponte-della-maddalena-devils-bridge/",
     address: "Borgo a Mozzano (LU)",
     coords: [43.9869, 10.5475],
-    tags: ["culture", "view", "family"]
+    tags: ["culture", "view", "family"],
+    difficulty: "easy",
+    tips: [
+      "Free, open 24/7 — a 10-minute photo stop is plenty",
+      "Tiny lay-by just north of the bridge; arrive early or late",
+      "Best photo from the river bank, not the bridge itself"
+    ]
   },
   {
     id: "selva-buffardello",
@@ -63,7 +76,14 @@ export const attractions: POI[] = [
     website: "https://www.selvadelbuffardello.it/",
     address: "Loc. Buffardello, Villa Collemandina (LU)",
     coords: [44.1644, 10.4339],
-    tags: ["extreme", "family", "nature"]
+    tags: ["extreme", "family", "nature"],
+    difficulty: "moderate",
+    tips: [
+      "100 cm minimum for the dedicated kid course; 140 cm for the high routes",
+      "Closed-toe shoes are mandatory — no sandals",
+      "Helmet, harness and safety briefing included in the ticket",
+      "Shaded chestnut forest — bring a long-sleeve top, can be cool"
+    ]
   },
   {
     id: "soft-rafting-serchio",
@@ -83,7 +103,14 @@ export const attractions: POI[] = [
     website: "https://www.canyonpark.it/",
     address: "Garfagnana (LU)",
     coords: [44.0742, 10.4853],
-    tags: ["water", "family", "nature"]
+    tags: ["water", "family", "nature"],
+    difficulty: "easy",
+    tips: [
+      "Family raft is around 2 hours including swim breaks",
+      "Min age usually 6; under-12s wear life vests the whole way",
+      "Wear swimwear, bring a dry change of clothes for the drive home",
+      "August water levels are gentle — splashy, not scary"
+    ]
   },
   {
     id: "pisa",
@@ -105,7 +132,14 @@ export const attractions: POI[] = [
     address: "Piazza del Duomo, 56126 Pisa (PI)",
     coords: [43.7229, 10.3966],
     tags: ["culture", "view", "family"],
-    openingNote: "ZTL all around the square — park outside the walls and walk."
+    openingNote: "ZTL all around the square — park outside the walls and walk.",
+    difficulty: "easy",
+    tips: [
+      "Park at 'Via Pietrasantina' (€2/hr) — free shuttle bus to the square",
+      "30–45 min is enough for the photo + gelato",
+      "Tower climb is timed-ticket only — book online before you go",
+      "Best 'leaning hand' photo from the lawn opposite the cathedral"
+    ]
   },
   {
     id: "abetone-monte-gomito",
@@ -126,7 +160,14 @@ export const attractions: POI[] = [
     website: "https://www.abetonefuniviaombrellino.it/",
     address: "Abetone Cutigliano (PT)",
     coords: [44.1344, 10.6717],
-    tags: ["nature", "view", "family"]
+    tags: ["nature", "view", "family"],
+    difficulty: "easy",
+    tips: [
+      "Bring a light jacket — 12–15 °C cooler at the top, even in August",
+      "First gondola ~09:30, last descent ~17:00 — don't miss it",
+      "Round-trip ticket ~€18 adult / cheaper for kids; cash works",
+      "Pack a picnic — mountain restaurants close mid-afternoon"
+    ]
   },
   {
     id: "lucca-walls",
@@ -141,7 +182,14 @@ export const attractions: POI[] = [
     website: "https://en.wikipedia.org/wiki/Walls_of_Lucca",
     address: "Mura Urbane di Lucca, Piazzale Verdi (LU)",
     coords: [43.8443, 10.5050],
-    tags: ["family", "culture", "nature", "view"]
+    tags: ["family", "culture", "nature", "view"],
+    difficulty: "easy",
+    tips: [
+      "Rentals from ~€4/hr near Porta San Pietro & Piazzale Verdi",
+      "Whole 4.2 km loop ~30–45 min easy pedalling, totally flat",
+      "Child seats, tagalongs and trailers are standard at every shop",
+      "Park outside the walls — the historic centre is full ZTL"
+    ]
   },
   {
     id: "sentierelsa",
@@ -156,7 +204,14 @@ export const attractions: POI[] = [
     website: "https://www.sentierelsa.it/",
     address: "Colle di Val d'Elsa (SI)",
     coords: [43.4197, 11.1289],
-    tags: ["water", "nature", "family"]
+    tags: ["water", "nature", "family"],
+    difficulty: "moderate",
+    tips: [
+      "Closed-toe water shoes are mandatory — barefoot is dangerous on the rocks",
+      "Free entry; no toilets at the trailhead — go in town first",
+      "Cliff-jumping at Diborrato is for strong swimmers only",
+      "Bring a dry bag for phones — there's no totally dry stretch"
+    ]
   },
 
   // ---------- SOUTH ----------
@@ -174,7 +229,14 @@ export const attractions: POI[] = [
     address: "Porto Santo Stefano, Monte Argentario (GR)",
     coords: [42.4361, 11.1167],
     tags: ["water", "family", "view"],
-    bookingNote: "Book a Gozzo / gommone for 22 Aug well in advance."
+    bookingNote: "Book a Gozzo / gommone for 22 Aug well in advance.",
+    difficulty: "easy",
+    tips: [
+      "No license needed for engines under 40 hp — quick safety briefing only",
+      "Marine fuel is pricey: budget €40–80 on top of the rental",
+      "Bring snorkel masks, reef-safe sun cream, a cooler & lots of water",
+      "Check the wind forecast — strong meltemi means rough water; reschedule if needed"
+    ]
   },
   {
     id: "cala-del-gesso",
@@ -193,7 +255,14 @@ export const attractions: POI[] = [
     },
     address: "Monte Argentario (GR)",
     coords: [42.3642, 11.1233],
-    tags: ["water", "nature", "view"]
+    tags: ["water", "nature", "view"],
+    difficulty: "moderate",
+    tips: [
+      "Easiest by boat — anchor offshore and swim in",
+      "Land path is steep, ~30 min down and a sweaty 40 min back up",
+      "White pebbles, no sand — water shoes save your feet",
+      "No facilities of any kind: bring your own water and snacks"
+    ]
   },
   {
     id: "acqua-village-follonica",
@@ -213,7 +282,14 @@ export const attractions: POI[] = [
     website: "https://www.acquavillage.it/follonica/",
     address: "Via Sanzio, 58022 Follonica (GR)",
     coords: [42.9183, 10.7717],
-    tags: ["water", "extreme", "family"]
+    tags: ["water", "extreme", "family"],
+    difficulty: "easy",
+    tips: [
+      "Buy tickets online — meaningfully cheaper than at the gate",
+      "Lockers ~€5 with key deposit; bring a €1 coin",
+      "Outside food is allowed in the picnic area — pack a cooler",
+      "Arrive at opening (10:00) — slide queues triple after lunch"
+    ]
   },
   {
     id: "maremma-horseback",
@@ -228,7 +304,14 @@ export const attractions: POI[] = [
     website: "https://www.parco-maremma.it/en/",
     address: "Parco della Maremma, Alberese (GR)",
     coords: [42.6647, 11.0883],
-    tags: ["nature", "family"]
+    tags: ["nature", "family"],
+    difficulty: "easy",
+    tips: [
+      "Long pants (jeans) and closed-toe shoes are non-negotiable",
+      "Min age usually 6 for trail rides; younger kids get a led pony",
+      "Book the 09:00 slot — by 11 it's brutally hot in the open",
+      "Helmets always provided; bring a wide-brim hat for after"
+    ]
   },
   {
     id: "pitigliano",
@@ -243,7 +326,14 @@ export const attractions: POI[] = [
     website: "https://visit.pitigliano.org/en/",
     address: "Pitigliano (GR)",
     coords: [42.6353, 11.6700],
-    tags: ["culture", "village", "view"]
+    tags: ["culture", "village", "view"],
+    difficulty: "easy",
+    tips: [
+      "Park at the big lot opposite the panorama viewpoint",
+      "Synagogue + Jewish quarter combo ticket ~€6 — closes early Friday",
+      "Don't leave without a slice of 'sfratto dei Goym' (local Jewish-Italian dessert)",
+      "Cool, shaded alleys make this the ideal late-afternoon walk"
+    ]
   },
   {
     id: "via-cava-san-giuseppe",
@@ -258,7 +348,14 @@ export const attractions: POI[] = [
     website: "https://www.parcodeglietruschi.it/en/",
     address: "Pitigliano (GR)",
     coords: [42.6313, 11.6722],
-    tags: ["culture", "cave", "nature"]
+    tags: ["culture", "cave", "nature"],
+    difficulty: "moderate",
+    tips: [
+      "Free, no ticket — trailhead just below the old town",
+      "Wear grippy shoes — the tufa is shaded but slick when damp",
+      "1-hour comfortable loop; longer if you take the Sovana extension",
+      "Surprisingly cool down inside — bring a light layer"
+    ]
   },
   {
     id: "vitozza",
@@ -273,7 +370,14 @@ export const attractions: POI[] = [
     website: "https://visit.pitigliano.org/en/",
     address: "San Quirico, Sorano (GR)",
     coords: [42.6864, 11.7464],
-    tags: ["cave", "nature", "culture"]
+    tags: ["cave", "nature", "culture"],
+    difficulty: "challenging",
+    tips: [
+      "Bring a head-lamp per person — the chambers are properly dark",
+      "1.5–2 hr round trip on uneven, sometimes overgrown ground",
+      "Wild, atmospheric, almost no signage — keep close to the trail",
+      "Wear long pants & closed shoes; brambles & rough stone"
+    ]
   },
   {
     id: "saturnia",
@@ -289,7 +393,14 @@ export const attractions: POI[] = [
     address: "Cascate del Mulino, Saturnia, Manciano (GR)",
     coords: [42.6483, 11.5089],
     tags: ["water", "nature", "view"],
-    openingNote: "Free, open 24/7. Arrive by 07:30 to beat crowds and heat."
+    openingNote: "Free, open 24/7. Arrive by 07:30 to beat crowds and heat.",
+    difficulty: "easy",
+    tips: [
+      "100 % free, 24/7, no facilities, no lockers — leave valuables in the car",
+      "Sulphur stains light fabrics — wear darker swimwear and rinse after",
+      "Bring sandals you don't mind smelling of eggs for a few days",
+      "Arrive by 07:30; by 10 it's elbow-to-elbow and parking is gone"
+    ]
   },
   {
     id: "lago-di-bolsena",
@@ -304,7 +415,14 @@ export const attractions: POI[] = [
     website: "https://www.comune.bolsena.vt.it/",
     address: "Bolsena (VT)",
     coords: [42.6447, 11.9847],
-    tags: ["water", "family", "nature"]
+    tags: ["water", "family", "nature"],
+    difficulty: "easy",
+    tips: [
+      "Free public beaches at Bolsena & Capodimonte; pay loungers also available",
+      "Lake water is cooler than the August coast — refreshing, not freezing",
+      "Pedalo & SUP rental at the marina; ice-cream & snack bars right there",
+      "Lake-fish 'coregone' is the local specialty — try at a marina trattoria"
+    ]
   },
   {
     id: "civita-di-bagnoregio",
@@ -319,7 +437,14 @@ export const attractions: POI[] = [
     website: "https://www.civitadibagnoregio.cloud/en/",
     address: "Civita di Bagnoregio, Bagnoregio (VT)",
     coords: [42.6275, 12.1131],
-    tags: ["culture", "village", "view"]
+    tags: ["culture", "village", "view"],
+    difficulty: "moderate",
+    tips: [
+      "Footbridge ticket ~€5/adult, cash only — kids under 6 free",
+      "The walk back is properly steep — strollers will struggle",
+      "Best light & cooler temps in late afternoon; village glows at golden hour",
+      "Tiny grocery on the bridge side — BYO water for the climb"
+    ]
   }
 ];
 

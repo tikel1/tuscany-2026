@@ -14,6 +14,7 @@ const TABS: { id: string; key: DictKey; Icon: typeof CalendarDays }[] = [
 
 const MORE_LINKS: { id: string; key: DictKey }[] = [
   { id: "attractions", key: "nav_attractions" },
+  { id: "food",        key: "nav_food" },
   { id: "tips",        key: "nav_tips" },
   { id: "checklist",   key: "nav_checklist" },
   { id: "emergency",   key: "nav_emergency" }
@@ -21,7 +22,7 @@ const MORE_LINKS: { id: string; key: DictKey }[] = [
 
 const MORE_LABEL: Record<"en" | "he", string> = { en: "More", he: "עוד" };
 
-const SECTION_IDS = ["trip", "map", "attractions", "stays", "services", "tips", "checklist", "emergency"];
+const SECTION_IDS = ["trip", "map", "attractions", "stays", "services", "food", "tips", "checklist", "emergency"];
 
 export default function MobileBottomNav() {
   const t = useT();
@@ -38,7 +39,7 @@ export default function MobileBottomNav() {
         if (el && el.offsetTop <= fromTop) current = id;
       }
       // collapse "more" categories under MORE tab
-      if (["attractions", "tips", "checklist", "emergency"].includes(current)) {
+      if (["attractions", "food", "tips", "checklist", "emergency"].includes(current)) {
         setActive("more");
       } else {
         setActive(current);

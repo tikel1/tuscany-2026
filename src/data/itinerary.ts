@@ -28,7 +28,20 @@ export const itinerary: Day[] = [
         description: "Around 3.5 h drive. Late swim in the pool, light dinner, early to bed."
       }
     ],
-    driveNotes: "FCO → Larciano ≈ 3 h 30 min via A1 + A11"
+    driveNotes: "FCO → Larciano ≈ 3 h 30 min via A1 + A11",
+    gear: [
+      "Comfortable travel layers (FCO is air-conditioned, the car will be hot)",
+      "Slip-on shoes for security",
+      "Refillable water bottles (empty for security, fill at FCO)",
+      "Sunglasses & a hat — late August sun is brutal at the rest stops",
+      "Swimwear in the carry-on, not the hold (in case bags arrive late)"
+    ],
+    dayTips: [
+      "Keep €40–50 cash for autostrada tolls (A1 + A11)",
+      "Confirm with the rental whether the tank policy is full-to-full or full-to-empty",
+      "Italian rentals require an International Driving Permit — keep it with the licence",
+      "Aim to clear the FCO area before 16:00 to dodge Friday rush southbound"
+    ]
   },
   {
     dayNumber: 2,
@@ -60,7 +73,21 @@ export const itinerary: Day[] = [
         tag: "extreme"
       }
     ],
-    driveNotes: "Larciano ↔ Bagni di Lucca ≈ 1 h"
+    driveNotes: "Larciano ↔ Bagni di Lucca ≈ 1 h",
+    gear: [
+      "Quick-dry swimwear under your clothes — saves a wet changing room",
+      "Closed-toe water shoes for the SUP & rocks",
+      "Dry bag for phone, keys & wallet",
+      "Closed-toe trainers for the ropes course (no sandals!)",
+      "A change of dry clothes for the drive home",
+      "Reef-safe sunscreen & a wide-brim hat"
+    ],
+    dayTips: [
+      "Big SUP slot fills up fast — book by phone the night before",
+      "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
+      "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
+      "Cash for the small adventure-park snack bar"
+    ]
   },
   {
     dayNumber: 3,
@@ -92,7 +119,20 @@ export const itinerary: Day[] = [
         tag: "family"
       }
     ],
-    driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min"
+    driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
+    gear: [
+      "Swimwear under your clothes for the rafting",
+      "Water shoes; dry change of clothes & towels in a sealed bag",
+      "Light cycling-friendly shoes for the Lucca walls",
+      "Sun hats (zero shade in Piazza dei Miracoli at midday)",
+      "Cash for parking, bike rental & gelato"
+    ],
+    dayTips: [
+      "Park Pisa at 'Via Pietrasantina' (€2/hr) — free shuttle to the square",
+      "Lucca walls bike rentals from €4/hr; bring an ID for the deposit",
+      "Tower climb at Pisa is timed — only book if you actually want the climb",
+      "Late-afternoon light on the walls is the postcard moment — aim for 17:00"
+    ]
   },
   {
     dayNumber: 4,
@@ -120,7 +160,20 @@ export const itinerary: Day[] = [
         description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south."
       }
     ],
-    driveNotes: "Larciano ↔ Abetone ≈ 1 h"
+    driveNotes: "Larciano ↔ Abetone ≈ 1 h",
+    gear: [
+      "Long sleeves & a light jacket — 12–15 °C cooler at 1,900 m",
+      "Long trousers for the ridge walk (sunburn at altitude is real)",
+      "Hiking-grade trail shoes, not sandals",
+      "A proper picnic kit: bread, cheese, fruit, water, a knife",
+      "Sunscreen, sunglasses & a windbreaker for the gondola ride"
+    ],
+    dayTips: [
+      "First gondola ~09:30, last descent ~17:00 — set a phone alarm",
+      "Mountain restaurants close mid-afternoon; pack the picnic instead",
+      "Cash for the gondola — card sometimes flaky at the booth",
+      "Use the cool half of the day for the ridge walk; descend by 15:00 to start packing"
+    ]
   },
   {
     dayNumber: 5,
@@ -144,7 +197,20 @@ export const itinerary: Day[] = [
         description: "Settle into the villa, swim in the private pool, decompress."
       }
     ],
-    driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min"
+    driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min",
+    gear: [
+      "Closed-toe water shoes — mandatory at Sentierelsa",
+      "Swimwear under your clothes; quick-change towel",
+      "Dry bag for phones (the river is the trail)",
+      "Light hiking shoes for the trail back from the river",
+      "Snacks & water for the long drive south"
+    ],
+    dayTips: [
+      "Fuel up before the A1 entry — autostrada gas is +20–30 c/L",
+      "Confirm Cortevecchia check-in window with the host before you leave",
+      "No public toilets at Sentierelsa trailhead — go in Colle di Val d'Elsa first",
+      "Plan an early-evening arrival; you don't want to discover the gravel road in the dark"
+    ]
   },
   {
     dayNumber: 6,
@@ -167,7 +233,21 @@ export const itinerary: Day[] = [
         tag: "water"
       }
     ],
-    driveNotes: "Cortevecchia ↔ Porto Santo Stefano ≈ 1 h 15 min"
+    driveNotes: "Cortevecchia ↔ Porto Santo Stefano ≈ 1 h 15 min",
+    gear: [
+      "Swimwear (a dry second set for the drive home)",
+      "Snorkel masks — bring your own; rentals are pricey at the marina",
+      "Reef-safe sunscreen, rash guards & sun-shirts (shade on the boat is minimal)",
+      "Floating phone case + waterproof dry bag",
+      "A cooler with sandwiches, fruit, lots of water — no shops at the coves",
+      "Cash for the harbour parking & marine fuel top-up"
+    ],
+    dayTips: [
+      "No license needed for engines under 40 hp (your rental qualifies)",
+      "Marine fuel runs €40–80 extra — keep cash for the dock pump",
+      "Anchor at Cala del Gesso early — by midday it fills with day boats",
+      "Strong meltemi wind = waves: check forecast the night before, reschedule if rough"
+    ]
   },
   {
     dayNumber: 7,
@@ -185,7 +265,21 @@ export const itinerary: Day[] = [
         tag: "extreme"
       }
     ],
-    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min"
+    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
+    gear: [
+      "Two sets of swimwear per person (one dry for the drive)",
+      "Waterproof phone case",
+      "Swim shirts / rash guards for kids — sun is harsh on the slides",
+      "Water shoes — pavement around the wave pool gets very hot",
+      "Beach towels (rentals are paid)",
+      "A €1 coin for the locker"
+    ],
+    dayTips: [
+      "Online tickets meaningfully cheaper — buy them the night before",
+      "Outside food allowed in the picnic zone; cooler bag = saves €€€",
+      "Arrive at opening (10:00) — slide queues triple after 13:00",
+      "Polynesian show times are posted at the gate; don't miss the evening one"
+    ]
   },
   {
     dayNumber: 8,
@@ -216,6 +310,20 @@ export const itinerary: Day[] = [
         attractionId: "vitozza",
         tag: "cave"
       }
+    ],
+    gear: [
+      "Long pants (jeans) for the horseback ride",
+      "Closed-toe shoes for everything today — riding, caves, cobbles",
+      "Sun hats & long-sleeve light shirts for the open ride",
+      "Headlamps if doing Vitozza (one per person)",
+      "A light layer for the cool tufa corridors",
+      "Water bottles and snacks — gaps between food stops"
+    ],
+    dayTips: [
+      "Riding helmets are provided; minimum age usually 6",
+      "Pitigliano synagogue closes early on Friday — go before lunch if it's a Friday",
+      "Vie Cave footing is shaded but uneven — grippy soles only",
+      "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano"
     ]
   },
   {
@@ -248,6 +356,20 @@ export const itinerary: Day[] = [
         attractionId: "civita-di-bagnoregio",
         tag: "culture"
       }
+    ],
+    gear: [
+      "Swimwear under your clothes for Saturnia (skip the queue)",
+      "Microfibre towel — quick to dry between stops",
+      "Sandals you don't mind smelling sulphury for a day",
+      "Beach mat for Bolsena's pebble shore",
+      "Comfortable walking shoes for the steep Civita climb",
+      "Sun hats, sunscreen, refilled water bottles"
+    ],
+    dayTips: [
+      "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
+      "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
+      "Civita footbridge ticket ~€5/adult, cash only",
+      "Eat lunch by 13:30 — village kitchens close hard at 14:30"
     ]
   },
   {
@@ -275,6 +397,19 @@ export const itinerary: Day[] = [
         title: "Take-off",
         description: "Arrivederci, Tuscany. Buon viaggio!"
       }
+    ],
+    gear: [
+      "Light layers — FCO is air-conditioned & the flight is cold",
+      "Passports + International Driving Permit easily reachable",
+      "Empty refillable bottle (fill after security)",
+      "Snacks for the kids — early flights, sleepy mood",
+      "All gels & liquids re-decanted to ≤ 100 ml"
+    ],
+    dayTips: [
+      "Bag drop opens exactly 2 h before departure — be there at 03:30",
+      "Return the rental with a full tank — closest 24/7 pump is on Via Portuense",
+      "Allow 10–15 min for the rental shuttle from car return to terminal",
+      "Pre-pay airport tolls online to skip the boom-gate queue at exit"
     ]
   }
 ];

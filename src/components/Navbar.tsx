@@ -8,6 +8,7 @@ const links: { id: string; key: DictKey }[] = [
   { id: "stays", key: "nav_stays" },
   { id: "attractions", key: "nav_attractions" },
   { id: "services", key: "nav_services" },
+  { id: "food", key: "nav_food" },
   { id: "tips", key: "nav_tips" },
   { id: "checklist", key: "nav_checklist" }
 ];

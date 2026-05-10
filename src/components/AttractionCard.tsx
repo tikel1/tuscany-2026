@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, MapPin, Navigation, Plus, X } from "lucide-react";
-import type { POI } from "../data/types";
+import {
+  ExternalLink,
+  MapPin,
+  Navigation,
+  Plus,
+  X,
+  Lightbulb,
+  Activity
+} from "lucide-react";
+import type { Difficulty, POI } from "../data/types";
 import { useMapFocus } from "../lib/mapContext";
 import { navUrl } from "../lib/nav";
 import { useT, type DictKey } from "../lib/dict";
@@ -18,6 +26,32 @@ const TAG_KEY: Record<string, DictKey> = {
   view: "tag_view",
   cave: "tag_cave",
   village: "tag_village"
+};
+
+/** Tone for the difficulty pill — green for easy, amber for moderate,
+ *  terracotta for challenging. */
+const DIFFICULTY_STYLE: Record<
+  Difficulty,
+  { dotClass: string; textClass: string; bgClass: string; key: DictKey }
+> = {
+  easy: {
+    dotClass: "bg-olive-500",
+    textClass: "text-olive-700",
+    bgClass: "bg-olive-500/12",
+    key: "difficulty_easy"
+  },
+  moderate: {
+    dotClass: "bg-gold-500",
+    textClass: "text-sienna-600",
+    bgClass: "bg-gold-400/15",
+    key: "difficulty_moderate"
+  },
+  challenging: {
+    dotClass: "bg-terracotta-500",
+    textClass: "text-terracotta-700",
+    bgClass: "bg-terracotta-500/12",
+    key: "difficulty_challenging"
+  }
 };
 
 export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
@@ -60,12 +94,26 @@ export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
         {regionLabel}
       </div>
 
-      {/* Top corner: first tag */}
-      {firstTag && (
-        <div className="absolute top-3 end-3 px-2.5 py-1 rounded-full bg-cream-50/90 text-ink-900 text-[10px] uppercase tracking-[0.16em] font-medium">
-          {t(TAG_KEY[firstTag] ?? "tag_view")}
-        </div>
-      )}
+      {/* Top corner: first tag + difficulty pill (stacked) */}
+      <div className="absolute top-3 end-3 flex flex-col items-end gap-1.5">
+        {firstTag && (
+          <div className="px-2.5 py-1 rounded-full bg-cream-50/90 text-ink-900 text-[10px] uppercase tracking-[0.16em] font-medium">
+            {t(TAG_KEY[firstTag] ?? "tag_view")}
+          </div>
+        )}
+        {poi.difficulty && (
+          <div
+            className={`px-2.5 py-1 rounded-full bg-cream-50/90 ${DIFFICULTY_STYLE[poi.difficulty].textClass} text-[10px] uppercase tracking-[0.16em] font-medium flex items-center gap-1.5`}
+            title={t("difficulty_label")}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${DIFFICULTY_STYLE[poi.difficulty].dotClass}`}
+              aria-hidden
+            />
+            {t(DIFFICULTY_STYLE[poi.difficulty].key)}
+          </div>
+        )}
+      </div>
 
       {/* Bottom gradient + title (always visible) */}
       <div className="absolute inset-x-0 bottom-0 pointer-events-none">
@@ -153,12 +201,44 @@ export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
             </div>
 
             <div className="px-5 py-4 overflow-y-auto flex-1">
+              {poi.difficulty && (
+                <div
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3 text-[10px] uppercase tracking-[0.18em] font-medium ${DIFFICULTY_STYLE[poi.difficulty].bgClass} ${DIFFICULTY_STYLE[poi.difficulty].textClass}`}
+                >
+                  <Activity size={11} strokeWidth={2} />
+                  <span>{t("difficulty_label")}</span>
+                  <span className="opacity-60" aria-hidden>·</span>
+                  <span>{t(DIFFICULTY_STYLE[poi.difficulty].key)}</span>
+                </div>
+              )}
               <p className="text-[14px] leading-relaxed text-ink-700/90">
                 {poi.description}
               </p>
               {(poi.openingNote || poi.bookingNote) && (
                 <div className="mt-4 text-xs text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug">
                   {poi.openingNote || poi.bookingNote}
+                </div>
+              )}
+              {poi.tips && poi.tips.length > 0 && (
+                <div className="mt-5 pt-4 border-t border-cream-300/70">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-olive-700 font-medium">
+                    <Lightbulb size={12} strokeWidth={1.9} />
+                    {t("insider_tips_label")}
+                  </div>
+                  <ul className="mt-2.5 space-y-1.5">
+                    {poi.tips.map((tip, i) => (
+                      <li
+                        key={i}
+                        className="text-[13px] leading-snug text-ink-700/85 flex gap-2"
+                      >
+                        <span
+                          className="shrink-0 mt-[6px] w-1.5 h-1.5 rounded-full bg-terracotta-500/70"
+                          aria-hidden
+                        />
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>

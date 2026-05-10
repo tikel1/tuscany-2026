@@ -112,6 +112,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
   if (loading) {
     return (
       <div
+        data-compact-ui
         className={`px-3 py-2 inline-flex items-center gap-2 text-xs ${
           isGlass
             ? "rounded-full bg-cream-50/15 backdrop-blur-md text-cream-50/85 border border-cream-50/20"
@@ -138,11 +139,11 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
   const dayTempMuted = isGlass ? "text-cream-50/65" : "text-ink-700/55";
 
   return (
-    <div className={wrapperClasses}>
+    <div className={wrapperClasses} data-compact-ui>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between gap-3 px-3.5 py-2 text-left"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left"
         aria-expanded={open}
       >
         <div className="flex items-center gap-3 sm:gap-5 min-w-0 overflow-x-auto scrollbar-hide">
@@ -158,7 +159,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
                 <span className={`text-sm font-semibold tabular-nums ${tempStrong}`}>
                   {w.current !== null ? `${Math.round(w.current)}°` : "—"}
                 </span>
-                <span className={`text-xs tabular-nums ${tempMuted}`}>
+                <span className={`text-[11px] tabular-nums ${tempMuted}`}>
                   {w.days[0]?.tMax}°/{w.days[0]?.tMin}°
                 </span>
               </div>
@@ -169,7 +170,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
           {open ? (lang === "he" ? "סגור" : "Hide") : (lang === "he" ? "תחזית" : "Forecast")}
         </span>
         <span
-          className={`transition-transform shrink-0 ${open ? "rotate-180" : ""} ${
+          className={`transition-transform shrink-0 text-[12px] leading-none ${open ? "rotate-180" : ""} ${
             isGlass ? "text-cream-50/70" : "text-ink-700/50"
           }`}
           aria-hidden
@@ -179,12 +180,12 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
       </button>
 
       {open && (
-        <div className={`border-t px-3.5 py-3 grid grid-cols-2 gap-x-6 ${dividerClass}`}>
+        <div className={`border-t px-3 py-3 grid grid-cols-2 gap-x-4 sm:gap-x-6 ${dividerClass}`}>
           {SPOTS.map(spot => {
             const w = data[spot.key];
             if (!w) return null;
             return (
-              <div key={spot.key} className="flex justify-between gap-2">
+              <div key={spot.key} className="flex justify-between gap-1.5">
                 {w.days.slice(0, 4).map((d, i) => (
                   <div key={d.date} className="flex flex-col items-center gap-1 text-[11px]">
                     <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i, lang, t("today"))}</span>

@@ -58,6 +58,7 @@ export const DICT = {
   nav_stays: { en: "Stays", he: "לינה" },
   nav_attractions: { en: "Places", he: "מקומות" },
   nav_services: { en: "Neighborhood", he: "סביבה" },
+  nav_food: { en: "Food", he: "אוכל" },
   nav_tips: { en: "Tips", he: "טיפים" },
   nav_checklist: { en: "List", he: "רשימה" },
   nav_emergency: { en: "Emergency", he: "חירום" },
@@ -291,6 +292,51 @@ export const DICT = {
   weather_error: { en: "Weather unavailable", he: "מזג אוויר לא זמין" },
   weather_high_low: { en: "H {high}° / L {low}°", he: "מקס׳ {high}° / מינ׳ {low}°" },
   weather_now: { en: "Now {temp}°", he: "כעת {temp}°" },
+
+  /* ---------- Difficulty ---------- */
+  difficulty_label: { en: "Difficulty", he: "רמת קושי" },
+  difficulty_easy: { en: "Easy", he: "קל" },
+  difficulty_moderate: { en: "Moderate", he: "בינוני" },
+  difficulty_challenging: { en: "Challenging", he: "מאתגר" },
+
+  /* ---------- Per-attraction insider tips ---------- */
+  insider_tips_label: { en: "Insider tips", he: "טיפים פנימיים" },
+
+  /* ---------- Per-day gear & dayTips on the chapter page ---------- */
+  gear_eyebrow: { en: "Pack the day", he: "תארזו ליום" },
+  gear_title: { en: "What to bring", he: "מה לקחת" },
+  gear_kicker: {
+    en: "A small kit, picked for the day's mix",
+    he: "ערכה קטנה שנבחרה לפי המיקס של היום"
+  },
+  daytips_eyebrow: { en: "Notes for the day", he: "הערות ליום" },
+  daytips_title: { en: "Good to know", he: "טוב לדעת" },
+  daytips_kicker: {
+    en: "Money, timing, mood — the things you'd whisper at breakfast",
+    he: "כסף, תזמון, מצב רוח — הדברים שלוחשים ליד ארוחת הבוקר"
+  },
+
+  /* ---------- Food & Wine ---------- */
+  food_eyebrow: { en: "At the table", he: "ליד השולחן" },
+  food_title: { en: "What Tuscany tastes like", he: "ככה טוסקנה אמורה לטעום" },
+  food_kicker: {
+    en: "Signature dishes, local pasta and the wineries to visit",
+    he: "מנות מסמלות, פסטות מקומיות והיקבים שכדאי לבקר"
+  },
+  food_dishes_label: { en: "Signature dishes", he: "מנות מסמלות" },
+  food_wineries_label: { en: "Wineries to visit", he: "יקבים לבקר" },
+  food_filter_north: { en: "North · Larciano", he: "צפון · לרצ'יאנו" },
+  food_filter_south: { en: "South · Maremma", he: "דרום · מרמה" },
+  food_filter_tuscany: { en: "Across Tuscany", he: "כל טוסקנה" },
+  food_try_it: { en: "Try it at", he: "לטעום ב" },
+  food_appellation: { en: "Appellation", he: "ייעוד יין" },
+  food_book_visit: { en: "Book the visit", he: "הזמן ביקור" },
+  food_dish_pasta: { en: "Pasta", he: "פסטה" },
+  food_dish_starter: { en: "Starter", he: "מנה ראשונה" },
+  food_dish_main: { en: "Main", he: "מנה עיקרית" },
+  food_dish_dessert: { en: "Dessert", he: "קינוח" },
+  food_dish_drink: { en: "Drink", he: "משקה" },
+  food_dish_snack: { en: "Snack", he: "נשנוש" },
 
   /* ---------- Footer ---------- */
   footer_made_with: {

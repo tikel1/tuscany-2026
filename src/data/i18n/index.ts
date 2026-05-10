@@ -6,7 +6,9 @@ import type {
   Day,
   Tip,
   ChecklistItem,
-  EmergencyGroup
+  EmergencyGroup,
+  Dish,
+  Winery
 } from "../types";
 import { attractionsHE } from "./attractions.he";
 import { staysHE } from "./stays.he";
@@ -15,6 +17,8 @@ import { itineraryHE } from "./itinerary.he";
 import { tipsHE } from "./tips.he";
 import { checklistHE } from "./checklist.he";
 import { emergencyHE } from "./emergency.he";
+import { dishesHE } from "./dishes.he";
+import { wineriesHE } from "./wineries.he";
 
 function mergeIfDefined<T extends object>(
   base: T,
@@ -58,7 +62,9 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
     title: he.title,
     subtitle: he.subtitle,
     base: he.base,
-    driveNotes: he.driveNotes
+    driveNotes: he.driveNotes,
+    gear: he.gear,
+    dayTips: he.dayTips
   });
   if (!he.activities) return baseMerged;
   const activities = d.activities.map((a, i) => {
@@ -111,6 +117,18 @@ export function localizeEmergencyGroup(
   return { ...group, title: he.title ?? group.title, items };
 }
 
+/* ---------- Food & Wine ---------- */
+
+export function localizeDish(d: Dish, lang: "en" | "he"): Dish {
+  if (lang === "en") return d;
+  return mergeIfDefined(d, dishesHE[d.id]);
+}
+
+export function localizeWinery(w: Winery, lang: "en" | "he"): Winery {
+  if (lang === "en") return w;
+  return mergeIfDefined(w, wineriesHE[w.id]);
+}
+
 /* ---------- Hooks (most components use these) ---------- */
 
 export function useLocalizePoi() {
@@ -141,4 +159,12 @@ export function useLocalizeEmergencyGroup() {
   const { lang } = useLang();
   return (group: EmergencyGroup, idx: number) =>
     localizeEmergencyGroup(group, idx, lang);
+}
+export function useLocalizeDish() {
+  const { lang } = useLang();
+  return (d: Dish) => localizeDish(d, lang);
+}
+export function useLocalizeWinery() {
+  const { lang } = useLang();
+  return (w: Winery) => localizeWinery(w, lang);
 }
