@@ -160,6 +160,9 @@ export interface Dish {
   description: string;
   /** Short hint at where to try it — "Trattoria Verdi in Manciano". */
   tryIt?: string;
+  /** Optional CC photo of the dish, served from /public/images/. */
+  image?: string;
+  imageCredit?: ImageCredit;
 }
 
 export interface Winery {
@@ -174,6 +177,9 @@ export interface Winery {
   coords?: [number, number];
   /** "Book ahead — small family operation" etc. */
   bookingNote?: string;
+  /** Optional CC photo — vineyard, cellar, the village it sits in. */
+  image?: string;
+  imageCredit?: ImageCredit;
 }
 
 export interface ChecklistItem {

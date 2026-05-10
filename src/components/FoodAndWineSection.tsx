@@ -15,6 +15,8 @@ import {
 import { dishes } from "../data/dishes";
 import { wineries } from "../data/wineries";
 import Section from "./Section";
+import PoiImage from "./PoiImage";
+import PhotoCredit from "./PhotoCredit";
 import { useT, type DictKey } from "../lib/dict";
 import { useLocalizeDish, useLocalizeWinery } from "../data/i18n";
 import { navUrl } from "../lib/nav";
@@ -110,37 +112,64 @@ export default function FoodAndWineSection() {
                 return (
                   <li
                     key={dish.id}
-                    className="card-paper p-4 sm:p-5 flex flex-col"
+                    className="card-paper overflow-hidden flex flex-col"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className={`shrink-0 w-9 h-9 rounded-full bg-cream-100 flex items-center justify-center ${meta.tone}`}
-                      >
-                        <Icon size={16} strokeWidth={1.7} />
-                      </span>
-                      <div className="text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-                        {t(meta.key)}
-                      </div>
-                    </div>
-                    <h4 className="mt-3 font-serif text-[20px] sm:text-[22px] text-ink-900 leading-tight">
-                      {dish.name}
-                    </h4>
-                    {dish.italianName && (
-                      <div className="mt-0.5 font-serif italic text-terracotta-700/85 text-[13.5px]">
-                        {dish.italianName}
-                      </div>
-                    )}
-                    <p className="mt-2.5 text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
-                      {dish.description}
-                    </p>
-                    {dish.tryIt && (
-                      <div className="mt-3 pt-3 border-t border-cream-300/70 text-[12px] text-ink-700/75">
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-olive-700 font-medium me-1.5">
-                          {t("food_try_it")}
+                    {/* Photo banner — falls back to a styled placeholder
+                        when the dish has no CC photo. */}
+                    <div className="relative h-32 sm:h-36 bg-cream-200 overflow-hidden">
+                      <PoiImage
+                        src={dish.image}
+                        alt={dish.name}
+                        region={dish.region === "tuscany" ? "north" : dish.region}
+                      />
+                      {/* tiny gradient so the category chip stays legible */}
+                      <div
+                        className="pointer-events-none absolute inset-x-0 top-0 h-12"
+                        style={{
+                          background:
+                            "linear-gradient(to bottom, rgba(42,31,26,0.42), rgba(42,31,26,0))"
+                        }}
+                      />
+                      <div className="absolute top-2 start-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-cream-50/90 backdrop-blur-sm">
+                        <Icon
+                          size={11}
+                          strokeWidth={1.9}
+                          className={meta.tone}
+                        />
+                        <span className="text-[9px] uppercase tracking-[0.2em] text-ink-800 font-medium">
+                          {t(meta.key)}
                         </span>
-                        {dish.tryIt}
                       </div>
-                    )}
+                      {dish.image && dish.imageCredit && (
+                        <div className="absolute bottom-1.5 end-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
+                          <PhotoCredit
+                            credit={dish.imageCredit}
+                            variant="light"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                      <h4 className="font-serif text-[20px] sm:text-[22px] text-ink-900 leading-tight">
+                        {dish.name}
+                      </h4>
+                      {dish.italianName && (
+                        <div className="mt-0.5 font-serif italic text-terracotta-700/85 text-[13.5px]">
+                          {dish.italianName}
+                        </div>
+                      )}
+                      <p className="mt-2.5 text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
+                        {dish.description}
+                      </p>
+                      {dish.tryIt && (
+                        <div className="mt-3 pt-3 border-t border-cream-300/70 text-[12px] text-ink-700/75">
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-olive-700 font-medium me-1.5">
+                            {t("food_try_it")}
+                          </span>
+                          {dish.tryIt}
+                        </div>
+                      )}
+                    </div>
                   </li>
                 );
               })}
@@ -160,59 +189,79 @@ export default function FoodAndWineSection() {
                 return (
                   <li
                     key={w.id}
-                    className="card-paper p-4 sm:p-5 border-s-4 border-terracotta-500/45"
+                    className="card-paper overflow-hidden border-s-4 border-terracotta-500/45 grid sm:grid-cols-[140px_1fr]"
                   >
-                    <div className="flex items-start gap-3">
-                      <span className="shrink-0 w-9 h-9 rounded-full bg-terracotta-500/10 text-terracotta-700 flex items-center justify-center">
-                        <Grape size={16} strokeWidth={1.7} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="font-serif text-[19px] sm:text-[20px] text-ink-900 leading-tight">
-                          {w.name}
-                        </h4>
-                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-olive-700 font-medium">
-                          {t("food_appellation")} · {w.appellation}
+                    {/* Side photo on sm+, top photo on mobile.
+                        The PoiImage component falls back to the styled
+                        placeholder for any winery without a CC image. */}
+                    <div className="relative aspect-[4/3] sm:aspect-auto bg-cream-200 overflow-hidden">
+                      <PoiImage
+                        src={w.image}
+                        alt={w.name}
+                        region={w.region}
+                      />
+                      {w.image && w.imageCredit && (
+                        <div className="absolute bottom-1.5 end-1.5 px-1.5 py-0.5 rounded-full bg-ink-900/50 backdrop-blur-sm">
+                          <PhotoCredit
+                            credit={w.imageCredit}
+                            variant="light"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4 sm:p-5 flex flex-col">
+                      <div className="flex items-start gap-2.5">
+                        <span className="shrink-0 w-7 h-7 rounded-full bg-terracotta-500/10 text-terracotta-700 flex items-center justify-center">
+                          <Grape size={13} strokeWidth={1.8} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-serif text-[19px] sm:text-[20px] text-ink-900 leading-tight">
+                            {w.name}
+                          </h4>
+                          <div className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-olive-700 font-medium">
+                            {t("food_appellation")} · {w.appellation}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <p className="mt-3 text-[13.5px] sm:text-[14px] text-ink-700/85 leading-relaxed">
-                      {w.description}
-                    </p>
-                    {w.address && (
-                      <div className="mt-2 text-[12px] text-ink-700/55">
-                        {w.address}
-                      </div>
-                    )}
-                    {w.bookingNote && (
-                      <div className="mt-3 text-[12px] text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug flex items-start gap-2">
-                        <CalendarCheck
-                          size={13}
-                          className="mt-[1px] shrink-0"
-                        />
-                        <span>{w.bookingNote}</span>
-                      </div>
-                    )}
-                    <div className="mt-3 pt-3 border-t border-cream-300/70 flex flex-wrap gap-x-4 gap-y-1.5">
-                      {w.website && (
-                        <a
-                          href={w.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="icon-link"
-                        >
-                          <ExternalLink size={12} /> {t("website")}
-                        </a>
+                      <p className="mt-3 text-[13.5px] sm:text-[14px] text-ink-700/85 leading-relaxed">
+                        {w.description}
+                      </p>
+                      {w.address && (
+                        <div className="mt-2 text-[12px] text-ink-700/55">
+                          {w.address}
+                        </div>
                       )}
-                      {w.coords && (
-                        <a
-                          href={navUrl(w.coords)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="icon-link"
-                        >
-                          <Navigation size={12} /> {t("navigate")}
-                        </a>
+                      {w.bookingNote && (
+                        <div className="mt-3 text-[12px] text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug flex items-start gap-2">
+                          <CalendarCheck
+                            size={13}
+                            className="mt-[1px] shrink-0"
+                          />
+                          <span>{w.bookingNote}</span>
+                        </div>
                       )}
+                      <div className="mt-3 pt-3 border-t border-cream-300/70 flex flex-wrap gap-x-4 gap-y-1.5">
+                        {w.website && (
+                          <a
+                            href={w.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="icon-link"
+                          >
+                            <ExternalLink size={12} /> {t("website")}
+                          </a>
+                        )}
+                        {w.coords && (
+                          <a
+                            href={navUrl(w.coords)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="icon-link"
+                          >
+                            <Navigation size={12} /> {t("navigate")}
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </li>
                 );

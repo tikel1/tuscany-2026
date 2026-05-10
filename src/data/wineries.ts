@@ -17,7 +17,13 @@ export const wineries: Winery[] = [
     website: "https://www.capezzana.it/en/",
     address: "Via di Capezzana 100, Carmignano (PO)",
     coords: [43.8233, 11.0242],
-    bookingNote: "Email or book online a few days ahead — small group tastings."
+    bookingNote: "Email or book online a few days ahead — small group tastings.",
+    image: "/images/wine-capezzana.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Carmignano_(wine)"
+    }
   },
   {
     id: "win-n-bacchereto",
@@ -29,7 +35,13 @@ export const wineries: Winery[] = [
     website: "https://www.fattoriadibacchereto.it/",
     address: "Via Fontemorana 179, Carmignano (PO)",
     coords: [43.8275, 11.0167],
-    bookingNote: "Call ahead — sometimes closed for harvest in late August."
+    bookingNote: "Call ahead — sometimes closed for harvest in late August.",
+    image: "/images/wine-bacchereto.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://commons.wikimedia.org/"
+    }
   },
   {
     id: "win-n-artimino",
@@ -41,7 +53,13 @@ export const wineries: Winery[] = [
     website: "https://www.artimino.com/en/",
     address: "Via le Poggia 10, Artimino, Carmignano (PO)",
     coords: [43.7978, 11.0489],
-    bookingNote: "Online booking; tasting rooms open most afternoons."
+    bookingNote: "Online booking; tasting rooms open most afternoons.",
+    image: "/images/wine-artimino.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Villa_di_Artimino"
+    }
   },
   {
     id: "win-n-fattoria-petrognano",
@@ -53,7 +71,13 @@ export const wineries: Winery[] = [
     website: "https://www.fattoriapetrognano.it/",
     address: "Via di Petrognano 3, Pomino (FI)",
     coords: [43.8911, 11.4231],
-    bookingNote: "Walk-ins for tastings most afternoons; call ahead in August."
+    bookingNote: "Walk-ins for tastings most afternoons; call ahead in August.",
+    image: "/images/wine-petrognano.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Chianti"
+    }
   },
 
   // ============== SOUTH — around Cortevecchia ==============
@@ -69,7 +93,13 @@ export const wineries: Winery[] = [
     website: "https://www.elisabettageppetti.com/en/",
     address: "Loc. Pereta, Magliano in Toscana (GR)",
     coords: [42.5742, 11.3522],
-    bookingNote: "Book by email a week ahead — Elisabetta's team does a great visit."
+    bookingNote: "Book by email a week ahead — Elisabetta's team does a great visit.",
+    image: "/images/wine-le-pupille.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Morellino_di_Scansano"
+    }
   },
   {
     id: "win-s-roccapesta",
@@ -81,7 +111,13 @@ export const wineries: Winery[] = [
     website: "https://www.roccapesta.com/en/",
     address: "Loc. Banditaccia, Scansano (GR)",
     coords: [42.6864, 11.3389],
-    bookingNote: "Walk-ins welcome; call ahead in peak August."
+    bookingNote: "Walk-ins welcome; call ahead in peak August.",
+    image: "/images/wine-roccapesta.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Scansano"
+    }
   },
   {
     id: "win-s-tenuta-ammiraglia",
@@ -93,7 +129,13 @@ export const wineries: Winery[] = [
     website: "https://www.frescobaldi.com/wineries/tenuta-ammiraglia/",
     address: "Loc. Pian dei Bichi, Magliano in Toscana (GR)",
     coords: [42.5878, 11.2942],
-    bookingNote: "Online bookings, English-speaking staff, easy with kids."
+    bookingNote: "Online bookings, English-speaking staff, easy with kids.",
+    image: "/images/wine-tenuta-ammiraglia.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Magliano_in_Toscana"
+    }
   },
   {
     id: "win-s-cantine-pitigliano",
@@ -105,7 +147,13 @@ export const wineries: Winery[] = [
     website: "https://www.cantinadipitigliano.it/",
     address: "Via N. Ciacci 974, Pitigliano (GR)",
     coords: [42.6303, 11.6736],
-    bookingNote: "Drop in during shop hours — no booking needed."
+    bookingNote: "Drop in during shop hours — no booking needed.",
+    image: "/images/wine-cantine-pitigliano.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Bianco_di_Pitigliano"
+    }
   },
   {
     id: "win-s-sassotondo",
@@ -117,7 +165,13 @@ export const wineries: Winery[] = [
     website: "https://www.sassotondo.it/en/",
     address: "Loc. Pian di Conati 52, Sovana, Sorano (GR)",
     coords: [42.6661, 11.6256],
-    bookingNote: "Email ahead — Edoardo & Carla pour personally."
+    bookingNote: "Email ahead — Edoardo & Carla pour personally.",
+    image: "/images/wine-sassotondo.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Sovana"
+    }
   }
 ];
 
