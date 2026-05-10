@@ -77,7 +77,13 @@ export const attractions: POI[] = [
     description:
       "Skip the city centre and aim straight for Piazza dei Miracoli. The Leaning Tower, the cathedral, and the baptistery sit together on bright green lawn — one of the most photogenic 30-minute stops in Italy. Park outside the walls (the area is full ZTL) and walk in. Excellent gelato just off the square.",
     image: "./images/pisa.jpg",
-    imageCredit: wmCredit("Piazza_dei_Miracoli"),
+    imageCredit: {
+      author: "Saffron Blaze",
+      license: "CC BY-SA 3.0",
+      source:
+        "https://commons.wikimedia.org/wiki/File:The_Leaning_Tower_of_Pisa_SB.jpeg",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
     website: "https://www.opapisa.it/en/",
     address: "Piazza del Duomo, 56126 Pisa (PI)",
     coords: [43.7229, 10.3966],
@@ -93,7 +99,13 @@ export const attractions: POI[] = [
     description:
       "Abetone is the Apennine ski village that turns into a high-altitude playground in summer. Ride the new gondola to Monte Gomito (about 1,892 m) for cool air, panoramic ridge walks, and easy family trails through pine forest. A perfect midday escape from the heat below.",
     image: "./images/abetone.jpg",
-    imageCredit: wmCredit("Abetone"),
+    imageCredit: {
+      author: "Wikimedia Commons contributors",
+      license: "CC BY-SA 4.0",
+      source:
+        "https://commons.wikimedia.org/wiki/File:Foresta_piazzale_Abetone.jpg",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
     website: "https://www.abetonefuniviaombrellino.it/",
     address: "Abetone Cutigliano (PT)",
     coords: [44.1344, 10.6717],

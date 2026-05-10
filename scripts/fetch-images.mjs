@@ -54,8 +54,12 @@ const TARGETS = [
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
   ["selva-buffardello.jpg",  { wiki: "Castelnuovo_di_Garfagnana" }],
   ["serchio-rafting.jpg",    { wiki: "Serchio" }],
-  ["pisa.jpg",               { wiki: "Piazza_dei_Miracoli" }],
-  ["abetone.jpg",            { wiki: "Abetone" }],
+  // Use the actual Leaning Tower (Wikipedia Featured Picture by Saffron Blaze)
+  // instead of a generic Piazza dei Miracoli wide shot.
+  ["pisa.jpg",               { commons: "File:The_Leaning_Tower_of_Pisa_SB.jpeg", width: 2000 }],
+  // Abetone forest scenery (the chestnut forest the village is named for) —
+  // far more evocative than the village street the Wikipedia summary returns.
+  ["abetone.jpg",            { commons: "File:Foresta_piazzale_Abetone.jpg", width: 2000 }],
   ["sentierelsa.jpg",        { wiki: "Elsa_(river)" }],
 
   // ---------- South attractions ----------
@@ -107,17 +111,20 @@ async function getWikiLeadImage(title) {
   return null;
 }
 
-async function getCommonsFile(fileTitle) {
-  // Use the Commons API to resolve File:Foo.jpg to a direct URL
+async function getCommonsFile(fileTitle, width) {
+  // Use the Commons API to resolve File:Foo.jpg to a direct URL.
+  // If width is provided, request a thumb at that width (server-side resize).
+  const widthParam = width ? `&iiurlwidth=${width}` : "";
   const api =
-    `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&titles=` +
+    `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url${widthParam}&format=json&origin=*&titles=` +
     encodeURIComponent(fileTitle);
   const res = await fetch(api, { headers: { "User-Agent": UA } });
   if (!res.ok) throw new Error(`Commons ${fileTitle} HTTP ${res.status}`);
   const data = await res.json();
   const pages = data?.query?.pages ?? {};
   const page = Object.values(pages)[0];
-  return page?.imageinfo?.[0]?.url ?? null;
+  const info = page?.imageinfo?.[0];
+  return info?.thumburl ?? info?.url ?? null;
 }
 
 async function downloadTo(url, dest) {
@@ -130,7 +137,7 @@ async function downloadTo(url, dest) {
 
 async function resolveUrl(spec) {
   if (spec.url) return spec.url;
-  if (spec.commons) return await getCommonsFile(spec.commons);
+  if (spec.commons) return await getCommonsFile(spec.commons, spec.width);
   if (spec.wiki) return await getWikiLeadImage(spec.wiki);
   return null;
 }
