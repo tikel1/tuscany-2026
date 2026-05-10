@@ -9,13 +9,17 @@ export const stays: Stay[] = [
     shortDescription: "Private Tuscan home, base for the northern half of the trip.",
     description:
       "Your base for the active northern week. Larciano sits between Pistoia and Lucca, putting you within an easy drive of Bagni di Lucca, Pisa, Abetone and the Sentierelsa river walk.",
-    image: "./images/stay-larciano.jpg",
+    image: "./images/stay-larciano-sunflowers.png",
+    gallery: [
+      "./images/stay-larciano-vineyard.png",
+      "./images/stay-larciano-pool.png",
+      "./images/stay-larciano-pool-dusk.png"
+    ],
     imageCredit: {
-      author: "Vignaccia76",
-      license: "CC BY-SA 3.0",
-      source:
-        "https://commons.wikimedia.org/wiki/File:Larciano_-_panoramica.JPG",
-      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/"
+      author: "Host photo",
+      license: "Airbnb listing",
+      source: "https://www.airbnb.com/rooms/1554711",
+      licenseUrl: "https://www.airbnb.com/help/article/2855"
     },
     website: "https://www.airbnb.com/rooms/1554711",
     bookingLink: "https://www.airbnb.com/rooms/1554711",
@@ -38,13 +42,17 @@ export const stays: Stay[] = [
     shortDescription: "Restored farm estate near Saturnia — your southern base.",
     description:
       "A 2,000-hectare organic estate in the rolling Maremma hills, just 12 km from the Saturnia hot springs. Apartment-style stays with private pool, perfect for an evening with a private chef. Remote setting — bring everything you need from Manciano.",
-    image: "./images/stay-cortevecchia.jpg",
+    image: "./images/stay-cortevecchia-poolview.png",
+    gallery: [
+      "./images/stay-cortevecchia-villa.png",
+      "./images/stay-cortevecchia-pool-deck.png",
+      "./images/stay-cortevecchia-aerial.png"
+    ],
     imageCredit: {
-      author: "LigaDue",
-      license: "CC BY-SA 4.0",
-      source:
-        "https://commons.wikimedia.org/wiki/File:Semproniano_-_panorama.jpg",
-      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/"
+      author: "Tenuta Cortevecchia",
+      license: "Property photo",
+      source: "https://tenutacortevecchia.it/en/photo-gallery/",
+      licenseUrl: "https://tenutacortevecchia.it/en/"
     },
     website: "https://tenutacortevecchia.it/en/",
     bookingLink: "https://tenutacortevecchia.it/en/",

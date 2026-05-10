@@ -4,6 +4,8 @@ import { ExternalLink, AlertCircle, Briefcase, ClipboardCheck } from "lucide-rea
 import { bookingChecklist, packingChecklist } from "../data/checklist";
 import Section from "./Section";
 import type { ChecklistItem } from "../data/types";
+import { useT } from "../lib/dict";
+import { useLocalizeChecklistItem } from "../data/i18n";
 
 const STORAGE_KEY = "tuscany-checklist-v1";
 
@@ -24,9 +26,12 @@ function ChecklistList({
   checked: Record<string, boolean>;
   onToggle: (id: string) => void;
 }) {
+  const t = useT();
+  const localizeChecklistItem = useLocalizeChecklistItem();
   return (
     <ul className="space-y-3">
-      {items.map(item => {
+      {items.map(rawItem => {
+        const item = localizeChecklistItem(rawItem);
         const isDone = !!checked[item.id];
         return (
           <li
@@ -49,7 +54,7 @@ function ChecklistList({
                   </span>
                   {item.urgent && !isDone && (
                     <span className="pill pill-terracotta">
-                      <AlertCircle size={10} /> book early
+                      <AlertCircle size={10} /> {t("checklist_urgent")}
                     </span>
                   )}
                 </div>
@@ -63,7 +68,7 @@ function ChecklistList({
                     rel="noopener noreferrer"
                     className="icon-link mt-1.5"
                   >
-                    <ExternalLink size={11} /> Open link
+                    <ExternalLink size={11} /> {t("open_external")}
                   </a>
                 )}
               </div>
@@ -76,6 +81,7 @@ function ChecklistList({
 }
 
 export default function ChecklistSection() {
+  const t = useT();
   const [tab, setTab] = useState<"booking" | "packing">("booking");
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
@@ -101,10 +107,9 @@ export default function ChecklistSection() {
   return (
     <Section
       id="checklist"
-      eyebrow="The list"
-      title="Things to book, things to pack"
-      kicker="Tick as you go. The list remembers."
-      intro="A pre-trip booking list and a what-fits-in-the-suitcase list. Your progress is saved on this device — no account, no nagging."
+      eyebrow={t("checklist_eyebrow")}
+      title={t("checklist_title")}
+      kicker={t("checklist_kicker")}
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-2">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
@@ -117,7 +122,7 @@ export default function ChecklistSection() {
             }`}
           >
             <ClipboardCheck size={14} />
-            Pre-trip bookings
+            {t("checklist_booking")}
             <span className={`text-xs ${tab === "booking" ? "text-cream-200" : "text-ink-700/60"}`}>
               {bookingChecklist.filter(i => checked[i.id]).length}/{bookingChecklist.length}
             </span>
@@ -131,7 +136,7 @@ export default function ChecklistSection() {
             }`}
           >
             <Briefcase size={14} />
-            Packing
+            {t("checklist_packing")}
             <span className={`text-xs ${tab === "packing" ? "text-cream-200" : "text-ink-700/60"}`}>
               {packingChecklist.filter(i => checked[i.id]).length}/{packingChecklist.length}
             </span>
@@ -171,8 +176,7 @@ export default function ChecklistSection() {
           </div>
         </div>
         <div className="text-sm text-ink-700/85">
-          <span className="font-semibold text-ink-900">{doneCount}</span> of{" "}
-          {list.length} done · {list.length - doneCount === 0 ? "you're set" : `${list.length - doneCount} to go`}
+          {t("checklist_progress", { done: doneCount, total: list.length })}
         </div>
       </div>
 

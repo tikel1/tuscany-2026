@@ -4,6 +4,7 @@ import L from "leaflet";
 import { Navigation } from "lucide-react";
 import type { POI } from "../data/types";
 import { navUrl } from "../lib/nav";
+import { useT } from "../lib/dict";
 
 const COLOR_BY_CATEGORY: Record<string, string> = {
   stay: "#C45A3D",
@@ -66,10 +67,11 @@ function FitBounds({ pois }: { pois: POI[] }) {
 }
 
 export default function MiniMap({ pois }: { pois: POI[] }) {
+  const t = useT();
   if (pois.length === 0) {
     return (
       <div className="h-64 sm:h-80 rounded-2xl bg-cream-100 ring-1 ring-cream-300/70 flex items-center justify-center text-ink-700/55 text-sm font-serif italic">
-        No locations on the map for this chapter.
+        {t("no_locations_for_chapter")}
       </div>
     );
   }
@@ -116,7 +118,7 @@ export default function MiniMap({ pois }: { pois: POI[] }) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs font-medium text-terracotta-600 hover:text-terracotta-700 mt-1.5"
                   >
-                    <Navigation size={11} /> Navigate
+                    <Navigation size={11} /> {t("navigate")}
                   </a>
                 </div>
               </Popup>

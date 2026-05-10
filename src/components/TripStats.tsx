@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Moon, Map, Compass, Waves, Mountain, Castle } from "lucide-react";
+import { useT } from "../lib/dict";
+import { useLang } from "../lib/i18n";
 
 interface Stat {
   value: number;
   suffix?: string;
-  label: string;
+  label: { en: string; he: string };
   Icon: typeof Moon;
 }
 
 const STATS: Stat[] = [
-  { value: 9,   label: "nights",      Icon: Moon },
-  { value: 17,  label: "attractions", Icon: Compass },
-  { value: 2,   label: "bases",       Icon: Map },
-  { value: 6,   label: "swims",       Icon: Waves },
-  { value: 1900, suffix: " m", label: "highest peak", Icon: Mountain },
-  { value: 4,   label: "old towns",   Icon: Castle }
+  { value: 9,    label: { en: "nights",       he: "לילות" },     Icon: Moon },
+  { value: 17,   label: { en: "attractions",  he: "אטרקציות" },  Icon: Compass },
+  { value: 2,    label: { en: "bases",        he: "בסיסים" },    Icon: Map },
+  { value: 6,    label: { en: "swims",        he: "שחיות" },     Icon: Waves },
+  { value: 1900, suffix: " m", label: { en: "highest peak", he: "פסגה" }, Icon: Mountain },
+  { value: 4,    label: { en: "old towns",    he: "ערים עתיקות" }, Icon: Castle }
 ];
 
 function easeOutCubic(t: number) {
@@ -47,6 +49,7 @@ function useCountUp(target: number, durationMs: number, start: boolean) {
 }
 
 function StatCell({ stat, fire }: { stat: Stat; fire: boolean }) {
+  const { lang } = useLang();
   const v = useCountUp(stat.value, 1100, fire);
   const Icon = stat.Icon;
   const display = v >= 1000 ? `${(v / 1000).toFixed(1).replace(/\.0$/, "")}k` : `${v}`;
@@ -66,13 +69,14 @@ function StatCell({ stat, fire }: { stat: Stat; fire: boolean }) {
         </span>
       </div>
       <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-ink-700/65 font-medium">
-        {stat.label}
+        {stat.label[lang]}
       </div>
     </div>
   );
 }
 
 export default function TripStats() {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-30px" });
 
@@ -87,14 +91,14 @@ export default function TripStats() {
       <div className="flex items-center gap-3 mb-3 px-1">
         <span className="h-px w-6 bg-terracotta-500/60" aria-hidden />
         <span className="text-[10px] uppercase tracking-[0.28em] font-medium text-terracotta-600">
-          By the numbers
+          {t("trip_stats_eyebrow")}
         </span>
       </div>
       <div className="card-paper overflow-hidden">
         <div className="-mx-px overflow-x-auto scrollbar-hide">
           <div className="flex sm:grid sm:grid-cols-6 divide-x divide-cream-300/70 min-w-max sm:min-w-0">
             {STATS.map(s => (
-              <StatCell key={s.label} stat={s} fire={inView} />
+              <StatCell key={s.label.en} stat={s} fire={inView} />
             ))}
           </div>
         </div>

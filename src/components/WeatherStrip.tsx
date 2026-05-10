@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 import { Cloud, CloudRain, Sun, CloudSun, Loader2 } from "lucide-react";
+import { useT } from "../lib/dict";
+import { useLang, type Lang } from "../lib/i18n";
+
+const SPOT_LABEL: Record<"north" | "south", { en: string; he: string }> = {
+  north: { en: "Larciano", he: "לרצ'יאנו" },
+  south: { en: "Saturnia", he: "סאטורניה" }
+};
 
 interface DayForecast {
   date: string;
@@ -28,9 +35,13 @@ function iconFor(code: number, size = 14) {
   return <CloudRain size={size} className="text-olive-500" />;
 }
 
-function dayLabel(iso: string, idx: number): string {
-  if (idx === 0) return "Today";
+function dayLabel(iso: string, idx: number, lang: Lang, todayLabel: string): string {
+  if (idx === 0) return todayLabel;
   const d = new Date(iso + "T12:00:00");
+  if (lang === "he") {
+    const heShort = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+    return heShort[d.getDay()];
+  }
   return d.toLocaleDateString("en-GB", { weekday: "short" });
 }
 
@@ -39,6 +50,8 @@ interface Props {
 }
 
 export default function WeatherStrip({ variant = "paper" }: Props = {}) {
+  const t = useT();
+  const { lang } = useLang();
   const [data, setData] = useState<Record<string, RegionWeather> | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -105,7 +118,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
             : "card-paper text-ink-700/70"
         }`}
       >
-        <Loader2 className="animate-spin" size={12} /> Weather…
+        <Loader2 className="animate-spin" size={12} /> {t("weather_loading")}
       </div>
     );
   }
@@ -140,7 +153,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
               <div key={spot.key} className="flex items-center gap-1.5 shrink-0">
                 {iconFor(w.days[0]?.code ?? 0, 14)}
                 <span className={`text-[10px] uppercase tracking-[0.16em] font-medium ${labelText}`}>
-                  {spot.label}
+                  {SPOT_LABEL[spot.key][lang]}
                 </span>
                 <span className={`text-sm font-semibold tabular-nums ${tempStrong}`}>
                   {w.current !== null ? `${Math.round(w.current)}°` : "—"}
@@ -153,7 +166,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
           })}
         </div>
         <span className={`text-[10px] uppercase tracking-[0.18em] font-medium shrink-0 hidden sm:inline ${triggerHint}`}>
-          {open ? "Hide" : "Forecast"}
+          {open ? (lang === "he" ? "סגור" : "Hide") : (lang === "he" ? "תחזית" : "Forecast")}
         </span>
         <span
           className={`transition-transform shrink-0 ${open ? "rotate-180" : ""} ${
@@ -174,7 +187,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
               <div key={spot.key} className="flex justify-between gap-2">
                 {w.days.slice(0, 4).map((d, i) => (
                   <div key={d.date} className="flex flex-col items-center gap-1 text-[11px]">
-                    <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i)}</span>
+                    <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i, lang, t("today"))}</span>
                     {iconFor(d.code, 13)}
                     <span className={`font-medium tabular-nums ${dayTempStrong}`}>
                       {d.tMax}°

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Map } from "lucide-react";
+import { useT } from "../lib/dict";
 
 export default function FloatingMapButton() {
+  const t = useT();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -26,11 +28,11 @@ export default function FloatingMapButton() {
       onClick={() =>
         document.getElementById("map")?.scrollIntoView({ behavior: "smooth", block: "start" })
       }
-      className="fixed z-30 right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 inline-flex items-center gap-2 rounded-full bg-ink-900 text-cream-50 px-4 py-3 shadow-lg shadow-ink-900/30 active:scale-95 transition-transform"
-      aria-label="Jump to map"
+      className="fixed z-30 end-4 sm:end-6 md:end-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 inline-flex items-center gap-2 rounded-full bg-ink-900 text-cream-50 px-4 py-3 shadow-lg shadow-ink-900/30 active:scale-95 transition-transform"
+      aria-label={t("open_map")}
     >
       <Map size={16} />
-      <span className="text-sm font-medium">Map</span>
+      <span className="text-sm font-medium">{t("nav_map")}</span>
     </button>
   );
 }

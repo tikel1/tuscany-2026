@@ -1,32 +1,38 @@
 import { useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route } from "lucide-react";
+import { Home, Star, Utensils, ShoppingCart, Fuel, Plane, Navigation, ExternalLink, Maximize2, Route, Sparkles } from "lucide-react";
 import { attractions } from "../data/attractions";
 import { stays } from "../data/stays";
 import { services } from "../data/services";
 import type { POI, Category } from "../data/types";
 import Section from "./Section";
 import { navUrl } from "../lib/nav";
+import { useT, type DictKey } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import { useLocalizePoi } from "../data/i18n";
 
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl: unknown })._getIconUrl;
 
 interface CategoryConfig {
   id: Category;
-  label: string;
+  labelKey: DictKey;
   color: string;
   bg: string;
   Icon: typeof Home;
 }
 
+/* "Tuscan terra & sea" palette — earth tones throughout with one
+   calmed dusk-blue accent for the airport. Designed to sit on top of
+   the Stamen Watercolor base without clashing. */
 const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
-  stay:        { id: "stay",        label: "Stays",        color: "#C45A3D", bg: "#C45A3D", Icon: Home },
-  attraction:  { id: "attraction",  label: "Attractions",  color: "#D9A441", bg: "#D9A441", Icon: Star },
-  restaurant:  { id: "restaurant",  label: "Restaurants",  color: "#6B7A4B", bg: "#6B7A4B", Icon: Utensils },
-  supermarket: { id: "supermarket", label: "Supermarkets", color: "#3B6FB6", bg: "#3B6FB6", Icon: ShoppingCart },
-  gas:         { id: "gas",         label: "Gas",          color: "#B8862C", bg: "#B8862C", Icon: Fuel },
-  airport:     { id: "airport",     label: "Airport",      color: "#7A4FB6", bg: "#7A4FB6", Icon: Plane },
-  hospital:    { id: "hospital",    label: "Hospital",     color: "#A8472D", bg: "#A8472D", Icon: Plane }
+  stay:        { id: "stay",        labelKey: "cat_stay",        color: "#A23E2A", bg: "#A23E2A", Icon: Home },         // warm brick
+  attraction:  { id: "attraction",  labelKey: "cat_attraction",  color: "#C68A2A", bg: "#C68A2A", Icon: Star },         // burnished bronze
+  restaurant:  { id: "restaurant",  labelKey: "cat_restaurant",  color: "#5C7244", bg: "#5C7244", Icon: Utensils },     // cypress green
+  supermarket: { id: "supermarket", labelKey: "cat_supermarket", color: "#587A8E", bg: "#587A8E", Icon: ShoppingCart }, // soft slate
+  gas:         { id: "gas",         labelKey: "cat_gas",         color: "#8B6F4A", bg: "#8B6F4A", Icon: Fuel },         // caramel sienna
+  airport:     { id: "airport",     labelKey: "cat_airport",     color: "#3D4F65", bg: "#3D4F65", Icon: Plane },        // twilight indigo
+  hospital:    { id: "hospital",    labelKey: "cat_hospital",    color: "#8C2E25", bg: "#8C2E25", Icon: Plane }         // deep oxblood
 };
 
 function makeIcon(cat: Category, isHero = false): L.DivIcon {
@@ -92,11 +98,18 @@ const AIRPORT_POI: POI = {
   coords: [41.8003, 12.2389]
 };
 
+const AIRPORT_POI_HE: POI = {
+  ...AIRPORT_POI,
+  name: "רומא פיומיצ'ינו — FCO",
+  description: "נמל התעופה הבינלאומי על שם ליאונרדו דה וינצ'י. נחיתה ב־17.8, המראה ב־26.8 בשעה 05:00.",
+  shortDescription: "שדה התעופה — נחיתה והמראה."
+};
+
 // The trip's big movements between bases (lat, lon)
 type RouteSegment = {
   id: string;
-  label: string;
-  day: string;
+  labelKey: DictKey;
+  dayKey: DictKey;
   color: string;
   coords: [number, number][];
 };
@@ -104,9 +117,9 @@ type RouteSegment = {
 const ROUTE_SEGMENTS: RouteSegment[] = [
   {
     id: "arrival",
-    label: "Day 1 · Land in Rome, drive north",
-    day: "Mon · 17 Aug",
-    color: "#C45A3D",
+    labelKey: "map_seg_arrival",
+    dayKey: "map_seg_arrival_short",
+    color: "#A23E2A", // brick — matches Stays
     coords: [
       AIRPORT_POI.coords,
       [42.30, 12.10],
@@ -116,9 +129,9 @@ const ROUTE_SEGMENTS: RouteSegment[] = [
   },
   {
     id: "transfer",
-    label: "Day 5 · Transfer to the south, via Sentierelsa",
-    day: "Fri · 21 Aug",
-    color: "#D9A441",
+    labelKey: "map_seg_transfer",
+    dayKey: "map_seg_transfer_short",
+    color: "#C68A2A", // bronze — matches Attractions
     coords: [
       [43.8267, 10.8978],
       [43.4720, 11.1700],
@@ -127,9 +140,9 @@ const ROUTE_SEGMENTS: RouteSegment[] = [
   },
   {
     id: "departure",
-    label: "Day 9–10 · Final loop to Fiumicino",
-    day: "Tue/Wed · 25–26 Aug",
-    color: "#6B7A4B",
+    labelKey: "map_seg_departure",
+    dayKey: "map_seg_departure_short",
+    color: "#5C7244", // cypress — matches Restaurants
     coords: [
       [42.6919, 11.5378],
       [42.6275, 11.7989],
@@ -177,16 +190,49 @@ interface Props {
 }
 
 export default function MapView({ registerFocus }: Props) {
+  const t = useT();
+  const { lang } = useLang();
+  const localizePoi = useLocalizePoi();
   const allPOIs: POI[] = useMemo(
     () => [...stays, ...attractions, ...services, AIRPORT_POI],
     []
+  );
+  const localizedPOIs = useMemo(
+    () =>
+      allPOIs.map(p => {
+        if (p.id === "fco") return lang === "he" ? AIRPORT_POI_HE : p;
+        return localizePoi(p);
+      }),
+    [allPOIs, localizePoi, lang]
   );
 
   const [activeCats, setActiveCats] = useState<Set<Category>>(
     new Set<Category>(["stay", "attraction", "airport"])
   );
   const [showRoute, setShowRoute] = useState(true);
+  const [showSpokes, setShowSpokes] = useState(true);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
+
+  /* Day-trip "spokes": from each base stay out to every attraction in the
+     same region. Lets you see at a glance which excursions belong to which
+     half of the trip. We compute them once from the raw (unlocalized) data
+     since the geometry doesn't depend on language. */
+  const spokes = useMemo(() => {
+    const northBase = stays.find(s => s.region === "north");
+    const southBase = stays.find(s => s.region === "south");
+    const lines: { id: string; from: [number, number]; to: [number, number]; color: string }[] = [];
+    for (const a of attractions) {
+      const base = a.region === "south" ? southBase : northBase;
+      if (!base) continue;
+      lines.push({
+        id: `spoke-${a.id}`,
+        from: base.coords,
+        to: a.coords,
+        color: a.region === "south" ? "#C68A2A" : "#5C7244"
+      });
+    }
+    return lines;
+  }, []);
 
   const markersRef = useRef<Record<string, L.Marker | null>>({});
   const flyRef = useRef<FlyHandle>(null);
@@ -205,7 +251,7 @@ export default function MapView({ registerFocus }: Props) {
     });
   }, [registerFocus, allPOIs, activeCats]);
 
-  const visible = allPOIs.filter(p => activeCats.has(p.category));
+  const visible = localizedPOIs.filter(p => activeCats.has(p.category));
 
   const toggle = (c: Category) => {
     setActiveCats(prev => {
@@ -219,10 +265,10 @@ export default function MapView({ registerFocus }: Props) {
   return (
     <Section
       id="map"
-      eyebrow="The atlas"
-      title="The whole trip on one map"
-      kicker="Tap a pin. Trace the route. Filter the rest."
-      intro="Every stay, attraction, restaurant, supermarket and gas station — color-coded by category. The dashed line is our actual journey: Rome to Larciano, Larciano to Cortevecchia, Cortevecchia back to Rome."
+      eyebrow={t("map_eyebrow")}
+      title={t("map_title")}
+      kicker={t("map_kicker")}
+      intro={t("map_intro")}
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-3">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
@@ -245,7 +291,7 @@ export default function MapView({ registerFocus }: Props) {
                   }
                 >
                   <Icon size={13} />
-                  {cfg.label}
+                  {t(cfg.labelKey)}
                   <span
                     className={`text-[10px] ${
                       on ? "text-cream-200" : "text-ink-700/60"
@@ -280,20 +326,32 @@ export default function MapView({ registerFocus }: Props) {
                   background: `repeating-linear-gradient(90deg, ${seg.color} 0 4px, transparent 4px 8px)`
                 }}
               />
-              <span className="text-ink-800">{seg.day}</span>
+              <span className="text-ink-800">{t(seg.dayKey)}</span>
             </button>
           ))}
         </div>
-        <button
-          onClick={() => setShowRoute(s => !s)}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-medium transition-colors min-h-9 ${
-            showRoute
-              ? "bg-terracotta-500 text-cream-50"
-              : "bg-cream-50 ring-1 ring-cream-300 text-ink-700 hover:bg-cream-100"
-          }`}
-        >
-          <Route size={12} /> Route {showRoute ? "on" : "off"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSpokes(s => !s)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-medium transition-colors min-h-9 text-cream-50 ${
+              showSpokes ? "" : "opacity-60 hover:opacity-100"
+            }`}
+            style={{ backgroundColor: showSpokes ? "#5C7244" : "#5C7244AA" }}
+            aria-pressed={showSpokes}
+          >
+            <Sparkles size={12} /> {showSpokes ? t("map_spokes_on") : t("map_spokes_off")}
+          </button>
+          <button
+            onClick={() => setShowRoute(s => !s)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-medium transition-colors min-h-9 text-cream-50 ${
+              showRoute ? "" : "opacity-60 hover:opacity-100"
+            }`}
+            style={{ backgroundColor: showRoute ? "#A23E2A" : "#A23E2AAA" }}
+            aria-pressed={showRoute}
+          >
+            <Route size={12} /> {showRoute ? t("map_route_on") : t("map_route_off")}
+          </button>
+        </div>
       </div>
 
       <div className="relative card-paper overflow-hidden -mx-4 sm:mx-0 rounded-none sm:rounded-2xl">
@@ -303,12 +361,41 @@ export default function MapView({ registerFocus }: Props) {
           scrollWheelZoom={true}
           className="h-[70svh] sm:h-[600px] w-full"
         >
+          {/* Stamen Watercolor base — painterly Tuscan-postcard feel.
+              Hosted by Stadia Maps; free for personal/dev use. */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-            subdomains="abcd"
+            attribution='Map tiles by <a href="https://stamen.com/" target="_blank" rel="noopener">Stamen Design</a>, hosted by <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> · CC BY 4.0. Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'
+            url="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
+            maxZoom={16}
+          />
+          {/* Toner Labels overlay — keeps place names legible above the watercolor wash */}
+          <TileLayer
+            url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png"
+            maxZoom={20}
+            opacity={0.85}
           />
           <MapController pois={allPOIs} markersRef={markersRef} ref={flyRef} />
+
+          {/* Day-trip spokes — soft lines from each base to its region's
+              attractions. Drawn underneath the main route so they don't
+              compete visually. Hidden when attractions or stays are filtered out. */}
+          {showSpokes &&
+            activeCats.has("attraction") &&
+            activeCats.has("stay") &&
+            spokes.map(s => (
+              <Polyline
+                key={s.id}
+                positions={[s.from, s.to]}
+                pathOptions={{
+                  color: s.color,
+                  weight: 1.5,
+                  opacity: 0.55,
+                  dashArray: "2 6",
+                  lineCap: "round"
+                }}
+                interactive={false}
+              />
+            ))}
 
           {/* Route polylines */}
           {showRoute &&
@@ -371,7 +458,7 @@ export default function MapView({ registerFocus }: Props) {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs font-medium text-terracotta-600 hover:text-terracotta-700"
                         >
-                          <Navigation size={11} /> Navigate
+                          <Navigation size={11} /> {t("navigate")}
                         </a>
                         {poi.website && (
                           <a
@@ -380,7 +467,7 @@ export default function MapView({ registerFocus }: Props) {
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 text-xs font-medium text-olive-600 hover:text-olive-700"
                           >
-                            <ExternalLink size={11} /> Website
+                            <ExternalLink size={11} /> {t("website")}
                           </a>
                         )}
                       </div>
@@ -396,8 +483,8 @@ export default function MapView({ registerFocus }: Props) {
         <button
           type="button"
           onClick={() => flyRef.current?.fitAll()}
-          aria-label="Zoom to fit all locations"
-          className="absolute top-3 right-3 z-[400] w-10 h-10 rounded-full bg-cream-50/95 backdrop-blur ring-1 ring-cream-300/70 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition flex items-center justify-center text-ink-800"
+          aria-label={t("map_zoom_fit")}
+          className="absolute top-3 end-3 z-[400] w-10 h-10 rounded-full bg-cream-50/95 backdrop-blur ring-1 ring-cream-300/70 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition flex items-center justify-center text-ink-800"
         >
           <Maximize2 size={16} />
         </button>
@@ -406,7 +493,10 @@ export default function MapView({ registerFocus }: Props) {
       {/* Hovered segment label */}
       {hoveredSegment && (
         <div className="mt-3 text-center text-[12px] sm:text-sm text-ink-700/85 font-serif italic">
-          {ROUTE_SEGMENTS.find(s => s.id === hoveredSegment)?.label}
+          {(() => {
+            const seg = ROUTE_SEGMENTS.find(s => s.id === hoveredSegment);
+            return seg ? t(seg.labelKey) : null;
+          })()}
         </div>
       )}
     </Section>

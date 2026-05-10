@@ -1,6 +1,8 @@
 import { Phone, MapPin, Globe, ExternalLink } from "lucide-react";
 import { emergencyGroups } from "../data/emergency";
 import Section from "./Section";
+import { useT } from "../lib/dict";
+import { useLocalizeEmergencyGroup } from "../data/i18n";
 
 function ItemIcon({ type }: { type: "phone" | "address" | "website" }) {
   if (type === "phone") return <Phone size={14} className="text-terracotta-500" />;
@@ -9,13 +11,14 @@ function ItemIcon({ type }: { type: "phone" | "address" | "website" }) {
 }
 
 export default function EmergencySection() {
+  const t = useT();
+  const localizeGroup = useLocalizeEmergencyGroup();
   return (
     <Section
       id="emergency"
-      eyebrow="Just in case"
-      title="If something goes sideways"
-      kicker="One number does most of the work."
-      intro="Hospitals, pharmacies, embassy and the catch-all line for any emergency in the EU. Save it before you need it."
+      eyebrow={t("emergency_eyebrow")}
+      title={t("emergency_title")}
+      kicker={t("emergency_kicker")}
       toned
     >
       {/* Hero 112 banner */}
@@ -29,23 +32,25 @@ export default function EmergencySection() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[10px] sm:text-xs uppercase tracking-[0.32em] opacity-90 font-medium">
-              Anywhere in the EU
+              {t("emergency_eyebrow")}
             </div>
-            <div className="font-serif text-5xl sm:text-7xl leading-none mt-1">
+            <div className="font-serif text-5xl sm:text-7xl leading-none mt-1" dir="ltr">
               112
             </div>
             <div className="font-serif italic text-sm sm:text-base mt-2 opacity-95">
-              Police · Ambulance · Fire — one number, every language.
+              {t("emergency_112_lead")}
             </div>
           </div>
           <div className="hidden sm:block text-xs uppercase tracking-[0.2em] opacity-85 group-hover:translate-x-1 transition-transform">
-            tap to call
+            {t("emergency_call_112")}
           </div>
         </div>
       </a>
 
       <div className="grid gap-5 md:grid-cols-2">
-        {emergencyGroups.map(g => (
+        {emergencyGroups.map((rawGroup, gi) => {
+          const g = localizeGroup(rawGroup, gi);
+          return (
           <div key={g.title} className="card-paper p-5">
             <h3 className="font-serif text-xl text-ink-900 mb-4 underline-terracotta">
               {g.title}
@@ -89,7 +94,8 @@ export default function EmergencySection() {
               ))}
             </ul>
           </div>
-        ))}
+        );
+        })}
       </div>
     </Section>
   );

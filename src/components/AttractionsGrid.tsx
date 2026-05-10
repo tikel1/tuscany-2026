@@ -4,20 +4,34 @@ import { attractions } from "../data/attractions";
 import AttractionCard from "./AttractionCard";
 import Section from "./Section";
 import type { AttractionTag, Region } from "../data/types";
+import { useT, type DictKey } from "../lib/dict";
 
 type RegionFilter = "all" | Extract<Region, "north" | "south">;
 
-const REGION_TABS: { id: RegionFilter; label: string; count: number }[] = [
-  { id: "all", label: "All", count: attractions.length },
-  { id: "north", label: "North", count: attractions.filter(a => a.region === "north").length },
-  { id: "south", label: "South", count: attractions.filter(a => a.region === "south").length }
+const REGION_TABS: { id: RegionFilter; key: DictKey; count: number }[] = [
+  { id: "all", key: "attr_filter_all", count: attractions.length },
+  { id: "north", key: "attr_filter_north", count: attractions.filter(a => a.region === "north").length },
+  { id: "south", key: "attr_filter_south", count: attractions.filter(a => a.region === "south").length }
 ];
 
 const ALL_TAGS: AttractionTag[] = [
   "water", "extreme", "nature", "culture", "family", "view", "cave", "village"
 ];
 
+const TAG_KEY: Record<string, DictKey> = {
+  water: "tag_water",
+  extreme: "tag_extreme",
+  nature: "tag_nature",
+  culture: "tag_culture",
+  family: "tag_family",
+  food: "tag_food",
+  view: "tag_view",
+  cave: "tag_cave",
+  village: "tag_village"
+};
+
 export default function AttractionsGrid() {
+  const t = useT();
   const [region, setRegion] = useState<RegionFilter>("all");
   const [tag, setTag] = useState<AttractionTag | null>(null);
 
@@ -34,27 +48,26 @@ export default function AttractionsGrid() {
   return (
     <Section
       id="attractions"
-      eyebrow="The places"
-      title="Postcards from Tuscany"
-      kicker="Tap a card to read its short story."
-      intro="Hand-picked, region-tagged, opening-hours-checked. Hover (or tap) any card for the description, the official site, and a one-tap pin on the map."
+      eyebrow={t("attr_eyebrow")}
+      title={t("attr_title")}
+      kicker={t("attr_kicker")}
       toned
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-3">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
-          {REGION_TABS.map(t => (
+          {REGION_TABS.map(tab => (
             <button
-              key={t.id}
-              onClick={() => setRegion(t.id)}
+              key={tab.id}
+              onClick={() => setRegion(tab.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-10 ${
-                region === t.id
+                region === tab.id
                   ? "bg-ink-900 text-cream-50"
                   : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
               }`}
             >
-              {t.label}
-              <span className={`ml-2 text-xs ${region === t.id ? "text-cream-200" : "text-ink-700/60"}`}>
-                {t.count}
+              {t(tab.key)}
+              <span className={`ms-2 text-xs ${region === tab.id ? "text-cream-200" : "text-ink-700/60"}`}>
+                {tab.count}
               </span>
             </button>
           ))}
@@ -63,9 +76,6 @@ export default function AttractionsGrid() {
 
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
         <div className="flex items-center gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
-          <span className="hidden sm:inline text-xs uppercase tracking-[0.2em] text-ink-700/60 mr-1">
-            Filter
-          </span>
           <button
             onClick={() => setTag(null)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap min-h-9 ${
@@ -74,19 +84,19 @@ export default function AttractionsGrid() {
                 : "bg-cream-50 border border-cream-300 text-ink-700 hover:border-terracotta-500/40"
             }`}
           >
-            any
+            {t("attr_filter_all")}
           </button>
-          {ALL_TAGS.map(t => (
+          {ALL_TAGS.map(at => (
             <button
-              key={t}
-              onClick={() => setTag(tag === t ? null : t)}
+              key={at}
+              onClick={() => setTag(tag === at ? null : at)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap min-h-9 ${
-                tag === t
+                tag === at
                   ? "bg-terracotta-500 text-cream-50"
                   : "bg-cream-50 border border-cream-300 text-ink-700 hover:border-terracotta-500/40"
               }`}
             >
-              {t}
+              {t(TAG_KEY[at] ?? "tag_view")}
             </button>
           ))}
         </div>
@@ -114,7 +124,7 @@ export default function AttractionsGrid() {
 
       {filtered.length === 0 && (
         <div className="py-16 text-center text-ink-700/70">
-          No attractions match these filters.
+          {t("attr_filter_all")} — 0
         </div>
       )}
     </Section>

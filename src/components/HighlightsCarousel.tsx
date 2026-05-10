@@ -3,6 +3,20 @@ import { motion } from "framer-motion";
 import { MapPin, Sparkles } from "lucide-react";
 import { attractions } from "../data/attractions";
 import { useMapFocus } from "../lib/mapContext";
+import { useT, type DictKey } from "../lib/dict";
+import { useLocalizePoi } from "../data/i18n";
+
+const TAG_KEY: Record<string, DictKey> = {
+  water: "tag_water",
+  extreme: "tag_extreme",
+  nature: "tag_nature",
+  culture: "tag_culture",
+  family: "tag_family",
+  food: "tag_food",
+  view: "tag_view",
+  cave: "tag_cave",
+  village: "tag_village"
+};
 
 const HIGHLIGHT_IDS = [
   "saturnia",
@@ -20,14 +34,16 @@ const HIGHLIGHT_IDS = [
 const AUTO_MS = 4500;
 
 export default function HighlightsCarousel() {
+  const t = useT();
+  const localizePoi = useLocalizePoi();
   const { focusOn } = useMapFocus();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const items = HIGHLIGHT_IDS
+  const items = (HIGHLIGHT_IDS
     .map(id => attractions.find(a => a.id === id))
-    .filter(Boolean) as typeof attractions;
+    .filter(Boolean) as typeof attractions).map(localizePoi);
 
   // Auto-advance
   useEffect(() => {
@@ -94,10 +110,10 @@ export default function HighlightsCarousel() {
         <div>
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] font-medium text-terracotta-600">
             <Sparkles size={10} />
-            In this issue
+            {t("highlights_eyebrow")}
           </div>
           <h3 className="mt-1 font-serif text-2xl sm:text-3xl text-ink-900 leading-tight">
-            Ten moments worth flying for
+            {t("highlights_title")}
           </h3>
         </div>
         <div className="flex items-center gap-1.5 pb-2 shrink-0">
@@ -138,18 +154,18 @@ export default function HighlightsCarousel() {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink-900/85 via-ink-900/25 to-transparent" />
 
-            <div className="absolute top-3 left-3 right-3 flex justify-between gap-2">
+            <div className="absolute top-3 start-3 end-3 flex justify-between gap-2">
               <span className={`pill ${a.region === "south" ? "bg-gold-400 text-ink-900" : "bg-olive-500 text-cream-50"}`}>
-                {a.region === "south" ? "South" : "North"}
+                {a.region === "south" ? t("region_south_short") : t("region_north_short")}
               </span>
               {a.tags && a.tags[0] && (
                 <span className="pill bg-cream-50/95 text-ink-900 backdrop-blur-sm">
-                  {a.tags[0]}
+                  {t(TAG_KEY[a.tags[0]] ?? "tag_view")}
                 </span>
               )}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 text-cream-50 text-left">
+            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-cream-50 text-start">
               <div className="font-serif text-2xl sm:text-3xl leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
                 {a.name.split(" — ")[0]}
               </div>
@@ -159,7 +175,7 @@ export default function HighlightsCarousel() {
                 </p>
               )}
               <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium opacity-90">
-                <MapPin size={11} /> tap to show on map
+                <MapPin size={11} /> {t("show_on_map")}
               </div>
             </div>
           </button>

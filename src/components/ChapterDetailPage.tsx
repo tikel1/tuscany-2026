@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
   MapPin,
@@ -19,33 +20,36 @@ import {
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
 import type { Day, DayActivity, ImageCredit, POI, Tip } from "../data/types";
-import { formatDate, navUrl } from "../lib/nav";
+import { navUrl } from "../lib/nav";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import { tipsForDay } from "../lib/tipsForDay";
 import { navigateChapter, navigateHome, rememberChapter } from "../lib/route";
+import { useT, localizeShortDate, localizeWeekday, type DictKey } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import { useLocalizeDay, useLocalizePoi, useLocalizeTip } from "../data/i18n";
 import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
-const tagLabel: Record<string, string> = {
-  water: "Water",
-  extreme: "Adrenaline",
-  nature: "Nature",
-  culture: "Culture",
-  family: "Family",
-  food: "Food",
-  view: "View",
-  cave: "Cave",
-  village: "Village"
+const TAG_KEY: Record<string, DictKey> = {
+  water: "tag_water",
+  extreme: "tag_extreme",
+  nature: "tag_nature",
+  culture: "tag_culture",
+  family: "tag_family",
+  food: "tag_food",
+  view: "tag_view",
+  cave: "tag_cave",
+  village: "tag_village"
 };
 
-const regionLabel: Record<string, string> = {
-  north: "North Tuscany",
-  south: "South Tuscany",
-  transit: "Transit"
+const REGION_KEY: Record<string, DictKey> = {
+  north: "region_north_long",
+  south: "region_south_long",
+  transit: "region_transit_long"
 };
 
 interface ResolvedLead {
@@ -56,14 +60,27 @@ interface ResolvedLead {
   tags?: POI["tags"];
 }
 
-function resolveLead(day: Day): ResolvedLead {
+interface ChapterSlide {
+  src: string;
+  alt: string;
+  /** Place name shown over the photo in italics (the attraction's name) */
+  place?: string;
+  credit?: ImageCredit;
+  category?: POI["category"];
+  tags?: POI["tags"];
+}
+
+/** Single fallback (used when no slides exist) — keeps the placeholder
+ *  gradient looking like the original day. */
+function resolveLead(day: Day, getPoi: (p: POI) => POI): ResolvedLead {
   const fromActivity = day.activities
     .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
     .find(a => !!a?.image);
   if (fromActivity?.image) {
+    const local = getPoi(fromActivity);
     return {
       src: fromActivity.image,
-      alt: fromActivity.name,
+      alt: local.name,
       credit: fromActivity.imageCredit,
       category: fromActivity.category,
       tags: fromActivity.tags
@@ -87,34 +104,74 @@ function resolveLead(day: Day): ResolvedLead {
   };
 }
 
+/** Build the ordered list of carousel slides for this day:
+ *  every attraction with a photo (in itinerary order), plus the day's
+ *  explicit leadImage if it isn't already in the set. Deduplicated by src. */
+function resolveSlides(day: Day, getPoi: (p: POI) => POI): ChapterSlide[] {
+  const slides: ChapterSlide[] = [];
+  const seen = new Set<string>();
+  for (const a of day.activities) {
+    if (!a.attractionId) continue;
+    const att = getAttraction(a.attractionId);
+    if (!att?.image || seen.has(att.image)) continue;
+    const local = getPoi(att);
+    seen.add(att.image);
+    slides.push({
+      src: att.image,
+      alt: local.name,
+      place: local.name,
+      credit: att.imageCredit,
+      category: att.category,
+      tags: att.tags
+    });
+  }
+  if (day.leadImage && !seen.has(day.leadImage)) {
+    slides.push({
+      src: day.leadImage,
+      alt: day.title,
+      credit: day.leadImageCredit
+    });
+  }
+  return slides;
+}
+
+const SLIDE_DURATION_MS = 6500;
+
 const SEVERITY_STYLES: Record<
   Tip["severity"],
-  { Icon: typeof Info; ring: string; bg: string; text: string; label: string }
+  { Icon: typeof Info; ring: string; bg: string; text: string; labelKey: DictKey }
 > = {
   critical: {
     Icon: AlertOctagon,
     ring: "ring-terracotta-500/40",
     bg: "bg-terracotta-500/10",
     text: "text-terracotta-700",
-    label: "Critical"
+    labelKey: "severity_critical"
   },
   warning: {
     Icon: AlertTriangle,
     ring: "ring-gold-500/45",
     bg: "bg-gold-500/10",
     text: "text-gold-700",
-    label: "Heads up"
+    labelKey: "severity_warning"
   },
   info: {
     Icon: Lightbulb,
     ring: "ring-olive-500/40",
     bg: "bg-olive-500/10",
     text: "text-olive-700",
-    label: "Good to know"
+    labelKey: "severity_info"
   }
 };
 
 export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) {
+  const t = useT();
+  const { lang } = useLang();
+  const isRTL = lang === "he";
+  const localizeDay = useLocalizeDay();
+  const localizePoi = useLocalizePoi();
+  const localizeTip = useLocalizeTip();
+
   const day = useMemo(
     () => itinerary.find(d => d.dayNumber === dayNumber),
     [dayNumber]
@@ -130,29 +187,62 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center">
-          <div className="font-serif text-2xl text-ink-900">Chapter not found</div>
+          <div className="font-serif text-2xl text-ink-900">{lang === "he" ? "פרק לא נמצא" : "Chapter not found"}</div>
           <button
             type="button"
             onClick={() => navigateHome({ scrollToTrip: true })}
             className="mt-4 inline-flex items-center gap-2 text-terracotta-600 hover:text-terracotta-700"
           >
-            <ArrowLeft size={16} /> Back to the plan
+            {isRTL ? <ArrowRight size={16} /> : <ArrowLeft size={16} />} {t("back_to_plan")}
           </button>
         </div>
       </div>
     );
   }
 
+  const localDay = localizeDay(day);
   const tripState = getTripState();
   const isToday =
     tripState.phase === "during" && tripState.today.dayNumber === day.dayNumber;
-  const lead = resolveLead(day);
-  const tips = tipsForDay(day.dayNumber);
+  const lead = resolveLead(localDay, localizePoi);
+  const slides = useMemo(
+    () => resolveSlides(day, localizePoi),
+    [day, localizePoi]
+  );
+  const [slideIdx, setSlideIdx] = useState(0);
 
-  // POIs visited this day, in order
+  // Reset to the first slide whenever we land on a new chapter
+  useEffect(() => {
+    setSlideIdx(0);
+  }, [day.dayNumber]);
+
+  // Auto-advance the hero carousel (only if we have more than one slide)
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const id = window.setInterval(() => {
+      setSlideIdx(i => (i + 1) % slides.length);
+    }, SLIDE_DURATION_MS);
+    return () => window.clearInterval(id);
+  }, [slides.length]);
+
+  // Lazy-preload the upcoming slide so the crossfade is seamless
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const next = slides[(slideIdx + 1) % slides.length];
+    if (next?.src) {
+      const img = new Image();
+      img.src = next.src;
+    }
+  }, [slideIdx, slides]);
+
+  const currentSlide = slides[slideIdx];
+  const tips = tipsForDay(day.dayNumber).map(localizeTip);
+
+  // POIs visited this day, in order, localized
   const dayPois: POI[] = day.activities
     .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
-    .filter((p): p is POI => !!p);
+    .filter((p): p is POI => !!p)
+    .map(localizePoi);
 
   const accent =
     day.region === "south"
@@ -164,6 +254,8 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
   const prevDay = day.dayNumber > 1 ? itinerary[day.dayNumber - 2] : null;
   const nextDay =
     day.dayNumber < itinerary.length ? itinerary[day.dayNumber] : null;
+  const localPrevDay = prevDay ? localizeDay(prevDay) : null;
+  const localNextDay = nextDay ? localizeDay(nextDay) : null;
 
   return (
     <div className="min-h-screen bg-cream-100/40">
@@ -173,43 +265,107 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
           <button
             type="button"
             onClick={() => navigateHome({ scrollToTrip: true })}
-            className="inline-flex items-center gap-2 text-ink-800 hover:text-terracotta-600 transition-colors min-h-11 -ml-2 px-2 rounded-full"
+            className="inline-flex items-center gap-2 text-ink-800 hover:text-terracotta-600 transition-colors min-h-11 -ms-2 px-2 rounded-full"
           >
-            <ArrowLeft size={18} />
-            <span className="text-sm font-medium">
-              <span className="hidden sm:inline">Back to </span>the plan
-            </span>
+            {isRTL ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
+            <span className="text-sm font-medium">{t("back_to_plan")}</span>
           </button>
           <div className="hidden sm:block text-[11px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-            Chapter {String(day.dayNumber).padStart(2, "0")} / {String(itinerary.length).padStart(2, "0")}
+            {t("plan_chapter_x_of_y", {
+              x: String(day.dayNumber).padStart(2, "0"),
+              y: String(itinerary.length).padStart(2, "0")
+            })}
           </div>
         </div>
       </div>
 
       <article>
-        {/* Hero */}
+        {/* Hero — crossfading carousel of every photo from the day */}
         <header className="relative aspect-[16/10] sm:aspect-[21/9] max-h-[70vh] overflow-hidden bg-ink-900">
-          <motion.div
-            initial={{ scale: 1.06 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
-            <PoiImage
-              src={lead.src}
-              alt={lead.alt}
-              region={day.region === "transit" ? "north" : day.region}
-              category={lead.category}
-              tags={lead.tags}
-            />
-          </motion.div>
+          {slides.length === 0 ? (
+            // No photos for this day — show the styled placeholder
+            <motion.div
+              initial={{ scale: 1.06 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="absolute inset-0"
+            >
+              <PoiImage
+                src={lead.src}
+                alt={lead.alt}
+                region={localDay.region === "transit" ? "north" : localDay.region}
+                category={lead.category}
+                tags={lead.tags}
+              />
+            </motion.div>
+          ) : (
+            <AnimatePresence mode="sync">
+              <motion.div
+                key={currentSlide.src}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1 }}
+                transition={{
+                  opacity: { duration: 1.4, ease: "easeInOut" },
+                  scale: { duration: SLIDE_DURATION_MS / 1000 + 1.4, ease: "linear" }
+                }}
+                className="absolute inset-0 will-change-transform"
+              >
+                <PoiImage
+                  src={currentSlide.src}
+                  alt={currentSlide.alt}
+                  region={localDay.region === "transit" ? "north" : localDay.region}
+                  category={currentSlide.category}
+                  tags={currentSlide.tags}
+                />
+              </motion.div>
+            </AnimatePresence>
+          )}
+
           <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/55 to-ink-900/15" />
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-900/40 to-transparent" />
 
-          {lead.credit && (
-            <div className="absolute bottom-3 right-3 px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
-              <PhotoCredit credit={lead.credit} variant="light" />
+          {/* Carousel progress dashes — top-right of the hero */}
+          {slides.length > 1 && (
+            <div
+              className="absolute end-4 sm:end-8 top-3 sm:top-5 z-10 flex gap-1 pointer-events-none"
+              aria-hidden
+            >
+              {slides.map((_, i) => (
+                <span
+                  key={i}
+                  className={`block h-px transition-all duration-500 ${
+                    i === slideIdx ? "w-5 bg-cream-50/90" : "w-2 bg-cream-50/30"
+                  }`}
+                />
+              ))}
             </div>
+          )}
+
+          {/* Per-slide place name + photo credit, crossfading with the image */}
+          {currentSlide && (currentSlide.place || currentSlide.credit) && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`meta-${currentSlide.src}`}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.45 }}
+                className="absolute bottom-3 end-3 z-10 flex flex-col items-end gap-1"
+                dir="ltr"
+              >
+                {currentSlide.place && (
+                  <div className="font-serif italic text-cream-50/95 text-[11px] sm:text-xs px-2 py-0.5 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                    {currentSlide.place}
+                  </div>
+                )}
+                {currentSlide.credit && (
+                  <div className="px-2 py-1 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                    <PhotoCredit credit={currentSlide.credit} variant="light" />
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           )}
 
           <div className="absolute inset-x-0 bottom-0 px-4 sm:px-10 pb-6 sm:pb-12 text-cream-50">
@@ -220,37 +376,37 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                 </div>
                 <div className="hidden sm:block h-px w-16 bg-cream-50/40 mb-2" />
                 <div className={`text-[10px] sm:text-[11px] uppercase tracking-[0.28em] font-medium ${accent}`}>
-                  Chapter {String(day.dayNumber).padStart(2, "0")}
+                  {t("plan_chapter_x_of_y", { x: String(day.dayNumber).padStart(2, "0"), y: String(itinerary.length).padStart(2, "0") })}
                 </div>
                 {isToday && (
                   <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-terracotta-500 text-cream-50 text-[9px] uppercase tracking-[0.22em] font-bold shadow-[0_4px_18px_rgba(196,90,61,0.5)]">
-                    <Sun size={10} /> Today
+                    <Sun size={10} /> {t("today")}
                   </span>
                 )}
               </div>
 
               <div className="mt-2 sm:mt-3 flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[12px] uppercase tracking-[0.22em] text-cream-50/85 font-medium flex-wrap">
-                <span>{day.weekday}</span>
+                <span>{localizeWeekday(day.weekday, lang)}</span>
                 <span aria-hidden>·</span>
-                <span>{formatDate(day.date)}</span>
+                <span>{localizeShortDate(day.date, lang)}</span>
                 <span aria-hidden>·</span>
-                <span>{regionLabel[day.region]}</span>
-                {day.base && (
+                <span>{t(REGION_KEY[day.region])}</span>
+                {localDay.base && (
                   <>
                     <span aria-hidden>·</span>
                     <span className="inline-flex items-center gap-1 normal-case tracking-normal text-cream-50/85">
-                      <MapPin size={11} className="opacity-70" /> {day.base}
+                      <MapPin size={11} className="opacity-70" /> {localDay.base}
                     </span>
                   </>
                 )}
               </div>
 
               <h1 className="mt-2 sm:mt-3 font-serif text-3xl sm:text-6xl leading-[1.05] tracking-tight max-w-3xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-                {day.title}
+                {localDay.title}
               </h1>
-              {day.subtitle && (
+              {localDay.subtitle && (
                 <p className="mt-2 sm:mt-3 font-serif italic text-cream-50/85 text-base sm:text-xl max-w-2xl">
-                  {day.subtitle}
+                  {localDay.subtitle}
                 </p>
               )}
             </div>
@@ -260,24 +416,24 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12 sm:space-y-16">
           {/* Activities */}
           <section>
-            <SectionLabel eyebrow="Today's plan" title="Hour by hour" />
+            <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
             <ol className="mt-6 sm:mt-8 space-y-5 sm:space-y-8">
-              {day.activities.map((a, i) => (
+              {localDay.activities.map((a, i) => (
                 <ActivityRow key={i} activity={a} index={i} isToday={isToday} />
               ))}
             </ol>
 
-            {day.driveNotes && (
+            {localDay.driveNotes && (
               <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-cream-300/60 flex items-start gap-3">
                 <span className="shrink-0 w-10 h-10 rounded-full bg-olive-500/10 text-olive-700 flex items-center justify-center">
                   <Car size={16} />
                 </span>
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.24em] text-olive-700/80 font-medium">
-                    On the road
+                    {t("on_the_road")}
                   </div>
                   <p className="mt-0.5 font-serif italic text-ink-700/85 text-[15px] sm:text-base leading-relaxed">
-                    {day.driveNotes}
+                    {localDay.driveNotes}
                   </p>
                 </div>
               </div>
@@ -287,9 +443,9 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
           {/* Mini map */}
           {dayPois.length > 0 && (
             <section>
-              <SectionLabel eyebrow="On the map" title="The day's stops" />
+              <SectionLabel eyebrow={t("on_the_map")} title={t("the_days_stops")} />
               <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                Numbered in the order you'll visit them.
+                {t("ordered_visit")}
               </p>
               <MiniMap pois={dayPois} />
               <ol className="mt-4 grid sm:grid-cols-2 gap-2.5">
@@ -316,7 +472,7 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.16em] text-terracotta-600 hover:text-terracotta-700 mt-1.5 font-medium"
                       >
-                        <Navigation size={11} /> Navigate
+                        <Navigation size={11} /> {t("navigate")}
                       </a>
                     </div>
                   </li>
@@ -328,7 +484,7 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
           {/* Tips */}
           {tips.length > 0 && (
             <section>
-              <SectionLabel eyebrow="Things to know" title="Tips for this chapter" />
+              <SectionLabel eyebrow={t("things_to_know")} title={t("tips_for_chapter")} />
               <ul className="mt-6 sm:mt-8 space-y-3.5">
                 {tips.map(tip => {
                   const s = SEVERITY_STYLES[tip.severity];
@@ -336,17 +492,17 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                   return (
                     <li
                       key={tip.id}
-                      className={`relative pl-12 sm:pl-14 pr-4 sm:pr-5 py-4 sm:py-5 rounded-2xl bg-cream-50 ring-1 ${s.ring}`}
+                      className={`relative ps-12 sm:ps-14 pe-4 sm:pe-5 py-4 sm:py-5 rounded-2xl bg-cream-50 ring-1 ${s.ring}`}
                     >
                       <span
-                        className={`absolute left-3 sm:left-4 top-4 sm:top-5 w-7 h-7 rounded-full ${s.bg} ${s.text} flex items-center justify-center`}
+                        className={`absolute start-3 sm:start-4 top-4 sm:top-5 w-7 h-7 rounded-full ${s.bg} ${s.text} flex items-center justify-center`}
                       >
                         <Icon size={14} />
                       </span>
                       <div
                         className={`text-[10px] uppercase tracking-[0.22em] font-medium ${s.text}`}
                       >
-                        {s.label}
+                        {t(s.labelKey)}
                       </div>
                       <h4 className="mt-0.5 font-serif text-[16px] sm:text-lg text-ink-900 leading-snug">
                         {tip.title}
@@ -365,43 +521,43 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
         {/* Prev / Next chapter nav */}
         <nav className="border-t border-cream-300/60 bg-cream-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-2 gap-3 sm:gap-6">
-            {prevDay ? (
+            {prevDay && localPrevDay ? (
               <button
                 type="button"
                 onClick={() => navigateChapter(prevDay.dayNumber)}
-                className="group flex items-center gap-3 sm:gap-4 text-left p-3 sm:p-5 rounded-2xl ring-1 ring-cream-300/70 hover:ring-terracotta-500/60 hover:bg-cream-100/60 transition-all"
+                className="group flex items-center gap-3 sm:gap-4 text-start p-3 sm:p-5 rounded-2xl ring-1 ring-cream-300/70 hover:ring-terracotta-500/60 hover:bg-cream-100/60 transition-all"
               >
                 <span className="shrink-0 w-10 h-10 rounded-full bg-cream-100 text-ink-800 flex items-center justify-center group-hover:bg-terracotta-500 group-hover:text-cream-50 transition-colors">
-                  <ChevronLeft size={18} />
+                  {isRTL ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                 </span>
                 <div className="min-w-0">
                   <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-                    Previous · {ROMAN[prevDay.dayNumber]}
+                    {t("previous")} · {ROMAN[prevDay.dayNumber]}
                   </div>
                   <div className="mt-0.5 font-serif text-[14px] sm:text-base text-ink-900 leading-tight line-clamp-2">
-                    {prevDay.title}
+                    {localPrevDay.title}
                   </div>
                 </div>
               </button>
             ) : (
               <div />
             )}
-            {nextDay ? (
+            {nextDay && localNextDay ? (
               <button
                 type="button"
                 onClick={() => navigateChapter(nextDay.dayNumber)}
-                className="group flex items-center gap-3 sm:gap-4 text-right p-3 sm:p-5 rounded-2xl ring-1 ring-cream-300/70 hover:ring-terracotta-500/60 hover:bg-cream-100/60 transition-all justify-end"
+                className="group flex items-center gap-3 sm:gap-4 text-end p-3 sm:p-5 rounded-2xl ring-1 ring-cream-300/70 hover:ring-terracotta-500/60 hover:bg-cream-100/60 transition-all justify-end"
               >
                 <div className="min-w-0">
                   <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-                    Next · {ROMAN[nextDay.dayNumber]}
+                    {t("next")} · {ROMAN[nextDay.dayNumber]}
                   </div>
                   <div className="mt-0.5 font-serif text-[14px] sm:text-base text-ink-900 leading-tight line-clamp-2">
-                    {nextDay.title}
+                    {localNextDay.title}
                   </div>
                 </div>
                 <span className="shrink-0 w-10 h-10 rounded-full bg-cream-100 text-ink-800 flex items-center justify-center group-hover:bg-terracotta-500 group-hover:text-cream-50 transition-colors">
-                  <ChevronRight size={18} />
+                  {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
                 </span>
               </button>
             ) : (
@@ -436,8 +592,11 @@ function ActivityRow({
   index: number;
   isToday: boolean;
 }) {
+  const t = useT();
+  const localizePoi = useLocalizePoi();
   const Icon = activityIcon(activity);
-  const att = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
+  const rawAtt = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
+  const att = rawAtt ? localizePoi(rawAtt) : undefined;
   const [open, setOpen] = useState(false);
   const hasMoreInfo = !!att;
 
@@ -467,7 +626,7 @@ function ActivityRow({
           </span>
           {activity.tag && (
             <span className="text-[9px] uppercase tracking-[0.22em] text-terracotta-600/85 font-medium">
-              · {tagLabel[activity.tag] ?? activity.tag}
+              · {t(TAG_KEY[activity.tag] ?? "tag_view")}
             </span>
           )}
         </div>
@@ -487,7 +646,7 @@ function ActivityRow({
             aria-expanded={open}
           >
             {open ? <X size={12} /> : <Plus size={12} />}
-            {open ? "Hide details" : "More about this place"}
+            {open ? t("hide_details") : t("more_about_place")}
           </button>
         )}
 
@@ -518,7 +677,7 @@ function ActivityRow({
                 </div>
                 <div className="p-4 sm:p-5 flex flex-col">
                   <div className="text-[10px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-                    About this place
+                    {t("about_this_place")}
                   </div>
                   <h5 className="mt-1 font-serif text-lg text-ink-900 leading-tight">
                     {att.name}
@@ -539,7 +698,7 @@ function ActivityRow({
                         rel="noopener noreferrer"
                         className="icon-link"
                       >
-                        <ExternalLink size={12} /> Website
+                        <ExternalLink size={12} /> {t("website")}
                       </a>
                     )}
                     <a
@@ -548,7 +707,7 @@ function ActivityRow({
                       rel="noopener noreferrer"
                       className="icon-link"
                     >
-                      <Navigation size={12} /> Navigate
+                      <Navigation size={12} /> {t("navigate")}
                     </a>
                   </div>
                 </div>

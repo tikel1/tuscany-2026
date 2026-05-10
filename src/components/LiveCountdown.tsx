@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { partsFromMs } from "../lib/tripState";
 import type { CountdownParts } from "../lib/tripState";
+import { useLang } from "../lib/i18n";
+
+const COUNTDOWN_LABELS = {
+  en: { days: "days", hrs: "hrs", min: "min", sec: "sec" },
+  he: { days: "ימים", hrs: "שעות", min: "דקות", sec: "שניות" }
+} as const;
 
 interface Props {
   /** Target date to count down to (or up from). */
@@ -97,6 +103,8 @@ export default function LiveCountdown({
   size = "md",
   className
 }: Props) {
+  const { lang } = useLang();
+  const labels = COUNTDOWN_LABELS[lang];
   const [parts, setParts] = useState<CountdownParts>(() => {
     const ms = mode === "down" ? target.getTime() - Date.now() : Date.now() - target.getTime();
     return partsFromMs(ms);
@@ -122,20 +130,20 @@ export default function LiveCountdown({
   }, [target, mode]);
 
   return (
-    <div className={`flex items-start justify-center gap-1 sm:gap-2 ${className ?? ""}`}>
+    <div dir="ltr" className={`flex items-start justify-center gap-1 sm:gap-2 ${className ?? ""}`}>
       {showDays && (
         <>
-          <CountdownBlock value={parts.days} label="days" pad={String(parts.days).length > 2 ? 3 : 2} size={size} pulse />
+          <CountdownBlock value={parts.days} label={labels.days} pad={String(parts.days).length > 2 ? 3 : 2} size={size} pulse />
           <Sep size={size} />
         </>
       )}
-      <CountdownBlock value={parts.hours} label="hrs" pad={2} size={size} />
+      <CountdownBlock value={parts.hours} label={labels.hrs} pad={2} size={size} />
       <Sep size={size} />
-      <CountdownBlock value={parts.minutes} label="min" pad={2} size={size} />
+      <CountdownBlock value={parts.minutes} label={labels.min} pad={2} size={size} />
       {showSeconds && (
         <>
           <Sep size={size} />
-          <CountdownBlock value={parts.seconds} label="sec" pad={2} size={size} pulse />
+          <CountdownBlock value={parts.seconds} label={labels.sec} pad={2} size={size} pulse />
         </>
       )}
     </div>

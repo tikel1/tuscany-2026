@@ -1,24 +1,31 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Map, Home, Utensils, MoreHorizontal } from "lucide-react";
+import { useT, type DictKey } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import LanguageSwitcher from "./LanguageSwitcher";
 
-const TABS = [
-  { id: "trip",        label: "Trip",  Icon: CalendarDays },
-  { id: "map",         label: "Map",   Icon: Map },
-  { id: "stays",       label: "Stays", Icon: Home },
-  { id: "services",    label: "Eat",   Icon: Utensils },
-  { id: "more",        label: "More",  Icon: MoreHorizontal }
+const TABS: { id: string; key: DictKey; Icon: typeof CalendarDays }[] = [
+  { id: "trip",     key: "nav_plan",    Icon: CalendarDays },
+  { id: "map",      key: "nav_map",     Icon: Map },
+  { id: "stays",    key: "nav_stays",   Icon: Home },
+  { id: "services", key: "nav_services", Icon: Utensils },
+  { id: "more",     key: "nav_attractions", Icon: MoreHorizontal } // overridden below
 ];
 
-const MORE_LINKS = [
-  { id: "attractions", label: "Attractions" },
-  { id: "tips",        label: "Tips" },
-  { id: "checklist",   label: "Checklist" },
-  { id: "emergency",   label: "Emergency" }
+const MORE_LINKS: { id: string; key: DictKey }[] = [
+  { id: "attractions", key: "nav_attractions" },
+  { id: "tips",        key: "nav_tips" },
+  { id: "checklist",   key: "nav_checklist" },
+  { id: "emergency",   key: "nav_emergency" }
 ];
+
+const MORE_LABEL: Record<"en" | "he", string> = { en: "More", he: "עוד" };
 
 const SECTION_IDS = ["trip", "map", "attractions", "stays", "services", "tips", "checklist", "emergency"];
 
 export default function MobileBottomNav() {
+  const t = useT();
+  const { lang } = useLang();
   const [active, setActive] = useState<string>("trip");
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -65,11 +72,14 @@ export default function MobileBottomNav() {
                 <button
                   key={l.id}
                   onClick={() => goTo(l.id)}
-                  className="text-left bg-cream-100 hover:bg-cream-200 active:bg-cream-300 transition-colors rounded-xl px-4 py-4 text-base font-medium text-ink-900"
+                  className="text-start bg-cream-100 hover:bg-cream-200 active:bg-cream-300 transition-colors rounded-xl px-4 py-4 text-base font-medium text-ink-900"
                 >
-                  {l.label}
+                  {t(l.key)}
                 </button>
               ))}
+            </div>
+            <div className="mt-3 flex justify-center">
+              <LanguageSwitcher variant="minimal" />
             </div>
           </div>
         </div>
@@ -80,8 +90,9 @@ export default function MobileBottomNav() {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="grid grid-cols-5 h-16">
-          {TABS.map(({ id, label, Icon }) => {
+          {TABS.map(({ id, key, Icon }) => {
             const isActive = active === id;
+            const label = id === "more" ? MORE_LABEL[lang] : t(key);
             return (
               <li key={id}>
                 <button

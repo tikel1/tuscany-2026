@@ -24,14 +24,9 @@ export const itinerary: Day[] = [
         description: "Pick up the rental car. International driving permit required. Confirm a credit card on the driver's name."
       },
       {
-        time: "On the road",
-        title: "Highway grocery stop",
-        description: "Big Autogrill or Conad on the A1/A11 — water, fruit, snacks, breakfast for tomorrow."
-      },
-      {
         time: "Evening",
         title: "Arrive in Larciano, settle in",
-        description: "Around 3.5 h drive. Late swim in the pool, dinner from the supermarket haul, early to bed."
+        description: "Around 3.5 h drive. Late swim in the pool, light dinner, early to bed."
       }
     ],
     driveNotes: "FCO → Larciano ≈ 3 h 30 min via A1 + A11"
@@ -89,9 +84,16 @@ export const itinerary: Day[] = [
         description: "Park outside the walls (ZTL!), walk into Piazza dei Miracoli, take the silly photos, eat gelato, leave.",
         attractionId: "pisa",
         tag: "culture"
+      },
+      {
+        time: "Optional",
+        title: "Lucca city walls bike loop",
+        description: "On the way back, rent bikes near Porta San Pietro or Piazzale Verdi and ride the 4 km tree-lined ring on top of Lucca's Renaissance walls. Flat, traffic-free, glorious in the late-afternoon light. Drop the bikes and disappear into the old town for gelato.",
+        attractionId: "lucca-walls",
+        tag: "family"
       }
     ],
-    driveNotes: "Garfagnana → Pisa ≈ 45 min"
+    driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min"
   },
   {
     dayNumber: 4,
@@ -127,7 +129,7 @@ export const itinerary: Day[] = [
     weekday: "Friday",
     region: "transit",
     base: "Larciano → Cortevecchia",
-    title: "River walk south, then a private chef in the villa",
+    title: "River walk south, settle into the villa",
     subtitle: "Transfer day — the Sentierelsa river walk on the way",
     activities: [
       {
@@ -141,12 +143,6 @@ export const itinerary: Day[] = [
         time: "Late afternoon",
         title: "Arrive at Tenuta Cortevecchia",
         description: "Settle into the villa, swim in the private pool, decompress."
-      },
-      {
-        time: "Evening",
-        title: "Private chef — pasta workshop & dinner",
-        description: "A local chef arrives with ingredients and runs a family pici-making workshop, then cooks dinner. Book ahead via Eatwith / Airbnb Experiences.",
-        tag: "food"
       }
     ],
     driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min"
@@ -170,11 +166,6 @@ export const itinerary: Day[] = [
         description: "Cruise the peninsula, anchor in glassy coves, snorkel, lunch on board.",
         attractionId: "porto-santo-stefano",
         tag: "water"
-      },
-      {
-        time: "Sunset",
-        title: "Dinner at the harbour",
-        description: "Fresh fish at Dal Greco, then drive back."
       }
     ],
     driveNotes: "Cortevecchia ↔ Porto Santo Stefano ≈ 1 h 15 min"
@@ -233,9 +224,9 @@ export const itinerary: Day[] = [
     date: "2026-08-25",
     weekday: "Tuesday",
     region: "south",
-    base: "Cortevecchia → Fiumicino",
+    base: "Cortevecchia",
     title: "Hot springs at dawn, lake swim, the floating city",
-    subtitle: "Big day — finishes near the airport for the early flight",
+    subtitle: "A full circuit of the southern Maremma",
     activities: [
       {
         time: "07:30 (critical)",
@@ -257,19 +248,8 @@ export const itinerary: Day[] = [
         description: "Walk the long footbridge into the 'dying city' on its tufa pedestal.",
         attractionId: "civita-di-bagnoregio",
         tag: "culture"
-      },
-      {
-        time: "19:00",
-        title: "Drive to Fiumicino",
-        description: "≈ 1 h 15 min from Civita. Return the rental car at FCO this evening — not at 03:00 tomorrow."
-      },
-      {
-        time: "Late evening",
-        title: "Bed-down near FCO",
-        description: "Find any quiet hotel within 10 min of the terminal — the goal is to be at check-in by 03:30 with zero stress."
       }
-    ],
-    driveNotes: "Civita → FCO ≈ 1 h 30 min"
+    ]
   },
   {
     dayNumber: 10,
@@ -278,6 +258,13 @@ export const itinerary: Day[] = [
     region: "transit",
     base: "Fiumicino",
     title: "Fly home",
+    leadImage: "./images/tel-aviv-skyline.jpg",
+    leadImageCredit: {
+      author: "Unsplash",
+      license: "Unsplash License",
+      source: "https://unsplash.com/photos/lpQwaLWhw9Q",
+      licenseUrl: "https://unsplash.com/license"
+    },
     activities: [
       {
         time: "03:30",

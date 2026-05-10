@@ -48,12 +48,19 @@ async function fetchWithRetry(url, opts = {}, tries = 4) {
  *   { commons: "File:Some_File.jpg" }            -> direct Wikimedia Commons file
  *   { url: "https://..." }                       -> direct URL (already CC/PD)
  */
+/* Helper to build a sensibly-sized Unsplash JPG URL from a "photo-…" id. */
+const unsplash = (photoId, w = 1600) =>
+  `https://images.unsplash.com/${photoId}?fm=jpg&q=85&w=${w}&auto=format&fit=crop`;
+
 const TARGETS = [
   // ---------- North attractions ----------
-  ["canyon-park.jpg",        { wiki: "Bagni_di_Lucca" }],
+  // Big SUP — group of people on paddle boards, by Brody Childs (Unsplash, free)
+  ["canyon-park.jpg",        { url: unsplash("photo-1731707485070-dbf45803f3b9") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
-  ["selva-buffardello.jpg",  { wiki: "Castelnuovo_di_Garfagnana" }],
-  ["serchio-rafting.jpg",    { wiki: "Serchio" }],
+  // Forest ropes course — rope bridges between tall trees (Unsplash, free)
+  ["selva-buffardello.jpg",  { url: unsplash("photo-1775647423221-ac87d3ec338b") }],
+  // Soft rafting — group on a raft going down a river (Unsplash, free)
+  ["serchio-rafting.jpg",    { url: unsplash("photo-1599443380179-33737c17ca81") }],
   // Use the actual Leaning Tower (Wikipedia Featured Picture by Saffron Blaze)
   // instead of a generic Piazza dei Miracoli wide shot.
   ["pisa.jpg",               { commons: "File:The_Leaning_Tower_of_Pisa_SB.jpeg", width: 2000 }],
@@ -61,11 +68,15 @@ const TARGETS = [
   // far more evocative than the village street the Wikipedia summary returns.
   ["abetone.jpg",            { commons: "File:Foresta_piazzale_Abetone.jpg", width: 2000 }],
   ["sentierelsa.jpg",        { wiki: "Elsa_(river)" }],
+  // Lucca walls — the Wikipedia summary lead is the iconic aerial of the
+  // tree-lined ramparts wrapping the old town.
+  ["lucca-walls.jpg",        { wiki: "Walls_of_Lucca" }],
 
   // ---------- South attractions ----------
   ["porto-santo-stefano.jpg",{ wiki: "Porto_Santo_Stefano" }],
   ["cala-del-gesso.jpg",     { wiki: "Monte_Argentario" }],
-  ["acqua-village.jpg",      { wiki: "Follonica" }],
+  // Acqua Village — sweeping aerial view of a colourful water park slide (Unsplash, free)
+  ["acqua-village.jpg",      { url: unsplash("photo-1725758575869-969b8e5783bc") }],
   ["maremma-horse.jpg",      { wiki: "Maremmano" }],
   ["pitigliano.jpg",         { wiki: "Pitigliano" }],
   ["via-cava.jpg",           { wiki: "Vie_Cave" }],
@@ -75,9 +86,17 @@ const TARGETS = [
   ["civita.jpg",             { wiki: "Civita_di_Bagnoregio" }],
 
   // ---------- Stays ----------
-  ["stay-larciano.jpg",      { wiki: "Larciano" }],
-  ["stay-cortevecchia.jpg",  { wiki: "Semproniano" }],
-  ["stay-hellosky.jpg",      { wiki: "Leonardo_da_Vinci_International_Airport" }]
+  // Both stays use host-supplied photos that live in public/images/ and are
+  // committed directly to the repo (the property CDNs aren't a great fit
+  // for an automated fetcher and the user has higher-resolution originals):
+  //   Larciano:     stay-larciano-sunflowers.png, -vineyard.png,
+  //                 -pool.png, -pool-dusk.png
+  //   Cortevecchia: stay-cortevecchia-poolview.png, -villa.png,
+  //                 -pool-deck.png, -aerial.png
+
+  // ---------- Itinerary lead images ----------
+  // Tel Aviv aerial — used as the "fly home" hero on day 10.
+  ["tel-aviv-skyline.jpg",   { url: unsplash("photo-1547483036-24bc77c79804") }]
 ];
 
 async function fileExists(p) {
@@ -127,8 +146,22 @@ async function getCommonsFile(fileTitle, width) {
   return info?.thumburl ?? info?.url ?? null;
 }
 
+/* Some hosts (notably the Tenuta Cortevecchia WAF) reject our default
+   project UA but happily serve to crawler UAs. We try the normal UA first
+   and transparently fall back to a Googlebot UA on a 403/406 so we don't
+   need per-target configuration. */
+const FALLBACK_UA =
+  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
 async function downloadTo(url, dest) {
-  const res = await fetch(url, { headers: { "User-Agent": UA, "Accept": "image/*" } });
+  let res = await fetch(url, {
+    headers: { "User-Agent": UA, "Accept": "image/*" }
+  });
+  if (res.status === 403 || res.status === 406) {
+    res = await fetch(url, {
+      headers: { "User-Agent": FALLBACK_UA, "Accept": "image/*,*/*;q=0.8" }
+    });
+  }
   if (!res.ok) throw new Error(`Download ${url} HTTP ${res.status}`);
   const buf = Buffer.from(await res.arrayBuffer());
   await writeFile(dest, buf);

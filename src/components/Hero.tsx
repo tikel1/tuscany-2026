@@ -4,6 +4,9 @@ import { ChevronDown } from "lucide-react";
 import { getTripState, TRIP_START } from "../lib/tripState";
 import type { TripState } from "../lib/tripState";
 import { formatDate } from "../lib/nav";
+import { useT } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import { useLocalizeDay } from "../data/i18n";
 import LiveCountdown from "./LiveCountdown";
 import WeatherStrip from "./WeatherStrip";
 
@@ -15,6 +18,9 @@ interface HeroPhoto {
   credit: string;
   /** Wikimedia Commons / Unsplash file page so curious viewers can verify */
   source: string;
+  /** If set, the photo shows a place we'll actually visit on this day of
+   *  the trip — used to render a "(Day N)" chip next to the place name. */
+  dayNumber?: number;
 }
 
 // All photos are CC-licensed beauty shots of places we'll actually visit
@@ -33,14 +39,16 @@ const HERO_PHOTOS: HeroPhoto[] = [
     place: "Saturnia · Cascate del Mulino",
     credit: "Raimond Spekking · CC BY-SA",
     source:
-      "https://commons.wikimedia.org/wiki/File:Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg"
+      "https://commons.wikimedia.org/wiki/File:Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg",
+    dayNumber: 9
   },
   {
     src: "./images/hero/pitigliano-panorama.jpg",
     place: "Pitigliano · viewpoint at golden hour",
     credit: "Wikimedia · Featured Picture · CC BY-SA",
     source:
-      "https://commons.wikimedia.org/wiki/File:01665_ITA_Tuscany_Pitigliano_S_from_viewpoint_V-P.jpg"
+      "https://commons.wikimedia.org/wiki/File:01665_ITA_Tuscany_Pitigliano_S_from_viewpoint_V-P.jpg",
+    dayNumber: 8
   },
   {
     src: "./images/hero/val-dorcia-hills.jpg",
@@ -54,13 +62,15 @@ const HERO_PHOTOS: HeroPhoto[] = [
     place: "Parco della Maremma · Torre di Collelungo",
     credit: "Wikimedia Commons · CC BY-SA",
     source:
-      "https://commons.wikimedia.org/wiki/File:Toscana_-_Maremma_Regional_Park_-_aerial_photo_with_Torre_di_Collelungo.jpg"
+      "https://commons.wikimedia.org/wiki/File:Toscana_-_Maremma_Regional_Park_-_aerial_photo_with_Torre_di_Collelungo.jpg",
+    dayNumber: 8
   },
   {
     src: "./images/cala-del-gesso.jpg",
     place: "Cala del Gesso · Argentario",
     credit: "Cristina Gottardi (Unsplash) · CC0",
-    source: "https://unsplash.com/photos/7_APbY7Afsg"
+    source: "https://unsplash.com/photos/7_APbY7Afsg",
+    dayNumber: 6
   },
   {
     src: "./images/hero/sorano-blue-hour.jpg",
@@ -87,7 +97,8 @@ const HERO_PHOTOS: HeroPhoto[] = [
     src: "./images/civita.jpg",
     place: "Civita di Bagnoregio · the dying city",
     credit: "Wikimedia Commons · CC BY-SA",
-    source: "https://en.wikipedia.org/wiki/Civita_di_Bagnoregio"
+    source: "https://en.wikipedia.org/wiki/Civita_di_Bagnoregio",
+    dayNumber: 9
   },
   {
     src: "./images/hero/coast-sunset.jpg",
@@ -141,55 +152,59 @@ function useHeroPhoto() {
 }
 
 function HeroBody({ state }: { state: TripState }) {
+  const t = useT();
+  const localizeDay = useLocalizeDay();
+
   if (state.phase === "before") {
     return (
       <>
         <div className="font-serif italic text-cream-50/90 text-base sm:text-lg drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-          Counting down to summer in the Maremma.
+          {t("hero_before_lead")}
         </div>
         <div className="mt-5 sm:mt-7">
           <LiveCountdown target={TRIP_START} mode="down" size="lg" />
         </div>
         <div className="mt-5 font-serif italic text-cream-50/85 text-sm sm:text-base">
           {state.daysUntil <= 1
-            ? "Buon viaggio — almost there."
+            ? t("hero_close_almost")
             : state.daysUntil <= 7
-            ? "One week to go. Time to pack the dry bag."
+            ? t("hero_one_week")
             : state.daysUntil <= 30
-            ? "Less than a month. Confirm the chef and the boat."
-            : "The summer of swimming, slowly approaching."}
+            ? t("hero_one_month")
+            : t("hero_far")}
         </div>
       </>
     );
   }
   if (state.phase === "during") {
+    const today = localizeDay(state.today);
     return (
       <>
         <div className="font-serif italic text-cream-50/90 text-base sm:text-lg drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-          Today in Tuscany.
+          {t("hero_today_lead")}
         </div>
         <div className="mt-4 sm:mt-6 flex items-end gap-4 sm:gap-6 justify-center">
-          <div className="text-cream-50/95 text-right">
+          <div className="text-cream-50/95 text-end">
             <div className="text-[10px] uppercase tracking-[0.28em] font-medium opacity-90">
-              Day
+              {t("hero_today_day")}
             </div>
             <div className="font-serif text-7xl sm:text-9xl leading-none mt-1">
-              {String(state.today.dayNumber).padStart(2, "0")}
+              {String(today.dayNumber).padStart(2, "0")}
             </div>
           </div>
-          <div className="text-cream-50/85 pb-2 sm:pb-4 text-left max-w-[55%]">
+          <div className="text-cream-50/85 pb-2 sm:pb-4 text-start max-w-[55%]">
             <div className="text-[10px] uppercase tracking-[0.22em] font-medium opacity-90">
-              of ten · {formatDate(state.today.date)}
+              {t("hero_of_ten")} · {formatDate(today.date)}
             </div>
             <div className="font-serif text-xl sm:text-3xl leading-tight mt-1">
-              {state.today.title}
+              {today.title}
             </div>
           </div>
         </div>
-        {state.today.activities[0] && (
+        {today.activities[0] && (
           <div className="mt-5 font-serif italic text-cream-50/85 text-sm sm:text-base max-w-md mx-auto px-2">
-            {state.today.activities[0].time} ·{" "}
-            {state.today.activities[0].title}
+            {today.activities[0].time} ·{" "}
+            {today.activities[0].title}
           </div>
         )}
       </>
@@ -198,11 +213,11 @@ function HeroBody({ state }: { state: TripState }) {
   return (
     <>
       <div className="font-serif italic text-cream-50/90 text-base sm:text-lg">
-        That summer in Tuscany.
+        {t("hero_after_lead")}
       </div>
-      <div className="mt-5 font-serif text-5xl sm:text-7xl text-cream-50">Buon ritorno</div>
+      <div className="mt-5 font-serif text-5xl sm:text-7xl text-cream-50">{t("hero_after_title")}</div>
       <div className="mt-3 font-serif italic text-cream-50/85 text-sm sm:text-base">
-        17 — 26 August 2026 · the family edition
+        {t("hero_after_sub")}
       </div>
     </>
   );
@@ -211,6 +226,8 @@ function HeroBody({ state }: { state: TripState }) {
 export default function Hero() {
   const state = useTripStateLive();
   const { photo, idx } = useHeroPhoto();
+  const t = useT();
+  const { dir } = useLang();
 
   return (
     <header
@@ -234,9 +251,9 @@ export default function Hero() {
         />
       </AnimatePresence>
 
-      {/* Progress dashes — bottom right, indicate position in the carousel */}
+      {/* Progress dashes — bottom corner, indicate position in the carousel */}
       <div
-        className="absolute right-4 sm:right-8 bottom-3 sm:bottom-5 z-10 flex gap-1 pointer-events-none"
+        className={`absolute ${dir === "rtl" ? "left-4 sm:left-8" : "right-4 sm:right-8"} bottom-3 sm:bottom-5 z-10 flex gap-1 pointer-events-none`}
         aria-hidden
       >
         {HERO_PHOTOS.map((_, i) => (
@@ -262,7 +279,7 @@ export default function Hero() {
       >
         <div className="flex items-baseline gap-3">
           <div className="font-serif tracking-[0.16em] text-xs sm:text-sm uppercase whitespace-nowrap">
-            Tuscany 2026
+            {t("brand")}
           </div>
           <div className="h-px flex-1 max-w-16 sm:max-w-32 bg-cream-50/40" />
           <AnimatePresence mode="wait">
@@ -275,17 +292,28 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.5 }}
-              className="text-right min-w-0 flex-shrink"
+              className="text-end min-w-0 flex-shrink"
+              dir="ltr"
               aria-label={`Photo: ${photo.place} (${photo.credit}). Open source.`}
             >
               <div className="font-serif italic text-[11px] sm:text-xs text-cream-50/90 leading-tight truncate">
                 {photo.place}
+                {photo.dayNumber && (
+                  <span className="not-italic font-sans font-medium uppercase tracking-[0.18em] text-[9px] sm:text-[10px] text-cream-50/95 ms-2 px-1.5 py-0.5 rounded-full bg-cream-50/15 ring-1 ring-cream-50/25 align-middle">
+                    {t("hero_photo_day", { n: photo.dayNumber })}
+                  </span>
+                )}
               </div>
               <div className="hidden sm:block text-[9px] uppercase tracking-[0.22em] text-cream-50/60 mt-0.5">
                 {photo.credit}
               </div>
             </motion.a>
           </AnimatePresence>
+        </div>
+
+        {/* Magazine subhead — who this issue is "by" */}
+        <div className="mt-2 sm:mt-2.5 font-serif italic text-[11px] sm:text-[13px] text-cream-50/85 tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+          {t("families_byline")}
         </div>
       </motion.div>
 
@@ -301,33 +329,36 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Bottom strip: weather + scroll cue */}
+      {/* Bottom strip: weather + scroll cue.
+          Desktop: weather on the left, scroll cue on the right.
+          Mobile: scroll cue sits ABOVE the weather glass strip. */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 pb-8 sm:pb-10 flex flex-col sm:flex-row items-center sm:items-end justify-center sm:justify-between gap-4"
+        className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 pb-8 sm:pb-10 flex flex-col sm:flex-row items-center sm:items-end justify-center sm:justify-between gap-5 sm:gap-4"
       >
-        <div className="hidden sm:block flex-1 max-w-md">
+        <div className="hidden sm:block flex-1 max-w-md order-1">
           <WeatherStrip variant="glass" />
         </div>
+
         <button
           type="button"
           onClick={() =>
             document.getElementById("trip")?.scrollIntoView({ behavior: "smooth", block: "start" })
           }
-          className="group flex flex-col items-center gap-1 text-cream-50/90 hover:text-cream-50 transition-colors"
-          aria-label="Scroll to the plan"
+          className="group flex flex-col items-center gap-1 text-cream-50/90 hover:text-cream-50 transition-colors order-1 sm:order-2"
+          aria-label={t("scroll_to_plan")}
         >
-          <span className="font-serif italic text-sm sm:text-sm tracking-wide">the plan</span>
+          <span className="font-serif italic text-sm sm:text-sm tracking-wide">{t("scroll_to_plan")}</span>
           <ChevronDown size={20} className="animate-bounce group-hover:animate-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
         </button>
-      </motion.div>
 
-      {/* Mobile: weather glass strip sits just above the scroll cue */}
-      <div className="sm:hidden absolute inset-x-5 bottom-24 z-10">
-        <WeatherStrip variant="glass" />
-      </div>
+        {/* Mobile-only weather, rendered below the scroll cue in the column */}
+        <div className="sm:hidden w-full order-2">
+          <WeatherStrip variant="glass" />
+        </div>
+      </motion.div>
     </header>
   );
 }

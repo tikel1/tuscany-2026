@@ -17,8 +17,13 @@ export const attractions: POI[] = [
     shortDescription: "Family stand-up paddleboarding through a turquoise canyon.",
     description:
       "An adventure park tucked into the Lima river gorge near Bagni di Lucca. The signature Big SUP experience puts the whole family on one giant paddleboard to glide through a narrow canyon of glowing turquoise water — calm enough for kids and unforgettable for adults. Book the XL/Big SUP slot ahead of time; spots are very limited per day.",
-    // No CC photo of the actual SUP experience exists yet — falling back to the
-    // styled icon placeholder rather than showing a misleading generic shot.
+    image: "./images/canyon-park.jpg",
+    imageCredit: {
+      author: "Brody Childs (Unsplash)",
+      license: "Unsplash License",
+      source: "https://unsplash.com/photos/V3xBoeOSQBk",
+      licenseUrl: "https://unsplash.com/license"
+    },
     website: "https://www.canyonpark.it/",
     address: "Località il Pianello, Bagni di Lucca (LU)",
     coords: [44.0167, 10.5833],
@@ -48,7 +53,13 @@ export const attractions: POI[] = [
     shortDescription: "Shaded forest ropes course with kid-friendly heights.",
     description:
       "A professional adventure park in a cool chestnut forest above the Garfagnana. Multiple ropes courses and zip lines are graded by height — including dedicated routes from 100 cm so younger kids can do the real thing safely. A welcome shaded escape on a hot August day.",
-    // No CC photo of the actual ropes course — placeholder will show.
+    image: "./images/selva-buffardello.jpg",
+    imageCredit: {
+      author: "Unsplash",
+      license: "Unsplash License",
+      source: "https://unsplash.com/photos/jKVfhe-z8U4",
+      licenseUrl: "https://unsplash.com/license"
+    },
     website: "https://www.selvadelbuffardello.it/",
     address: "Loc. Buffardello, Villa Collemandina (LU)",
     coords: [44.1644, 10.4339],
@@ -62,7 +73,13 @@ export const attractions: POI[] = [
     shortDescription: "Gentle white-water rafting suited for families.",
     description:
       "A relaxed, splashy float down the Serchio with calm stretches, a few playful rapids, and chances to jump in and swim. Operators in the Bagni di Lucca / Garfagnana area run family-friendly trips of around 2 hours — wet, cool, and a perfect contrast to the August heat.",
-    // No CC photo of the actual rafting — placeholder will show.
+    image: "./images/serchio-rafting.jpg",
+    imageCredit: {
+      author: "Unsplash",
+      license: "Unsplash License",
+      source: "https://unsplash.com/photos/ayhiuTdcUEk",
+      licenseUrl: "https://unsplash.com/license"
+    },
     website: "https://www.canyonpark.it/",
     address: "Garfagnana (LU)",
     coords: [44.0742, 10.4853],
@@ -110,6 +127,21 @@ export const attractions: POI[] = [
     address: "Abetone Cutigliano (PT)",
     coords: [44.1344, 10.6717],
     tags: ["nature", "view", "family"]
+  },
+  {
+    id: "lucca-walls",
+    name: "Lucca City Walls — Bike Loop",
+    category: "attraction",
+    region: "north",
+    shortDescription: "Cycle the 4 km tree-lined Renaissance wall ring around old Lucca.",
+    description:
+      "Lucca's massive 16th-century walls were never tested in battle and were turned into a leafy public promenade in the 19th century. Today the 4.2 km grass-and-tree-shaded ring on top of the walls is one of Tuscany's signature family bike rides — completely flat, completely traffic-free, with rampart views into the old city on one side and the Tuscan plain on the other. Rental shops cluster around Porta San Pietro and Piazzale Verdi (Tourist Center Lucca, Cicli Bizzarri, Poli Antonio Bici); kids' bikes, child seats and trailers are all standard. Loop the walls in 30–45 min, then drop the bikes and disappear into the old town for gelato.",
+    image: "./images/lucca-walls.jpg",
+    imageCredit: wmCredit("Walls_of_Lucca"),
+    website: "https://en.wikipedia.org/wiki/Walls_of_Lucca",
+    address: "Mura Urbane di Lucca, Piazzale Verdi (LU)",
+    coords: [43.8443, 10.5050],
+    tags: ["family", "culture", "nature", "view"]
   },
   {
     id: "sentierelsa",
@@ -171,7 +203,13 @@ export const attractions: POI[] = [
     shortDescription: "Hawaiian-themed water park with serious slides.",
     description:
       "The biggest, most polished water park in southern Tuscany — Polynesian theming, multi-lane slides, a wave pool, and a lazy river. A full-day, all-ages adrenaline reset between cultural and outdoor days.",
-    // No CC photo of the actual water park — placeholder will show.
+    image: "./images/acqua-village.jpg",
+    imageCredit: {
+      author: "Unsplash",
+      license: "Unsplash License",
+      source: "https://unsplash.com/photos/1-P3CP8Z1Qg",
+      licenseUrl: "https://unsplash.com/license"
+    },
     website: "https://www.acquavillage.it/follonica/",
     address: "Via Sanzio, 58022 Follonica (GR)",
     coords: [42.9183, 10.7717],

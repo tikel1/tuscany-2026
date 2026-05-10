@@ -23,19 +23,6 @@ export const bookingChecklist: ChecklistItem[] = [
     urgent: true
   },
   {
-    id: "confirm-ac",
-    text: "Confirm AC at Tenuta Cortevecchia in writing",
-    detail: "Message the host before flying out. Specifically your apartment, not just 'the property'.",
-    link: "https://tenutacortevecchia.it/en/",
-    urgent: true
-  },
-  {
-    id: "book-fco-overnight",
-    text: "Sort the FCO overnight (25–26 Aug)",
-    detail: "Pick a quiet hotel within 10 min of Fiumicino, or plan a late-evening drive straight to the terminal. Goal: be at check-in by 03:30 with zero stress.",
-    urgent: true
-  },
-  {
     id: "book-rafting",
     text: "Reserve Soft Rafting on the Serchio",
     detail: "Family-friendly trip with one of the Garfagnana operators (Canyon Park, Rafting Garfagnana)."

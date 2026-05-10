@@ -56,6 +56,9 @@ export interface Stay extends POI {
   bookingLink?: string;
   highlights: string[];
   warnings?: string[];
+  /** Optional extra photos shown in the stay-card carousel.
+   *  When present, the card crossfades through `[image, ...gallery]`. */
+  gallery?: string[];
 }
 
 export interface Service extends POI {

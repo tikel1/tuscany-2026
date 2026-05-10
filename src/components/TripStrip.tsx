@@ -4,6 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
 import { getTripState } from "../lib/tripState";
+import { useT, localizeWeekday } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import { useLocalizeDay } from "../data/i18n";
 import PoiImage from "./PoiImage";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
@@ -18,6 +21,10 @@ interface Props {
 }
 
 export default function TripStrip({ compact = false, activeDay, onSelect }: Props) {
+  const t = useT();
+  const { lang, dir } = useLang();
+  const isRTL = dir === "rtl";
+  const localizeDay = useLocalizeDay();
   const tripState = getTripState();
   const todayNumber =
     tripState.phase === "during" ? tripState.today.dayNumber : null;
@@ -80,6 +87,7 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
         >
           <ol className="flex items-center gap-1.5 min-w-max">
             {itinerary.map(day => {
+              const localDay = localizeDay(day);
               const isToday = day.dayNumber === todayNumber;
               const isActive = activeIdx === day.dayNumber;
               const region = day.region;
@@ -101,18 +109,18 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
                         ? "bg-terracotta-500/10 text-terracotta-700 ring-1 ring-terracotta-500/30 hover:bg-terracotta-500/20"
                         : "bg-cream-50 text-ink-700 ring-1 ring-cream-300 hover:bg-cream-100"
                     }`}
-                    title={day.title}
+                    title={localDay.title}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden />
                     <span className="font-serif text-[13px] leading-none">
                       {ROMAN[day.dayNumber]}
                     </span>
                     <span className="hidden sm:inline opacity-80">
-                      {day.weekday.slice(0, 3)} {day.date.slice(8)}
+                      {localizeWeekday(day.weekday, lang, true)} {day.date.slice(8)}
                     </span>
                     {isToday && (
-                      <span className="text-[8px] uppercase tracking-[0.2em] font-bold ml-0.5">
-                        today
+                      <span className="text-[8px] uppercase tracking-[0.2em] font-bold ms-0.5">
+                        {t("today")}
                       </span>
                     )}
                   </button>
@@ -134,18 +142,18 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
       <button
         type="button"
         onClick={() => scroll("left")}
-        aria-label="Scroll chapters left"
-        className="hidden sm:flex absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition"
+        aria-label={t("scroll_chapters_prev")}
+        className="hidden sm:flex absolute -start-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition"
       >
-        <ChevronLeft size={18} />
+        {isRTL ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </button>
       <button
         type="button"
         onClick={() => scroll("right")}
-        aria-label="Scroll chapters right"
-        className="hidden sm:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition"
+        aria-label={t("scroll_chapters_next")}
+        className="hidden sm:flex absolute -end-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition"
       >
-        <ChevronRight size={18} />
+        {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
       </button>
 
       <div
@@ -154,6 +162,7 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
       >
         <ol className="flex gap-3 sm:gap-4 min-w-max sm:min-w-0">
           {itinerary.map(day => {
+            const localDay = localizeDay(day);
             const lead = day.activities
               .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
               .find(a => !!a?.image);
@@ -186,7 +195,7 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
                   <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.06]">
                     <PoiImage
                       src={fallbackImage}
-                      alt={day.title}
+                      alt={localDay.title}
                       region={region === "transit" ? "north" : region}
                       category={lead?.category}
                       tags={lead?.tags}
@@ -194,12 +203,12 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-900/95 via-ink-900/40 to-ink-900/15" />
 
-                  <div className="absolute top-2.5 left-3 right-3 flex items-start justify-between text-cream-50">
+                  <div className="absolute top-2.5 start-3 end-3 flex items-start justify-between text-cream-50">
                     <div>
                       <div
                         className={`text-[9px] uppercase tracking-[0.28em] font-medium ${accentText}`}
                       >
-                        Chapter
+                        {t("chapter_label")}
                       </div>
                       <div className="font-serif text-2xl leading-none mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
                         {ROMAN[day.dayNumber]}
@@ -207,17 +216,17 @@ export default function TripStrip({ compact = false, activeDay, onSelect }: Prop
                     </div>
                     {isToday && (
                       <span className="px-1.5 py-0.5 rounded-full bg-terracotta-500 text-cream-50 text-[8px] uppercase tracking-[0.2em] font-bold">
-                        Today
+                        {t("today")}
                       </span>
                     )}
                   </div>
 
                   <div className="absolute bottom-0 inset-x-0 p-3 text-cream-50">
                     <div className="text-[9px] uppercase tracking-[0.22em] opacity-90">
-                      {day.weekday.slice(0, 3)} · {day.date.slice(8)} Aug
+                      {localizeWeekday(day.weekday, lang, true)} · {day.date.slice(8)} {t("month_aug_short")}
                     </div>
                     <div className="font-serif text-[13px] sm:text-sm leading-tight mt-0.5 line-clamp-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
-                      {day.title}
+                      {localDay.title}
                     </div>
                   </div>
                 </motion.button>

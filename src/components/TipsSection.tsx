@@ -1,6 +1,8 @@
 import { AlertTriangle, Info, ShieldAlert } from "lucide-react";
 import { tips } from "../data/tips";
 import Section from "./Section";
+import { useT } from "../lib/dict";
+import { useLocalizeTip } from "../data/i18n";
 
 const severityStyle = {
   critical: {
@@ -21,22 +23,24 @@ const severityStyle = {
 } as const;
 
 export default function TipsSection() {
+  const t = useT();
+  const localizeTip = useLocalizeTip();
   return (
     <Section
       id="tips"
-      eyebrow="The fine print"
-      title="Things Tuscany doesn't tell you"
-      kicker="Five small briefings worth memorizing."
-      intro="Nine times out of ten the trip goes smoothly. Here are the reminders for the tenth."
+      eyebrow={t("tips_eyebrow")}
+      title={t("tips_title")}
+      kicker={t("tips_kicker")}
     >
       <div className="grid gap-4 md:grid-cols-2">
-        {tips.map(tip => {
+        {tips.map(rawTip => {
+          const tip = localizeTip(rawTip);
           const s = severityStyle[tip.severity];
           const { Icon } = s;
           return (
             <div
               key={tip.id}
-              className={`card-paper border-l-4 ${s.border} p-5`}
+              className={`card-paper border-s-4 ${s.border} p-5`}
             >
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg ${s.accent} shrink-0`}>

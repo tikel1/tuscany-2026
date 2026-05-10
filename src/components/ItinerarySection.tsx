@@ -4,11 +4,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getCurrentOrUpcomingDayNumber } from "../lib/tripState";
 import { getRememberedChapter, rememberChapter } from "../lib/route";
+import { useT } from "../lib/dict";
+import { useLang } from "../lib/i18n";
 import ChapterCard from "./ChapterCard";
 import TripStrip from "./TripStrip";
 
 export default function ItinerarySection() {
   const days = itinerary;
+  const t = useT();
+  const { lang } = useLang();
+  const isRTL = lang === "he";
 
   const defaultDay = useMemo(
     () => getRememberedChapter() ?? getCurrentOrUpcomingDayNumber(),
@@ -84,7 +89,7 @@ export default function ItinerarySection() {
         aria-hidden
         className="pointer-events-none absolute -top-2 sm:top-2 right-0 left-0 text-center font-serif italic select-none whitespace-nowrap text-[18vw] sm:text-[12rem] leading-none text-terracotta-500/[0.05]"
       >
-        Tuscany
+        {t("brand_short")}
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
@@ -105,14 +110,17 @@ export default function ItinerarySection() {
         >
           <div>
             <div className="text-[10px] uppercase tracking-[0.32em] text-terracotta-600/85 font-medium">
-              The plan · day by day
+              {t("plan_eyebrow")}
             </div>
             <div className="font-serif italic text-ink-800/65 text-sm mt-0.5">
-              Swipe through ten chapters · click <span className="font-sans not-italic font-medium text-ink-900">Read more</span> for the full chapter
+              {t("plan_kicker")}
             </div>
           </div>
           <div className="text-[11px] uppercase tracking-[0.22em] text-ink-700/55 font-medium">
-            Chapter {String(activeDay).padStart(2, "0")} / {String(days.length).padStart(2, "0")}
+            {t("plan_chapter_x_of_y", {
+              x: String(activeDay).padStart(2, "0"),
+              y: String(days.length).padStart(2, "0")
+            })}
           </div>
         </motion.div>
       </div>
@@ -123,24 +131,27 @@ export default function ItinerarySection() {
         <div className="pointer-events-none hidden md:block absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-cream-100 to-transparent z-10" />
         <div className="pointer-events-none hidden md:block absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-cream-100 to-transparent z-10" />
 
-        {/* Prev / next buttons — desktop only */}
+        {/* Prev / next buttons — desktop only. We use logical `start` / `end`
+            insets so the "previous" button always sits on the side where the
+            earlier chapters are (visual left in LTR, visual right in RTL),
+            and pair that with arrows that point in the matching direction. */}
         <button
           type="button"
           onClick={goPrev}
           disabled={activeDay <= 1}
-          aria-label="Previous chapter"
-          className="hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition disabled:opacity-30 disabled:hover:bg-cream-50 disabled:hover:text-ink-900"
+          aria-label={t("previous")}
+          className="hidden md:flex absolute start-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition disabled:opacity-30 disabled:hover:bg-cream-50 disabled:hover:text-ink-900"
         >
-          <ChevronLeft size={20} />
+          {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
         <button
           type="button"
           onClick={goNext}
           disabled={activeDay >= days.length}
-          aria-label="Next chapter"
-          className="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition disabled:opacity-30 disabled:hover:bg-cream-50 disabled:hover:text-ink-900"
+          aria-label={t("next")}
+          className="hidden md:flex absolute end-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full items-center justify-center bg-cream-50 ring-1 ring-cream-300 shadow-md hover:bg-terracotta-500 hover:text-cream-50 hover:ring-terracotta-500 transition disabled:opacity-30 disabled:hover:bg-cream-50 disabled:hover:text-ink-900"
         >
-          <ChevronRight size={20} />
+          {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
 
         <div

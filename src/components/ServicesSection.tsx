@@ -5,49 +5,69 @@ import { services } from "../data/services";
 import Section from "./Section";
 import { useMapFocus } from "../lib/mapContext";
 import { navUrl } from "../lib/nav";
+import { useT, type DictKey } from "../lib/dict";
+import { useLang } from "../lib/i18n";
+import { useLocalizeService } from "../data/i18n";
 
-const CATS = [
-  { id: "restaurant" as const, label: "Restaurants", Icon: Utensils, color: "text-olive-600" },
-  { id: "supermarket" as const, label: "Supermarkets", Icon: ShoppingCart, color: "text-sienna-600" },
-  { id: "gas" as const, label: "Gas stations", Icon: Fuel, color: "text-gold-500" }
+const CATS: { id: "restaurant" | "supermarket" | "gas"; key: DictKey; Icon: typeof Utensils; color: string }[] = [
+  { id: "restaurant", key: "services_filter_restaurant", Icon: Utensils, color: "text-olive-600" },
+  { id: "supermarket", key: "services_filter_supermarket", Icon: ShoppingCart, color: "text-sienna-600" },
+  { id: "gas", key: "services_filter_gas", Icon: Fuel, color: "text-gold-500" }
 ];
 
-const BASES = [
-  { id: "north" as const, label: "Around Larciano", sub: "North base · Aug 17–21" },
-  { id: "south" as const, label: "Around Cortevecchia", sub: "South base · Aug 21–26" }
+const BASES: {
+  id: "north" | "south";
+  key: DictKey;
+  sub: { en: string; he: string };
+}[] = [
+  {
+    id: "north",
+    key: "services_filter_north",
+    sub: { en: "Aug 17–21 · Larciano", he: "17–21 באוגוסט · לרצ'יאנו" }
+  },
+  {
+    id: "south",
+    key: "services_filter_south",
+    sub: { en: "Aug 21–26 · Cortevecchia", he: "21–26 באוגוסט · קורטווקיה" }
+  }
 ];
 
 export default function ServicesSection() {
+  const t = useT();
+  const { lang } = useLang();
+  const localizeService = useLocalizeService();
   const [base, setBase] = useState<"north" | "south">("north");
   const { focusOn } = useMapFocus();
 
   return (
     <Section
       id="services"
-      eyebrow="The neighborhood"
-      title="Eat, shop, refuel"
-      kicker="Five-star pasta, last-minute groceries, the right pump."
-      intro="A short list of the places worth driving to from each base — local trattorias, full-service supermarkets, and the closest gas stations for the morning runs."
+      eyebrow={t("services_eyebrow")}
+      title={t("services_title")}
+      kicker={t("services_kicker")}
       toned
     >
       <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-hide mb-6 sm:mb-8">
         <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
-          {BASES.map(b => (
-            <button
-              key={b.id}
-              onClick={() => setBase(b.id)}
-              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-11 ${
-                base === b.id
-                  ? "bg-ink-900 text-cream-50"
-                  : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
-              }`}
-            >
-              <span>{b.label}</span>
-              <span className={`ml-2 text-xs ${base === b.id ? "text-cream-200" : "text-ink-700/60"}`}>
-                · {b.sub}
-              </span>
-            </button>
-          ))}
+          {BASES.map(b => {
+            const subText = b.sub[lang];
+            return (
+              <button
+                key={b.id}
+                onClick={() => setBase(b.id)}
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap min-h-11 ${
+                  base === b.id
+                    ? "bg-ink-900 text-cream-50"
+                    : "bg-cream-50 border border-cream-300 text-ink-800 hover:border-terracotta-500/40"
+                }`}
+              >
+                <span>{t(b.key)}</span>
+                <span className={`ms-2 text-xs ${base === b.id ? "text-cream-200" : "text-ink-700/60"}`}>
+                  · {subText}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -60,14 +80,16 @@ export default function ServicesSection() {
           transition={{ duration: 0.22 }}
           className="grid gap-6 lg:grid-cols-3"
         >
-          {CATS.map(({ id, label, Icon, color }) => {
-            const items = services.filter(s => s.base === base && s.category === id);
+          {CATS.map(({ id, key, Icon, color }) => {
+            const items = services
+              .filter(s => s.base === base && s.category === id)
+              .map(localizeService);
             return (
               <div key={id} className="card-paper p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Icon size={18} className={color} />
-                  <h3 className="font-serif text-xl text-ink-900">{label}</h3>
-                  <span className="text-xs text-ink-700/60 ml-auto">{items.length}</span>
+                  <h3 className="font-serif text-xl text-ink-900">{t(key)}</h3>
+                  <span className="text-xs text-ink-700/60 ms-auto">{items.length}</span>
                 </div>
                 <ul className="space-y-4">
                   {items.map(it => (
@@ -94,10 +116,10 @@ export default function ServicesSection() {
                           rel="noopener noreferrer"
                           className="icon-link"
                         >
-                          <Navigation size={11} /> Navigate
+                          <Navigation size={11} /> {t("navigate")}
                         </a>
                         <button onClick={() => focusOn(it.id)} className="icon-link">
-                          <MapPin size={11} /> On map
+                          <MapPin size={11} /> {t("on_the_map_short")}
                         </button>
                       </div>
                     </li>

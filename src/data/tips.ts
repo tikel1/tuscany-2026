@@ -23,13 +23,6 @@ export const tips: Tip[] = [
     severity: "warning"
   },
   {
-    id: "ac-confirm",
-    title: "Confirm AC at Tenuta Cortevecchia in writing",
-    body:
-      "Cortevecchia is a restored historic estate. The Maremma in late August is hot. Message your host before you fly and confirm — in writing — that working air conditioning is installed in your specific apartment, and not just 'in the property'.",
-    severity: "warning"
-  },
-  {
     id: "self-service-fuel",
     title: "Self-service vs servito at gas stations",
     body:

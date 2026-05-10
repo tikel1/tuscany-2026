@@ -26,6 +26,15 @@
   --font-serif: "Cormorant Garamond", "Georgia", ui-serif, serif;
 }
 
+/* Hebrew typography — applied automatically when <html dir="rtl">.
+   Rubik is a warm, humanist Hebrew sans (used by many Israeli editorial
+   sites). David Libre is the classic elegant Hebrew serif — pairs well
+   with Cormorant on the Latin side and gives a real magazine feel. */
+html[dir="rtl"] {
+  --font-sans: "Rubik", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "David Libre", "Cormorant Garamond", "Georgia", ui-serif, serif;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
@@ -113,13 +122,24 @@ h1, h2, h3, h4 {
   display: none;
 }
 
-/* Leaflet popup styling override */
+/* Leaflet popup content always reads LTR so the OSM/Carto credit and
+   navigation links don't get mirrored awkwardly inside RTL layouts. */
 .leaflet-popup-content-wrapper {
   background: var(--color-cream-50) !important;
   color: var(--color-ink-800) !important;
   border-radius: 12px !important;
   border: 1px solid var(--color-cream-300) !important;
   box-shadow: 0 16px 32px -12px rgba(42, 31, 26, 0.2) !important;
+}
+
+html[dir="rtl"] .leaflet-popup-content {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Keep map controls (zoom etc.) in their original LTR position on RTL pages */
+html[dir="rtl"] .leaflet-control-attribution {
+  direction: ltr;
 }
 
 .leaflet-popup-tip {
