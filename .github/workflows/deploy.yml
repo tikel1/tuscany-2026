@@ -27,7 +27,10 @@ jobs:
           cache: npm
 
       - name: Install
-        run: npm ci
+        # We use `npm install` rather than `npm ci` because the lock file is
+        # generated on Windows and CI runs on Linux — Linux needs the
+        # @emnapi/* optional native deps that Windows doesn't record.
+        run: npm install --no-audit --no-fund
 
       - name: Build
         run: npm run build
