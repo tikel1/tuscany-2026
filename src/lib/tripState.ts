@@ -30,6 +30,18 @@ export function partsFromMs(ms: number): CountdownParts {
   return { totalMs: safe, days, hours, minutes, seconds };
 }
 
+/**
+ * Returns the day number to feature by default.
+ * - During the trip: today's chapter.
+ * - Before the trip: Day 1 (the upcoming chapter).
+ * - After the trip: Day 1 (back to the start).
+ */
+export function getCurrentOrUpcomingDayNumber(now: Date = new Date()): number {
+  const state = getTripState(now);
+  if (state.phase === "during") return state.today.dayNumber;
+  return 1;
+}
+
 export function getTripState(now: Date = new Date()): TripState {
   const today = startOfDayLocal(now);
   const start = startOfDayLocal(TRIP_START);

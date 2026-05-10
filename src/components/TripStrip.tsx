@@ -11,17 +11,24 @@ const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 interface Props {
   /** Compact = the slim sticky bar; default = the big intro ribbon */
   compact?: boolean;
+  /** Controlled active day number. If omitted, falls back to scroll tracking. */
+  activeDay?: number | null;
+  /** Called when a pill is selected. If omitted, scrolls to #day-N. */
+  onSelect?: (dayNumber: number) => void;
 }
 
-export default function TripStrip({ compact = false }: Props) {
+export default function TripStrip({ compact = false, activeDay, onSelect }: Props) {
   const tripState = getTripState();
   const todayNumber =
     tripState.phase === "during" ? tripState.today.dayNumber : null;
 
+  const controlled = typeof activeDay !== "undefined";
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [scrollActive, setScrollActive] = useState<number | null>(null);
+  const activeIdx = controlled ? activeDay ?? null : scrollActive;
 
   useEffect(() => {
+    if (controlled) return;
     const onScroll = () => {
       const fromTop = window.scrollY + window.innerHeight * 0.35;
       let active: number | null = null;
@@ -29,12 +36,12 @@ export default function TripStrip({ compact = false }: Props) {
         const el = document.getElementById(`day-${day.dayNumber}`);
         if (el && el.offsetTop <= fromTop) active = day.dayNumber;
       }
-      setActiveIdx(active);
+      setScrollActive(active);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [controlled]);
 
   // Auto-center the active pill in the compact strip
   useEffect(() => {
@@ -55,6 +62,10 @@ export default function TripStrip({ compact = false }: Props) {
   };
 
   const jumpTo = (n: number) => {
+    if (onSelect) {
+      onSelect(n);
+      return;
+    }
     document
       .getElementById(`day-${n}`)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });

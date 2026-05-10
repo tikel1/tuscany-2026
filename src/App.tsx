@@ -15,10 +15,13 @@ import Footer from "./components/Footer";
 import MobileBottomNav from "./components/MobileBottomNav";
 import FloatingMapButton from "./components/FloatingMapButton";
 import SectionOrnament from "./components/SectionOrnament";
+import ChapterDetailPage from "./components/ChapterDetailPage";
 import { MapFocusContext } from "./lib/mapContext";
+import { useHashRoute } from "./lib/route";
 
 export default function App() {
   const focusFnRef = useRef<((id: string) => void) | null>(null);
+  const route = useHashRoute();
 
   const focusOn = useCallback((id: string) => {
     if (focusFnRef.current) focusFnRef.current(id);
@@ -27,6 +30,10 @@ export default function App() {
   const registerFocus = useCallback((fn: (id: string) => void) => {
     focusFnRef.current = fn;
   }, []);
+
+  if (route.kind === "chapter") {
+    return <ChapterDetailPage dayNumber={route.day} />;
+  }
 
   return (
     <MapFocusContext.Provider value={{ focusOn }}>
