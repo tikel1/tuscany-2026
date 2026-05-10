@@ -9,35 +9,98 @@ import WeatherStrip from "./WeatherStrip";
 
 interface HeroPhoto {
   src: string;
-  caption: string;
-  region: "north" | "south";
+  /** Place name shown at the bottom-left in italics */
+  place: string;
+  /** Tiny attribution shown next to the place — photographer + license */
+  credit: string;
+  /** Wikimedia Commons / Unsplash file page so curious viewers can verify */
+  source: string;
 }
 
+// All photos are CC-licensed beauty shots of places we'll actually visit
+// (or the iconic Tuscan landscapes that surround them). Hosted locally
+// at public/images/hero/ — fetched once via scripts/fetch-hero-images.mjs.
 const HERO_PHOTOS: HeroPhoto[] = [
   {
-    src: "./images/saturnia.jpg",
-    caption: "Saturnia · Cascate del Mulino",
-    region: "south"
+    src: "./images/hero/cypresses-sunset.jpg",
+    place: "Cipressi di San Quirico d'Orcia",
+    credit: "Wikimedia Commons · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Cipressi_di_S.Quirico_d'Orcia_al_tramonto.jpg"
   },
   {
-    src: "./images/pitigliano.jpg",
-    caption: "Pitigliano · the tufa city",
-    region: "south"
+    src: "./images/hero/saturnia-falls.jpg",
+    place: "Saturnia · Cascate del Mulino",
+    credit: "Raimond Spekking · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg"
+  },
+  {
+    src: "./images/hero/pitigliano-panorama.jpg",
+    place: "Pitigliano · viewpoint at golden hour",
+    credit: "Wikimedia · Featured Picture · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:01665_ITA_Tuscany_Pitigliano_S_from_viewpoint_V-P.jpg"
+  },
+  {
+    src: "./images/hero/val-dorcia-hills.jpg",
+    place: "Endless hills of Pienza · Val d'Orcia",
+    credit: "Wikimedia · Featured Picture · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Endless_hills_of_Pienza1.jpg"
+  },
+  {
+    src: "./images/hero/maremma-aerial.jpg",
+    place: "Parco della Maremma · Torre di Collelungo",
+    credit: "Wikimedia Commons · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Toscana_-_Maremma_Regional_Park_-_aerial_photo_with_Torre_di_Collelungo.jpg"
   },
   {
     src: "./images/cala-del-gesso.jpg",
-    caption: "Cala del Gesso · Argentario",
-    region: "south"
+    place: "Cala del Gesso · Argentario",
+    credit: "Cristina Gottardi (Unsplash) · CC0",
+    source: "https://unsplash.com/photos/7_APbY7Afsg"
+  },
+  {
+    src: "./images/hero/sorano-blue-hour.jpg",
+    place: "Sorano · blue hour",
+    credit: "Wikimedia · Featured Picture · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:01844b_ITA_Tuscany_Sorano_blue_hour_3_to_1_V-P.jpg"
+  },
+  {
+    src: "./images/hero/val-dorcia-lonely-tree.jpg",
+    place: "Tuscan landscape · the lonely tree",
+    credit: "Wikimedia · Featured Picture · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Tuscan_landscape_with_lonely_tree.jpg"
+  },
+  {
+    src: "./images/hero/crete-orcia-sunrise.jpg",
+    place: "Sunrise on the Crete dell'Orcia",
+    credit: "Wikimedia Commons · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Sunrise_in_Crete_dell'Orcia.jpg"
   },
   {
     src: "./images/civita.jpg",
-    caption: "Civita di Bagnoregio · the dying city",
-    region: "south"
+    place: "Civita di Bagnoregio · the dying city",
+    credit: "Wikimedia Commons · CC BY-SA",
+    source: "https://en.wikipedia.org/wiki/Civita_di_Bagnoregio"
   },
   {
-    src: "./images/abetone.jpg",
-    caption: "Monte Gomito · 1,892 m",
-    region: "north"
+    src: "./images/hero/coast-sunset.jpg",
+    place: "Tramonto al Castello del Boccale · Tyrrhenian coast",
+    credit: "Wikimedia Commons · CC BY-SA",
+    source:
+      "https://commons.wikimedia.org/wiki/File:Tramonto_al_Castello_del_Boccale.jpg"
+  },
+  {
+    src: "./images/hero/tuscan-landscape-pano.jpg",
+    place: "Tuscan countryside · the long view",
+    credit: "Wikimedia · Featured Picture · CC BY-SA",
+    source: "https://commons.wikimedia.org/wiki/File:Tuscan_Landscape_6.JPG"
   }
 ];
 
@@ -55,17 +118,25 @@ function useTripStateLive() {
 
 function useHeroPhoto() {
   const [idx, setIdx] = useState(0);
+
+  // Lazy preload: keep memory low and avoid hammering the network with ~25 MB
+  // of full-resolution screensavers all at once. Strategy:
+  //   - First photo loads with the page itself (no preload needed).
+  //   - As soon as a photo becomes active, kick off a preload for the NEXT one
+  //     so it's ready by the time we crossfade.
   useEffect(() => {
-    // Preload all hero photos once on mount so crossfades are seamless.
-    HERO_PHOTOS.forEach(p => {
-      const img = new Image();
-      img.src = p.src;
-    });
+    const next = (idx + 1) % HERO_PHOTOS.length;
+    const img = new Image();
+    img.src = HERO_PHOTOS[next].src;
+  }, [idx]);
+
+  useEffect(() => {
     const id = window.setInterval(() => {
       setIdx(i => (i + 1) % HERO_PHOTOS.length);
     }, PHOTO_DURATION_MS);
     return () => window.clearInterval(id);
   }, []);
+
   return { photo: HERO_PHOTOS[idx], idx };
 }
 
@@ -163,29 +234,26 @@ export default function Hero() {
         />
       </AnimatePresence>
 
-      {/* Hero photo caption — small italic credit at the bottom-left */}
-      <div className="absolute left-5 sm:left-8 bottom-3 sm:bottom-4 z-10 hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-cream-50/70 font-medium pointer-events-none">
-        <span className="w-1.5 h-1.5 rounded-full bg-cream-50/60" aria-hidden />
-        <span className="font-serif italic normal-case tracking-normal text-[12px] text-cream-50/85">
-          {photo.caption}
-        </span>
-        <span className="ml-2 flex gap-1" aria-hidden>
-          {HERO_PHOTOS.map((_, i) => (
-            <span
-              key={i}
-              className={`block h-px transition-all ${
-                i === idx ? "w-5 bg-cream-50/85" : "w-2 bg-cream-50/35"
-              }`}
-            />
-          ))}
-        </span>
+      {/* Progress dashes — bottom right, indicate position in the carousel */}
+      <div
+        className="absolute right-4 sm:right-8 bottom-3 sm:bottom-5 z-10 flex gap-1 pointer-events-none"
+        aria-hidden
+      >
+        {HERO_PHOTOS.map((_, i) => (
+          <span
+            key={i}
+            className={`block h-px transition-all duration-500 ${
+              i === idx ? "w-5 bg-cream-50/90" : "w-2 bg-cream-50/30"
+            }`}
+          />
+        ))}
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/15 to-ink-900/75" />
       {/* Top-bottom edge fades */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink-900/40 to-transparent pointer-events-none" />
 
-      {/* Top wordmark */}
+      {/* Top wordmark + dynamic photo place / credit on the right */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -193,13 +261,31 @@ export default function Hero() {
         className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 pt-20 sm:pt-24"
       >
         <div className="flex items-baseline gap-3">
-          <div className="font-serif tracking-[0.16em] text-xs sm:text-sm uppercase">
+          <div className="font-serif tracking-[0.16em] text-xs sm:text-sm uppercase whitespace-nowrap">
             Tuscany 2026
           </div>
-          <div className="h-px flex-1 max-w-32 bg-cream-50/40" />
-          <div className="font-serif italic text-[11px] sm:text-xs text-cream-50/80">
-            Family edition · Issue 01
-          </div>
+          <div className="h-px flex-1 max-w-16 sm:max-w-32 bg-cream-50/40" />
+          <AnimatePresence mode="wait">
+            <motion.a
+              key={photo.src}
+              href={photo.source}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.5 }}
+              className="text-right min-w-0 flex-shrink"
+              aria-label={`Photo: ${photo.place} (${photo.credit}). Open source.`}
+            >
+              <div className="font-serif italic text-[11px] sm:text-xs text-cream-50/90 leading-tight truncate">
+                {photo.place}
+              </div>
+              <div className="hidden sm:block text-[9px] uppercase tracking-[0.22em] text-cream-50/60 mt-0.5">
+                {photo.credit}
+              </div>
+            </motion.a>
+          </AnimatePresence>
         </div>
       </motion.div>
 
