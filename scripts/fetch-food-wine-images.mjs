@@ -60,12 +60,12 @@ const TARGETS = [
   // appellation / village article — a vineyard or village panorama is
   // visually relevant and credibly representative of the producer.
   ["wine-capezzana.jpg",        { wiki: "Carmignano_(wine)" }],
-  // Bacchereto's en article is missing — use the comune of Carmignano,
-  // which is the village it sits inside of.
-  ["wine-bacchereto.jpg",       { wiki: "Carmignano" }],
-  // No standalone Villa di Artimino article on en.wiki — use the
-  // hamlet, which surfaces a panorama of the very same hilltop estate.
-  ["wine-artimino.jpg",         { wiki: "Artimino" }],
+  // Bacchereto + Artimino's hamlet articles both surface the same
+  // Carmignano church lead image, so we go elsewhere for visual variety:
+  //  - Bacchereto: the Sangiovese grape (their headline varietal).
+  //  - Artimino:   the actual Medici villa the estate sits around.
+  ["wine-bacchereto.jpg",       { wiki: "Sangiovese" }],
+  ["wine-artimino.jpg",         { wiki: "Medici_villas" }],
   // No "Chianti Montalbano" article on en.wiki — use the parent
   // Chianti article instead.
   ["wine-petrognano.jpg",       { wiki: "Chianti" }],
