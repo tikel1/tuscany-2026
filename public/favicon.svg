@@ -1,30 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Tuscany 2026 favicon — three cypresses on a Tuscan ridge,
-    redrawn so the silhouettes actually read as cypresses (not
-    eggs or mushrooms): bold tapered columns coming to a SHARP
-    point at the top. The trick is cubic Beziers whose end
-    control points sit DIRECTLY ABOVE the apex (cx == apex x),
-    so both sides arrive at the peak with vertical tangents —
-    that's what gives a clean angular point instead of a
-    rounded dome. Center cypress is dominant so it survives
-    16×16 (~10px tall, ~3px wide at that size).
+    Tuscany 2026 favicon — ONE bold cypress, sized to actually read
+    at browser-tab favicon sizes (16×16 and 20×20). Three smaller
+    cypresses look great at 64×64 but collapse into a coloured blob
+    at 16×16 because each silhouette is only ~1.5px wide. A single
+    dominant cypress that fills most of the icon is the only thing
+    that survives that scale.
+
+    Design choices:
+    - Sharp pointed apex (cubic Bezier control points cx == apex x
+      so both sides arrive vertical → clean angular peak).
+    - Slight outward bulge in the lower third so the silhouette
+      reads as "tree" not "obelisk".
+    - Cypress base sits on a low terracotta ridge for context;
+      the ridge curve also doubles as visual weight at the bottom
+      so the icon feels grounded, not floating.
+    - Cream silhouette on terracotta sky gives high contrast in
+      both light and dark browser chromes.
   -->
 
   <!-- Sky: warm Tuscan terracotta (matches brand --color-terracotta-500) -->
   <rect width="64" height="64" fill="#C45A3D"/>
 
-  <!-- Rolling hill, deeper terracotta, for grounding -->
-  <path d="M-2,50 Q32,44 66,50 L66,66 L-2,66 Z" fill="#8B3622"/>
+  <!-- Ridge / hill, deeper terracotta -->
+  <path d="M-2,54 Q32,48 66,54 L66,66 L-2,66 Z" fill="#8B3622"/>
 
-  <!-- Center cypress (dominant — survives 16×16).
-       Each side: cubic Bezier that bulges out in the lower third
-       and arrives at the apex with a vertical tangent (cx == 32). -->
-  <path d="M27,50 C25,38 32,20 32,8 C32,20 39,38 37,50 Z" fill="#F5EFE0"/>
-
-  <!-- Left cypress (medium height) -->
-  <path d="M14,50 C13,40 17,28 17,20 C17,28 21,40 20,50 Z" fill="#F5EFE0"/>
-
-  <!-- Right cypress (medium height) -->
-  <path d="M44,50 C43,42 47,30 47,22 C47,30 51,42 50,50 Z" fill="#F5EFE0"/>
+  <!-- The cypress — wide enough to be visible at 16×16 (~6px wide
+       at the base and ~14px tall at that scale). -->
+  <path d="M21,54 C18,42 32,14 32,4 C32,14 46,42 43,54 Z" fill="#F5EFE0"/>
 </svg>
