@@ -17,7 +17,10 @@ import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
-import { buildSystemPrompt, buildTypedReplySystemPrompt } from "../lib/gemininio/persona";
+import {
+  buildLiveSessionSystemPrompt,
+  buildTypedReplySystemPrompt
+} from "../lib/gemininio/persona";
 import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
 import {
   getApiKey,
@@ -209,7 +212,7 @@ export default function Gemininio() {
     const session = new LiveSession(
       {
         apiKey,
-        systemInstruction: buildSystemPrompt(lang),
+        systemInstruction: buildLiveSessionSystemPrompt(lang),
         language: lang
         // Sessions are always AUDIO modality on the wire (Live's
         // TEXT modality is currently broken across every model on
@@ -317,17 +320,32 @@ export default function Gemininio() {
     setStatus("thinking");
     setError(null);
 
-    /* Typed chat always uses REST generateContent + Google Search tool.
-     * The API lets the model decide when a search actually runs — we
-     * never expose a toggle; discipline in buildTypedReplySystemPrompt
-     * keeps the itinerary as source of truth. Live WebSocket is only
-     * for voice (see startMic / onText from Live). */
     const apiKey = getApiKey();
     if (!apiKey) {
       setStatus("needs-key");
       setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
       return;
     }
+
+    /* Sound ON → same path as early Gemininio: typed text goes over Live
+     * `sendText`, so replies use native Charon audio (Italian guide voice).
+     * Sound OFF → REST + optional Google Search; no Live PCM. */
+    if (audioEnabledRef.current) {
+      if (!playerRef.current) playerRef.current = new PcmPlayer();
+      try {
+        await playerRef.current.ensureAudioUnlocked();
+      } catch {
+        /* still try Live — enqueue may resume later */
+      }
+      const s = await ensureSession();
+      if (!s) {
+        setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
+        return;
+      }
+      s.sendText(trimmed);
+      return;
+    }
+
     try {
       const sys = buildTypedReplySystemPrompt(lang);
       const reply = await generateGroundedReply({

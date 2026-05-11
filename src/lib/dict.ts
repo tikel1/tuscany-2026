@@ -265,8 +265,8 @@ export const DICT = {
   gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
   gem_mute:   { en: "Turn voice off", he: "כבה קול" },
   gem_input_mode_note: {
-    en: "Typed messages may use Google when helpful; the plan always wins. The Italian guide voice (Gemini Live) plays when you hold the mic — not on typed replies.",
-    he: "הודעות כתובות עשויות להיעזר בגוגל כשזה עוזר; המסלול תמיד מנצח. קול המדריך האיטלקי (ג׳מיני לייב) מושמע כשמחזיקים את המיקרופון — לא בתשובות כתובות."
+    en: "Speaker off: typed messages may use Google Search when helpful; the plan always wins. Speaker on: typed text uses Gemini Live too (Italian guide voice) — no web search on that path.",
+    he: "רמקול כבוי: הודעות כתובות עשויות להיעזר בחיפוש גוגל; המסלול מנצח. רמקול דלוק: גם טקסט עובר בלייב של ג׳מיני (קול המדריך האיטלקי) — בלי חיפוש אינטרנט בנתיב הזה."
   },
   gem_typed_failed: {
     en: "Could not get a reply: ",

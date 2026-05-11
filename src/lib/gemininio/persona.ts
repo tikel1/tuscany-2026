@@ -309,6 +309,19 @@ export function buildTypedReplySystemPrompt(lang: Lang): string {
   return `${buildSystemPrompt(lang)}\n\n${TYPED_SEARCH_DISCIPLINE}`;
 }
 
+/** System instruction for the Gemini Live WebSocket (mic OR typed when
+ *  sound is on). Same trip grounding as `buildSystemPrompt` plus an explicit
+ *  note that this channel has no Google Search — matches pre-search
+ *  behaviour when typed replies used `sendText` on Live for native audio. */
+const LIVE_CHANNEL_NO_WEB_SEARCH = `THIS LIVE WEBSOCKET (you receive both streamed voice and/or plain text from the user on the same connection):
+- There is NO Google Search tool on this channel. Work only from the trip data already in your context.
+- If a question truly needs live web facts (today's opening hours, current weather, is this venue open right now), say briefly that you cannot browse the web from here, give the best answer you can from the plan, and suggest they turn OFF the speaker icon and send the same question typed — that path uses Google Search.
+- Otherwise follow every persona rule as usual (brevity, single language, Italian warmth in native audio, etc.).`;
+
+export function buildLiveSessionSystemPrompt(lang: Lang): string {
+  return `${buildSystemPrompt(lang)}\n\n${LIVE_CHANNEL_NO_WEB_SEARCH}`;
+}
+
 export function buildSystemPrompt(lang: Lang): string {
   const persona = lang === "he" ? PERSONA_FOR_HEBREW_RESPONSES : PERSONA_EN;
   const trip =
