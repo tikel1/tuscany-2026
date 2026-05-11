@@ -96,15 +96,33 @@ export function isStandalone(): boolean {
 
 /* ---------- Mobile-only gate ---------- */
 
+/** Maximum viewport width (CSS pixels) that we treat as "mobile" for
+ *  the install prompt. Phone landscape goes up to ~932px (iPhone 14
+ *  Pro Max in landscape); 1024px gives us comfortable headroom while
+ *  still blocking every common desktop window. */
+const MOBILE_MAX_VIEWPORT = 1024;
+
+/** Hard viewport gate. The user explicitly doesn't want this prompt on
+ *  desktop — and the cleanest signal for "is this a desktop browser"
+ *  is the actual window width, not UA strings or touch capability
+ *  (both of which lie on hybrid laptops, IDE preview panes, etc.). */
+export function isMobileViewport(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.innerWidth < MOBILE_MAX_VIEWPORT;
+}
+
 /** Belt-and-suspenders mobile check, on top of UA-based platform
- *  detection. We only ever want this prompt on a phone or tablet — not
- *  on a desktop Chrome that happens to share the same Chromium engine.
+ *  detection. We only ever want this prompt on a phone or small
+ *  tablet — not on a desktop Chrome that happens to share the same
+ *  Chromium engine, or on a touchscreen monitor.
  *
- *  We require *both* a coarse primary pointer (= touch-driven UI) and
- *  actual touch capability, so a desktop with a touchscreen monitor
- *  (which still uses a fine mouse pointer) doesn't trigger the popup. */
+ *  Three checks combined: phone-sized viewport AND coarse primary
+ *  pointer (= touch-driven UI) AND actual touch capability. The
+ *  viewport gate is the dominant one — a Windows touch laptop with a
+ *  1920px-wide screen has all the touch APIs but is still a desktop. */
 export function isLikelyMobile(): boolean {
   if (typeof window === "undefined") return false;
+  if (!isMobileViewport()) return false;
 
   const coarsePointer = window.matchMedia?.("(pointer: coarse)").matches ?? false;
   const hasTouch =
@@ -232,6 +250,14 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // PRIMARY GATE: viewport width. The user explicitly doesn't want this
+    // prompt on desktop, and the most reliable "am I a desktop" signal is
+    // the actual window size — not UA strings, not touch capability. This
+    // catches Cursor / Electron preview panes, Windows touch laptops,
+    // touchscreen desktop monitors, "Request desktop site" mode, and any
+    // other edge case that lies about being mobile.
+    if (!isMobileViewport()) return;
+
     // Skip outright if we have nothing useful to say.
     if (platform === "other") return;
     // Mobile-only by design — this app lives on the phone in the user's
@@ -247,6 +273,7 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
 
     const id = window.setTimeout(() => {
       // Re-check at fire time — a lot can happen in 6 seconds.
+      if (!isMobileViewport()) return;
       if (isStandalone()) return;
       if (isSnoozed(readPrefs())) return;
       setOpen(true);
@@ -254,6 +281,20 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
 
     return () => window.clearTimeout(id);
   }, [platform, openDelayMs]);
+
+  /* If the user widens the window past the mobile threshold while the
+   * prompt is open (or scheduled), close it. The prompt is mobile-only
+   * by contract; resizing into desktop territory should make it vanish
+   * the same way it would if you'd loaded the page that wide to start. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const onResize = () => {
+      if (!isMobileViewport()) setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const install: InstallPromptApi["install"] = async () => {
     const evt = bipRef.current;

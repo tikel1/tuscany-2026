@@ -1061,8 +1061,16 @@ the prompt yourself:
 3. **`src/lib/install.ts`** — a small `useInstallPrompt` hook that:
    - Detects platform: iOS Safari, iOS non-Safari (Chrome, FB browser),
      Android Chrome, other.
-   - Skips desktop entirely (`isLikelyMobile()` = coarse pointer +
-     touch capability + UA cross-check).
+   - **Hard-gates on viewport width first.** This is the *primary*
+     "is it desktop?" signal — UA strings and touch capability lie
+     constantly (Cursor / Electron preview panes, Windows touch
+     laptops, touchscreen monitors, "Request desktop site" mode all
+     fool UA-based detection). A simple `window.innerWidth < 1024`
+     check beats every heuristic. Listen to `resize` too — close the
+     prompt if the user widens the window past the threshold.
+   - Layered defense: also skip on `platform === "desktop-chromium"`
+     (UA-based) and `!isLikelyMobile()` (coarse pointer + touch +
+     viewport, all three). Belt and suspenders.
    - Skips standalone mode (`navigator.standalone` on iOS;
      `display-mode: standalone` media query elsewhere) — already
      installed.
