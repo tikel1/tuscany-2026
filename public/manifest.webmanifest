@@ -13,7 +13,7 @@
   "categories": ["travel", "lifestyle"],
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "favicon.svg?v=3",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
