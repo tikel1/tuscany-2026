@@ -265,10 +265,17 @@ export const DICT = {
   gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
   gem_mute:   { en: "Turn voice off", he: "כבה קול" },
   gem_input_mode_note: {
-    en: "Send: trip knowledge only when the speaker is off (text). Speaker on: same answer path uses Gemini Live (Italian guide voice). Tap the globe when you need Google Search — that turn is text-only from the REST API, not live voice.",
-    he: "שליחה: כשהרמקול כבוי — תשובה מהמסלול בלבד (טקסט). רמקול דלוק: אותו שליחה בלייב של ג׳מיני (קול מדריך איטלקי). לחצו על כדור הארץ כשצריך חיפוש גוגל — באותו שלב התשובה מגיעה מ־REST בלי קול לייב."
+    en: "Globe (left): off = trip data only when the speaker is off; speaker on = Italian voice on Live. Globe on = Google Search on every send (text, REST) — independent of the speaker.",
+    he: "כדור הארץ (משמאל): כבוי — עם רמקול כבוי רק מהמסלול; רמקול דלוק — לייב עם קול איטלקי. כדור הארץ דלוק — חיפוש גוגל בכל שליחה (טקסט, REST), בלי קשר לרמקול."
   },
-  gem_web_search: { en: "Search with Google", he: "חיפוש בגוגל" },
+  gem_web_search_enable: {
+    en: "Turn Google Search on for sends",
+    he: "הפעלת חיפוש גוגל לשליחות"
+  },
+  gem_web_search_disable: {
+    en: "Turn Google Search off for sends",
+    he: "כיבוי חיפוש גוגל לשליחות"
+  },
   gem_typed_failed: {
     en: "Could not get a reply: ",
     he: "לא הצלחנו לקבל תשובה: "

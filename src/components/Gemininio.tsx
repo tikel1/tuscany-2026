@@ -44,9 +44,9 @@ import {
  * - Static SPA on GitHub Pages → no backend, so no shared API key.
  * - Each user pastes their own free Gemini key once; saved in
  *   localStorage on their device only.
- * - Typed + speaker on: Live `sendText` (Charon / Italian-guide voice).
- *   Typed + speaker off: REST trip-only on Send; globe = REST + Google
- *   Search (text). Mic: Live audio. Search tool exists only on REST.
+ * - Web search toggle (left, default off): when ON, every Send uses REST
+ *   + Google Search (text). When OFF: Send uses Live if speaker on, else
+ *   REST trip-only. Mic is always Live. Search is never tied to speaker.
  * - System prompt rebuilt from the live trip data so any itinerary
  *   edit is immediately known to Gemininio.
  *
@@ -82,15 +82,25 @@ export default function Gemininio() {
   const [messages, setMessages] = useState<Message[]>(() => loadHistory());
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  // Audio is OFF by default — most use is read-and-tap. When OFF we
-  // also switch the Live API response modality to TEXT so Google
-  // doesn't generate any audio bytes server-side (saves quota AND
-  // bandwidth, not just the playback). The user's last preference
-  // is persisted so power-users who want voice get it on every load.
+  // Audio is OFF by default — most use is read-and-tap. Live always
+  // streams PCM; we drop it client-side when muted. Preference is
+  // persisted so users who want Italian voice on typed sends get it
+  // on every load.
   const [audioEnabled, setAudioEnabled] = useState<boolean>(() => {
     try {
       return typeof localStorage !== "undefined" &&
         localStorage.getItem("gem-audio-enabled") === "true";
+    } catch {
+      return false;
+    }
+  });
+  /** Google Search on REST sends only; independent of speaker. Default off. */
+  const [webSearchEnabled, setWebSearchEnabled] = useState<boolean>(() => {
+    try {
+      return (
+        typeof localStorage !== "undefined" &&
+        localStorage.getItem("gem-web-search-enabled") === "true"
+      );
     } catch {
       return false;
     }
@@ -107,6 +117,7 @@ export default function Gemininio() {
   // at session-create time; a later toggle wouldn't affect it. This
   // ref is the always-current source the callback actually reads.
   const audioEnabledRef = useRef(audioEnabled);
+  const webSearchEnabledRef = useRef(webSearchEnabled);
 
   /* ---------------- side effects ---------------- */
 
@@ -126,6 +137,15 @@ export default function Gemininio() {
       /* private mode etc. — silent */
     }
   }, [audioEnabled]);
+
+  useEffect(() => {
+    webSearchEnabledRef.current = webSearchEnabled;
+    try {
+      localStorage.setItem("gem-web-search-enabled", String(webSearchEnabled));
+    } catch {
+      /* ignore */
+    }
+  }, [webSearchEnabled]);
 
   // Auto-scroll the message list when something new lands.
   useEffect(() => {
@@ -305,15 +325,11 @@ export default function Gemininio() {
   }
 
   /**
-   * `channel: "live"` — Gemini Live (native voice when speaker is on).
-   * `channel: "rest"` + `useGoogleSearch` — REST only; search tool is
-   * only attached when the user explicitly taps the globe (Google's
-   * search tool is not available on the Live WebSocket in this app).
+   * Web search toggle ON → always REST + Google Search (independent of
+   * speaker). Toggle OFF + speaker ON → Live. Toggle OFF + speaker OFF
+   * → REST trip data only.
    */
-  async function submitTypedUserMessage(opts: {
-    channel: "live" | "rest";
-    useGoogleSearch?: boolean;
-  }) {
+  async function submitTypedUserMessage() {
     const trimmed = text.trim();
     if (!trimmed) return;
     setText("");
@@ -332,7 +348,9 @@ export default function Gemininio() {
       return;
     }
 
-    if (opts.channel === "live") {
+    const searchOn = webSearchEnabledRef.current;
+
+    if (!searchOn && audioEnabledRef.current) {
       if (!playerRef.current) playerRef.current = new PcmPlayer();
       try {
         await playerRef.current.ensureAudioUnlocked();
@@ -348,7 +366,7 @@ export default function Gemininio() {
       return;
     }
 
-    const useGoogleSearch = opts.useGoogleSearch === true;
+    const useGoogleSearch = searchOn;
     const sys = useGoogleSearch
       ? buildTypedReplySystemPrompt(lang)
       : buildSystemPrompt(lang);
@@ -386,14 +404,11 @@ export default function Gemininio() {
   }
 
   async function sendText() {
-    await submitTypedUserMessage({
-      channel: audioEnabledRef.current ? "live" : "rest",
-      useGoogleSearch: false
-    });
+    await submitTypedUserMessage();
   }
 
-  async function sendTextWithWebSearch() {
-    await submitTypedUserMessage({ channel: "rest", useGoogleSearch: true });
+  function toggleWebSearch() {
+    setWebSearchEnabled(v => !v);
   }
 
   async function startMic() {
@@ -633,8 +648,9 @@ export default function Gemininio() {
                     setText={setText}
                     scrollRef={scrollRef}
                     inputRef={inputRef}
+                    webSearchEnabled={webSearchEnabled}
+                    onToggleWebSearch={toggleWebSearch}
                     onSend={sendText}
-                    onSendWithWebSearch={sendTextWithWebSearch}
                     onMicDown={startMic}
                     onMicUp={stopMic}
                   />
@@ -756,8 +772,9 @@ function ChatView({
   setText,
   scrollRef,
   inputRef,
+  webSearchEnabled,
+  onToggleWebSearch,
   onSend,
-  onSendWithWebSearch,
   onMicDown,
   onMicUp
 }: {
@@ -768,8 +785,9 @@ function ChatView({
   setText: (s: string) => void;
   scrollRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  webSearchEnabled: boolean;
+  onToggleWebSearch: () => void;
   onSend: () => void;
-  onSendWithWebSearch: () => void;
   onMicDown: () => void;
   onMicUp: () => void;
 }) {
@@ -805,7 +823,28 @@ function ChatView({
         <p className="px-3 pt-2 pb-0 text-[10px] leading-snug text-ink-700/75 text-center">
           {t("gem_input_mode_note")}
         </p>
-        <div className="px-2 sm:px-3 py-3 flex items-center gap-1.5 sm:gap-2">
+        <div
+          className="px-2 sm:px-3 py-3 flex flex-row items-center gap-1.5 sm:gap-2"
+          dir="ltr"
+        >
+          <button
+            type="button"
+            onClick={onToggleWebSearch}
+            aria-pressed={webSearchEnabled}
+            aria-label={
+              webSearchEnabled ? t("gem_web_search_disable") : t("gem_web_search_enable")
+            }
+            title={
+              webSearchEnabled ? t("gem_web_search_disable") : t("gem_web_search_enable")
+            }
+            className={`shrink-0 w-10 h-10 rounded-full border flex items-center justify-center transition ${
+              webSearchEnabled
+                ? "border-terracotta-500 bg-terracotta-500 text-cream-50 shadow-md shadow-terracotta-700/20"
+                : "border-cream-400 bg-cream-100 text-ink-700/70 hover:bg-cream-200"
+            }`}
+          >
+            <Globe size={16} />
+          </button>
           <input
             ref={inputRef}
             value={text}
@@ -817,19 +856,10 @@ function ChatView({
               }
             }}
             placeholder={t("gem_input_placeholder")}
+            dir="auto"
             className="flex-1 min-w-0 px-3 py-2.5 rounded-full border border-cream-300 bg-cream-100 text-[14px] focus:outline-none focus:ring-2 focus:ring-terracotta-500/40"
             inputMode="text"
           />
-          <button
-            type="button"
-            onClick={onSendWithWebSearch}
-            disabled={sendDisabled}
-            aria-label={t("gem_web_search")}
-            title={t("gem_web_search")}
-            className="shrink-0 w-10 h-10 rounded-full border border-cream-400 bg-cream-100 text-ink-800 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cream-200 transition"
-          >
-            <Globe size={16} />
-          </button>
           <button
             type="button"
             onClick={onSend}
