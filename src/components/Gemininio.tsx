@@ -380,11 +380,11 @@ export default function Gemininio() {
 
   return (
     <>
-      {/* Floating launcher — circular, icon-only.
+      {/* Floating launcher — circular, icon-only, solid colour.
           Position: anchored to the physical RIGHT (`right-*` not
           `end-*`) so the chat stays on the same visual side when
-          the page is in Hebrew. Sits in the slot the map FAB used
-          to occupy. The breathing pulse ring and the
+          the page is in Hebrew. Sits in the slot the map FAB
+          used to occupy. The breathing pulse ring and
           AnimatePresence spring entry give it a living feel
           without being noisy. */}
       <AnimatePresence>
@@ -398,13 +398,9 @@ export default function Gemininio() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.7, y: 12 }}
             transition={{ type: "spring", damping: 18, stiffness: 280 }}
-            whileHover={{ scale: 1.07 }}
+            whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.92 }}
-            className="fixed z-30 right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 w-14 h-14 rounded-full text-cream-50 flex items-center justify-center shadow-xl shadow-terracotta-700/40 ring-1 ring-cream-50/30"
-            style={{
-              background:
-                "radial-gradient(120% 120% at 25% 20%, #E0996B 0%, #C45A3D 38%, #8B4513 100%)"
-            }}
+            className="fixed z-30 right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 w-12 h-12 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-cream-50 flex items-center justify-center shadow-lg shadow-terracotta-700/30"
           >
             {/* Breathing pulse ring — pure CSS, sits behind the
                 FAB and never intercepts pointer events. */}
@@ -412,10 +408,7 @@ export default function Gemininio() {
               aria-hidden
               className="absolute inset-0 rounded-full bg-terracotta-500/40 animate-gem-breathe"
             />
-            <Sparkles
-              size={22}
-              className="relative drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
-            />
+            <Sparkles size={18} className="relative" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -454,14 +447,8 @@ export default function Gemininio() {
                   / listening / thinking. */}
               <div className="px-5 pt-4 pb-3 border-b border-cream-300/70 flex items-center gap-3 bg-gradient-to-b from-cream-100 to-cream-50">
                 <div className="relative shrink-0">
-                  <div
-                    className="w-11 h-11 rounded-full text-cream-50 flex items-center justify-center ring-1 ring-cream-50/40 shadow-md shadow-terracotta-700/25"
-                    style={{
-                      background:
-                        "radial-gradient(120% 120% at 25% 20%, #E0996B 0%, #C45A3D 38%, #8B4513 100%)"
-                    }}
-                  >
-                    <Sparkles size={18} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]" />
+                  <div className="w-10 h-10 rounded-full bg-terracotta-500 text-cream-50 flex items-center justify-center shadow-md shadow-terracotta-700/20">
+                    <Sparkles size={16} />
                   </div>
                   {/* Status indicator dot. */}
                   <span
