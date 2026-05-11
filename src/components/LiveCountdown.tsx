@@ -34,10 +34,14 @@ function DigitCell({ value, size }: DigitCellProps) {
      numerals are visually quite different from Cormorant's, and the
      design depends on the countdown looking the same across languages.
      Only the unit labels (days/hrs/min/sec) below switch language. */
+  /* leading-[0.88]: Cormorant's em-box is taller than the digit glyphs;
+     line-height 1 still leaves visible slack above the numerals inside
+     the glass pill — a slightly tight line box trims that without
+     clipping (digits have no descenders). */
   const cls =
     size === "lg"
-      ? "font-latin-serif text-5xl sm:text-7xl leading-none"
-      : "font-latin-serif text-4xl sm:text-6xl leading-none";
+      ? "font-latin-serif text-5xl sm:text-7xl leading-[0.88]"
+      : "font-latin-serif text-4xl sm:text-6xl leading-[0.88]";
   return (
     <span
       className="relative inline-flex items-center justify-center overflow-hidden tabular-nums align-middle"
@@ -51,7 +55,7 @@ function DigitCell({ value, size }: DigitCellProps) {
           exit={{ y: "-60%", opacity: 0 }}
           transition={{ duration: 0.25, ease: [0.22, 0.61, 0.36, 1] }}
           className={`flex items-center justify-center ${cls}`}
-          style={{ fontVariantNumeric: "tabular-nums", lineHeight: 1 }}
+          style={{ fontVariantNumeric: "tabular-nums", lineHeight: 0.88 }}
         >
           {value}
         </motion.span>
@@ -76,7 +80,7 @@ function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
    * have no descenders — that combo left a large empty band above the
    * numerals. Symmetric padding + flex `items-center` on the row aligns
    * the glyph box with the pill without fighting the font metrics. */
-  const padCls = size === "lg" ? "py-2 sm:py-2.5" : "py-1.5 sm:py-2";
+  const padCls = size === "lg" ? "py-1 sm:py-1.5" : "py-1 sm:py-1.5";
 
   return (
     <div className="flex flex-col items-center gap-1.5 sm:gap-2">
@@ -85,9 +89,13 @@ function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
           pulse ? "ring-1 ring-cream-50/25" : ""
         }`}
       >
-        {str.split("").map((d, i) => (
-          <DigitCell key={`${label}-${i}`} value={d} size={size} />
-        ))}
+        {/* Nudge digits up a hair — optical balance inside the pill after
+            trimming line-height; keeps colon alignment via shared row. */}
+        <span className="flex items-center justify-center -translate-y-px sm:-translate-y-0.5">
+          {str.split("").map((d, i) => (
+            <DigitCell key={`${label}-${i}`} value={d} size={size} />
+          ))}
+        </span>
       </div>
       <div
         className={`uppercase tracking-[0.22em] font-medium opacity-90 ${
@@ -108,7 +116,7 @@ function Sep({ size }: { size: "md" | "lg" }) {
       ? "font-latin-serif text-4xl sm:text-6xl leading-none opacity-60"
       : "font-latin-serif text-3xl sm:text-5xl leading-none opacity-60";
   return (
-    <span className={`${cls} px-0.5 sm:px-1 self-center leading-none`}>:</span>
+    <span className={`${cls} px-0.5 sm:px-1 self-center leading-none -translate-y-px sm:-translate-y-0.5`}>:</span>
   );
 }
 
