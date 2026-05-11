@@ -262,6 +262,8 @@ export const DICT = {
     en: "Using the trip's built-in API key. To use your own instead, set up a key in your browser cache.",
     he: "משתמשים במפתח המובנה של הטיול. כדי להשתמש במפתח אישי שלכם, הגדירו אותו במטמון הדפדפן."
   },
+  gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
+  gem_mute:   { en: "Turn voice off", he: "כבה קול" },
 
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },

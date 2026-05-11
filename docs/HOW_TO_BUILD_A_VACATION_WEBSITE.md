@@ -1353,6 +1353,35 @@ For an Italian-tour-guide voice:
 - Keep an `isOpen()` getter so subsequent sends in the same
   session reuse the socket instead of reopening.
 
+### Default to muted; flip modalities to save quota
+
+Voice replies are charged differently from text and most chat-bot
+usage in practice is read-and-tap, not listen. Default `audioEnabled`
+to `false` and surface a small speaker toggle in the header.
+
+The clever bit: don't just mute the *playback* — switch the entire
+`responseModalities` between `["TEXT"]` (muted) and `["AUDIO"]`
+(unmuted). When TEXT-only:
+
+- Server doesn't synthesize any audio bytes at all (no quota burn).
+- `outputTranscription` is irrelevant — the answer arrives as
+  `modelTurn.parts[].text`. Your client filter (skip `text` parts
+  in AUDIO mode, accept them in TEXT mode) handles both cases
+  uniformly.
+- Mic input still works! User speaks → server transcribes
+  (`inputTranscription`) → text reply. Voice in, text out is a
+  perfectly natural mode and it's free of audio output cost.
+
+Setup config is fixed at WebSocket open time, so the toggle handler
+must close the existing session — the next send in `ensureSession`
+reconnects with the new modalities. Stop the `PcmPlayer` too so
+muting mid-reply actually feels instant. Persist the preference
+in `localStorage` so power-users get voice on every load.
+
+Also worth doing in the setup payload: only include `speech_config`
+and `output_audio_transcription` when audio is actually requested.
+Harmless to include in TEXT mode but makes the wire log noisy.
+
 ### Model fallback
 
 The newest preview models (`gemini-2.5-flash-native-audio-preview-…`)

@@ -9,7 +9,9 @@ import {
   Trash2,
   ExternalLink,
   Loader2,
-  MessageCircle
+  MessageCircle,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
@@ -73,6 +75,19 @@ export default function Gemininio() {
   const [messages, setMessages] = useState<Message[]>(() => loadHistory());
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  // Audio is OFF by default — most use is read-and-tap. When OFF we
+  // also switch the Live API response modality to TEXT so Google
+  // doesn't generate any audio bytes server-side (saves quota AND
+  // bandwidth, not just the playback). The user's last preference
+  // is persisted so power-users who want voice get it on every load.
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(() => {
+    try {
+      return typeof localStorage !== "undefined" &&
+        localStorage.getItem("gem-audio-enabled") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   /* ---------------- refs ---------------- */
 
@@ -90,6 +105,15 @@ export default function Gemininio() {
   useEffect(() => {
     saveHistory(messages.map(m => ({ role: m.role, text: m.text, ts: m.ts })));
   }, [messages]);
+
+  // Persist the audio-enabled preference.
+  useEffect(() => {
+    try {
+      localStorage.setItem("gem-audio-enabled", String(audioEnabled));
+    } catch {
+      /* private mode etc. — silent */
+    }
+  }, [audioEnabled]);
 
   // Auto-scroll the message list when something new lands.
   useEffect(() => {
@@ -154,7 +178,11 @@ export default function Gemininio() {
         apiKey,
         systemInstruction: buildSystemPrompt(lang),
         language: lang,
-        responseModalities: ["AUDIO"]
+        // TEXT-only when muted so the server doesn't synthesize
+        // audio at all. AUDIO when the user has unmuted — voice
+        // bytes flow into the PcmPlayer and the canonical visible
+        // text comes from the audio's outputTranscription.
+        responseModalities: audioEnabled ? ["AUDIO"] : ["TEXT"]
       },
       {
         onText: delta => {
@@ -317,6 +345,24 @@ export default function Gemininio() {
     setMessages([]);
   }
 
+  /** Toggle voice replies. Setup config is fixed at WebSocket open
+   *  time, so to switch modalities we tear down the existing session
+   *  here — the next send in `ensureSession` will reconnect with the
+   *  new `responseModalities`. We also stop any audio that's mid-
+   *  playback so muting actually feels instant. */
+  function handleToggleAudio() {
+    setAudioEnabled(prev => {
+      const next = !prev;
+      sessionRef.current?.close();
+      sessionRef.current = null;
+      playerRef.current?.stop();
+      playerRef.current = null;
+      // If we were mid-speech, the "speaking" status is now stale.
+      if (status === "speaking") setStatus("ready");
+      return next;
+    });
+  }
+
   /* ---------------- JSX ---------------- */
 
   return (
@@ -372,6 +418,19 @@ export default function Gemininio() {
                     {t("gem_tagline")}
                   </div>
                 </div>
+                <button
+                  onClick={handleToggleAudio}
+                  aria-label={audioEnabled ? t("gem_mute") : t("gem_unmute")}
+                  aria-pressed={audioEnabled}
+                  title={audioEnabled ? t("gem_mute") : t("gem_unmute")}
+                  className={`p-2 rounded-full transition ${
+                    audioEnabled
+                      ? "bg-terracotta-500/15 text-terracotta-700 hover:bg-terracotta-500/25"
+                      : "text-ink-700/70 hover:bg-cream-200"
+                  }`}
+                >
+                  {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                </button>
                 <button
                   onClick={() => setShowSettings(s => !s)}
                   aria-label={t("gem_settings")}

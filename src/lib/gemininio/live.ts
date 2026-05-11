@@ -107,30 +107,40 @@ export class LiveSession {
       ws.binaryType = "arraybuffer";
 
       ws.onopen = () => {
-        const setup = {
+        const modalities = this.opts.responseModalities ?? ["AUDIO"];
+        const wantsAudio = modalities.includes("AUDIO");
+        const generationConfig: Record<string, unknown> = {
+          response_modalities: modalities,
+          // Native-audio preview model emits chain-of-thought text
+          // by default. Force the budget to 0 so the model jumps
+          // straight to the answer — the user doesn't want to see
+          // "I'm now considering whether…". We also defensively
+          // filter `part.thought` parts on the client below in
+          // case the server still emits any.
+          thinking_config: { thinking_budget: 0 }
+        };
+        // speech_config only matters when we're asking for audio
+        // back. Including it for a TEXT-only session is harmless
+        // but makes the wire log noisy; leave it out.
+        if (wantsAudio) {
+          generationConfig.speech_config = {
+            voice_config: {
+              prebuilt_voice_config: { voice_name: VOICE_NAME }
+            },
+            language_code: this.opts.language === "he" ? "he-IL" : "en-US"
+          };
+        }
+        const setup: Record<string, unknown> = {
           setup: {
             model,
             system_instruction: {
               parts: [{ text: this.opts.systemInstruction }]
             },
-            generation_config: {
-              response_modalities: this.opts.responseModalities ?? ["AUDIO"],
-              speech_config: {
-                voice_config: {
-                  prebuilt_voice_config: { voice_name: VOICE_NAME }
-                },
-                language_code: this.opts.language === "he" ? "he-IL" : "en-US"
-              },
-              // Native-audio preview model emits chain-of-thought
-              // text by default. Force the budget to 0 so the model
-              // jumps straight to the answer — the user doesn't want
-              // to see "I'm now considering whether…". We also
-              // defensively filter `part.thought` parts on the
-              // client below in case the server still emits any.
-              thinking_config: { thinking_budget: 0 }
-            },
+            generation_config: generationConfig,
             input_audio_transcription: {},
-            output_audio_transcription: {}
+            // Only ask the server to transcribe its own audio when
+            // there IS audio. In TEXT mode this would be a no-op.
+            ...(wantsAudio ? { output_audio_transcription: {} } : {})
           }
         };
         ws.send(JSON.stringify(setup));
