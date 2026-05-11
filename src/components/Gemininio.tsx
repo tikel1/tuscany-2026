@@ -97,6 +97,10 @@ export default function Gemininio() {
   const transcriptRef = useRef<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // The Live session's onAudio callback closes over `audioEnabled`
+  // at session-create time; a later toggle wouldn't affect it. This
+  // ref is the always-current source the callback actually reads.
+  const audioEnabledRef = useRef(audioEnabled);
 
   /* ---------------- side effects ---------------- */
 
@@ -106,8 +110,10 @@ export default function Gemininio() {
     saveHistory(messages.map(m => ({ role: m.role, text: m.text, ts: m.ts })));
   }, [messages]);
 
-  // Persist the audio-enabled preference.
+  // Persist the audio-enabled preference and sync the ref the
+  // Live callback reads.
   useEffect(() => {
+    audioEnabledRef.current = audioEnabled;
     try {
       localStorage.setItem("gem-audio-enabled", String(audioEnabled));
     } catch {
@@ -177,12 +183,13 @@ export default function Gemininio() {
       {
         apiKey,
         systemInstruction: buildSystemPrompt(lang),
-        language: lang,
-        // TEXT-only when muted so the server doesn't synthesize
-        // audio at all. AUDIO when the user has unmuted — voice
-        // bytes flow into the PcmPlayer and the canonical visible
-        // text comes from the audio's outputTranscription.
-        responseModalities: audioEnabled ? ["AUDIO"] : ["TEXT"]
+        language: lang
+        // Sessions are always AUDIO modality on the wire (Live's
+        // TEXT modality is currently broken across every model on
+        // the v1beta endpoint — see live.ts top-of-file note). We
+        // implement "muted" by ignoring the incoming PCM bytes
+        // client-side; the text reply still arrives via the
+        // server's outputTranscription channel.
       },
       {
         onText: delta => {
@@ -199,6 +206,12 @@ export default function Gemininio() {
           });
         },
         onAudio: pcm => {
+          // Audio always streams from the server. When the user
+          // has muted, just drop the bytes on the floor — the
+          // text reply still flows through onText. We read from a
+          // ref so a mid-session toggle takes effect immediately
+          // (the callback otherwise closes over stale state).
+          if (!audioEnabledRef.current) return;
           if (!playerRef.current) playerRef.current = new PcmPlayer();
           playerRef.current.enqueue(pcm);
           setStatus("speaking");
@@ -345,20 +358,20 @@ export default function Gemininio() {
     setMessages([]);
   }
 
-  /** Toggle voice replies. Setup config is fixed at WebSocket open
-   *  time, so to switch modalities we tear down the existing session
-   *  here — the next send in `ensureSession` will reconnect with the
-   *  new `responseModalities`. We also stop any audio that's mid-
-   *  playback so muting actually feels instant. */
+  /** Toggle voice replies. The session itself doesn't need to be
+   *  rebuilt — the wire-format is always AUDIO and we control
+   *  playback purely client-side via `audioEnabledRef`. We just
+   *  stop whatever's currently playing when muting so the toggle
+   *  feels instant. */
   function handleToggleAudio() {
     setAudioEnabled(prev => {
       const next = !prev;
-      sessionRef.current?.close();
-      sessionRef.current = null;
-      playerRef.current?.stop();
-      playerRef.current = null;
-      // If we were mid-speech, the "speaking" status is now stale.
-      if (status === "speaking") setStatus("ready");
+      if (!next) {
+        // Muting: cut current playback dead.
+        playerRef.current?.stop();
+        playerRef.current = null;
+        if (status === "speaking") setStatus("ready");
+      }
       return next;
     });
   }

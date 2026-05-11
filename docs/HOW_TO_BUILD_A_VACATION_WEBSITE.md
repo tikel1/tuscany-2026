@@ -1353,34 +1353,80 @@ For an Italian-tour-guide voice:
 - Keep an `isOpen()` getter so subsequent sends in the same
   session reuse the socket instead of reopening.
 
-### Default to muted; flip modalities to save quota
+### Default to muted; mute client-side (TEXT modality is broken)
 
-Voice replies are charged differently from text and most chat-bot
-usage in practice is read-and-tap, not listen. Default `audioEnabled`
-to `false` and surface a small speaker toggle in the header.
+Voice replies are louder than people expect, and most chat-bot
+usage in practice is read-and-tap, not listen. Default
+`audioEnabled` to `false` and surface a small speaker toggle in
+the header. Persist the preference in `localStorage`.
 
-The clever bit: don't just mute the *playback* — switch the entire
+**The seductive idea that does not work today:** "I'll switch
 `responseModalities` between `["TEXT"]` (muted) and `["AUDIO"]`
-(unmuted). When TEXT-only:
+(unmuted) so the server doesn't synthesize audio at all when
+muted." Lovely in theory, dead in practice — as of writing,
+every `bidiGenerateContent` model on the v1beta endpoint rejects
+TEXT modality:
 
-- Server doesn't synthesize any audio bytes at all (no quota burn).
-- `outputTranscription` is irrelevant — the answer arrives as
-  `modelTurn.parts[].text`. Your client filter (skip `text` parts
-  in AUDIO mode, accept them in TEXT mode) handles both cases
-  uniformly.
-- Mic input still works! User speaks → server transcribes
-  (`inputTranscription`) → text reply. Voice in, text out is a
-  perfectly natural mode and it's free of audio output cost.
+- `gemini-2.5-flash-native-audio-*` → 1007 *"Cannot extract
+  voices from a non-audio request"* (these are audio-out only).
+- `gemini-3.1-flash-live-preview` → 1011 *"Internal error
+  encountered"* even with a minimal payload (TEXT is documented
+  as supported but currently broken).
+- `gemini-live-2.5-flash-preview` and `gemini-2.0-flash-live-001`
+  were retired on 2025-12-09 — they return 1008 *"model not
+  found"*. Don't put them in your fallback list.
 
-Setup config is fixed at WebSocket open time, so the toggle handler
-must close the existing session — the next send in `ensureSession`
-reconnects with the new modalities. Stop the `PcmPlayer` too so
-muting mid-reply actually feels instant. Persist the preference
-in `localStorage` so power-users get voice on every load.
+**What actually works.** Always open the WebSocket in AUDIO
+modality, and gate the `onAudio` callback client-side on the
+`audioEnabled` flag. Drop the bytes on the floor when muted; the
+text reply arrives just fine through `outputTranscription` either
+way. Mic input also still works — voice in, text-on-screen out.
 
-Also worth doing in the setup payload: only include `speech_config`
-and `output_audio_transcription` when audio is actually requested.
-Harmless to include in TEXT mode but makes the wire log noisy.
+Two implementation gotchas:
+
+1. **Closure staleness on the toggle.** The `onAudio` callback is
+   created when the session is opened and closes over whatever
+   `audioEnabled` value existed at that moment. A later toggle
+   does nothing unless you read from a `useRef` that you keep in
+   sync via a `useEffect`. Use the ref inside the callback,
+   never the state directly.
+2. **Stop playback when muting.** Just flipping the flag means
+   anything currently in the `PcmPlayer` queue will keep playing
+   for another ~5 seconds. Call `playerRef.current?.stop()`
+   immediately on mute so the toggle feels instant.
+
+Trade-off you're making: server still synthesizes audio when
+muted, so you pay the audio quota cost regardless. For a personal
+trip site this is fine; for a public app you'd want a real backend
+that proxies a TEXT-modality model (which works fine on the REST
+`generateContent` endpoint — just not on Live).
+
+### Live API model graveyard (as of writing)
+
+The Live model lineup churns fast. Anything you read in a tutorial
+older than three months is probably wrong. Current state:
+
+- ✓ `gemini-3.1-flash-live-preview` — primary, AUDIO works,
+  TEXT broken (1011)
+- ✓ `gemini-2.5-flash-native-audio-latest` — audio-out only,
+  good fallback
+- ✓ `gemini-2.5-flash-native-audio-preview-09-2025` / `-12-2025`
+  — also audio-out only, dated previews of the above
+- ✗ `gemini-live-2.5-flash-preview` — RETIRED 2025-12-09
+- ✗ `gemini-2.0-flash-live-001` — RETIRED 2025-12-09
+
+When in doubt, hit
+`GET /v1beta/models?key=…` and grep for `bidiGenerateContent` in
+`supportedGenerationMethods` to see what your account actually
+has access to today.
+
+Also: when `setupComplete` doesn't arrive and the socket closes,
+the WebSocket close event has both a `code` and a `reason`. The
+reason carries the actionable detail (*"thinking_config is not
+supported"*, *"Cannot extract voices from a non-audio request"*).
+Surface BOTH in your error message — it would have saved an hour
+of debugging the bugs above. Throwing only the code leaves you
+guessing.
 
 ### Model fallback
 

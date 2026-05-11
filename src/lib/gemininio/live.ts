@@ -19,17 +19,27 @@
 
 import { bytesToBase64 } from "./audio";
 
-/* The `-native-audio` preview model gives the most natural voice out
- * and best language steerability via prompts, but it's audio-out
- * only — asking for `response_modalities: ["TEXT"]` against it gets
- * a policy-violation 1008 close before setup. So:
+/* Currently-valid bidiGenerateContent models on v1beta (verified
+ * against the live ListModels response — both `gemini-live-2.5-
+ * flash-preview` and `gemini-2.0-flash-live-001` were retired on
+ * 2025-12-09 and now return a 1008 "model not found").
  *
- *   - AUDIO sessions → try the native-audio preview first, fall back
- *     to the general live model if the user's account doesn't have
- *     the preview enabled.
- *   - TEXT sessions  → use the general live model directly. */
-const AUDIO_PRIMARY_MODEL  = "models/gemini-2.5-flash-native-audio-preview-09-2025";
-const GENERAL_LIVE_MODEL   = "models/gemini-live-2.5-flash-preview";
+ * IMPORTANT: every Live model on this account currently rejects
+ * `response_modalities: ["TEXT"]`. The 2.5 native-audio family
+ * returns code 1007 "Cannot extract voices from a non-audio
+ * request"; the 3.1 live preview returns a generic 1011 internal
+ * error even with a minimal payload. So we ALWAYS open the
+ * session in AUDIO mode and, when the user has the chat muted,
+ * simply drop the incoming PCM bytes on the client side
+ * (outputTranscription still flows, so the visible reply works).
+ * Less efficient than per-modality switching but actually works.
+ *
+ * `gemini-3.1-flash-live-preview` is the documented "all use
+ * cases" recommendation: native audio out, clean transcripts, no
+ * chain-of-thought leakage. Falls back to the 2.5 native-audio
+ * "latest" alias if the preview is ever pulled. */
+const PRIMARY_MODEL  = "models/gemini-3.1-flash-live-preview";
+const FALLBACK_MODEL = "models/gemini-2.5-flash-native-audio-latest";
 
 const WS_BASE =
   "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
@@ -39,12 +49,13 @@ const WS_BASE =
  *  an Italian persona prompt. "Puck" is a good lighter alternative. */
 const VOICE_NAME = "Charon";
 
-export type ResponseModality = "AUDIO" | "TEXT";
-
 export interface LiveCallbacks {
-  /** Streamed text deltas from the model's reply. */
+  /** Streamed text deltas from the model's reply (sourced from
+   *  the server's outputTranscription channel). */
   onText?: (delta: string) => void;
-  /** Streamed PCM audio (24 kHz, mono, 16-bit LE). */
+  /** Streamed PCM audio (24 kHz, mono, 16-bit LE). The caller is
+   *  free to ignore this — when the user has muted the chat, just
+   *  drop the bytes. The text reply still arrives via `onText`. */
   onAudio?: (pcm: Uint8Array) => void;
   /** Transcript of what the user actually said (server-side ASR
    *  Gemini does on our 16 kHz mic stream). */
@@ -62,8 +73,6 @@ export interface LiveOptions {
   systemInstruction: string;
   /** "he" → he-IL transcription / output, otherwise en-US. */
   language: "en" | "he";
-  /** Default ["AUDIO"]; pass ["TEXT"] for typed-only sessions. */
-  responseModalities?: ResponseModality[];
 }
 
 export class LiveSession {
@@ -79,27 +88,17 @@ export class LiveSession {
   }
 
   /** Open the socket and send the `setup` message. Resolves once the
-   *  server has acknowledged setup; rejects on early failure. */
+   *  server has acknowledged setup; rejects on early failure. Tries
+   *  the primary model first; on any setup-time failure, retries
+   *  once with the fallback model so the chat still works if the
+   *  primary preview is ever pulled. */
   connect(): Promise<void> {
-    const wantsAudio =
-      (this.opts.responseModalities ?? ["AUDIO"]).includes("AUDIO");
-    // TEXT sessions go straight to the general Live model (the
-    // native-audio preview is audio-out only and rejects TEXT).
-    // AUDIO sessions try the preview first for the better voice,
-    // falling back to the general model if the account doesn't
-    // have the preview enabled.
-    const primary = wantsAudio ? AUDIO_PRIMARY_MODEL : GENERAL_LIVE_MODEL;
-    const fallback = GENERAL_LIVE_MODEL;
     return new Promise((resolve, reject) => {
-      this.openOnce(primary)
+      this.openOnce(PRIMARY_MODEL)
         .then(resolve)
-        .catch(err => {
-          if (primary !== fallback) {
-            this.openOnce(fallback).then(resolve).catch(reject);
-          } else {
-            reject(err);
-          }
-        });
+        .catch(() =>
+          this.openOnce(FALLBACK_MODEL).then(resolve).catch(reject)
+        );
     });
   }
 
@@ -117,41 +116,34 @@ export class LiveSession {
       ws.binaryType = "arraybuffer";
 
       ws.onopen = () => {
-        const modalities = this.opts.responseModalities ?? ["AUDIO"];
-        const wantsAudio = modalities.includes("AUDIO");
-        const generationConfig: Record<string, unknown> = {
-          response_modalities: modalities
-          // NOTE: we used to send `thinking_config: { thinking_budget: 0 }`
-          // here to suppress chain-of-thought leakage. The Live preview
-          // models we use are NOT thinking models, and including the
-          // field caused the server to slam the socket shut with code
-          // 1008 (policy violation) before setupComplete. The
-          // defense-in-depth `part.thought` filter in handleMessage()
-          // below already drops any thought parts client-side, which
-          // is enough.
-        };
-        // speech_config only matters when we're asking for audio
-        // back. Including it for a TEXT-only session is harmless
-        // but makes the wire log noisy; leave it out.
-        if (wantsAudio) {
-          generationConfig.speech_config = {
-            voice_config: {
-              prebuilt_voice_config: { voice_name: VOICE_NAME }
-            },
-            language_code: this.opts.language === "he" ? "he-IL" : "en-US"
-          };
-        }
-        const setup: Record<string, unknown> = {
+        // Always AUDIO modality (see top-of-file note on why TEXT
+        // is broken across every Live model right now). The caller
+        // can still mute output by ignoring the `onAudio` callback;
+        // the visible text reply comes from outputTranscription
+        // which the server emits regardless.
+        const setup = {
           setup: {
             model,
             system_instruction: {
               parts: [{ text: this.opts.systemInstruction }]
             },
-            generation_config: generationConfig,
+            generation_config: {
+              response_modalities: ["AUDIO"],
+              speech_config: {
+                voice_config: {
+                  prebuilt_voice_config: { voice_name: VOICE_NAME }
+                },
+                language_code: this.opts.language === "he" ? "he-IL" : "en-US"
+              }
+              // NOTE: we used to send `thinking_config: { thinking_budget: 0 }`
+              // here to suppress chain-of-thought leakage. The Live preview
+              // models are NOT thinking models, and including the field
+              // caused 1008 policy violation before setupComplete. The
+              // defense-in-depth `part.thought` filter in handleMessage()
+              // below drops any thought parts client-side, which is enough.
+            },
             input_audio_transcription: {},
-            // Only ask the server to transcribe its own audio when
-            // there IS audio. In TEXT mode this would be a no-op.
-            ...(wantsAudio ? { output_audio_transcription: {} } : {})
+            output_audio_transcription: {}
           }
         };
         ws.send(JSON.stringify(setup));
@@ -205,19 +197,15 @@ export class LiveSession {
     // Server content: text + audio + transcripts.
     const sc = msg.serverContent as Record<string, unknown> | undefined;
     if (sc) {
-      // Track whether the current setup intends to speak audio. If
-      // it does, the canonical visible text is the AUDIO transcript
-      // (outputTranscription) — modelTurn text parts in that mode
-      // are usually internal thoughts / reasoning that we don't
-      // want to surface. In TEXT-only mode, modelTurn text IS the
-      // answer, so we forward it.
-      const wantsAudio = (this.opts.responseModalities ?? ["AUDIO"]).includes("AUDIO");
-
       // User-side transcript of our mic input.
       const it = sc.inputTranscription as { text?: string } | undefined;
       if (it?.text) this.cb.onTranscript?.(it.text, false);
 
-      // Model-side transcript (text version of what the audio says).
+      // Model-side transcript — the canonical visible reply. We
+      // always run AUDIO sessions, so this is the source of truth
+      // for what the model "said". `modelTurn.parts[].text` is
+      // skipped because in AUDIO mode it carries internal scratch
+      // (reasoning, narration) and would just bloat the bubble.
       const ot = sc.outputTranscription as { text?: string } | undefined;
       if (ot?.text) this.cb.onText?.(ot.text);
 
@@ -226,18 +214,9 @@ export class LiveSession {
         | undefined;
       if (turn?.parts) {
         for (const part of turn.parts) {
-          // Defensive filter — even with thinking_budget=0 in
-          // setup, some preview models still emit thought summaries
-          // tagged with `thought: true`. Drop them on the client.
+          // Defensive filter for thought summaries (some preview
+          // models still emit them).
           if (part.thought === true) continue;
-
-          // For AUDIO sessions, skip text parts entirely — the
-          // visible text comes from outputTranscription. Anything
-          // else here is reasoning / metadata that bloats the bubble.
-          if (!wantsAudio) {
-            const t = part.text as string | undefined;
-            if (typeof t === "string" && t.length > 0) this.cb.onText?.(t);
-          }
 
           const inline = part.inlineData as
             | { mimeType?: string; data?: string }
