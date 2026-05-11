@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Bumped ?v= when the icon asset changes. Full-bleed square
-         (512) — landscape zoomed/cropped so it fills the canvas; OS
-         circular masks sit on art edge-to-edge, not a tiny picture
-         inside a white ring. -->
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-tuscany-192.png?v=6" />
-    <link rel="icon" type="image/png" sizes="512x512" href="./icon-tuscany.png?v=6" />
+    <!-- ?v= bumps when icons change. Full-bleed 512px art + manifest
+         purpose any maskable so Android does not letterbox on white;
+         slight center zoom keeps saturated pixels at the circular mask. -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-tuscany-192.png?v=7" />
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-tuscany.png?v=7" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#C45A3D" />
 
@@ -18,7 +17,7 @@
     <!-- iOS Safari: Apple ignores the manifest, so these meta tags are how
          we get a clean home-screen icon, a custom short label, and a
          standalone (chrome-less) launch experience. -->
-    <link rel="apple-touch-icon" href="./icon-tuscany.png?v=6" />
+    <link rel="apple-touch-icon" href="./icon-tuscany.png?v=7" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
