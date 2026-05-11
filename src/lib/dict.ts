@@ -212,6 +212,53 @@ export const DICT = {
   listen_pause: { en: "Pause", he: "השהה" },
   listen_unavailable: { en: "Audio unavailable", he: "האודיו לא זמין" },
 
+  /* ---------- Gemininio (the AI tour guide) ---------- */
+  gem_open: { en: "Chat with Gemininio", he: "שוחחו עם ג׳מיניניו" },
+  gem_close: { en: "Close", he: "סגור" },
+  gem_title: { en: "Gemininio", he: "ג׳מיניניו" },
+  gem_tagline: {
+    en: "Your Italian friend in Tuscany",
+    he: "החבר האיטלקי שלכם בטוסקנה"
+  },
+  gem_setup_title: { en: "Set up Gemininio", he: "הגדרת ג׳מיניניו" },
+  gem_setup_blurb: {
+    en: "Gemininio uses Google's Gemini Live API to talk with you. Paste a free Gemini API key — it's saved on this device only and never shared.",
+    he: "ג׳מיניניו משתמש ב־Gemini Live API של גוגל כדי לדבר אתכם. הדביקו מפתח Gemini API חינמי — הוא נשמר במכשיר הזה בלבד ולא נשלח לשום מקום אחר."
+  },
+  gem_setup_link: {
+    en: "Get a free key (aistudio.google.com/apikey)",
+    he: "להפיק מפתח חינמי (aistudio.google.com/apikey)"
+  },
+  gem_key_placeholder: { en: "AIza…", he: "AIza…" },
+  gem_save_key: { en: "Save key & start chatting", he: "שמור מפתח והתחל" },
+  gem_clear_key: { en: "Forget my key", he: "מחק את המפתח" },
+  gem_reset_history: { en: "Clear chat", he: "נקה שיחה" },
+  gem_input_placeholder: {
+    en: "Type a question — or hold the mic to talk",
+    he: "כתבו שאלה — או החזיקו את המיקרופון כדי לדבר"
+  },
+  gem_send: { en: "Send", he: "שלח" },
+  gem_mic_hold: { en: "Hold to talk", he: "החזיקו כדי לדבר" },
+  gem_mic_release: { en: "Release to send", he: "שחררו כדי לשלוח" },
+  gem_listening: { en: "Listening…", he: "מקשיב…" },
+  gem_thinking: { en: "Thinking…", he: "חושב…" },
+  gem_connecting: { en: "Connecting…", he: "מתחבר…" },
+  gem_disconnected: { en: "Disconnected. Tap to reconnect.", he: "לא מחובר. הקישו כדי להתחבר." },
+  gem_error_generic: {
+    en: "Something went wrong. Check your API key or your network.",
+    he: "משהו השתבש. בדקו את המפתח או את החיבור."
+  },
+  gem_error_mic: {
+    en: "Microphone access blocked. Allow it in your browser settings to talk.",
+    he: "הגישה למיקרופון נחסמה. אפשרו אותה בהגדרות הדפדפן כדי לדבר."
+  },
+  gem_first_hint: {
+    en: "Try: \"What should we do tomorrow morning?\" or \"Tell me a story about Pitigliano.\"",
+    he: "נסו: \"מה כדאי לעשות מחר בבוקר?\" או \"ספר לי סיפור על פיטיליאנו.\""
+  },
+  gem_settings: { en: "Settings", he: "הגדרות" },
+  gem_back: { en: "Back to chat", he: "חזרה לשיחה" },
+
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },
   stays_title: { en: "Two homes, two halves", he: "שני בתים, שני חצאים" },

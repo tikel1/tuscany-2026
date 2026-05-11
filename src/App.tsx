@@ -17,6 +17,7 @@ import FloatingMapButton from "./components/FloatingMapButton";
 import SectionOrnament from "./components/SectionOrnament";
 import ChapterDetailPage from "./components/ChapterDetailPage";
 import InstallPrompt from "./components/InstallPrompt";
+import Gemininio from "./components/Gemininio";
 import { MapFocusContext } from "./lib/mapContext";
 import { useHashRoute } from "./lib/route";
 
@@ -39,6 +40,9 @@ export default function App() {
         {/* The Add-to-Home-Screen coachmark lives at the app root so it
             shows regardless of which page the user landed on. */}
         <InstallPrompt />
+        {/* Gemininio is also globally available, including inside a
+            chapter — useful when reading about a specific day. */}
+        <Gemininio />
       </>
     );
   }
@@ -90,6 +94,7 @@ export default function App() {
       <FloatingMapButton />
       <MobileBottomNav />
       <InstallPrompt />
+      <Gemininio />
     </MapFocusContext.Provider>
   );
 }

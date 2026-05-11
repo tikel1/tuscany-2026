@@ -30,11 +30,12 @@ section.
 12. [Content guidelines](#12-content-guidelines)
 13. [Mobile-first UX](#13-mobile-first-ux)
 14. [Audio narration (pre-generated TTS)](#14-audio-narration-pre-generated-tts)
-15. [Routing & persistence](#15-routing--persistence)
-16. [SEO & social sharing](#16-seo--social-sharing)
-17. [Deployment (GitHub Pages)](#17-deployment-github-pages)
-18. [Common gotchas](#18-common-gotchas)
-19. [If you only do five things](#19-if-you-only-do-five-things)
+15. [AI tour guide (Gemini Live, no backend)](#15-ai-tour-guide-gemini-live-no-backend)
+16. [Routing & persistence](#16-routing--persistence)
+17. [SEO & social sharing](#17-seo--social-sharing)
+18. [Deployment (GitHub Pages)](#18-deployment-github-pages)
+19. [Common gotchas](#19-common-gotchas)
+20. [If you only do five things](#20-if-you-only-do-five-things)
 
 ---
 
@@ -1206,7 +1207,123 @@ That's the next step beyond static narration.
 
 ---
 
-## 15. Routing & persistence
+## 15. AI tour guide (Gemini Live, no backend)
+
+The chat assistant — Gemininio in this project — uses Google's
+**Gemini Live API** for bidirectional realtime audio + text. The
+hard constraint: this is still a static SPA on GitHub Pages, so
+there is **no server to hold a shared API key**.
+
+### The user-supplied key pattern
+
+The only safe way to ship live LLM chat from a static site:
+
+1. First time the user opens the chat, show a setup screen that
+   asks for their own free Gemini API key.
+2. Save it in `localStorage` on their device.
+3. The browser opens the WebSocket directly to Google with that
+   key. Each user pays their own (free-tier) cost. The repo never
+   sees a key.
+
+For a family trip site this is a perfect fit — each adult signs
+up once at `aistudio.google.com/apikey` and the chat works.
+
+### Why Gemini Live, not REST + ElevenLabs?
+
+- **One vendor, one bill, one key.** Live handles streaming text
+  AND audio output natively. No separate TTS contract for the live
+  replies (the pre-generated narration in §14 is a separate use
+  case where ElevenLabs is fine).
+- **Realtime bidi.** Push 16 kHz mic PCM up; receive 24 kHz voice
+  PCM down. Latency ~500–800 ms feels conversational.
+- **Free tier.** Gemini 2.5 Flash native-audio is generous enough
+  for a 10-day family trip.
+- **Built-in input transcription.** Gemini does ASR on the audio
+  you send it and sends back the transcript — no extra Whisper.
+
+### The protocol in 30 seconds
+
+It's WebSocket + JSON envelopes:
+
+1. Connect to `wss://generativelanguage.googleapis.com/ws/…BidiGenerateContent?key=API_KEY`.
+2. Send `{ setup: { model, system_instruction, generation_config: { response_modalities, speech_config: { voice_config, language_code } }, input_audio_transcription, output_audio_transcription } }`.
+3. Wait for `{ setupComplete: {} }`.
+4. Stream user audio: `{ realtime_input: { media_chunks: [{ mime_type: "audio/pcm;rate=16000", data: "<base64>" }] } }`.
+5. Or send text: `{ client_content: { turns: [{ role: "user", parts: [{ text: "..." }] }], turn_complete: true } }`.
+6. Receive interleaved `{ serverContent: { inputTranscription, outputTranscription, modelTurn: { parts: [{ text }, { inlineData: { mimeType, data } }] }, turnComplete } }`.
+
+### Browser audio plumbing (the part nobody warns you about)
+
+- **Sample rate mismatch.** Browser mic defaults to 44.1 / 48 kHz;
+  Gemini wants 16 kHz. Resample on the way out (linear-interp is
+  fine for speech). The OUTPUT side is easier — create the
+  `AudioContext` with `{ sampleRate: 24000 }` so the model's
+  audio plays without resampling.
+- **PCM ↔ Float32.** Float32 [-1, 1] → Int16 LE bytes for upload;
+  Int16 LE bytes → Float32 for playback (`Math.max(-1, Math.min(1, x))`
+  before scaling, or you'll click).
+- **base64 chunking.** `btoa()` chokes on bytes outside Latin-1 and
+  blows the stack on big buffers. Encode in 32 KB chunks.
+- **Seamless playback.** Don't `new Audio()` per chunk — that gives
+  you a stuttering robot. Schedule each PCM chunk on a Web Audio
+  `AudioBufferSourceNode` with a running `playTime` cursor. When
+  the tab was backgrounded, resync `playTime = ctx.currentTime`
+  before scheduling the next one.
+- **ScriptProcessorNode is "deprecated"** but works fine for low-
+  rate speech; `AudioWorklet` is the modern path but needs a
+  separate worklet file. Pick your battles.
+- **Push-to-talk beats VAD** for predictability — voice-activity
+  detection on the server is good but can clip the start of a
+  sentence on a quiet sigh.
+
+### Persona + system prompt: ground it in the trip data
+
+The trick that makes Gemininio actually useful (vs a generic AI
+chatbot) is feeding **the entire trip data as the system prompt**:
+itinerary, attractions, stays, services, food. ~25K tokens —
+trivial for Gemini's 1M context. Now when the family asks "what
+should we do tomorrow?" he answers from the actual plan, not from
+hallucinated travel-brochure prose.
+
+Build the prompt **at session-open time** so any itinerary edit
+applied since the last chat is immediately known. Don't cache it.
+
+For an Italian-tour-guide voice:
+- Pick a warm prebuilt voice (`Charon` worked best for our taste).
+- Set `language_code: "en-US"` (or `"he-IL"`) on the speech config.
+- In the system prompt, instruct the model to "speak with a warm
+  Italian accent" and to "drop occasional Italian interjections".
+  Prompt-driven accent is imperfect but the model leans into it.
+
+### Lifecycle: lazy connect, eager disconnect
+
+- Don't open the WebSocket on `useEffect` mount. Open on the first
+  user message.
+- Close on panel-close to free the socket and stop the user's
+  free-tier minutes from quietly draining.
+- Keep an `isOpen()` getter so subsequent sends in the same
+  session reuse the socket instead of reopening.
+
+### Model fallback
+
+The newest preview models (`gemini-2.5-flash-native-audio-preview-…`)
+aren't enabled on every Google account. Wrap `connect()` so a
+clean failure auto-falls-back to the stable `gemini-live-2.5-flash-preview`
+once before surfacing an error.
+
+### When this pattern stops working
+
+- You want a single shared API key (privacy / business).
+- You want server-side guardrails or logging.
+- Free tier isn't enough.
+
+For all three: stand up a Cloudflare Worker that proxies the same
+WebSocket protocol with the key as a secret. The browser code
+barely changes — same JSON envelopes.
+
+---
+
+## 16. Routing & persistence
 
 ### Hash routing
 
@@ -1231,7 +1348,7 @@ implementation; cards just call `focusOn(id)`. No prop drilling.
 
 ---
 
-## 16. SEO & social sharing
+## 17. SEO & social sharing
 
 The site is personal but you'll share the link in a family WhatsApp,
 maybe a status update. A nice link preview is worth 5 minutes:
@@ -1250,7 +1367,7 @@ so the path resolves under your GH Pages base.
 
 ---
 
-## 17. Deployment (GitHub Pages)
+## 18. Deployment (GitHub Pages)
 
 ### Vite config
 
@@ -1300,7 +1417,7 @@ In the repo settings: **Pages → Source: GitHub Actions**.
 
 ---
 
-## 18. Common gotchas
+## 19. Common gotchas
 
 A list of things that bit us so they don't bite you.
 
@@ -1392,7 +1509,7 @@ row it labels.
 
 ---
 
-## 19. If you only do five things
+## 20. If you only do five things
 
 Compressed, in priority order:
 
