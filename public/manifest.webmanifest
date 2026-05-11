@@ -13,10 +13,10 @@
   "categories": ["travel", "lifestyle"],
   "icons": [
     {
-      "src": "favicon.svg?v=4",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "icon-tuscany.png?v=5",
+      "sizes": "360x360",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
