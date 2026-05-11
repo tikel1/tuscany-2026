@@ -133,6 +133,10 @@ export class LiveSession {
                 voice_config: {
                   prebuilt_voice_config: { voice_name: VOICE_NAME }
                 },
+                // Match the reply language so pronunciation is natural.
+                // Italian "colour" is steered by the Charon voice + the
+                // LIVE_SPOKEN_DELIVERY block in persona.ts (not by forcing
+                // it-IT here — Hebrew text + it-IT can sound wrong).
                 language_code: this.opts.language === "he" ? "he-IL" : "en-US"
               }
               // NOTE: we used to send `thinking_config: { thinking_budget: 0 }`

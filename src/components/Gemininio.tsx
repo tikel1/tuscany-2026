@@ -19,7 +19,6 @@ import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
 import { buildSystemPrompt, buildTypedReplySystemPrompt } from "../lib/gemininio/persona";
 import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
-import { cancelTypedSpeech, speakTypedReply } from "../lib/gemininio/typedSpeech";
 import {
   getApiKey,
   setApiKey,
@@ -41,8 +40,9 @@ import {
  * - Each user pastes their own free Gemini key once; saved in
  *   localStorage on their device only.
  * - Typed messages use REST generateContent + Google Search (model
- *   chooses when to search); voice opens a WebSocket to Gemini Live,
- *   streaming 16 kHz PCM mic up and 24 kHz PCM voice down.
+ *   chooses when to search). Voice uses a WebSocket to Gemini Live
+ *   (16 kHz PCM up, 24 kHz Charon voice down) — that is the only path
+ *   for the Italian-accent native audio; the speaker toggle gates it.
  * - System prompt rebuilt from the live trip data so any itinerary
  *   edit is immediately known to Gemininio.
  *
@@ -133,7 +133,6 @@ export default function Gemininio() {
   // Tear everything down when the panel closes.
   useEffect(() => {
     if (status !== "closed") return;
-    cancelTypedSpeech();
     sessionRef.current?.close();
     sessionRef.current = null;
     micRef.current?.stop();
@@ -170,7 +169,6 @@ export default function Gemininio() {
   // Cleanup on unmount.
   useEffect(() => {
     return () => {
-      cancelTypedSpeech();
       sessionRef.current?.close();
       micRef.current?.stop();
       playerRef.current?.stop();
@@ -305,7 +303,6 @@ export default function Gemininio() {
   async function sendText() {
     const trimmed = text.trim();
     if (!trimmed) return;
-    cancelTypedSpeech();
     setText("");
     // Append BOTH the user's question and a placeholder "streaming"
     // model bubble in one update — the empty bubble with
@@ -346,7 +343,6 @@ export default function Gemininio() {
         }
         return next;
       });
-      if (audioEnabledRef.current) speakTypedReply(reply, lang);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setMessages(ms => {
@@ -437,7 +433,6 @@ export default function Gemininio() {
   function handleToggleAudio() {
     setAudioEnabled(prev => {
       if (prev) {
-        cancelTypedSpeech();
         playerRef.current?.stop();
         playerRef.current = null;
         if (status === "speaking") setStatus("ready");

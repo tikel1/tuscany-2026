@@ -162,6 +162,13 @@ EXAMPLES OF BAD REPLIES (don't do these):
 - "**Assessing Itinerary Deviation** I have determined that…"
 - Anything over three sentences.`;
 
+/** Heard only on the Gemini Live native-audio channel (hold mic), not
+ *  on typed REST replies. Steers the same Charon voice toward Italian
+ *  warmth in both English and Hebrew spoken output. */
+const LIVE_SPOKEN_DELIVERY = `LIVE NATIVE AUDIO (when the user uses the microphone and hears your voice):
+- Sound like a warm Italian tour guide — slightly musical pacing, open vowels, a little gravelly friendliness — never flat "airport PA" delivery.
+- Whether you are speaking English or Hebrew aloud, keep that same Italian warmth and rhythm in your voice (think: a Roman who is used to switching languages with tourists).`;
+
 /** Same role and discipline as PERSONA_EN, but every reply must be
  *  written in natural modern Hebrew because the site UI is Hebrew.
  *  (This block is English-only in source so editors and grep stay
@@ -335,6 +342,8 @@ export function buildSystemPrompt(lang: Lang): string {
     digestServices(lang),
     "",
     digestFood(lang),
+    "",
+    LIVE_SPOKEN_DELIVERY,
     "",
     lang === "he"
       ? "Default to Hebrew for this session (site language). If the user writes in English, switch to English for that turn. When asked what to do now, use the itinerary above. When asked about something NOT on our itinerary, say in Hebrew that it is not on our plan, then offer one fair brief suggestion."
