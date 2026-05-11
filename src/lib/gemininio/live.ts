@@ -19,11 +19,17 @@
 
 import { bytesToBase64 } from "./audio";
 
-/* The `-native-audio` preview model gives the most natural voice
- * out and best language steerability via prompts. If it's unavailable
- * for an account, fall back to `gemini-live-2.5-flash-preview`. */
-const PRIMARY_MODEL = "models/gemini-2.5-flash-native-audio-preview-09-2025";
-const FALLBACK_MODEL = "models/gemini-live-2.5-flash-preview";
+/* The `-native-audio` preview model gives the most natural voice out
+ * and best language steerability via prompts, but it's audio-out
+ * only — asking for `response_modalities: ["TEXT"]` against it gets
+ * a policy-violation 1008 close before setup. So:
+ *
+ *   - AUDIO sessions → try the native-audio preview first, fall back
+ *     to the general live model if the user's account doesn't have
+ *     the preview enabled.
+ *   - TEXT sessions  → use the general live model directly. */
+const AUDIO_PRIMARY_MODEL  = "models/gemini-2.5-flash-native-audio-preview-09-2025";
+const GENERAL_LIVE_MODEL   = "models/gemini-live-2.5-flash-preview";
 
 const WS_BASE =
   "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
@@ -66,7 +72,6 @@ export class LiveSession {
   private opts: LiveOptions;
   private setupComplete = false;
   private closed = false;
-  private modelTried = PRIMARY_MODEL;
 
   constructor(opts: LiveOptions, cb: LiveCallbacks = {}) {
     this.opts = opts;
@@ -76,16 +81,21 @@ export class LiveSession {
   /** Open the socket and send the `setup` message. Resolves once the
    *  server has acknowledged setup; rejects on early failure. */
   connect(): Promise<void> {
+    const wantsAudio =
+      (this.opts.responseModalities ?? ["AUDIO"]).includes("AUDIO");
+    // TEXT sessions go straight to the general Live model (the
+    // native-audio preview is audio-out only and rejects TEXT).
+    // AUDIO sessions try the preview first for the better voice,
+    // falling back to the general model if the account doesn't
+    // have the preview enabled.
+    const primary = wantsAudio ? AUDIO_PRIMARY_MODEL : GENERAL_LIVE_MODEL;
+    const fallback = GENERAL_LIVE_MODEL;
     return new Promise((resolve, reject) => {
-      this.openOnce(this.modelTried)
+      this.openOnce(primary)
         .then(resolve)
         .catch(err => {
-          // Some Google accounts don't have the preview native-audio
-          // model enabled. Fall back to the standard live-2.5 model
-          // once before giving up.
-          if (this.modelTried === PRIMARY_MODEL) {
-            this.modelTried = FALLBACK_MODEL;
-            this.openOnce(this.modelTried).then(resolve).catch(reject);
+          if (primary !== fallback) {
+            this.openOnce(fallback).then(resolve).catch(reject);
           } else {
             reject(err);
           }
@@ -110,14 +120,15 @@ export class LiveSession {
         const modalities = this.opts.responseModalities ?? ["AUDIO"];
         const wantsAudio = modalities.includes("AUDIO");
         const generationConfig: Record<string, unknown> = {
-          response_modalities: modalities,
-          // Native-audio preview model emits chain-of-thought text
-          // by default. Force the budget to 0 so the model jumps
-          // straight to the answer — the user doesn't want to see
-          // "I'm now considering whether…". We also defensively
-          // filter `part.thought` parts on the client below in
-          // case the server still emits any.
-          thinking_config: { thinking_budget: 0 }
+          response_modalities: modalities
+          // NOTE: we used to send `thinking_config: { thinking_budget: 0 }`
+          // here to suppress chain-of-thought leakage. The Live preview
+          // models we use are NOT thinking models, and including the
+          // field caused the server to slam the socket shut with code
+          // 1008 (policy violation) before setupComplete. The
+          // defense-in-depth `part.thought` filter in handleMessage()
+          // below already drops any thought parts client-side, which
+          // is enough.
         };
         // speech_config only matters when we're asking for audio
         // back. Including it for a TEXT-only session is harmless
@@ -151,9 +162,17 @@ export class LiveSession {
       ws.onclose = e => {
         this.closed = true;
         if (!this.setupComplete) {
-          // Closed before we got setupComplete — propagate as connect
-          // failure so the fallback model can try.
-          reject(new Error(`Gemini Live closed before setup (code ${e.code})`));
+          // Closed before setupComplete — most often a 1008 policy
+          // violation on the setup payload (unsupported config field
+          // for this model, bad model name, key restriction, etc).
+          // Surface `e.reason` if the server included one — that's
+          // where the actionable detail lives.
+          const reason = e.reason ? ` — ${e.reason}` : "";
+          reject(
+            new Error(
+              `Gemini Live closed before setup (code ${e.code} on ${model})${reason}`
+            )
+          );
         }
         this.cb.onClose?.();
       };
