@@ -265,9 +265,10 @@ export const DICT = {
   gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
   gem_mute:   { en: "Turn voice off", he: "כבה קול" },
   gem_input_mode_note: {
-    en: "Speaker off: typed messages may use Google Search when helpful; the plan always wins. Speaker on: typed text uses Gemini Live too (Italian guide voice) — no web search on that path.",
-    he: "רמקול כבוי: הודעות כתובות עשויות להיעזר בחיפוש גוגל; המסלול מנצח. רמקול דלוק: גם טקסט עובר בלייב של ג׳מיני (קול המדריך האיטלקי) — בלי חיפוש אינטרנט בנתיב הזה."
+    en: "Send: trip knowledge only when the speaker is off (text). Speaker on: same answer path uses Gemini Live (Italian guide voice). Tap the globe when you need Google Search — that turn is text-only from the REST API, not live voice.",
+    he: "שליחה: כשהרמקול כבוי — תשובה מהמסלול בלבד (טקסט). רמקול דלוק: אותו שליחה בלייב של ג׳מיני (קול מדריך איטלקי). לחצו על כדור הארץ כשצריך חיפוש גוגל — באותו שלב התשובה מגיעה מ־REST בלי קול לייב."
   },
+  gem_web_search: { en: "Search with Google", he: "חיפוש בגוגל" },
   gem_typed_failed: {
     en: "Could not get a reply: ",
     he: "לא הצלחנו לקבל תשובה: "

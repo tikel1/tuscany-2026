@@ -315,7 +315,7 @@ export function buildTypedReplySystemPrompt(lang: Lang): string {
  *  behaviour when typed replies used `sendText` on Live for native audio. */
 const LIVE_CHANNEL_NO_WEB_SEARCH = `THIS LIVE WEBSOCKET (you receive both streamed voice and/or plain text from the user on the same connection):
 - There is NO Google Search tool on this channel. Work only from the trip data already in your context.
-- If a question truly needs live web facts (today's opening hours, current weather, is this venue open right now), say briefly that you cannot browse the web from here, give the best answer you can from the plan, and suggest they turn OFF the speaker icon and send the same question typed — that path uses Google Search.
+- If a question truly needs live web facts (today's opening hours, current weather, is this venue open right now), say briefly that you cannot browse the web from here, give the best answer you can from the plan, and suggest they tap the globe button next to Send and send the same question — that runs a separate REST request with Google Search (text-only, no native voice on that turn).
 - Otherwise follow every persona rule as usual (brevity, single language, Italian warmth in native audio, etc.).`;
 
 export function buildLiveSessionSystemPrompt(lang: Lang): string {

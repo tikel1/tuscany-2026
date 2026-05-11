@@ -1,7 +1,8 @@
 /**
- * One-shot Gemini `generateContent` with Google Search grounding.
- * Used for every typed chat turn; the model decides when a search
- * actually runs. Voice stays on the Live WebSocket (see live.ts).
+ * One-shot Gemini `generateContent`. Optionally attaches the Google
+ * Search tool — only the REST path supports that; Gemini Live cannot
+ * use the same tool bundle, which is why "Italian voice" and "web search"
+ * are separate actions in the UI.
  *
  * Docs: https://ai.google.dev/gemini-api/docs/google-search
  */
@@ -28,6 +29,8 @@ export interface GroundedReplyParams {
   systemInstruction: string;
   userMessage: string;
   signal?: AbortSignal;
+  /** When true, attach `google_search` so the model may query the web. */
+  useGoogleSearch?: boolean;
 }
 
 /**
@@ -35,19 +38,22 @@ export interface GroundedReplyParams {
  * for v1 — we keep the bubble simple; sources can be added later.
  */
 export async function generateGroundedReply(params: GroundedReplyParams): Promise<string> {
+  const useSearch = params.useGoogleSearch === true;
   let lastErr = "No model accepted the request.";
 
   for (const model of MODELS_TO_TRY) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(params.apiKey)}`;
-    const body = {
+    const body: Record<string, unknown> = {
       systemInstruction: { parts: [{ text: params.systemInstruction }] },
       contents: [{ role: "user", parts: [{ text: params.userMessage }] }],
-      tools: [{ google_search: {} }],
       generationConfig: {
         temperature: 0.45,
         maxOutputTokens: 1200
       }
     };
+    if (useSearch) {
+      body.tools = [{ google_search: {} }];
+    }
 
     let res: Response;
     try {

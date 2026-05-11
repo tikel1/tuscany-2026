@@ -5,6 +5,7 @@ import {
   X,
   Send,
   Mic,
+  Globe,
   Settings as SettingsIcon,
   Trash2,
   ExternalLink,
@@ -19,6 +20,7 @@ import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
 import {
   buildLiveSessionSystemPrompt,
+  buildSystemPrompt,
   buildTypedReplySystemPrompt
 } from "../lib/gemininio/persona";
 import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
@@ -42,10 +44,9 @@ import {
  * - Static SPA on GitHub Pages → no backend, so no shared API key.
  * - Each user pastes their own free Gemini key once; saved in
  *   localStorage on their device only.
- * - Typed messages use REST generateContent + Google Search (model
- *   chooses when to search). Voice uses a WebSocket to Gemini Live
- *   (16 kHz PCM up, 24 kHz Charon voice down) — that is the only path
- *   for the Italian-accent native audio; the speaker toggle gates it.
+ * - Typed + speaker on: Live `sendText` (Charon / Italian-guide voice).
+ *   Typed + speaker off: REST trip-only on Send; globe = REST + Google
+ *   Search (text). Mic: Live audio. Search tool exists only on REST.
  * - System prompt rebuilt from the live trip data so any itinerary
  *   edit is immediately known to Gemininio.
  *
@@ -303,15 +304,19 @@ export default function Gemininio() {
     }
   }
 
-  async function sendText() {
+  /**
+   * `channel: "live"` — Gemini Live (native voice when speaker is on).
+   * `channel: "rest"` + `useGoogleSearch` — REST only; search tool is
+   * only attached when the user explicitly taps the globe (Google's
+   * search tool is not available on the Live WebSocket in this app).
+   */
+  async function submitTypedUserMessage(opts: {
+    channel: "live" | "rest";
+    useGoogleSearch?: boolean;
+  }) {
     const trimmed = text.trim();
     if (!trimmed) return;
     setText("");
-    // Append BOTH the user's question and a placeholder "streaming"
-    // model bubble in one update — the empty bubble with
-    // `streaming: true` is what triggers the bouncing typing dots
-    // in <Bubble />. We don't want a flicker between "user message"
-    // and "model bubble appears", so they land together.
     setMessages(ms => [
       ...ms,
       { role: "user", text: trimmed, ts: Date.now() },
@@ -327,15 +332,12 @@ export default function Gemininio() {
       return;
     }
 
-    /* Sound ON → same path as early Gemininio: typed text goes over Live
-     * `sendText`, so replies use native Charon audio (Italian guide voice).
-     * Sound OFF → REST + optional Google Search; no Live PCM. */
-    if (audioEnabledRef.current) {
+    if (opts.channel === "live") {
       if (!playerRef.current) playerRef.current = new PcmPlayer();
       try {
         await playerRef.current.ensureAudioUnlocked();
       } catch {
-        /* still try Live — enqueue may resume later */
+        /* still try Live */
       }
       const s = await ensureSession();
       if (!s) {
@@ -346,12 +348,16 @@ export default function Gemininio() {
       return;
     }
 
+    const useGoogleSearch = opts.useGoogleSearch === true;
+    const sys = useGoogleSearch
+      ? buildTypedReplySystemPrompt(lang)
+      : buildSystemPrompt(lang);
     try {
-      const sys = buildTypedReplySystemPrompt(lang);
       const reply = await generateGroundedReply({
         apiKey,
         systemInstruction: sys,
-        userMessage: trimmed
+        userMessage: trimmed,
+        useGoogleSearch
       });
       setMessages(ms => {
         const next = [...ms];
@@ -377,6 +383,17 @@ export default function Gemininio() {
       });
     }
     setStatus("ready");
+  }
+
+  async function sendText() {
+    await submitTypedUserMessage({
+      channel: audioEnabledRef.current ? "live" : "rest",
+      useGoogleSearch: false
+    });
+  }
+
+  async function sendTextWithWebSearch() {
+    await submitTypedUserMessage({ channel: "rest", useGoogleSearch: true });
   }
 
   async function startMic() {
@@ -617,6 +634,7 @@ export default function Gemininio() {
                     scrollRef={scrollRef}
                     inputRef={inputRef}
                     onSend={sendText}
+                    onSendWithWebSearch={sendTextWithWebSearch}
                     onMicDown={startMic}
                     onMicUp={stopMic}
                   />
@@ -739,6 +757,7 @@ function ChatView({
   scrollRef,
   inputRef,
   onSend,
+  onSendWithWebSearch,
   onMicDown,
   onMicUp
 }: {
@@ -750,10 +769,14 @@ function ChatView({
   scrollRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
   onSend: () => void;
+  onSendWithWebSearch: () => void;
   onMicDown: () => void;
   onMicUp: () => void;
 }) {
   const t = useT();
+  const inputBusy =
+    status === "thinking" || status === "connecting" || status === "listening";
+  const sendDisabled = !text.trim() || inputBusy;
 
   return (
     <div className="flex flex-1 min-h-0 flex-col">
@@ -799,8 +822,18 @@ function ChatView({
           />
           <button
             type="button"
+            onClick={onSendWithWebSearch}
+            disabled={sendDisabled}
+            aria-label={t("gem_web_search")}
+            title={t("gem_web_search")}
+            className="shrink-0 w-10 h-10 rounded-full border border-cream-400 bg-cream-100 text-ink-800 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cream-200 transition"
+          >
+            <Globe size={16} />
+          </button>
+          <button
+            type="button"
             onClick={onSend}
-            disabled={!text.trim()}
+            disabled={sendDisabled}
             aria-label={t("gem_send")}
             className="shrink-0 w-10 h-10 rounded-full bg-ink-900 text-cream-50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-ink-800 transition"
           >
