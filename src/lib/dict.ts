@@ -265,8 +265,8 @@ export const DICT = {
   gem_unmute: { en: "Play reply audio", he: "השמעת קול תשובה" },
   gem_mute:   { en: "Mute reply audio", he: "השתקת קול תשובה" },
   gem_input_mode_note: {
-    en: "Globe off = trip data only (Gemini Live on each send). Globe on = Google Search (REST, text). Speaker only mutes or plays Live audio in your browser — it does not switch trip vs. search or change APIs.",
-    he: "כדור הארץ כבוי = רק נתוני מסלול (ג׳מיני לייב בכל שליחה). כדור הארץ דלוק = חיפוש גוגל (REST, טקסט). הרמקול משתיק או משמיע שמע לייב בדפדפן בלבד — לא מחליף מסלול/חיפוש ולא מחליף API."
+    en: "Globe off = trip data only (Gemini Live). Globe on = Google Search (REST, text).",
+    he: "כדור הארץ כבוי = רק נתוני מסלול (ג׳מיני לייב). כדור הארץ דלוק = חיפוש גוגל (REST, טקסט)."
   },
   gem_web_search_enable: {
     en: "Turn Google Search on for sends",

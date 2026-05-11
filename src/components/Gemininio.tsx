@@ -763,6 +763,18 @@ function SettingsView({
   );
 }
 
+/** Pick bubble `dir` so English replies stay LTR inside an RTL page. */
+function bubbleTextDir(text: string): "rtl" | "ltr" {
+  let he = 0;
+  let lat = 0;
+  for (const ch of text) {
+    const c = ch.codePointAt(0)!;
+    if (c >= 0x0590 && c <= 0x05ff) he++;
+    else if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) lat++;
+  }
+  return he > lat ? "rtl" : "ltr";
+}
+
 function ChatView({
   messages,
   status,
@@ -911,7 +923,7 @@ function Bubble({ message }: { message: Message }) {
       className={`flex ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
+        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed shadow-sm ${
           isUser
             ? "bg-gradient-to-br from-ink-800 to-ink-900 text-cream-50 rounded-ee-md shadow-ink-900/15"
             : "bg-cream-50 text-ink-800 ring-1 ring-cream-300/70 rounded-es-md shadow-ink-900/5"
@@ -920,10 +932,13 @@ function Bubble({ message }: { message: Message }) {
         {isWaiting ? (
           <TypingDots />
         ) : (
-          <>
+          <div
+            dir={bubbleTextDir(message.text)}
+            className="[unicode-bidi:isolate] whitespace-pre-wrap break-words"
+          >
             {message.text}
             {isStreaming && <BlinkingCaret />}
-          </>
+          </div>
         )}
       </div>
     </motion.div>
