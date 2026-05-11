@@ -13,7 +13,6 @@ import TipsSection from "./components/TipsSection";
 import EmergencySection from "./components/EmergencySection";
 import Footer from "./components/Footer";
 import MobileBottomNav from "./components/MobileBottomNav";
-import FloatingMapButton from "./components/FloatingMapButton";
 import SectionOrnament from "./components/SectionOrnament";
 import ChapterDetailPage from "./components/ChapterDetailPage";
 import InstallPrompt from "./components/InstallPrompt";
@@ -91,9 +90,10 @@ export default function App() {
       {/* Spacer so content above the bottom nav isn't hidden on mobile */}
       <div className="h-20 md:hidden" aria-hidden />
 
-      <FloatingMapButton />
       <MobileBottomNav />
       <InstallPrompt />
+      {/* Gemininio occupies the floating-action slot that used to
+          host the "scroll to map" FAB — same position, more useful. */}
       <Gemininio />
     </MapFocusContext.Provider>
   );

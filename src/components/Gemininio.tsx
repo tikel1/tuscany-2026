@@ -380,18 +380,45 @@ export default function Gemininio() {
 
   return (
     <>
-      {/* Floating launcher — sits on the start side so it doesn't
-          collide with the existing map FAB on the end side. */}
-      <button
-        onClick={open}
-        aria-label={t("gem_open")}
-        title={t("gem_open")}
-        className="fixed z-30 start-4 sm:start-6 md:start-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-terracotta-500 to-sienna-600 text-cream-50 px-4 py-3 shadow-lg shadow-terracotta-700/30 active:scale-95 transition-transform"
-        style={{ display: status === "closed" ? "inline-flex" : "none" }}
-      >
-        <Sparkles size={16} />
-        <span className="text-sm font-medium">{t("gem_title")}</span>
-      </button>
+      {/* Floating launcher — circular, icon-only.
+          Position: anchored to the physical RIGHT (`right-*` not
+          `end-*`) so the chat stays on the same visual side when
+          the page is in Hebrew. Sits in the slot the map FAB used
+          to occupy. The breathing pulse ring and the
+          AnimatePresence spring entry give it a living feel
+          without being noisy. */}
+      <AnimatePresence>
+        {status === "closed" && (
+          <motion.button
+            key="gem-launcher"
+            onClick={open}
+            aria-label={t("gem_open")}
+            title={t("gem_open")}
+            initial={{ opacity: 0, scale: 0.6, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.7, y: 12 }}
+            transition={{ type: "spring", damping: 18, stiffness: 280 }}
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.92 }}
+            className="fixed z-30 right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 w-14 h-14 rounded-full text-cream-50 flex items-center justify-center shadow-xl shadow-terracotta-700/40 ring-1 ring-cream-50/30"
+            style={{
+              background:
+                "radial-gradient(120% 120% at 25% 20%, #E0996B 0%, #C45A3D 38%, #8B4513 100%)"
+            }}
+          >
+            {/* Breathing pulse ring — pure CSS, sits behind the
+                FAB and never intercepts pointer events. */}
+            <span
+              aria-hidden
+              className="absolute inset-0 rounded-full bg-terracotta-500/40 animate-gem-breathe"
+            />
+            <Sparkles
+              size={22}
+              className="relative drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
+            />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {status !== "closed" && (
@@ -407,21 +434,48 @@ export default function Gemininio() {
               className="fixed inset-0 z-40 bg-ink-900/55 backdrop-blur-sm"
             />
 
-            {/* Panel */}
+            {/* Panel — bottom-sheet on mobile, anchored to the
+                physical right on desktop (matches the launcher and
+                stays on the same side in RTL). */}
             <motion.div
               key="gem-panel"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 28, stiffness: 240 }}
-              className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:end-6 sm:bottom-6 sm:start-auto sm:w-[420px] sm:h-[calc(100vh-3rem)] sm:max-h-[760px] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col overflow-hidden"
+              initial={{ y: "100%", opacity: 0.6 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 280 }}
+              className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:w-[420px] sm:h-[calc(100vh-3rem)] sm:max-h-[760px] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col overflow-hidden"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
               data-compact-ui
             >
-              {/* Header */}
-              <div className="px-5 pt-4 pb-3 border-b border-cream-300/70 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-terracotta-500 to-sienna-600 text-cream-50 flex items-center justify-center shrink-0">
-                  <Sparkles size={16} />
+              {/* Header — warm Tuscan gradient stripe + larger
+                  avatar. The status dot in the corner of the
+                  avatar gives a tiny "alive" signal: olive when
+                  ready, terracotta + pulse when actively talking
+                  / listening / thinking. */}
+              <div className="px-5 pt-4 pb-3 border-b border-cream-300/70 flex items-center gap-3 bg-gradient-to-b from-cream-100 to-cream-50">
+                <div className="relative shrink-0">
+                  <div
+                    className="w-11 h-11 rounded-full text-cream-50 flex items-center justify-center ring-1 ring-cream-50/40 shadow-md shadow-terracotta-700/25"
+                    style={{
+                      background:
+                        "radial-gradient(120% 120% at 25% 20%, #E0996B 0%, #C45A3D 38%, #8B4513 100%)"
+                    }}
+                  >
+                    <Sparkles size={18} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]" />
+                  </div>
+                  {/* Status indicator dot. */}
+                  <span
+                    aria-hidden
+                    className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-cream-50 ${
+                      status === "listening" || status === "speaking"
+                        ? "bg-terracotta-500 animate-gem-breathe"
+                        : status === "thinking" || status === "connecting"
+                          ? "bg-gold-400 animate-gem-breathe"
+                          : status === "error"
+                            ? "bg-terracotta-700"
+                            : "bg-olive-500"
+                    }`}
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-serif text-lg leading-tight text-ink-900">
@@ -709,12 +763,17 @@ function Bubble({ message }: { message: Message }) {
   const isStreaming = !isUser && message.streaming && !!message.text;
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", damping: 22, stiffness: 320, mass: 0.6 }}
+      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+    >
       <div
-        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed whitespace-pre-wrap break-words ${
+        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
           isUser
-            ? "bg-ink-900 text-cream-50 rounded-br-sm"
-            : "bg-cream-50 text-ink-800 ring-1 ring-cream-300 rounded-bl-sm"
+            ? "bg-gradient-to-br from-ink-800 to-ink-900 text-cream-50 rounded-br-md shadow-ink-900/15"
+            : "bg-cream-50 text-ink-800 ring-1 ring-cream-300/70 rounded-bl-md shadow-ink-900/5"
         }`}
       >
         {isWaiting ? (
@@ -726,7 +785,7 @@ function Bubble({ message }: { message: Message }) {
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

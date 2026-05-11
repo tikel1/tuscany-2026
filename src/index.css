@@ -266,3 +266,25 @@ html[dir="rtl"] .leaflet-control-attribution {
     opacity: 0.7 !important;
   }
 }
+
+/* Gemininio FAB — soft "breathing" pulse ring that gently swells
+   and fades behind the launcher button to make the AI assistant
+   feel alive without being distracting. ~3s cycle (slow enough
+   to read as breath, fast enough to be noticed in peripheral
+   vision). Used twice: behind the floating launcher, and on the
+   small status dot inside the chat header avatar. */
+@keyframes gem-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.55; }
+  50%      { transform: scale(1.18); opacity: 0.0;  }
+}
+.animate-gem-breathe {
+  animation: gem-breathe 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gem-breathe {
+    animation: none !important;
+    opacity: 0.4 !important;
+  }
+}
