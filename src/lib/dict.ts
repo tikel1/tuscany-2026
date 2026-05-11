@@ -258,6 +258,10 @@ export const DICT = {
   },
   gem_settings: { en: "Settings", he: "הגדרות" },
   gem_back: { en: "Back to chat", he: "חזרה לשיחה" },
+  gem_builtin_key_note: {
+    en: "Using the trip's built-in API key. To use your own instead, set up a key in your browser cache.",
+    he: "משתמשים במפתח המובנה של הטיול. כדי להשתמש במפתח אישי שלכם, הגדירו אותו במטמון הדפדפן."
+  },
 
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },

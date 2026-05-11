@@ -23,6 +23,8 @@ import {
   loadHistory,
   saveHistory,
   clearHistory,
+  hasBuildTimeKey,
+  hasUserOverride,
   type PersistedMessage
 } from "../lib/gemininio/storage";
 
@@ -305,8 +307,11 @@ export default function Gemininio() {
 
   function handleForgetKey() {
     clearApiKey();
-    setStatus("needs-key");
     setShowSettings(false);
+    // Re-evaluate: if a build-time env key still exists, we just
+    // fall back to it and keep the chat alive. Otherwise, show
+    // the setup screen so the user can paste a new key.
+    setStatus(hasBuildTimeKey() ? "ready" : "needs-key");
   }
 
   function handleClearHistory() {
@@ -389,7 +394,14 @@ export default function Gemininio() {
               {/* Body — settings, setup, or chat */}
               {showSettings ? (
                 <SettingsView
-                  hasKey={!!getApiKey()}
+                  // The "Forget my key" button only does something
+                  // useful if there's a user-pasted override on top
+                  // of the built-in env key. With a build-time key
+                  // and no override, "forget" would just fall back
+                  // to the same env key — so we hide the button
+                  // entirely to avoid a confusing no-op.
+                  showForgetKey={hasUserOverride()}
+                  hasBuildTimeKey={hasBuildTimeKey()}
                   onForgetKey={handleForgetKey}
                   onClearHistory={handleClearHistory}
                   onBack={() => setShowSettings(false)}
@@ -478,12 +490,14 @@ function SetupView({
 }
 
 function SettingsView({
-  hasKey,
+  showForgetKey,
+  hasBuildTimeKey: builtIn,
   onForgetKey,
   onClearHistory,
   onBack
 }: {
-  hasKey: boolean;
+  showForgetKey: boolean;
+  hasBuildTimeKey: boolean;
   onForgetKey: () => void;
   onClearHistory: () => void;
   onBack: () => void;
@@ -503,13 +517,18 @@ function SettingsView({
       >
         <Trash2 size={14} /> {t("gem_reset_history")}
       </button>
-      {hasKey && (
+      {showForgetKey && (
         <button
           onClick={onForgetKey}
           className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cream-100 hover:bg-terracotta-500/10 hover:text-terracotta-700 transition text-ink-800 text-[13px]"
         >
           <Trash2 size={14} /> {t("gem_clear_key")}
         </button>
+      )}
+      {builtIn && (
+        <div className="text-[11px] text-ink-700/60 leading-relaxed mt-2 px-1">
+          {t("gem_builtin_key_note")}
+        </div>
       )}
     </div>
   );

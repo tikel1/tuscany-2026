@@ -1214,19 +1214,68 @@ The chat assistant — Gemininio in this project — uses Google's
 hard constraint: this is still a static SPA on GitHub Pages, so
 there is **no server to hold a shared API key**.
 
-### The user-supplied key pattern
+### Two key-handling patterns (pick one)
 
-The only safe way to ship live LLM chat from a static site:
+**A. User-supplied key (safest, most friction).**
 
-1. First time the user opens the chat, show a setup screen that
-   asks for their own free Gemini API key.
+1. First time the user opens the chat, a setup screen asks for
+   their own free Gemini API key.
 2. Save it in `localStorage` on their device.
 3. The browser opens the WebSocket directly to Google with that
    key. Each user pays their own (free-tier) cost. The repo never
    sees a key.
 
-For a family trip site this is a perfect fit — each adult signs
-up once at `aistudio.google.com/apikey` and the chat works.
+Best when the site is open to the public and you don't want to be
+on the hook for strangers' usage.
+
+**B. Build-time env key (most convenient, leakable).**
+
+1. Put the key in `.env.local` as `VITE_GEMINI_API_KEY=…` for
+   local dev; `.env.local` is gitignored.
+2. Add a GitHub Actions secret of the same name and inject it in
+   the workflow's `Build` step:
+
+   ```yaml
+   - name: Build
+     run: npm run build
+     env:
+       VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
+   ```
+
+3. Vite replaces `import.meta.env.VITE_GEMINI_API_KEY` with a
+   string literal at build time. The key ships inside the
+   minified bundle.
+4. The setup screen never appears for visitors — the chat just
+   works.
+
+The catch: anyone who view-sources the deployed site can grep the
+bundle for `AIza…` and steal your key. **Mitigate, don't ignore:**
+
+- In AI Studio → API key → Application restrictions → HTTP
+  referrers, allow only `https://yourname.github.io/your-repo/*`.
+  Casual scrapers stop here. Determined attackers can spoof the
+  referer, so don't put a paid key behind this without quotas.
+- Set a hard daily quota cap on the key.
+- Treat any key that's been pasted into a chat / commit / Slack
+  as compromised — regenerate it.
+
+**The implementation supports both.** The resolution order in
+`storage.ts::getApiKey()` is:
+
+1. localStorage entry (user paste) — wins if present, so a family
+   member can override the default with their own account.
+2. `import.meta.env.VITE_GEMINI_API_KEY` (build-time) — used when
+   no override exists.
+3. `null` — falls through to the setup screen.
+
+The Settings panel hides the "Forget my key" button when there's
+no localStorage override (otherwise the button would be a confusing
+no-op against the build-time default).
+
+`.env.example` lives in the repo as a documentation-only file
+that teaches new clones which variables exist. Real values go in
+`.env.local`, which `.gitignore` blocks via both `*.local` and an
+explicit `.env.*` rule (defense in depth).
 
 ### Why Gemini Live, not REST + ElevenLabs?
 
