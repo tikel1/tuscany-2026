@@ -7,14 +7,14 @@ import type { Tip } from "../data/types";
  */
 const TIP_IDS_PER_DAY: Record<number, string[]> = {
   1: ["self-service-fuel"],
-  2: ["water-shoes", "canyon-park-booking"],
-  3: ["ztl"],
+  2: [],
+  3: [],
   4: [],
-  5: ["water-shoes", "ac-confirm"],
-  6: ["boat-no-licence"],
+  5: [],
+  6: [],
   7: [],
   8: ["ztl"],
-  9: ["saturnia-early", "water-shoes", "car-return-night-before", "ztl"],
+  9: ["car-return-night-before"],
   10: ["car-return-night-before"]
 };
 

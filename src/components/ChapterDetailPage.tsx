@@ -748,36 +748,32 @@ function ChapterDetailContent({ day }: { day: Day }) {
             <RestaurantsForDay restaurants={dayRestaurants} />
           )}
 
-          {/* Day notes — money, timing, mood */}
-          {localDay.dayTips && localDay.dayTips.length > 0 && (
+          {/* Good-to-know notes: day-specific reminders plus broader trip tips
+              relevant to this chapter, merged into one section to avoid two
+              near-identical "tips" blocks on the detail page. */}
+          {((localDay.dayTips && localDay.dayTips.length > 0) || tips.length > 0) && (
             <section>
               <SectionLabel eyebrow={t("daytips_eyebrow")} title={t("daytips_title")} />
               <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
                 {t("daytips_kicker")}
               </p>
               <ul className="space-y-2.5">
-                {localDay.dayTips.map((line, i) => (
+                {(localDay.dayTips ?? []).map((line, i) => (
                   <li
-                    key={i}
-                    className="relative ps-10 pe-4 py-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+                    key={`day-tip-${i}`}
+                    className="relative ps-12 sm:ps-14 pe-4 sm:pe-5 py-4 sm:py-5 rounded-2xl bg-cream-50 ring-1 ring-gold-500/35"
                   >
-                    <span className="absolute start-3 top-3 w-7 h-7 rounded-full bg-gold-400/15 text-sienna-600 flex items-center justify-center">
-                      <StickyNote size={13} strokeWidth={1.8} />
+                    <span className="absolute start-3 sm:start-4 top-4 sm:top-5 w-7 h-7 rounded-full bg-gold-500/10 text-sienna-600 flex items-center justify-center">
+                      <StickyNote size={14} strokeWidth={1.8} />
                     </span>
-                    <p className="text-[13.5px] sm:text-[14.5px] text-ink-700/90 leading-relaxed">
+                    <div className="text-[10px] uppercase tracking-[0.22em] font-medium text-sienna-600">
+                      {t("severity_info")}
+                    </div>
+                    <p className="mt-1.5 text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
                       {line}
                     </p>
                   </li>
                 ))}
-              </ul>
-            </section>
-          )}
-
-          {/* Tips */}
-          {tips.length > 0 && (
-            <section>
-              <SectionLabel eyebrow={t("things_to_know")} title={t("tips_for_chapter")} />
-              <ul className="mt-6 sm:mt-8 space-y-3.5">
                 {tips.map(tip => {
                   const s = SEVERITY_STYLES[tip.severity];
                   const Icon = s.Icon;

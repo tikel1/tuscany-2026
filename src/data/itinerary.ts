@@ -692,7 +692,6 @@ export const itinerary: Day[] = [
     dayTips: [
       "Riding helmets are provided; minimum age usually 6",
       "Pitigliano synagogue closes early on Friday — go before lunch if it's a Friday",
-      "Vie Cave footing is shaded but uneven — grippy soles only",
       "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano"
     ],
     italianWords: [

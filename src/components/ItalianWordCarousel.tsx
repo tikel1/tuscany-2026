@@ -181,10 +181,11 @@ function ItalianWordCarouselInner({
                       {t("word_use_label")}
                     </div>
                     <div
-                      className="font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug"
-                      dir="ltr"
+                      className="text-start font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug"
                     >
-                      <span>“{w.example}”</span>
+                      <span dir="ltr" className="inline-block">
+                        “{w.example}”
+                      </span>
                       {w.exampleMeaning && exampleUrlForSlide && (
                         <button
                           type="button"
@@ -193,7 +194,7 @@ function ItalianWordCarouselInner({
                             exToggle(e);
                           }}
                           dir="ltr"
-                          className={`ms-2 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left align-middle font-sans not-italic ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 ${
+                          className={`mx-2 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left align-middle font-sans not-italic ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 ${
                             exState === "error"
                               ? "ring-amber-400/90 text-ink-700/70"
                               : exState === "playing"
