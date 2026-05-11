@@ -265,8 +265,8 @@ export const DICT = {
   gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
   gem_mute:   { en: "Turn voice off", he: "כבה קול" },
   gem_input_mode_note: {
-    en: "Typed messages may use Google when helpful; the plan always wins. Voice uses live chat (trip only).",
-    he: "הודעות כתובות עשויות להיעזר בגוגל כשזה עוזר; המסלול תמיד מנצח. קול — שיחה חיה (טיול בלבד)."
+    en: "Typed messages may use Google when helpful; the plan always wins. Voice uses live chat (trip only). With sound on, typed replies are read aloud by your device.",
+    he: "הודעות כתובות עשויות להיעזר בגוגל כשזה עוזר; המסלול תמיד מנצח. קול — שיחה חיה (טיול בלבד). כשהקול דלוק, תשובות כתובות יוקראו בקול במכשיר."
   },
   gem_typed_failed: {
     en: "Could not get a reply: ",

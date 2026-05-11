@@ -174,39 +174,88 @@ export class MicCapture {
 export class PcmPlayer {
   private ctx: AudioContext | null = null;
   private playTime = 0;
+  /** Chunks received while `AudioContext` was still `suspended` (iOS). */
+  private pending: Uint8Array[] = [];
+  private resumeInFlight = false;
 
-  /** Queue a chunk. The first call lazily creates the AudioContext.
-   *  Returns when the chunk is scheduled (not when it finishes). */
-  enqueue(pcm: Uint8Array): void {
+  /**
+   * Call from a **user gesture** (mic up, unmute tap) so the playback
+   * context is not stuck `suspended` — iOS Safari will not play Live
+   * PCM until `resume()` runs after a tap. Mic capture uses a *different*
+   * AudioContext, so unlocking the mic does not unlock playback.
+   */
+  async ensureAudioUnlocked(): Promise<void> {
+    if (typeof window === "undefined") return;
     if (!this.ctx) {
-      // Output context locks to OUTPUT_RATE so we don't have to
-      // resample every chunk on the way out.
       this.ctx = new AudioContext({ sampleRate: OUTPUT_RATE });
       this.playTime = this.ctx.currentTime;
     }
+    if (this.ctx.state === "suspended") {
+      try {
+        await this.ctx.resume();
+      } catch {
+        /* ignore */
+      }
+    }
+    this.flushPending();
+  }
+
+  private flushPending(): void {
+    if (!this.ctx || this.ctx.state !== "running") return;
+    while (this.pending.length) {
+      const pcm = this.pending.shift();
+      if (pcm) this.scheduleChunk(pcm);
+    }
+  }
+
+  private scheduleChunk(pcm: Uint8Array): void {
+    if (!this.ctx) return;
     const float = pcm16BytesToFloat(pcm);
     if (float.length === 0) return;
 
     const buffer = this.ctx.createBuffer(1, float.length, OUTPUT_RATE);
-    // Use getChannelData().set instead of copyToChannel — TS6's
-    // stricter typed-array generics complain about copyToChannel's
-    // ArrayBuffer vs ArrayBufferLike, but .set on a TypedArray view
-    // is fully compatible.
     buffer.getChannelData(0).set(float);
 
     const source = this.ctx.createBufferSource();
     source.buffer = buffer;
     source.connect(this.ctx.destination);
 
-    // If we got behind (e.g. the tab was backgrounded), resync to now.
     const now = this.ctx.currentTime;
     if (this.playTime < now) this.playTime = now;
     source.start(this.playTime);
     this.playTime += buffer.duration;
   }
 
+  /** Queue a chunk. The first call lazily creates the AudioContext.
+   *  Returns when the chunk is scheduled (not when it finishes). */
+  enqueue(pcm: Uint8Array): void {
+    if (!this.ctx) {
+      this.ctx = new AudioContext({ sampleRate: OUTPUT_RATE });
+      this.playTime = this.ctx.currentTime;
+    }
+    if (this.ctx.state !== "running") {
+      this.pending.push(pcm);
+      if (!this.resumeInFlight) {
+        this.resumeInFlight = true;
+        void this.ctx
+          .resume()
+          .then(() => {
+            this.resumeInFlight = false;
+            this.flushPending();
+          })
+          .catch(() => {
+            this.resumeInFlight = false;
+          });
+      }
+      return;
+    }
+    this.scheduleChunk(pcm);
+  }
+
   /** Hard-cut current playback (e.g. user interrupted Gemininio). */
   stop(): void {
+    this.pending = [];
+    this.resumeInFlight = false;
     try {
       this.ctx?.close();
     } catch {

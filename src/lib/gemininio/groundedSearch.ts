@@ -16,6 +16,7 @@ function extractTextFromCandidate(candidate: unknown): string {
   const chunks: string[] = [];
   for (const p of parts) {
     if (!p || typeof p !== "object") continue;
+    if ((p as { thought?: boolean }).thought === true) continue;
     const text = (p as { text?: string }).text;
     if (typeof text === "string" && text.length) chunks.push(text);
   }
@@ -43,7 +44,7 @@ export async function generateGroundedReply(params: GroundedReplyParams): Promis
       contents: [{ role: "user", parts: [{ text: params.userMessage }] }],
       tools: [{ google_search: {} }],
       generationConfig: {
-        temperature: 0.6,
+        temperature: 0.45,
         maxOutputTokens: 1200
       }
     };

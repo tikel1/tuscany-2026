@@ -19,6 +19,7 @@ import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
 import { buildSystemPrompt, buildTypedReplySystemPrompt } from "../lib/gemininio/persona";
 import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
+import { cancelTypedSpeech, speakTypedReply } from "../lib/gemininio/typedSpeech";
 import {
   getApiKey,
   setApiKey,
@@ -132,6 +133,7 @@ export default function Gemininio() {
   // Tear everything down when the panel closes.
   useEffect(() => {
     if (status !== "closed") return;
+    cancelTypedSpeech();
     sessionRef.current?.close();
     sessionRef.current = null;
     micRef.current?.stop();
@@ -168,6 +170,7 @@ export default function Gemininio() {
   // Cleanup on unmount.
   useEffect(() => {
     return () => {
+      cancelTypedSpeech();
       sessionRef.current?.close();
       micRef.current?.stop();
       playerRef.current?.stop();
@@ -302,6 +305,7 @@ export default function Gemininio() {
   async function sendText() {
     const trimmed = text.trim();
     if (!trimmed) return;
+    cancelTypedSpeech();
     setText("");
     // Append BOTH the user's question and a placeholder "streaming"
     // model bubble in one update — the empty bubble with
@@ -342,6 +346,7 @@ export default function Gemininio() {
         }
         return next;
       });
+      if (audioEnabledRef.current) speakTypedReply(reply, lang);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setMessages(ms => {
@@ -384,6 +389,10 @@ export default function Gemininio() {
 
   async function stopMic() {
     await micRef.current?.stop();
+    // Unlock output AudioContext on this user gesture (finger up) so
+    // Live PCM is not silent on iOS — mic capture uses another context.
+    if (!playerRef.current) playerRef.current = new PcmPlayer();
+    await playerRef.current.ensureAudioUnlocked();
     sessionRef.current?.endTurn();
     setStatus("thinking");
     // Same trick as sendText — drop a placeholder streaming bubble
@@ -427,14 +436,16 @@ export default function Gemininio() {
    *  feels instant. */
   function handleToggleAudio() {
     setAudioEnabled(prev => {
-      const next = !prev;
-      if (!next) {
-        // Muting: cut current playback dead.
+      if (prev) {
+        cancelTypedSpeech();
         playerRef.current?.stop();
         playerRef.current = null;
         if (status === "speaking") setStatus("ready");
+        return false;
       }
-      return next;
+      if (!playerRef.current) playerRef.current = new PcmPlayer();
+      void playerRef.current.ensureAudioUnlocked();
+      return true;
     });
   }
 
