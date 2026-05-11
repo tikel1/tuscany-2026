@@ -48,6 +48,15 @@ html[dir="rtl"] {
   font-family: "Cormorant Garamond", "Georgia", ui-serif, serif;
 }
 
+/* Gemininio message list — iOS PWA / Chrome Android need an explicit
+   scroll layer with touch momentum and contained overscroll so the
+   swipe does not refresh the page or scroll the site behind the sheet. */
+.gem-chat-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;

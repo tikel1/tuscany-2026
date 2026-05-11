@@ -279,6 +279,39 @@ function digestFood(lang: Lang): string {
 /* Public: build the full system prompt for the current language       */
 /* ------------------------------------------------------------------ */
 
+/** Extra rules when the user turns on "Web search" for a typed turn.
+ *  Appended to the full trip-grounded prompt so search never overrides
+ *  the itinerary — only supplements it with fresh public facts. */
+const WEB_SEARCH_DISCIPLINE_EN = `WEB SEARCH MODE (this turn only — Google Search is enabled):
+- The itinerary, dates, bases, and POIs in your system context are the
+  SOURCE OF TRUTH for "our plan". Treat them as fixed unless the user
+  explicitly asks to change plans.
+- Use the web ONLY for fresh or external facts the trip data cannot
+  know: opening hours, weather headlines, road closures, ticket prices,
+  whether a museum is open this week, etc.
+- If web results disagree with our plan, OUR PLAN WINS. Say so briefly
+  ("the site says X, but on our plan we're doing Y") and stick to Y.
+- Never invent bookings or changes the user did not ask for.
+- Stay concise (same 1–3 sentence discipline as always). No markdown.
+- If the question is purely about the trip as written, you may answer
+  without leaning on web — do not force a search angle.`;
+
+const WEB_SEARCH_DISCIPLINE_HE = `מצב חיפוש באינטרנט (רק בתור הזה — חיפוש Google מופעל):
+- המסלול, התאריכים, הבסיסים והאטרקציות בהקשר שלך הם מקור האמת ל"התוכנית
+  שלנו". התייחסו אליהם כקבועים אלא אם המשתמש מבקש במפורש לשנות.
+- השתמשו באינטרנט רק לעובדות עדכניות שהמסלול לא יכול לדעת: שעות פתיחה,
+  מזג אוויר, סגירות כבישים, מחירי כרטיסים, האם מוזיאון פתוח השבוע וכו'.
+- אם תוצאות רשת סותרות את התוכנית שלנו — התוכנית שלנו מנצחת. אמורו
+  בקצרה ("באתר כתוב X, אבל אצלנו בתוכנית עושים Y") והמשיכו עם Y.
+- אל תמציאו הזמנות או שינויים שלא ביקשו.
+- תשובה קצרה (אותו כלל 1–3 משפטים). בלי מרקדאון.
+- אם השאלה רק על הטיול כפי שכתוב, אפשר לענות בלי להכריח זווית חיפוש.`;
+
+export function buildGroundedSystemPrompt(lang: Lang): string {
+  const extra = lang === "he" ? WEB_SEARCH_DISCIPLINE_HE : WEB_SEARCH_DISCIPLINE_EN;
+  return `${buildSystemPrompt(lang)}\n\n${extra}`;
+}
+
 export function buildSystemPrompt(lang: Lang): string {
   const persona = lang === "he" ? PERSONA_HE : PERSONA_EN;
   const trip =

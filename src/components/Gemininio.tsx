@@ -11,13 +11,15 @@ import {
   Loader2,
   MessageCircle,
   Volume2,
-  VolumeX
+  VolumeX,
+  Globe
 } from "lucide-react";
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
-import { buildSystemPrompt } from "../lib/gemininio/persona";
+import { buildSystemPrompt, buildGroundedSystemPrompt } from "../lib/gemininio/persona";
+import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
 import {
   getApiKey,
   setApiKey,
@@ -88,6 +90,15 @@ export default function Gemininio() {
       return false;
     }
   });
+  /** Typed messages only — uses REST + Google Search; Live/voice stays trip-only. */
+  const [webSearchEnabled, setWebSearchEnabled] = useState<boolean>(() => {
+    try {
+      return typeof localStorage !== "undefined" &&
+        localStorage.getItem("gem-web-search") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   /* ---------------- refs ---------------- */
 
@@ -121,6 +132,14 @@ export default function Gemininio() {
     }
   }, [audioEnabled]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem("gem-web-search", String(webSearchEnabled));
+    } catch {
+      /* ignore */
+    }
+  }, [webSearchEnabled]);
+
   // Auto-scroll the message list when something new lands.
   useEffect(() => {
     const el = scrollRef.current;
@@ -151,13 +170,16 @@ export default function Gemininio() {
     const prevHtml = document.documentElement.style.overflow;
     const prevBody = document.body.style.overflow;
     const prevOverscroll = document.body.style.overscrollBehavior;
+    const prevHtmlOs = document.documentElement.style.overscrollBehavior;
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     document.body.style.overscrollBehavior = "contain";
+    document.documentElement.style.overscrollBehavior = "none";
     return () => {
       document.documentElement.style.overflow = prevHtml;
       document.body.style.overflow = prevBody;
       document.body.style.overscrollBehavior = prevOverscroll;
+      document.documentElement.style.overscrollBehavior = prevHtmlOs;
     };
   }, [status]);
 
@@ -310,6 +332,49 @@ export default function Gemininio() {
       { role: "model", text: "", ts: Date.now() + 1, streaming: true }
     ]);
     setStatus("thinking");
+    setError(null);
+
+    if (webSearchEnabled) {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        setStatus("needs-key");
+        setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
+        return;
+      }
+      try {
+        const sys = buildGroundedSystemPrompt(lang);
+        const reply = await generateGroundedReply({
+          apiKey,
+          systemInstruction: sys,
+          userMessage: trimmed
+        });
+        setMessages(ms => {
+          const next = [...ms];
+          const last = next[next.length - 1];
+          if (last?.role === "model" && last.streaming) {
+            next[next.length - 1] = { ...last, text: reply, streaming: false };
+          }
+          return next;
+        });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setMessages(ms => {
+          const next = [...ms];
+          const last = next[next.length - 1];
+          if (last?.role === "model" && last.streaming) {
+            next[next.length - 1] = {
+              ...last,
+              text: `${t("gem_web_failed")}${msg}`,
+              streaming: false
+            };
+          }
+          return next;
+        });
+      }
+      setStatus("ready");
+      return;
+    }
+
     const s = await ensureSession();
     if (!s) {
       // Connection failed — strip the placeholder back out so the
@@ -446,7 +511,7 @@ export default function Gemininio() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={close}
-              className="fixed inset-0 z-40 bg-ink-900/55 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-ink-900/55 backdrop-blur-sm touch-none"
             />
 
             {/* Panel — bottom-sheet on mobile, anchored to the
@@ -458,7 +523,7 @@ export default function Gemininio() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 280 }}
-              className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:w-[420px] sm:h-[calc(100vh-3rem)] sm:max-h-[760px] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col overflow-hidden"
+              className="fixed z-50 inset-x-0 bottom-0 h-[70dvh] max-h-[70dvh] sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:w-[420px] sm:max-h-[70dvh] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col min-h-0 overflow-hidden"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
               data-compact-ui
             >
@@ -524,41 +589,42 @@ export default function Gemininio() {
                 </button>
               </div>
 
-              {/* Body — settings, setup, or chat */}
-              {showSettings ? (
-                <SettingsView
-                  // The "Forget my key" button only does something
-                  // useful if there's a user-pasted override on top
-                  // of the built-in env key. With a build-time key
-                  // and no override, "forget" would just fall back
-                  // to the same env key — so we hide the button
-                  // entirely to avoid a confusing no-op.
-                  showForgetKey={hasUserOverride()}
-                  hasBuildTimeKey={hasBuildTimeKey()}
-                  onForgetKey={handleForgetKey}
-                  onClearHistory={handleClearHistory}
-                  onBack={() => setShowSettings(false)}
-                />
-              ) : status === "needs-key" ? (
-                <SetupView
-                  draft={keyDraft}
-                  setDraft={setKeyDraft}
-                  onSave={handleSaveKey}
-                />
-              ) : (
-                <ChatView
-                  messages={messages}
-                  status={status}
-                  error={error}
-                  text={text}
-                  setText={setText}
-                  scrollRef={scrollRef}
-                  inputRef={inputRef}
-                  onSend={sendText}
-                  onMicDown={startMic}
-                  onMicUp={stopMic}
-                />
-              )}
+              {/* Scrollable body — flex-1 + min-h-0 so the inner list can
+                  actually scroll inside the capped 70vh panel (otherwise
+                  flex children default to min-height:auto and absorb all
+                  growth, killing overflow). */}
+              <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
+                {showSettings ? (
+                  <SettingsView
+                    showForgetKey={hasUserOverride()}
+                    hasBuildTimeKey={hasBuildTimeKey()}
+                    onForgetKey={handleForgetKey}
+                    onClearHistory={handleClearHistory}
+                    onBack={() => setShowSettings(false)}
+                  />
+                ) : status === "needs-key" ? (
+                  <SetupView
+                    draft={keyDraft}
+                    setDraft={setKeyDraft}
+                    onSave={handleSaveKey}
+                  />
+                ) : (
+                  <ChatView
+                    messages={messages}
+                    status={status}
+                    error={error}
+                    text={text}
+                    setText={setText}
+                    scrollRef={scrollRef}
+                    inputRef={inputRef}
+                    onSend={sendText}
+                    onMicDown={startMic}
+                    onMicUp={stopMic}
+                    webSearchEnabled={webSearchEnabled}
+                    onToggleWebSearch={() => setWebSearchEnabled(v => !v)}
+                  />
+                )}
+              </div>
             </motion.div>
           </>
         )}
@@ -677,7 +743,9 @@ function ChatView({
   inputRef,
   onSend,
   onMicDown,
-  onMicUp
+  onMicUp,
+  webSearchEnabled,
+  onToggleWebSearch
 }: {
   messages: Message[];
   status: ChatStatus;
@@ -689,14 +757,16 @@ function ChatView({
   onSend: () => void;
   onMicDown: () => void;
   onMicUp: () => void;
+  webSearchEnabled: boolean;
+  onToggleWebSearch: () => void;
 }) {
   const t = useT();
 
   return (
-    <>
+    <div className="flex flex-1 min-h-0 flex-col">
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 flex flex-col gap-3 bg-cream-100/40"
+        className="gem-chat-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 flex flex-col gap-3 bg-cream-100/40"
       >
         {messages.length === 0 && (
           <div className="text-[12.5px] italic text-ink-700/65 leading-relaxed self-center max-w-[280px] text-center pt-6">
@@ -715,48 +785,71 @@ function ChatView({
 
       <StatusBar status={status} />
 
-      <div className="px-3 py-3 border-t border-cream-300/70 bg-cream-50 flex items-center gap-2">
-        <input
-          ref={inputRef}
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              onSend();
+      <div className="shrink-0 border-t border-cream-300/70 bg-cream-50">
+        {webSearchEnabled && (
+          <p className="px-3 pt-2 pb-0 text-[10px] leading-snug text-ink-700/75 text-center">
+            {t("gem_web_voice_note")}
+          </p>
+        )}
+        <div className="px-2 sm:px-3 py-3 flex items-center gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={onToggleWebSearch}
+            aria-pressed={webSearchEnabled}
+            aria-label={webSearchEnabled ? t("gem_web_search_aria_on") : t("gem_web_search_aria")}
+            title={webSearchEnabled ? t("gem_web_search_aria_on") : t("gem_web_search_aria")}
+            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition ${
+              webSearchEnabled
+                ? "bg-terracotta-500/20 text-terracotta-700 ring-1 ring-terracotta-500/35"
+                : "text-ink-700/70 hover:bg-cream-200"
+            }`}
+          >
+            <Globe size={18} strokeWidth={webSearchEnabled ? 2.2 : 1.7} />
+          </button>
+          <input
+            ref={inputRef}
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
+            placeholder={t("gem_input_placeholder")}
+            className="flex-1 min-w-0 px-3 py-2.5 rounded-full border border-cream-300 bg-cream-100 text-[14px] focus:outline-none focus:ring-2 focus:ring-terracotta-500/40"
+            inputMode="text"
+          />
+          <button
+            type="button"
+            onClick={onSend}
+            disabled={!text.trim()}
+            aria-label={t("gem_send")}
+            className="shrink-0 w-10 h-10 rounded-full bg-ink-900 text-cream-50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-ink-800 transition"
+          >
+            <Send size={16} />
+          </button>
+          <button
+            type="button"
+            onPointerDown={onMicDown}
+            onPointerUp={onMicUp}
+            onPointerCancel={onMicUp}
+            onPointerLeave={status === "listening" ? onMicUp : undefined}
+            aria-label={
+              status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")
             }
-          }}
-          placeholder={t("gem_input_placeholder")}
-          className="flex-1 min-w-0 px-3 py-2.5 rounded-full border border-cream-300 bg-cream-100 text-[14px] focus:outline-none focus:ring-2 focus:ring-terracotta-500/40"
-          inputMode="text"
-        />
-        <button
-          onClick={onSend}
-          disabled={!text.trim()}
-          aria-label={t("gem_send")}
-          className="shrink-0 w-10 h-10 rounded-full bg-ink-900 text-cream-50 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-ink-800 transition"
-        >
-          <Send size={16} />
-        </button>
-        <button
-          onPointerDown={onMicDown}
-          onPointerUp={onMicUp}
-          onPointerCancel={onMicUp}
-          onPointerLeave={status === "listening" ? onMicUp : undefined}
-          aria-label={
-            status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")
-          }
-          title={status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")}
-          className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none ${
-            status === "listening"
-              ? "bg-terracotta-500 text-cream-50 scale-110 shadow-lg shadow-terracotta-700/30"
-              : "bg-olive-600 text-cream-50 hover:bg-olive-700"
-          }`}
-        >
-          <Mic size={16} />
-        </button>
+            title={status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")}
+            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none ${
+              status === "listening"
+                ? "bg-terracotta-500 text-cream-50 scale-110 shadow-lg shadow-terracotta-700/30"
+                : "bg-olive-600 text-cream-50 hover:bg-olive-700"
+            }`}
+          >
+            <Mic size={16} />
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

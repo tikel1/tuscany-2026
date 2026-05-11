@@ -264,6 +264,22 @@ export const DICT = {
   },
   gem_unmute: { en: "Turn voice on", he: "הפעל קול" },
   gem_mute:   { en: "Turn voice off", he: "כבה קול" },
+  gem_web_search_aria: {
+    en: "Web search off — trip knowledge only. Tap to enable Google Search for typed messages.",
+    he: "חיפוש אינטרנט כבוי — רק ידע מהטיול. הקישו להפעלת חיפוש Google להודעות כתובות."
+  },
+  gem_web_search_aria_on: {
+    en: "Web search on — Google may supplement answers; the itinerary always wins. Tap to turn off.",
+    he: "חיפוש מופעל — גוגל עשוי להשלים תשובות; המסלול תמיד מנצח. הקישו לכיבוי."
+  },
+  gem_web_voice_note: {
+    en: "Voice chat always uses trip knowledge only (no web).",
+    he: "שיחה בקול תמיד לפי הטיול בלבד (בלי אינטרנט)."
+  },
+  gem_web_failed: {
+    en: "Web search failed: ",
+    he: "חיפוש נכשל: "
+  },
 
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },

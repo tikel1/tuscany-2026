@@ -1333,6 +1333,45 @@ The Settings panel hides the "Forget my key" button when there's
 no localStorage override (otherwise the button would be a confusing
 no-op against the build-time default).
 
+### Panel height (~70vh), flex scroll chain, and pull-to-refresh
+
+On mobile, a full-bleed bottom sheet that grows with content never
+gives the inner message list a bounded height — `flex-1` children
+default to `min-height: auto`, so they absorb all vertical space
+and `overflow-y: auto` never scrolls; swipes then hit the document
+and Chrome Android fires pull-to-refresh.
+
+Fix pattern:
+
+1. Cap the sheet: `h-[70dvh] max-h-[70dvh]` (70% of the dynamic
+   viewport — leaves room to see the page behind it).
+2. After the header, wrap settings/chat in `flex flex-1 min-h-0
+   flex-col overflow-hidden` so the flex child can shrink below its
+   content height.
+3. Message list: `flex-1 min-h-0 overflow-y-auto` **plus** a small
+   CSS helper (`.gem-chat-scroll`) with `-webkit-overflow-scrolling:
+   touch`, `overscroll-behavior: contain`, and `touch-action: pan-y`.
+4. While open: `overflow: hidden` on both `<html>` and `<body>`,
+   `overscroll-behavior: contain` on `body`, and `overscroll-
+   behavior: none` on `<html>` — restore all four on close.
+5. Backdrop: `touch-none` so drags on the dimmed area do not scroll
+   the page underneath.
+
+### Optional Google Search (REST, not Live)
+
+Live `bidiGenerateContent` is the wrong place to bolt on search
+grounding for most accounts. Instead: a **Globe toggle** that only
+affects **typed** sends. When on, skip the WebSocket for that turn
+and call `v1beta/models/{gemini-2.5-flash}:generateContent` with
+`tools: [{ google_search: {} }]` and the **same** trip-grounded
+system prompt **plus** a short discipline block ("itinerary wins;
+web only for hours/prices/closures; never contradict the plan
+without saying so"). Voice/mic stays on Live without web — avoids
+half-open bidi state and makes the limitation obvious in UI copy.
+
+Try `gemini-2.5-flash` then fall back to `gemini-2.0-flash` if the
+first rejects the tool.
+
 `.env.example` lives in the repo as a documentation-only file
 that teaches new clones which variables exist. Real values go in
 `.env.local`, which `.gitignore` blocks via both `*.local` and an
