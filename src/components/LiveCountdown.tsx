@@ -39,7 +39,10 @@ function DigitCell({ value, size }: DigitCellProps) {
       ? "font-latin-serif text-5xl sm:text-7xl leading-none"
       : "font-latin-serif text-4xl sm:text-6xl leading-none";
   return (
-    <span className="relative inline-block overflow-hidden tabular-nums" style={{ minWidth: "1ch" }}>
+    <span
+      className="relative inline-flex items-center justify-center overflow-hidden tabular-nums align-middle"
+      style={{ minWidth: "1ch" }}
+    >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={value}
@@ -47,8 +50,8 @@ function DigitCell({ value, size }: DigitCellProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "-60%", opacity: 0 }}
           transition={{ duration: 0.25, ease: [0.22, 0.61, 0.36, 1] }}
-          className={`block ${cls}`}
-          style={{ fontVariantNumeric: "tabular-nums" }}
+          className={`flex items-center justify-center ${cls}`}
+          style={{ fontVariantNumeric: "tabular-nums", lineHeight: 1 }}
         >
           {value}
         </motion.span>
@@ -68,20 +71,17 @@ interface BlockProps {
 function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
   const str = String(value).padStart(pad, "0");
 
-  /* Optical centering for serif numerals.
-   * Cormorant Garamond's line-box reserves space below the baseline
-   * for descenders (g/p/y) that digits never have, so equal py
-   * padding leaves a visible empty band below each numeral and pushes
-   * the visible glyph toward the top of the pill. We bias the padding
-   * upward (more pt, less pb) without changing the pill's total
-   * vertical padding — the pill keeps its current height; the digit
-   * just sits where the eye expects it. */
-  const padCls = size === "lg" ? "pt-2 pb-0" : "pt-1.5 pb-0.5";
+  /* Vertical centering inside the glass pill: `items-baseline` + asymmetric
+   * top-heavy padding used to fight descender line-box gaps, but digits
+   * have no descenders — that combo left a large empty band above the
+   * numerals. Symmetric padding + flex `items-center` on the row aligns
+   * the glyph box with the pill without fighting the font metrics. */
+  const padCls = size === "lg" ? "py-2 sm:py-2.5" : "py-1.5 sm:py-2";
 
   return (
     <div className="flex flex-col items-center gap-1.5 sm:gap-2">
       <div
-        className={`flex items-baseline justify-center px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
+        className={`flex items-center justify-center px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
           pulse ? "ring-1 ring-cream-50/25" : ""
         }`}
       >
@@ -108,7 +108,7 @@ function Sep({ size }: { size: "md" | "lg" }) {
       ? "font-latin-serif text-4xl sm:text-6xl leading-none opacity-60"
       : "font-latin-serif text-3xl sm:text-5xl leading-none opacity-60";
   return (
-    <span className={`${cls} -translate-y-1 sm:-translate-y-2 px-0.5 sm:px-1 self-start`}>:</span>
+    <span className={`${cls} px-0.5 sm:px-1 self-center leading-none`}>:</span>
   );
 }
 
@@ -147,7 +147,7 @@ export default function LiveCountdown({
   }, [target, mode]);
 
   return (
-    <div dir="ltr" className={`flex items-start justify-center gap-1 sm:gap-2 ${className ?? ""}`}>
+    <div dir="ltr" className={`flex items-center justify-center gap-1 sm:gap-2 ${className ?? ""}`}>
       {showDays && (
         <>
           <CountdownBlock value={parts.days} label={labels.days} pad={String(parts.days).length > 2 ? 3 : 2} size={size} pulse />
