@@ -1370,6 +1370,68 @@ For all three: stand up a Cloudflare Worker that proxies the same
 WebSocket protocol with the key as a secret. The browser code
 barely changes — same JSON envelopes.
 
+### Killing the chain-of-thought leak
+
+Gemini 2.5's "thinking" models love to narrate their reasoning into
+the response stream. Out of the box you'll get bubbles like:
+
+> **Assessing Itinerary Deviation** I have determined that the
+> Colosseum visit represents a substantial deviation from the
+> direct route north to Larciano…
+
+Three layers of defense, all needed:
+
+1. **Setup-time:** `generation_config.thinking_config.thinking_budget = 0`
+   tells the server to skip thinking entirely.
+2. **Client filter:** even with the budget at 0, preview models
+   sometimes still emit parts tagged `thought: true`. Skip them
+   in the message handler.
+3. **Don't double-source for AUDIO sessions.** When response
+   modality is `AUDIO`, the canonical visible text is
+   `outputTranscription` (the ASR'd version of what the voice is
+   saying). The `modelTurn.parts[].text` you also receive is
+   usually internal scratch. Pick one source per modality:
+   - AUDIO: use `outputTranscription`, ignore `modelTurn.text`.
+   - TEXT: use `modelTurn.text`, there is no `outputTranscription`.
+
+### Persona discipline > prompt verbosity
+
+The first version of Gemininio's persona was 12 paragraphs of
+"warm, knowledgeable, slightly poetic Italian guide" prose. The
+model dutifully wrote five-paragraph answers full of preamble.
+
+What actually worked:
+
+- A short list of **ABSOLUTE RULES** ("1–3 sentences. NEVER more.").
+- Concrete **good** and **bad** examples baked into the prompt.
+  The model imitates structure better than it follows adjectives.
+- A separate paragraph of voice / personality, kept terse.
+- An explicit "never say `my response will…`, `let me think…`,
+  `assessing…`" — calling out the exact filler phrases stops them.
+
+### Typing animation
+
+Streaming text already arrives in chunks, but there's a 0.5–2 s
+gap between "user pressed send" and "first token lands". An empty
+bubble during that gap looks broken. Fix:
+
+1. The instant the user sends, push BOTH the user message AND a
+   placeholder `{ role: "model", text: "", streaming: true }` into
+   the message list. Atomically — same `setMessages` call — so
+   they appear together.
+2. Render rules in the bubble component:
+   - `streaming && !text` → three bouncing CSS-animated dots.
+   - `streaming && text` → text + a blinking caret at the end.
+   - `!streaming` → text only.
+3. On `turnComplete`, walk the list and flip `streaming: false`
+   on every model bubble. On `onError`, ALSO strip any empty
+   placeholder so users don't see eternal dots after a connection
+   failure.
+
+The same trick applies to the voice flow — drop the placeholder
+in `stopMic()` so the dots show up the moment they release the
+mic, then `outputTranscription` flows into the same bubble.
+
 ---
 
 ## 16. Routing & persistence

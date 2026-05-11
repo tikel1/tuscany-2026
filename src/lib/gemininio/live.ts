@@ -120,7 +120,14 @@ export class LiveSession {
                   prebuilt_voice_config: { voice_name: VOICE_NAME }
                 },
                 language_code: this.opts.language === "he" ? "he-IL" : "en-US"
-              }
+              },
+              // Native-audio preview model emits chain-of-thought
+              // text by default. Force the budget to 0 so the model
+              // jumps straight to the answer — the user doesn't want
+              // to see "I'm now considering whether…". We also
+              // defensively filter `part.thought` parts on the
+              // client below in case the server still emits any.
+              thinking_config: { thinking_budget: 0 }
             },
             input_audio_transcription: {},
             output_audio_transcription: {}
@@ -169,6 +176,14 @@ export class LiveSession {
     // Server content: text + audio + transcripts.
     const sc = msg.serverContent as Record<string, unknown> | undefined;
     if (sc) {
+      // Track whether the current setup intends to speak audio. If
+      // it does, the canonical visible text is the AUDIO transcript
+      // (outputTranscription) — modelTurn text parts in that mode
+      // are usually internal thoughts / reasoning that we don't
+      // want to surface. In TEXT-only mode, modelTurn text IS the
+      // answer, so we forward it.
+      const wantsAudio = (this.opts.responseModalities ?? ["AUDIO"]).includes("AUDIO");
+
       // User-side transcript of our mic input.
       const it = sc.inputTranscription as { text?: string } | undefined;
       if (it?.text) this.cb.onTranscript?.(it.text, false);
@@ -182,8 +197,19 @@ export class LiveSession {
         | undefined;
       if (turn?.parts) {
         for (const part of turn.parts) {
-          const t = part.text as string | undefined;
-          if (typeof t === "string" && t.length > 0) this.cb.onText?.(t);
+          // Defensive filter — even with thinking_budget=0 in
+          // setup, some preview models still emit thought summaries
+          // tagged with `thought: true`. Drop them on the client.
+          if (part.thought === true) continue;
+
+          // For AUDIO sessions, skip text parts entirely — the
+          // visible text comes from outputTranscription. Anything
+          // else here is reasoning / metadata that bloats the bubble.
+          if (!wantsAudio) {
+            const t = part.text as string | undefined;
+            if (typeof t === "string" && t.length > 0) this.cb.onText?.(t);
+          }
+
           const inline = part.inlineData as
             | { mimeType?: string; data?: string }
             | undefined;

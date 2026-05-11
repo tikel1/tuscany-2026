@@ -234,3 +234,35 @@ html[dir="rtl"] .leaflet-control-attribution {
     opacity: 0.25 !important;
   }
 }
+
+/* Gemininio "typing" indicator — three dots that wave in sequence
+   while we wait for the first token from Gemini. The negative
+   animation-delays on the first two dots stagger them by ~150ms
+   each, so they look like a smooth left-to-right ripple instead
+   of pulsing in unison. */
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.35; }
+  30%           { transform: translateY(-3px); opacity: 0.95; }
+}
+.animate-typing-dot {
+  animation: typing-dot 1.05s infinite ease-in-out;
+}
+
+/* Blinking text caret rendered at the end of a streaming reply
+   bubble. ~0.9s per cycle is the classic terminal-cursor cadence
+   — fast enough to feel "live", slow enough not to flicker. */
+@keyframes caret-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.animate-caret-blink {
+  animation: caret-blink 0.9s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-typing-dot,
+  .animate-caret-blink {
+    animation: none !important;
+    opacity: 0.7 !important;
+  }
+}

@@ -61,20 +61,6 @@ interface Message extends PersistedMessage {
   streaming?: boolean;
 }
 
-const FALLBACK_FIRST_MESSAGE_EN: Message = {
-  role: "model",
-  text:
-    "Ciao! I'm Gemininio — your friend in Tuscany. Ask me anything: what to do tomorrow, where to eat near Larciano, why Pitigliano sits on a cliff. I know the whole plan, and I've lived here forever. Allora, what's on your mind?",
-  ts: Date.now()
-};
-
-const FALLBACK_FIRST_MESSAGE_HE: Message = {
-  role: "model",
-  text:
-    "צ'או! אני ג׳מיניניו — החבר שלכם בטוסקנה. שאלו אותי כל דבר: מה לעשות מחר, איפה לאכול ליד לרצ׳אנו, למה פיטיליאנו יושבת על הצוק. אני יודע את כל התוכנית ואני חי כאן מאז ומעולם. אללוֹרָה, מה על הלב?",
-  ts: Date.now()
-};
-
 export default function Gemininio() {
   const t = useT();
   const { lang } = useLang();
@@ -93,7 +79,6 @@ export default function Gemininio() {
   const sessionRef = useRef<LiveSession | null>(null);
   const playerRef = useRef<PcmPlayer | null>(null);
   const micRef = useRef<MicCapture | null>(null);
-  const currentReplyRef = useRef<Message | null>(null);
   const transcriptRef = useRef<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -150,10 +135,6 @@ export default function Gemininio() {
     setShowSettings(false);
   }
 
-  function appendMessage(m: Message) {
-    setMessages(ms => [...ms, m]);
-  }
-
   /** Open or reuse a Live session. We connect lazily on first send so
    *  opening the panel for a peek doesn't establish a socket. */
   async function ensureSession(): Promise<LiveSession | null> {
@@ -177,19 +158,17 @@ export default function Gemininio() {
       },
       {
         onText: delta => {
-          // Accumulate streaming text into the in-flight model bubble.
-          if (!currentReplyRef.current) {
-            currentReplyRef.current = {
-              role: "model",
-              text: "",
-              ts: Date.now(),
-              streaming: true
-            };
-            setMessages(ms => [...ms, currentReplyRef.current!]);
-          }
-          currentReplyRef.current.text += delta;
-          // Force a re-render with the updated text.
-          setMessages(ms => ms.map(m => (m === currentReplyRef.current ? { ...m, text: m.text } : m)));
+          // Append the delta to the in-flight model bubble (or
+          // create one if this is the first chunk of a turn).
+          // Pure functional update — no ref mutation, so React's
+          // reconciler can't get out of sync with our state.
+          setMessages(ms => {
+            const last = ms[ms.length - 1];
+            if (last && last.role === "model" && last.streaming) {
+              return [...ms.slice(0, -1), { ...last, text: last.text + delta }];
+            }
+            return [...ms, { role: "model", text: delta, ts: Date.now(), streaming: true }];
+          });
         },
         onAudio: pcm => {
           if (!playerRef.current) playerRef.current = new PcmPlayer();
@@ -202,39 +181,39 @@ export default function Gemininio() {
           transcriptRef.current += delta;
         },
         onTurnComplete: () => {
-          // Commit any pending transcript as a user message (prepended
-          // BEFORE the model bubble would be wrong, so we insert one
-          // position back).
+          // Commit any pending transcript as a user message,
+          // inserting it BEFORE the model's reply so the chat
+          // reads in the right order.
           const transcript = transcriptRef.current.trim();
           transcriptRef.current = "";
-          if (transcript) {
-            setMessages(ms => {
-              // Insert just before the model's reply if we have one.
-              const lastIsModel =
+          setMessages(ms => {
+            let next = ms;
+            if (transcript) {
+              const lastIsStreamingModel =
                 ms.length > 0 && ms[ms.length - 1].role === "model" && ms[ms.length - 1].streaming;
-              if (lastIsModel) {
-                const userMsg: Message = {
-                  role: "user",
-                  text: transcript,
-                  ts: Date.now() - 1
-                };
-                return [...ms.slice(0, -1), userMsg, ms[ms.length - 1]];
-              }
-              return [...ms, { role: "user", text: transcript, ts: Date.now() }];
-            });
-          }
-          // Mark the streaming reply as final.
-          if (currentReplyRef.current) {
-            currentReplyRef.current.streaming = false;
-            const ref = currentReplyRef.current;
-            setMessages(ms => ms.map(m => (m === ref ? { ...m, streaming: false } : m)));
-            currentReplyRef.current = null;
-          }
+              const userMsg: Message = {
+                role: "user",
+                text: transcript,
+                ts: Date.now() - 1
+              };
+              next = lastIsStreamingModel
+                ? [...ms.slice(0, -1), userMsg, ms[ms.length - 1]]
+                : [...ms, userMsg];
+            }
+            // Mark every still-streaming bubble as final.
+            return next.map(m => (m.streaming ? { ...m, streaming: false } : m));
+          });
           setStatus("ready");
         },
         onError: msg => {
           setError(msg);
           setStatus("error");
+          // Strip any in-flight empty placeholder so the user isn't
+          // staring at typing dots that will never resolve.
+          setMessages(ms =>
+            ms.filter(m => !(m.role === "model" && m.streaming && !m.text))
+              .map(m => (m.streaming ? { ...m, streaming: false } : m))
+          );
         },
         onClose: () => {
           if (status !== "closed") setStatus("ready");
@@ -244,10 +223,6 @@ export default function Gemininio() {
     try {
       await session.connect();
       sessionRef.current = session;
-      // Seed the chat with a welcome message if it's empty.
-      if (messages.length === 0) {
-        appendMessage(lang === "he" ? FALLBACK_FIRST_MESSAGE_HE : FALLBACK_FIRST_MESSAGE_EN);
-      }
       setStatus("ready");
       return session;
     } catch (e) {
@@ -261,10 +236,24 @@ export default function Gemininio() {
     const trimmed = text.trim();
     if (!trimmed) return;
     setText("");
-    appendMessage({ role: "user", text: trimmed, ts: Date.now() });
+    // Append BOTH the user's question and a placeholder "streaming"
+    // model bubble in one update — the empty bubble with
+    // `streaming: true` is what triggers the bouncing typing dots
+    // in <Bubble />. We don't want a flicker between "user message"
+    // and "model bubble appears", so they land together.
+    setMessages(ms => [
+      ...ms,
+      { role: "user", text: trimmed, ts: Date.now() },
+      { role: "model", text: "", ts: Date.now() + 1, streaming: true }
+    ]);
     setStatus("thinking");
     const s = await ensureSession();
-    if (!s) return;
+    if (!s) {
+      // Connection failed — strip the placeholder back out so the
+      // user isn't left staring at perpetually-bouncing dots.
+      setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
+      return;
+    }
     s.sendText(trimmed);
   }
 
@@ -294,6 +283,15 @@ export default function Gemininio() {
     await micRef.current?.stop();
     sessionRef.current?.endTurn();
     setStatus("thinking");
+    // Same trick as sendText — drop a placeholder streaming bubble
+    // so the typing dots appear immediately while we wait for the
+    // model's reply. The user transcript will be inserted just
+    // BEFORE this bubble in onTurnComplete, and the model's reply
+    // text (from outputTranscription) flows INTO this bubble.
+    setMessages(ms => [
+      ...ms,
+      { role: "model", text: "", ts: Date.now(), streaming: true }
+    ]);
   }
 
   function handleSaveKey() {
@@ -629,22 +627,55 @@ function ChatView({
 
 function Bubble({ message }: { message: Message }) {
   const isUser = message.role === "user";
+  // We treat "model bubble with no text yet" as the waiting state —
+  // that's the moment between "user pressed send" and "first token
+  // arrives". Show three bouncing dots so the bubble feels alive.
+  // Once text starts arriving (streaming === true) we show the
+  // text plus a blinking caret. When the turn completes the caret
+  // disappears.
+  const isWaiting = !isUser && message.streaming && !message.text;
+  const isStreaming = !isUser && message.streaming && !!message.text;
+
   return (
-    <div
-      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
-    >
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed ${
+        className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed whitespace-pre-wrap break-words ${
           isUser
             ? "bg-ink-900 text-cream-50 rounded-br-sm"
             : "bg-cream-50 text-ink-800 ring-1 ring-cream-300 rounded-bl-sm"
         }`}
       >
-        {message.text || (
-          <span className="opacity-60 italic">…</span>
+        {isWaiting ? (
+          <TypingDots />
+        ) : (
+          <>
+            {message.text}
+            {isStreaming && <BlinkingCaret />}
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+/** Three-dot typing indicator used while we wait for the first token. */
+function TypingDots() {
+  return (
+    <span className="inline-flex items-center gap-1 py-1 px-0.5" aria-label="typing">
+      <span className="w-1.5 h-1.5 rounded-full bg-ink-700/55 animate-typing-dot [animation-delay:-300ms]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-ink-700/55 animate-typing-dot [animation-delay:-150ms]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-ink-700/55 animate-typing-dot" />
+    </span>
+  );
+}
+
+/** Blinking text caret rendered at the tail of a streaming bubble. */
+function BlinkingCaret() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block w-[2px] h-[1em] -mb-[0.15em] ms-[1px] bg-ink-700 align-baseline animate-caret-blink"
+    />
   );
 }
 
