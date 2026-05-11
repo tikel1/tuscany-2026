@@ -85,7 +85,8 @@ function ItalianWordCarouselInner({
   const { swipeHandlers, swipeTouchAction } = useCarouselSwipe({
     onPrev: () => go(-1),
     onNext: () => go(1),
-    disabled: count <= 1
+    disabled: count <= 1,
+    maxWidthPx: 767
   });
 
   const playFromChip = (e: MouseEvent<HTMLButtonElement>) => {
@@ -179,10 +180,11 @@ function ItalianWordCarouselInner({
                     <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium mb-1.5">
                       {t("word_use_label")}
                     </div>
-                    <div className="flex flex-wrap items-start gap-x-2 gap-y-2" dir="ltr">
-                      <p className="font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug min-w-0 flex-1">
-                        “{w.example}”
-                      </p>
+                    <div
+                      className="font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug"
+                      dir="ltr"
+                    >
+                      <span>“{w.example}”</span>
                       {w.exampleMeaning && exampleUrlForSlide && (
                         <button
                           type="button"
@@ -191,7 +193,7 @@ function ItalianWordCarouselInner({
                             exToggle(e);
                           }}
                           dir="ltr"
-                          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 self-start mt-0.5 ${
+                          className={`ms-2 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left align-middle font-sans not-italic ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 ${
                             exState === "error"
                               ? "ring-amber-400/90 text-ink-700/70"
                               : exState === "playing"

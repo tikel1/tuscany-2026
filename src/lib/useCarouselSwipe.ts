@@ -4,34 +4,37 @@ const SWIPE_THRESHOLD_PX = 48;
 /** Horizontal swipe must dominate vertical by this ratio (avoids fighting scroll). */
 const HORIZONTAL_RATIO = 1.15;
 
-function useIsMaxSm() {
-  const [maxSm, setMaxSm] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 639px)").matches : false
+function useIsBelowWidthPx(px: number) {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia(`(max-width: ${px}px)`).matches : false
   );
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 639px)");
-    const sync = () => setMaxSm(mq.matches);
+    const mq = window.matchMedia(`(max-width: ${px}px)`);
+    const sync = () => setMatches(mq.matches);
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
-  return maxSm;
+  }, [px]);
+  return matches;
 }
 
 /**
- * Touch swipe to prev/next on narrow viewports (max-width: 639px),
- * matching Tailwind's `sm` breakpoint so desktop keeps arrow buttons only.
+ * Touch swipe to prev/next on narrow viewports;
+ * breakpoint defaults to Tailwind below-`sm` (639px) so desktop keeps arrow buttons only.
+ * Uses capture-phase listeners so touches beginning on nested controls still count.
  */
 export function useCarouselSwipe(options: {
   onPrev: () => void;
   onNext: () => void;
   disabled?: boolean;
-  /** When false, swipe works on all viewports (default: only max-width 639px). */
+  /** When false, swipe works on all viewports (default: only below maxWidthPx). */
   mobileOnly?: boolean;
+  /** Inclusive max inner width where swipe applies (default 639). */
+  maxWidthPx?: number;
 }) {
-  const { onPrev, onNext, disabled = false, mobileOnly = true } = options;
-  const maxSm = useIsMaxSm();
-  const active = !disabled && (!mobileOnly || maxSm);
+  const { onPrev, onNext, disabled = false, mobileOnly = true, maxWidthPx = 639 } = options;
+  const narrow = useIsBelowWidthPx(maxWidthPx);
+  const active = !disabled && (!mobileOnly || narrow);
 
   const x0 = useRef(0);
   const y0 = useRef(0);
@@ -66,8 +69,21 @@ export function useCarouselSwipe(options: {
     [active, onNext, onPrev]
   );
 
+  const onTouchCancel = useCallback(() => {
+    tracking.current = false;
+  }, []);
+
+  const swipeHandlers = active
+    ? ({
+        /* Capture prevents nested buttons/links from absorbing the gesture chain inconsistently */
+        onTouchStartCapture: onTouchStart,
+        onTouchEndCapture: onTouchEnd,
+        onTouchCancelCapture: onTouchCancel,
+      } as const)
+    : ({} as const);
+
   return {
-    swipeHandlers: { onTouchStart, onTouchEnd } as const,
+    swipeHandlers,
     /** Prefer vertical scrolling for the page; we only react on clear horizontal swipes. */
     swipeTouchAction: active ? ("pan-y" as const) : undefined
   };

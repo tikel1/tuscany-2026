@@ -38,24 +38,18 @@ function DigitCell({ value, size }: DigitCellProps) {
     size === "lg"
       ? "font-latin-serif text-5xl sm:text-7xl"
       : "font-latin-serif text-4xl sm:text-6xl";
-  /* Slot ≈ 1.5× digit cap height so ±25% slide fits inside overflow clip
-     (40–60% slides need much taller boxes with display-size numerals). */
-  const slotCls =
-    size === "lg"
-      ? "h-[4.5rem] sm:h-[6.75rem] min-w-[1ch]"
-      : "h-[3.5rem] sm:h-[5.75rem] min-w-[1ch]";
+  /* Opacity cross-fade only — vertical slide + overflow clip caused visible
+     cropping and baseline drift; this stays stable in the pill. */
   return (
-    <span
-      className={`relative inline-grid place-items-center overflow-hidden tabular-nums align-middle ${slotCls}`}
-    >
-      <AnimatePresence mode="popLayout" initial={false}>
+    <span className="relative inline-flex min-w-[1ch] items-center justify-center tabular-nums align-middle">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={value}
-          initial={{ y: "25%", opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "-25%", opacity: 0 }}
-          transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
-          className={`col-start-1 row-start-1 flex items-center justify-center ${digitCls}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.12, ease: "easeOut" }}
+          className={`flex items-center justify-center ${digitCls}`}
           style={{
             fontVariantNumeric: "tabular-nums",
             lineHeight: 1,
@@ -87,7 +81,7 @@ function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
   return (
     <div className="flex flex-col items-center gap-1.5 sm:gap-2">
       <div
-        className={`flex items-center justify-center overflow-hidden px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
+        className={`flex items-center justify-center px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
           pulse ? "ring-1 ring-cream-50/25" : ""
         }`}
       >
