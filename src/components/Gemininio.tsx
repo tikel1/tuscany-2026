@@ -44,9 +44,10 @@ import {
  * - Static SPA on GitHub Pages → no backend, so no shared API key.
  * - Each user pastes their own free Gemini key once; saved in
  *   localStorage on their device only.
- * - Web search toggle (left, default off): when ON, every Send uses REST
- *   + Google Search (text). When OFF: Send uses Live if speaker on, else
- *   REST trip-only. Mic is always Live. Search is never tied to speaker.
+ * - Globe (left, default off): OFF = trip-only on Live (`sendText`). ON =
+ *   REST + Google Search (text). Mic = Live. Globe never consults speaker.
+ * - Speaker: **browser-only** — `onAudio` PCM is played or dropped; Live
+ *   is still used for globe-off typed sends when muted (text + silent audio).
  * - System prompt rebuilt from the live trip data so any itinerary
  *   edit is immediately known to Gemininio.
  *
@@ -325,9 +326,9 @@ export default function Gemininio() {
   }
 
   /**
-   * Web search toggle ON → always REST + Google Search (independent of
-   * speaker). Toggle OFF + speaker ON → Live. Toggle OFF + speaker OFF
-   * → REST trip data only.
+   * Globe = data source only: ON → REST + Google Search. OFF → trip only
+   * on Gemini Live (`sendText`). Speaker / mute only gates whether `onAudio`
+   * PCM is played in the browser — routing does not switch to REST when muted.
    */
   async function submitTypedUserMessage() {
     const trimmed = text.trim();
@@ -350,7 +351,7 @@ export default function Gemininio() {
 
     const searchOn = webSearchEnabledRef.current;
 
-    if (!searchOn && audioEnabledRef.current) {
+    if (!searchOn) {
       if (!playerRef.current) playerRef.current = new PcmPlayer();
       try {
         await playerRef.current.ensureAudioUnlocked();
@@ -366,7 +367,7 @@ export default function Gemininio() {
       return;
     }
 
-    const useGoogleSearch = searchOn;
+    const useGoogleSearch = true;
     const sys = useGoogleSearch
       ? buildTypedReplySystemPrompt(lang)
       : buildSystemPrompt(lang);
@@ -475,11 +476,9 @@ export default function Gemininio() {
     setMessages([]);
   }
 
-  /** Toggle voice replies. The session itself doesn't need to be
-   *  rebuilt — the wire-format is always AUDIO and we control
-   *  playback purely client-side via `audioEnabledRef`. We just
-   *  stop whatever's currently playing when muting so the toggle
-   *  feels instant. */
+  /** Live always streams PCM; this only toggles **playback** in the
+   *  browser (and `audioEnabledRef` for `onAudio`). Does not change
+   *  globe / trip vs. web search routing. */
   function handleToggleAudio() {
     setAudioEnabled(prev => {
       if (prev) {

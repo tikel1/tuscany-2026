@@ -167,7 +167,7 @@ EXAMPLES OF BAD REPLIES (don't do these):
 /** Heard only on the Gemini Live native-audio channel (hold mic), not
  *  on typed REST replies. Steers the same Charon voice toward Italian
  *  warmth in both English and Hebrew spoken output. */
-const LIVE_SPOKEN_DELIVERY = `LIVE NATIVE AUDIO (when the user hears your voice on Gemini Live — typed send with speaker on, or microphone):
+const LIVE_SPOKEN_DELIVERY = `LIVE NATIVE AUDIO (Gemini Live — microphone, or typed messages that use the Live websocket when the globe is off):
 - Speak with a **thick, playful, cartoon-exaggerated Italian accent** in delivery: rolled Italian R, sing-song intonation, big open vowels, cheerful upward lifts at phrase ends — like an upbeat Italian stereotype in a classic platform video game (warm and silly, never mocking any real group).
 - Keep that same **over-the-top Italian energy** whether the spoken words are English, Hebrew, or anything else — the *accent and prosody* stay Italian; the *words* stay in the user's language (Hebrew question → Hebrew words spoken with that Italian thickness).
 - Never flat "airport PA" or neutral news-anchor delivery.`;
