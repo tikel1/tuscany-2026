@@ -1,13 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#D87154"/>
-      <stop offset="100%" stop-color="#A8472D"/>
-    </linearGradient>
-  </defs>
-  <circle cx="32" cy="32" r="30" fill="url(#g)"/>
-  <path d="M14 44 Q22 30 32 30 Q42 30 50 44 Z" fill="#6B7A4B" opacity="0.85"/>
-  <circle cx="22" cy="20" r="4" fill="#F5EFE0" opacity="0.95"/>
-  <circle cx="32" cy="16" r="3" fill="#F5EFE0" opacity="0.7"/>
-  <text x="32" y="56" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#F5EFE0">T</text>
+  <!--
+    Tuscany 2026 favicon — three cypress trees on a Tuscan ridge,
+    echoing the famous Cipressi di San Quirico d'Orcia in Val d'Orcia.
+    The square terracotta background (rather than a circle on
+    transparent) makes the icon look good whether the OS leaves it
+    square (browser tab), crops it round (Android maskable home
+    screen), or sits it on white (iOS home screen).
+    Designed to read clearly all the way down to 16×16.
+  -->
+
+  <!-- Sky: warm Tuscan terracotta (matches brand --color-terracotta-500) -->
+  <rect width="64" height="64" fill="#C45A3D"/>
+
+  <!-- Rolling hill in deeper terracotta -->
+  <path d="M-2,50 Q32,40 66,50 L66,66 L-2,66 Z" fill="#8B3622"/>
+
+  <!-- Three cypress silhouettes — pointier than ellipses so they
+       read as cypresses, not as eggs. Cream against terracotta
+       gives high contrast at every favicon size. -->
+  <path d="M16,52 C13,52 13,28 16,24 C19,28 19,52 16,52 Z" fill="#F5EFE0"/>
+  <path d="M32,52 C28,52 28,18 32,14 C36,18 36,52 32,52 Z" fill="#F5EFE0"/>
+  <path d="M48,52 C45,52 45,30 48,26 C51,30 51,52 48,52 Z" fill="#F5EFE0"/>
 </svg>
