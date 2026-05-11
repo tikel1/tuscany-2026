@@ -60,6 +60,12 @@ export function usePageAudio(url: string | null, options?: Options) {
         releasePlayback(a);
         onEndedRef.current?.();
       });
+      /** Without this, 404 / decode failures never leave `loading` (no `playing` event). */
+      a.addEventListener("error", () => {
+        if (a.error?.code === MediaError.MEDIA_ERR_ABORTED) return;
+        setState("error");
+        releasePlayback(a);
+      });
       audioRef.current = a;
     }
     return audioRef.current;
@@ -81,6 +87,8 @@ export function usePageAudio(url: string | null, options?: Options) {
 
       const playFrom = (src: string, stage: "primary" | "fallback") => {
         a.src = src;
+        /* Re-start the media pipeline (helps some browsers after `preload="none"`). */
+        a.load();
         setState("loading");
         claimPlayback(a);
         a.play().catch(() => {
