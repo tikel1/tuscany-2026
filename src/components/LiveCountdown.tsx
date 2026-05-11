@@ -38,18 +38,18 @@ function DigitCell({ value, size }: DigitCellProps) {
     size === "lg"
       ? "font-latin-serif text-5xl sm:text-7xl"
       : "font-latin-serif text-4xl sm:text-6xl";
-  /* Opacity cross-fade only — vertical slide + overflow clip caused visible
-     cropping and baseline drift; this stays stable in the pill. */
+  /* Keep the original upward roll, but do not clip the digit box. The earlier
+     crop came from combining y-axis motion with overflow-hidden wrappers. */
   return (
-    <span className="relative inline-flex min-w-[1ch] items-center justify-center tabular-nums align-middle">
-      <AnimatePresence mode="wait" initial={false}>
+    <span className="relative inline-grid min-w-[1ch] place-items-center tabular-nums align-middle">
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={value}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.12, ease: "easeOut" }}
-          className={`flex items-center justify-center ${digitCls}`}
+          initial={{ y: "42%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "-42%", opacity: 0 }}
+          transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
+          className={`col-start-1 row-start-1 flex items-center justify-center ${digitCls}`}
           style={{
             fontVariantNumeric: "tabular-nums",
             lineHeight: 1,
