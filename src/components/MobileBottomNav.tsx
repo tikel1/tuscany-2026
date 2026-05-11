@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Map, Compass, Utensils, MoreHorizontal } from "lucide-react";
+import { CalendarDays, Map, Compass, Utensils, MoreHorizontal, Download } from "lucide-react";
 import { useT, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { canShowInstallOption, triggerInstallPrompt } from "../lib/install";
 
 // Primary 4 tabs are the "exploring the trip" essentials; the rest of
 // the requested nav order lives in the More overlay below.
@@ -53,6 +54,15 @@ export default function MobileBottomNav() {
   const { lang } = useLang();
   const [active, setActive] = useState<string>("trip");
   const [moreOpen, setMoreOpen] = useState(false);
+  /* Capture once on mount: whether this device/browser has a meaningful
+   * install path AND the app isn't already running standalone. Stable
+   * for the session — no point recomputing on every render. */
+  const [showInstall] = useState<boolean>(() => canShowInstallOption());
+
+  const handleInstallClick = () => {
+    setMoreOpen(false);
+    triggerInstallPrompt();
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -98,6 +108,15 @@ export default function MobileBottomNav() {
                 </button>
               ))}
             </div>
+            {showInstall && (
+              <button
+                onClick={handleInstallClick}
+                className="mt-3 w-full inline-flex items-center justify-center gap-2 bg-terracotta-500 hover:bg-terracotta-600 active:bg-terracotta-700 text-cream-50 rounded-xl px-4 py-3 text-sm font-medium shadow-sm shadow-terracotta-700/20 transition-colors"
+              >
+                <Download size={16} />
+                {t("install_menu_label")}
+              </button>
+            )}
             <div className="mt-3 flex justify-center">
               <LanguageSwitcher variant="minimal" />
             </div>

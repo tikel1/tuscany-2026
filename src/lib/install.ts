@@ -177,6 +177,43 @@ function isSnoozed(p: Prefs): boolean {
   return false;
 }
 
+/* ---------- Manual / imperative trigger ----------
+ *
+ * The auto-open path in `useInstallPrompt` respects a "Don't show
+ * again" preference and a 14-day soft snooze. But sometimes the user
+ * wants to install AFTER they've dismissed (e.g. they tapped "Maybe
+ * later", then changed their mind two weeks before the trip and went
+ * looking for it in a menu).
+ *
+ * This event-bus pattern lets any component anywhere in the tree
+ * say "open the prompt now" without the install hook having to be
+ * lifted into a context. The hook listens for the event below and
+ * sets `open = true` directly, bypassing the snooze gate but still
+ * honouring the safety check that we're not already in standalone
+ * mode (i.e. already installed).
+ */
+const FORCE_OPEN_EVENT = "tuscany:a2hs:force-open";
+
+/** Imperatively open the install prompt from anywhere in the app
+ *  (e.g. a "Install app" link in the More menu). Bypasses the soft
+ *  snooze and "don't show again" preferences, but still respects
+ *  the standalone-mode safety gate (no point offering install when
+ *  the app already runs as a standalone PWA). */
+export function triggerInstallPrompt(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(FORCE_OPEN_EVENT));
+}
+
+/** True if the current platform has a meaningful install path we can
+ *  actually offer through the prompt. Used to decide whether to show
+ *  a manual "Install app" entry in menus. */
+export function canShowInstallOption(): boolean {
+  if (typeof window === "undefined") return false;
+  if (isStandalone()) return false;
+  const p = detectPlatform();
+  return p === "ios-safari" || p === "ios-other" || p === "android";
+}
+
 /* ---------- The hook ---------- */
 
 export interface InstallPromptApi {
@@ -294,6 +331,23 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  /* Listen for manual "open the prompt now" events from the More menu
+   * (or anywhere else in the app). Bypasses snooze / never-show prefs
+   * — if the user explicitly tapped "Install app", they want to see it
+   * regardless of past dismissals — but still honours the standalone
+   * gate so we don't ask people to install something they're already
+   * running. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const onForce = () => {
+      if (isStandalone()) return;
+      setOpen(true);
+    };
+    window.addEventListener(FORCE_OPEN_EVENT, onForce);
+    return () => window.removeEventListener(FORCE_OPEN_EVENT, onForce);
   }, []);
 
   const install: InstallPromptApi["install"] = async () => {

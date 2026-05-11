@@ -1091,6 +1091,67 @@ the prompt yourself:
 The prompt mounts at the root so it shows whether you're on the home
 page or a chapter detail page.
 
+#### Manual re-trigger from a menu
+
+The auto-open path respects "Don't show again" and a 14-day soft
+snooze, which is the right default — but users change their mind.
+A family member taps "Maybe later" two weeks before the trip, then
+the night before flying actually wants the icon on their phone, and
+hunts through your settings for it. Make sure they can find it.
+
+The pattern: a tiny event bus inside `install.ts` instead of lifting
+state into a React Context (which would force every consumer to wrap
+with a provider for one button).
+
+```ts
+// install.ts
+const FORCE_OPEN_EVENT = "tuscany:a2hs:force-open";
+
+export function triggerInstallPrompt(): void {
+  window.dispatchEvent(new Event(FORCE_OPEN_EVENT));
+}
+
+export function canShowInstallOption(): boolean {
+  if (isStandalone()) return false;
+  const p = detectPlatform();
+  return p === "ios-safari" || p === "ios-other" || p === "android";
+}
+
+// inside useInstallPrompt():
+useEffect(() => {
+  const onForce = () => {
+    if (isStandalone()) return; // already installed — nothing to offer
+    setOpen(true);
+  };
+  window.addEventListener(FORCE_OPEN_EVENT, onForce);
+  return () => window.removeEventListener(FORCE_OPEN_EVENT, onForce);
+}, []);
+```
+
+Then in the More menu (or Navbar, or wherever):
+
+```tsx
+const [showInstall] = useState(() => canShowInstallOption());
+// ...
+{showInstall && (
+  <button onClick={() => { closeMenu(); triggerInstallPrompt(); }}>
+    {t("install_menu_label")}
+  </button>
+)}
+```
+
+Two non-obvious rules baked into this:
+
+- **Manual trigger ignores snooze + never-show.** If they explicitly
+  tapped "Install app", they want the prompt — past dismissals are
+  irrelevant. The standalone gate stays, because there's nothing to
+  install when you're already installed.
+- **Hide the menu entry when there's nothing useful to show.** Don't
+  let a user tap "Install app" and have nothing happen — gate the
+  entry on `canShowInstallOption()` so it's hidden in standalone mode
+  and on platforms where we have no install path (`other`,
+  `desktop-chromium`).
+
 ---
 
 ## 14. Audio narration (pre-generated TTS)

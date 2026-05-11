@@ -492,6 +492,7 @@ export const DICT = {
     he: "הוסיפו קיצור דרך מתפריט Chrome"
   },
   install_install_button: { en: "Install", he: "התקנה" },
+  install_menu_label: { en: "Install app", he: "התקנת האפליקציה" },
   install_dismiss: { en: "Maybe later", he: "אולי אחר כך" },
   install_dont_show_again: { en: "Don't show this again", he: "אל תציגו לי שוב" },
   install_close_aria: { en: "Close install prompt", he: "סגור חלונית התקנה" },
