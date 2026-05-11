@@ -39,7 +39,7 @@ export const DICT = {
   },
   hero_one_week: {
     en: "One week to go · time to pack the dry bag",
-    he: "שבוע נשאר · הגיע הזמן לארוז את התיק האטום"
+    he: "שבוע נותר · הגיע הזמן לארוז את התיק האטום"
   },
   hero_one_month: {
     en: "Less than a month · confirm the chef and the boat",
@@ -79,7 +79,7 @@ export const DICT = {
   plan_eyebrow: { en: "The plan · day by day", he: "התוכנית · יום אחר יום" },
   plan_kicker: {
     en: "Swipe through ten chapters · click Read more for the full chapter",
-    he: "החלק בין עשרה פרקים · הקש על קרא עוד לפרק המלא"
+    he: "החליקו בין עשרה פרקים · לחצו על 'קרא עוד' לפרק המלא"
   },
   plan_chapter_x_of_y: {
     en: "Chapter {x} / {y}",
@@ -92,7 +92,7 @@ export const DICT = {
   },
   hide_details: { en: "Hide details", he: "הסתר פרטים" },
   about_this_place: { en: "About this place", he: "על המקום הזה" },
-  on_the_road: { en: "On the road", he: "על הדרך" },
+  on_the_road: { en: "On the road", he: "בדרך" },
   more_stop_one: { en: "more stop", he: "עצירה נוספת" },
   more_stop_many: { en: "more stops", he: "עצירות נוספות" },
 
@@ -101,7 +101,7 @@ export const DICT = {
   todays_plan: { en: "Today's plan", he: "תוכנית היום" },
   hour_by_hour: { en: "Hour by hour", he: "שעה אחרי שעה" },
   on_the_map: { en: "On the map", he: "על המפה" },
-  the_days_stops: { en: "The day's stops", he: "תחנות היום" },
+  the_days_stops: { en: "The day's stops", he: "עצירות היום" },
   ordered_visit: {
     en: "Numbered in the order you'll visit them",
     he: "ממוספרות לפי סדר הביקור"
@@ -150,11 +150,11 @@ export const DICT = {
   },
   map_kicker: {
     en: "Tap a pin · trace the route · filter the rest",
-    he: "הקש על סיכה · עקוב אחר המסלול · סנן את השאר"
+    he: "הקישו על סיכה · עקבו אחר המסלול · סננו את השאר"
   },
   map_intro: {
     en: "Every stay, attraction, restaurant, supermarket and gas station — color-coded by category. The dashed line is our actual journey: Rome to Larciano, Larciano to Cortevecchia, Cortevecchia back to Rome.",
-    he: "כל אכסניה, אטרקציה, מסעדה, סופרמרקט ותחנת דלק — בקוד צבעים לפי קטגוריה. הקו המקווקו הוא המסלול שלנו: רומא ללרצ'יאנו, לרצ'יאנו לקורטווקיה, וחזרה לרומא."
+    he: "כל מקום לינה, אטרקציה, מסעדה, סופרמרקט ותחנת דלק — בקוד צבעים לפי קטגוריה. הקו המקווקו הוא המסלול שלנו: מרומא ללרצ'יאנו, מלרצ'יאנו לקורטווקיה, ובחזרה לרומא."
   },
   map_route_on: { en: "Route on", he: "מסלול מוצג" },
   map_route_off: { en: "Route off", he: "מסלול מוסתר" },
@@ -198,11 +198,11 @@ export const DICT = {
   navigate_waze: { en: "Waze", he: "וויז" },
   navigate_google_aria: {
     en: "Open in Google Maps and start navigating",
-    he: "פתח ב־Google Maps והתחל ניווט"
+    he: "פתחו ב־Google Maps והתחילו ניווט"
   },
   navigate_waze_aria: {
     en: "Open in Waze and start navigating",
-    he: "פתח ב־Waze והתחל ניווט"
+    he: "פתחו ב־Waze והתחילו ניווט"
   },
   website: { en: "Website", he: "אתר" },
   show_on_map: { en: "Show on the map", he: "הצג על המפה" },
@@ -231,9 +231,9 @@ export const DICT = {
     he: "להפיק מפתח חינמי (aistudio.google.com/apikey)"
   },
   gem_key_placeholder: { en: "AIza…", he: "AIza…" },
-  gem_save_key: { en: "Save key & start chatting", he: "שמור מפתח והתחל" },
-  gem_clear_key: { en: "Forget my key", he: "מחק את המפתח" },
-  gem_reset_history: { en: "Clear chat", he: "נקה שיחה" },
+  gem_save_key: { en: "Save key & start chatting", he: "שמרו מפתח והתחילו שיחה" },
+  gem_clear_key: { en: "Forget my key", he: "שכח את המפתח שלי" },
+  gem_reset_history: { en: "Clear chat", he: "נקה היסטוריית שיחה" },
   gem_input_placeholder: {
     en: "Type a question — or hold the mic to talk",
     he: "כתבו שאלה — או החזיקו את המיקרופון כדי לדבר"
@@ -245,7 +245,7 @@ export const DICT = {
   gem_thinking: { en: "Thinking…", he: "חושב…" },
   gem_speaking: { en: "Speaking…", he: "מדבר…" },
   gem_connecting: { en: "Connecting…", he: "מתחבר…" },
-  gem_disconnected: { en: "Disconnected. Tap to reconnect.", he: "לא מחובר. הקישו כדי להתחבר." },
+  gem_disconnected: { en: "Disconnected. Tap to reconnect.", he: "לא מחובר. הקישו כדי להתחבר מחדש." },
   gem_error_generic: {
     en: "Something went wrong. Please try again later.",
     he: "משהו השתבש. נסו שוב מאוחר יותר."
@@ -279,7 +279,7 @@ export const DICT = {
     he: "כיבוי חיפוש גוגל לשליחות"
   },
   /* ---------- Stays section ---------- */
-  stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },
+  stays_eyebrow: { en: "Where we sleep", he: "איפה נישן" },
   stays_title: { en: "Two homes, two halves", he: "שני בתים, שני חצאים" },
   stays_kicker: {
     en: "Five nights up north, five nights down south",
@@ -301,7 +301,7 @@ export const DICT = {
   trip_stats_eyebrow: { en: "By the numbers", he: "במספרים" },
   trip_stats_days: { en: "Days", he: "ימים" },
   trip_stats_chapters: { en: "Chapters", he: "פרקים" },
-  trip_stats_attractions: { en: "Highlights", he: "שיאים" },
+  trip_stats_attractions: { en: "Highlights", he: "נקודות עניין" },
   trip_stats_stays: { en: "Stays", he: "לינות" },
 
   /* ---------- Attractions grid ---------- */
@@ -320,11 +320,11 @@ export const DICT = {
   attr_filter_nature: { en: "Nature", he: "טבע" },
 
   /* ---------- Services section ---------- */
-  services_eyebrow: { en: "Around you", he: "סביבך" },
+  services_eyebrow: { en: "Around you", he: "סביבכם" },
   services_title: { en: "Eat, shop, refuel", he: "אוכל, קניות, תדלוק" },
   services_kicker: {
     en: "Hand-picked spots near both bases — saves you the panic-Google",
-    he: "מקומות שנבחרו בקפידה ליד שני הבסיסים — חוסכים גוגל בלחץ"
+    he: "מקומות שנבחרו בקפידה ליד שני הבסיסים — חוסכים חיפושי גוגל בלחץ"
   },
   services_filter_north: { en: "North base", he: "בסיס צפוני" },
   services_filter_south: { en: "South base", he: "בסיס דרומי" },
@@ -364,10 +364,10 @@ export const DICT = {
     en: "One number to remember: 112",
     he: "מספר אחד לזכור: 112"
   },
-  emergency_call_112: { en: "Call 112", he: "התקשר ל־112" },
+  emergency_call_112: { en: "Call 112", he: "חייגו 112" },
   emergency_112_lead: {
     en: "Single emergency number across the EU — works from any phone, English available",
-    he: "מספר חירום אחיד באיחוד האירופי — עובד מכל טלפון, כולל אנגלית"
+    he: "מספר חירום אחיד בכל האיחוד האירופי — עובד מכל טלפון, נותן שירות גם באנגלית"
   },
 
   /* ---------- Weather ---------- */
@@ -386,14 +386,14 @@ export const DICT = {
   difficulty_challenging: { en: "Challenging", he: "מאתגר" },
 
   /* ---------- Per-attraction insider tips ---------- */
-  insider_tips_label: { en: "Insider tips", he: "טיפים פנימיים" },
+  insider_tips_label: { en: "Insider tips", he: "טיפים של יודעי דבר" },
 
   /* ---------- Per-day gear & dayTips on the chapter page ---------- */
-  gear_eyebrow: { en: "Pack the day", he: "תארזו ליום" },
+  gear_eyebrow: { en: "Pack the day", he: "לארוז ליום" },
   gear_title: { en: "What to bring", he: "מה לקחת" },
   gear_kicker: {
     en: "A small kit, picked for the day's mix",
-    he: "ערכה קטנה שנבחרה לפי המיקס של היום"
+    he: "ציוד קטן שנבחר בקפידה לחוויות של היום"
   },
   gear_for_label: { en: "for", he: "ל־" },
   gear_for_general: { en: "general", he: "כללי" },
@@ -417,21 +417,21 @@ export const DICT = {
     en: "Play example (Italian, then English, then Hebrew)",
     he: "השמעת המשפט (איטלקית, אחר כך אנגלית, ואז עברית)"
   },
-  daytips_eyebrow: { en: "Notes for the day", he: "הערות ליום" },
+  daytips_eyebrow: { en: "Notes for the day", he: "הערות להיום" },
   daytips_title: { en: "Good to know", he: "טוב לדעת" },
   daytips_kicker: {
     en: "Money, timing, mood — the things you'd whisper at breakfast",
-    he: "כסף, תזמון, מצב רוח — הדברים שלוחשים ליד ארוחת הבוקר"
+    he: "כסף, תזמון, אווירה — הדברים שלוחשים ליד ארוחת הבוקר"
   },
 
   /* ---------- Food & Wine ---------- */
   food_eyebrow: { en: "At the table", he: "ליד השולחן" },
-  food_title: { en: "What Tuscany tastes like", he: "ככה טוסקנה אמורה לטעום" },
+  food_title: { en: "What Tuscany tastes like", he: "הטעם של טוסקנה" },
   food_kicker: {
     en: "Signature dishes, local pasta and the wineries to visit",
-    he: "מנות מסמלות, פסטות מקומיות והיקבים שכדאי לבקר"
+    he: "מנות דגל, פסטות מקומיות והיקבים שחובה לבקר"
   },
-  food_dishes_label: { en: "Signature dishes", he: "מנות מסמלות" },
+  food_dishes_label: { en: "Signature dishes", he: "מנות דגל" },
   food_wineries_label: { en: "Wineries to visit", he: "יקבים לבקר" },
   food_filter_north: { en: "North · Larciano", he: "צפון · לרצ'יאנו" },
   food_filter_south: { en: "South · Maremma", he: "דרום · מרמה" },
@@ -467,10 +467,10 @@ export const DICT = {
 
   /* ---------- Restaurants for the day ---------- */
   restaurants_eyebrow: { en: "Where to eat", he: "איפה לאכול" },
-  restaurants_title: { en: "Tonight's tables", he: "השולחנות של היום" },
+  restaurants_title: { en: "Tonight's tables", he: "השולחנות של הערב" },
   restaurants_kicker: {
     en: "Hand-picked spots near today's plan",
-    he: "מקומות נבחרים בקרבת היום"
+    he: "מקומות שנבחרו בקפידה ליד המסלול של היום"
   },
 
   /* ---------- Drink of the day (closing flourish) ---------- */
@@ -498,7 +498,7 @@ export const DICT = {
   },
 
   /* ---------- Install / Add to Home Screen ---------- */
-  install_eyebrow: { en: "Take it with you", he: "קחו אתכם" },
+  install_eyebrow: { en: "Take it with you", he: "קחו את זה איתכם" },
   install_title_ios: {
     en: "Save the trip to your home screen",
     he: "שמרו את הטיול למסך הבית"
@@ -509,17 +509,17 @@ export const DICT = {
   },
   install_subtitle_ios: {
     en: "Open like a real app — no app store, works offline-friendly",
-    he: "פתיחה כמו אפליקציה רגילה — בלי חנות, ידידותי גם ללא רשת"
+    he: "נפתחת כמו אפליקציה רגילה — בלי חנות, עובדת גם ללא חיבור רשת"
   },
   install_subtitle_android: {
     en: "One tap from your home screen, full-screen, no browser bar",
-    he: "הקשה אחת ממסך הבית, מסך מלא, בלי שורת דפדפן"
+    he: "הקשה אחת ממסך הבית, מסך מלא, בלי שורת דפדפן למעלה"
   },
   install_subtitle_android_fallback: {
     en: "Add a one-tap shortcut from Chrome's menu",
     he: "הוסיפו קיצור דרך מתפריט Chrome"
   },
-  install_install_button: { en: "Install", he: "התקנה" },
+  install_install_button: { en: "Install", he: "התקן" },
   install_menu_label: { en: "Install app", he: "התקנת האפליקציה" },
   install_dismiss: { en: "Maybe later", he: "אולי אחר כך" },
   install_dont_show_again: { en: "Don't show this again", he: "אל תציגו לי שוב" },
@@ -549,7 +549,7 @@ export const DICT = {
   },
   install_step_a2hs_hint: {
     en: "Scroll down in the share sheet if you don't see it",
-    he: "אם לא רואים, גללו בתפריט השיתוף"
+    he: "גללו מטה בתפריט השיתוף אם אינכם רואים זאת"
   },
   install_step_confirm: {
     en: "Tap \u201CAdd\u201D in the top corner",

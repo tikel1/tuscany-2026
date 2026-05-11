@@ -51,6 +51,7 @@ import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
 import ListenButton from "./ListenButton";
 import ItalianWordCarousel from "./ItalianWordCarousel";
+import { useCarouselSwipe } from "../lib/useCarouselSwipe";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -435,6 +436,19 @@ function ChapterDetailContent({ day }: { day: Day }) {
   const localPrevDay = prevDay ? localizeDay(prevDay) : null;
   const localNextDay = nextDay ? localizeDay(nextDay) : null;
 
+  const { swipeHandlers: heroSwipeHandlers, swipeTouchAction: heroSwipeTouchAction } =
+    useCarouselSwipe({
+      onPrev: () => {
+        if (slides.length <= 1) return;
+        setSlideIdx(i => (i - 1 + slides.length) % slides.length);
+      },
+      onNext: () => {
+        if (slides.length <= 1) return;
+        setSlideIdx(i => (i + 1) % slides.length);
+      },
+      disabled: slides.length <= 1
+    });
+
   return (
     <div className="min-h-screen bg-cream-100/40">
       {/* Sticky back bar */}
@@ -459,7 +473,11 @@ function ChapterDetailContent({ day }: { day: Day }) {
 
       <article>
         {/* Hero — crossfading carousel of every photo from the day */}
-        <header className="relative aspect-[16/10] sm:aspect-[21/9] max-h-[70vh] overflow-hidden bg-ink-900">
+        <header
+          className="relative aspect-[16/10] sm:aspect-[21/9] max-h-[70vh] overflow-hidden bg-ink-900"
+          style={heroSwipeTouchAction ? { touchAction: heroSwipeTouchAction } : undefined}
+          {...heroSwipeHandlers}
+        >
           {slides.length === 0 ? (
             // No photos for this day — show the styled placeholder
             <motion.div

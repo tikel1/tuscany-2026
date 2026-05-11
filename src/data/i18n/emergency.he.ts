@@ -35,7 +35,7 @@ export const emergencyHE: EmergencyHEGroup[] = [
       {
         label: "פרונטו סוקורסו פדיאטריקו — מאיר (פירנצה)",
         value: "Viale Pieraccini 24, 50139 Firenze",
-        detail: "בית החולים הילדים המוביל במרכז איטליה. כשעה"
+        detail: "בית חולים לילדים המוביל במרכז איטליה. כשעה נסיעה"
       }
     ]
   },

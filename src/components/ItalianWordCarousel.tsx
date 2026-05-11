@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, type MouseEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -17,6 +17,7 @@ import {
   markItalianWordHeard
 } from "../lib/italianWordListenProgress";
 import { useT } from "../lib/dict";
+import { useCarouselSwipe } from "../lib/useCarouselSwipe";
 
 function padDay(n: number) {
   return String(n).padStart(2, "0");
@@ -29,6 +30,7 @@ export default function ItalianWordCarousel({
   dayNumber: number;
   words: ItalianWord[];
 }) {
+  if (words.length === 0) return null;
   return (
     <ItalianWordCarouselInner key={`${dayNumber}-${words.length}`} dayNumber={dayNumber} words={words} />
   );
@@ -75,21 +77,32 @@ function ItalianWordCarouselInner({
   const exampleListenOpts = useMemo(() => ({ preload: "auto" as const }), []);
   const { state: exState, toggle: exToggle } = usePageAudio(exampleUrlForSlide, exampleListenOpts);
 
-  const w = words[slideIdx];
-  if (!w || count === 0) return null;
+  const go = useCallback(
+    (delta: number) => setSlideIdx(i => (i + delta + count) % count),
+    [count]
+  );
 
-  const go = (delta: number) => {
-    setSlideIdx(i => (i + delta + count) % count);
-  };
+  const { swipeHandlers, swipeTouchAction } = useCarouselSwipe({
+    onPrev: () => go(-1),
+    onNext: () => go(1),
+    disabled: count <= 1
+  });
 
-  const playFromChip = (e: React.MouseEvent) => {
+  const playFromChip = (e: MouseEvent<HTMLButtonElement>) => {
     markIndexRef.current = slideIdx;
     toggle(e);
   };
 
+  const w = words[slideIdx];
+  if (!w) return null;
+
   return (
     <section className="space-y-6 sm:space-y-8">
-      <article className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cream-50 via-cream-100 to-gold-400/10 ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]">
+      <article
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cream-50 via-cream-100 to-gold-400/10 ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]"
+        style={swipeTouchAction ? { touchAction: swipeTouchAction } : undefined}
+        {...swipeHandlers}
+      >
         <Quote
           size={120}
           strokeWidth={1}
@@ -163,10 +176,13 @@ function ItalianWordCarouselInner({
 
                 {w.example && (
                   <div className="mt-5 pt-5 border-t border-cream-300/60 flex-1">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
-                        {t("word_use_label")}
-                      </div>
+                    <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium mb-1.5">
+                      {t("word_use_label")}
+                    </div>
+                    <div className="flex flex-wrap items-start gap-x-2 gap-y-2" dir="ltr">
+                      <p className="font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug min-w-0 flex-1">
+                        “{w.example}”
+                      </p>
                       {w.exampleMeaning && exampleUrlForSlide && (
                         <button
                           type="button"
@@ -175,7 +191,7 @@ function ItalianWordCarouselInner({
                             exToggle(e);
                           }}
                           dir="ltr"
-                          className={`inline-flex items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 ${
+                          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 self-start mt-0.5 ${
                             exState === "error"
                               ? "ring-amber-400/90 text-ink-700/70"
                               : exState === "playing"
@@ -196,9 +212,6 @@ function ItalianWordCarouselInner({
                         </button>
                       )}
                     </div>
-                    <p className="mt-1.5 font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug">
-                      “{w.example}”
-                    </p>
                     {w.exampleMeaning && (
                       <p className="mt-1 text-[13px] sm:text-[14px] text-ink-700/70 leading-snug">
                         {w.exampleMeaning}

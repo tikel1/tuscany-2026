@@ -18,7 +18,7 @@
 //   node scripts/fetch-italian-word-audio.mjs
 //   node scripts/fetch-italian-word-audio.mjs --force
 //   node scripts/fetch-italian-word-audio.mjs --google-chirp3 --force
-//   node scripts/fetch-italian-word-audio.mjs --elevenlabs --force
+//   node scripts/fetch-italian-word-audio.mjs --elevenlabs --force --examples-only
 //
 // Source of truth: `src/data/itinerary.ts` + `src/data/i18n/itinerary.he.ts`
 
@@ -403,6 +403,13 @@ async function main() {
   const parseOnly = process.argv.includes("--parse-only");
   /** Skip the `*-ex.mp3` example sentences; only build the word/meaning clip. */
   const wordsOnly = process.argv.includes("--words-only");
+  /** Skip word/meaning clips; only (re)build `*-ex.mp3` Italian example + meanings. */
+  const examplesOnly = process.argv.includes("--examples-only");
+  if (examplesOnly && wordsOnly) {
+    console.error("Use only one of --examples-only or --words-only.");
+    process.exit(1);
+  }
+
   const eleven = useElevenLabs();
 
   const enSrc = (await readFile(ITINERARY_EN, "utf8")).replace(/\r\n/g, "\n");
@@ -504,40 +511,42 @@ async function main() {
         const wordDest = resolve(OUT_DIR, `${prefix}-${i}.mp3`);
         const exDest = resolve(OUT_DIR, `${prefix}-${i}-ex.mp3`);
 
-        const skipWord = !force && (await exists(wordDest));
-        if (skipWord) {
-          skipped++;
-        } else if (eleven) {
-          await buildTrilingualEleven(
-            elevenKey,
-            elevenCfg.modelId,
-            tmpDir,
-            silencePath,
-            elevenWordSegments(elevenCfg, en.word, en.meaning, he.meaning),
-            wordDest
-          );
-          console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
-          wrote++;
-        } else if (googleMode === "chirp3") {
-          await buildTrilingualGoogle(
-            googleToken,
-            tmpDir,
-            silencePath,
-            googleWordSegments(googleVoices, en.word, en.meaning, he.meaning),
-            wordDest
-          );
-          console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
-          wrote++;
-        } else {
-          await buildTrilingualGemini(
-            geminiKey,
-            tmpDir,
-            silencePath,
-            geminiWordSegments(geminiVoices, en.word, en.meaning, he.meaning),
-            wordDest
-          );
-          console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
-          wrote++;
+        if (!examplesOnly) {
+          const skipWord = !force && (await exists(wordDest));
+          if (skipWord) {
+            skipped++;
+          } else if (eleven) {
+            await buildTrilingualEleven(
+              elevenKey,
+              elevenCfg.modelId,
+              tmpDir,
+              silencePath,
+              elevenWordSegments(elevenCfg, en.word, en.meaning, he.meaning),
+              wordDest
+            );
+            console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
+            wrote++;
+          } else if (googleMode === "chirp3") {
+            await buildTrilingualGoogle(
+              googleToken,
+              tmpDir,
+              silencePath,
+              googleWordSegments(googleVoices, en.word, en.meaning, he.meaning),
+              wordDest
+            );
+            console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
+            wrote++;
+          } else {
+            await buildTrilingualGemini(
+              geminiKey,
+              tmpDir,
+              silencePath,
+              geminiWordSegments(geminiVoices, en.word, en.meaning, he.meaning),
+              wordDest
+            );
+            console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
+            wrote++;
+          }
         }
 
         if (wordsOnly) {

@@ -34,28 +34,32 @@ function DigitCell({ value, size }: DigitCellProps) {
      numerals are visually quite different from Cormorant's, and the
      design depends on the countdown looking the same across languages.
      Only the unit labels (days/hrs/min/sec) below switch language. */
-  /* leading-[0.88]: Cormorant's em-box is taller than the digit glyphs;
-     line-height 1 still leaves visible slack above the numerals inside
-     the glass pill — a slightly tight line box trims that without
-     clipping (digits have no descenders). */
-  const cls =
+  const digitCls =
     size === "lg"
-      ? "font-latin-serif text-5xl sm:text-7xl leading-[0.88]"
-      : "font-latin-serif text-4xl sm:text-6xl leading-[0.88]";
+      ? "font-latin-serif text-5xl sm:text-7xl"
+      : "font-latin-serif text-4xl sm:text-6xl";
+  /* Slot ≈ 1.5× digit cap height so ±25% slide fits inside overflow clip
+     (40–60% slides need much taller boxes with display-size numerals). */
+  const slotCls =
+    size === "lg"
+      ? "h-[4.5rem] sm:h-[6.75rem] min-w-[1ch]"
+      : "h-[3.5rem] sm:h-[5.75rem] min-w-[1ch]";
   return (
     <span
-      className="relative inline-flex items-center justify-center overflow-hidden tabular-nums align-middle"
-      style={{ minWidth: "1ch" }}
+      className={`relative inline-grid place-items-center overflow-hidden tabular-nums align-middle ${slotCls}`}
     >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={value}
-          initial={{ y: "60%", opacity: 0 }}
+          initial={{ y: "25%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "-60%", opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.22, 0.61, 0.36, 1] }}
-          className={`flex items-center justify-center ${cls}`}
-          style={{ fontVariantNumeric: "tabular-nums", lineHeight: 0.88 }}
+          exit={{ y: "-25%", opacity: 0 }}
+          transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
+          className={`col-start-1 row-start-1 flex items-center justify-center ${digitCls}`}
+          style={{
+            fontVariantNumeric: "tabular-nums",
+            lineHeight: 1,
+          }}
         >
           {value}
         </motion.span>
@@ -75,23 +79,19 @@ interface BlockProps {
 function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
   const str = String(value).padStart(pad, "0");
 
-  /* Vertical centering inside the glass pill: `items-baseline` + asymmetric
-   * top-heavy padding used to fight descender line-box gaps, but digits
-   * have no descenders — that combo left a large empty band above the
-   * numerals. Symmetric padding + flex `items-center` on the row aligns
-   * the glyph box with the pill without fighting the font metrics. */
-  const padCls = size === "lg" ? "py-1 sm:py-1.5" : "py-1 sm:py-1.5";
+  /* Less padding above numerals than below — keeps animation safe while
+     trimming empty band at the top of the glass pill. */
+  const padCls =
+    size === "lg" ? "pt-1 pb-1.5 sm:pt-1.5 sm:pb-2.5" : "pt-1 pb-1.5 sm:pt-1.5 sm:pb-2";
 
   return (
     <div className="flex flex-col items-center gap-1.5 sm:gap-2">
       <div
-        className={`flex items-center justify-center px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
+        className={`flex items-center justify-center overflow-hidden px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
           pulse ? "ring-1 ring-cream-50/25" : ""
         }`}
       >
-        {/* Nudge digits up a hair — optical balance inside the pill after
-            trimming line-height; keeps colon alignment via shared row. */}
-        <span className="flex items-center justify-center -translate-y-px sm:-translate-y-0.5">
+        <span className="flex items-center justify-center">
           {str.split("").map((d, i) => (
             <DigitCell key={`${label}-${i}`} value={d} size={size} />
           ))}
@@ -116,7 +116,7 @@ function Sep({ size }: { size: "md" | "lg" }) {
       ? "font-latin-serif text-4xl sm:text-6xl leading-none opacity-60"
       : "font-latin-serif text-3xl sm:text-5xl leading-none opacity-60";
   return (
-    <span className={`${cls} px-0.5 sm:px-1 self-center leading-none -translate-y-px sm:-translate-y-0.5`}>:</span>
+    <span className={`${cls} px-0.5 sm:px-1 self-center leading-none`}>:</span>
   );
 }
 

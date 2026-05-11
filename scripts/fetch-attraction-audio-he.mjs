@@ -9,7 +9,8 @@
 // `GOOGLE_TTS_ATTRACTION_HE_VOICE` or `GOOGLE_TTS_VOICE_HE`, else Chirp3 Kore stem.
 // Pace: `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` (default `1`).
 //
-// **ElevenLabs:** `--elevenlabs` or `ATTRACTION_HE_TTS=elevenlabs` + `ELEVEN_API_KEY`.
+// **ElevenLabs v3:** `--elevenlabs` or `ATTRACTION_HE_TTS=elevenlabs` + `ELEVEN_API_KEY`.
+// Optional: `ELEVEN_HE_VOICE_ID`, `ELEVEN_HE_MODEL` (default `eleven_v3`). Hebrew clips use `language_code: he`.
 //
 //   node scripts/fetch-attraction-audio-he.mjs
 //   node scripts/fetch-attraction-audio-he.mjs --force
@@ -104,6 +105,7 @@ async function elevenSynthesize(apiKey, text) {
     body: JSON.stringify({
       text,
       model_id: modelId,
+      language_code: "he",
       voice_settings: {
         stability: 0.5,
         similarity_boost: 0.82,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { getTripState, TRIP_START } from "../lib/tripState";
@@ -11,6 +11,7 @@ import { getAttraction } from "../data/attractions";
 import type { Day, POI } from "../data/types";
 import LiveCountdown from "./LiveCountdown";
 import WeatherStrip from "./WeatherStrip";
+import { useCarouselSwipe } from "../lib/useCarouselSwipe";
 
 interface HeroPhoto {
   src: string;
@@ -208,7 +209,17 @@ function useHeroPhoto(photos: HeroPhoto[]) {
   // Defensive read — if `photos` was mutated to empty between renders,
   // fall back to the first hero photo so the page never renders blank.
   const safe = photos[idx] ?? photos[0] ?? HERO_PHOTOS[0];
-  return { photo: safe, idx };
+  const step = useCallback(
+    (delta: number) => {
+      setIdx(i => {
+        const len = photos.length;
+        if (len <= 1) return i;
+        return (i + delta + len) % len;
+      });
+    },
+    [photos]
+  );
+  return { photo: safe, idx, step };
 }
 
 function HeroBody({ state }: { state: TripState }) {
@@ -310,13 +321,23 @@ export default function Hero() {
     return HERO_PHOTOS;
   }, [state, localizePoi]);
 
-  const { photo, idx } = useHeroPhoto(photos);
+  const { photo, idx, step } = useHeroPhoto(photos);
+
+  const { swipeHandlers, swipeTouchAction } = useCarouselSwipe({
+    onPrev: () => step(-1),
+    onNext: () => step(1),
+    disabled: photos.length <= 1
+  });
 
   return (
     <header
       id="hero"
       className="relative min-h-[100svh] flex flex-col overflow-hidden text-cream-50 bg-ink-900"
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+        ...(swipeTouchAction ? { touchAction: swipeTouchAction } : {})
+      }}
+      {...swipeHandlers}
     >
       {/* Crossfading hero photos with gentle Ken-Burns drift */}
       <AnimatePresence mode="sync">

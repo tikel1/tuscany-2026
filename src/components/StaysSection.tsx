@@ -1,6 +1,6 @@
 import { ExternalLink, MapPin, AlertTriangle, Check } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { stays } from "../data/stays";
 import type { Stay } from "../data/types";
 import Section from "./Section";
@@ -11,6 +11,7 @@ import { useLang } from "../lib/i18n";
 import { useLocalizeStay } from "../data/i18n";
 import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
+import { useCarouselSwipe } from "../lib/useCarouselSwipe";
 
 const STAY_SLIDE_MS = 5000;
 
@@ -25,6 +26,19 @@ function StayHero({ stay }: { stay: Stay }) {
 
   const [idx, setIdx] = useState(0);
 
+  const step = useCallback(
+    (delta: number) => {
+      if (slides.length <= 1) return;
+      setIdx(i => (i + delta + slides.length) % slides.length);
+    },
+    [slides.length]
+  );
+
+  const { swipeHandlers, swipeTouchAction } = useCarouselSwipe({
+    onPrev: () => step(-1),
+    onNext: () => step(1),
+    disabled: slides.length <= 1
+  });
   useEffect(() => {
     if (slides.length <= 1) return;
     const id = window.setInterval(
@@ -67,7 +81,11 @@ function StayHero({ stay }: { stay: Stay }) {
   }
 
   return (
-    <>
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={swipeTouchAction ? { touchAction: swipeTouchAction } : undefined}
+      {...swipeHandlers}
+    >
       <AnimatePresence mode="sync">
         <motion.div
           key={slides[idx]}
@@ -103,7 +121,7 @@ function StayHero({ stay }: { stay: Stay }) {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 

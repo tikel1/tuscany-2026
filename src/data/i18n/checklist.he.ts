@@ -23,7 +23,7 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
   },
   "book-horses": {
     text: "להזמין שעת רכיבה במרמה",
-    detail: "חווה ידידותית למתחילים ליד אלברסה / אלביניה. החריץ של הבוקר המוקדם הכי טוב."
+    detail: "חווה ידידותית למתחילים ליד אלברסה / אלביניה. שעת הבוקר המוקדמת היא הטובה ביותר."
   },
   "international-driving-permit": {
     text: "להוציא רישיון נהיגה בינלאומי לנהג",
@@ -31,7 +31,7 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
   },
   "credit-card-on-driver-name": {
     text: "לוודא שלנהג ההשכרה יש כרטיס אשראי על שמו",
-    detail: "כרטיסי דביט בדרך כלל נדחים. ההפקדה יכולה להגיע ל־€1,500+."
+    detail: "כרטיסי דביט (חיוב ישיר) בדרך כלל נדחים. הפיקדון יכול להגיע ל־€1,500 ויותר."
   },
   esim: {
     text: "לסגור eSIM איטלקי",
@@ -60,7 +60,7 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
     detail: "למגורי המערות בוויטוצה ול־Vie Cave לקראת ערב."
   },
   "reef-sunscreen": {
-    text: "קרם הגנה SPF גבוה ידידותי לים + אחרי שמש",
+    text: "קרם הגנה SPF גבוה ידידותי לים + קרם אלוורה/אחרי שמש",
     detail: "השמש האיטלקית באוגוסט אכזרית."
   },
   "first-aid": {
@@ -81,6 +81,6 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
   },
   "kids-snacks": {
     text: "מאגר חטיפים לילדים",
-    detail: "הגעה ראשונה מאוחרת; אין זמן לקניות מסודרות."
+    detail: "ביום ההגעה מגיעים מאוחר; לא יהיה זמן לקניות מסודרות."
   }
 };

@@ -8,8 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "tts:italian-words": "node scripts/fetch-italian-word-audio.mjs",
+    "tts:italian-words:eleven": "node scripts/fetch-italian-word-audio.mjs --elevenlabs",
+    "tts:italian-words-ex:eleven": "node scripts/fetch-italian-word-audio.mjs --elevenlabs --examples-only",
     "repair:italian-words-audio": "node scripts/repair-italian-word-mp3.mjs",
     "tts:attractions-he": "node scripts/fetch-attraction-audio-he.mjs",
+    "tts:attractions-he:eleven": "node scripts/fetch-attraction-audio-he.mjs --elevenlabs",
     "preview": "vite preview"
   },
   "dependencies": {
