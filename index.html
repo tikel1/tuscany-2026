@@ -2,13 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Bumped ?v= every time the icon changes so browsers (and PWA
-         home-screens that cache aggressively) refetch instead of
-         serving the previous version. The PNG is a circular Tuscan
-         landscape illustration — beautiful at install/home-screen
-         sizes, recognisable at favicon size by its warm palette
-         even when fine detail blurs. -->
-    <link rel="icon" type="image/png" href="./icon-tuscany.png?v=5" />
+    <!-- Bumped ?v= when the icon asset changes. Full-bleed square
+         (512) — landscape zoomed/cropped so it fills the canvas; OS
+         circular masks sit on art edge-to-edge, not a tiny picture
+         inside a white ring. -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-tuscany-192.png?v=6" />
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-tuscany.png?v=6" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#C45A3D" />
 
@@ -19,7 +18,7 @@
     <!-- iOS Safari: Apple ignores the manifest, so these meta tags are how
          we get a clean home-screen icon, a custom short label, and a
          standalone (chrome-less) launch experience. -->
-    <link rel="apple-touch-icon" href="./icon-tuscany.png?v=5" />
+    <link rel="apple-touch-icon" href="./icon-tuscany.png?v=6" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
