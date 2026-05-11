@@ -207,6 +207,11 @@ export const DICT = {
   show_on_map: { en: "Show on the map", he: "הצג על המפה" },
   on_the_map_short: { en: "On the map", he: "על המפה" },
 
+  /* ---------- Listen / audio playback ---------- */
+  listen_play: { en: "Listen", he: "האזן" },
+  listen_pause: { en: "Pause", he: "השהה" },
+  listen_unavailable: { en: "Audio unavailable", he: "האודיו לא זמין" },
+
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },
   stays_title: { en: "Two homes, two halves", he: "שני בתים, שני חצאים" },

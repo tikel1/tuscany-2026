@@ -51,6 +51,7 @@ import { useLocalizeDay, useLocalizePoi, useLocalizeService, useLocalizeTip } fr
 import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
+import ListenButton from "./ListenButton";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -1050,6 +1051,12 @@ function ActivityRow({
                   <p className="mt-2 text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
                     {att.description}
                   </p>
+                  {/* Italian-accented narration of the description.
+                      Audio is pre-generated as a static asset, so no
+                      runtime API key or call is needed. */}
+                  <div className="mt-3">
+                    <ListenButton attractionId={att.id} />
+                  </div>
                   {(att.openingNote || att.bookingNote) && (
                     <div className="mt-3 text-xs text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug">
                       {att.openingNote || att.bookingNote}

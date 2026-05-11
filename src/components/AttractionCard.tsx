@@ -14,6 +14,7 @@ import NavigateLinks from "./NavigateLinks";
 import { useT, type DictKey } from "../lib/dict";
 import { useLocalizePoi } from "../data/i18n";
 import PoiImage from "./PoiImage";
+import ListenButton from "./ListenButton";
 
 const TAG_KEY: Record<string, DictKey> = {
   water: "tag_water",
@@ -213,6 +214,13 @@ export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
               <p className="text-[14px] leading-relaxed text-ink-700/90">
                 {poi.description}
               </p>
+              {/* Italian-accented narration of the description above.
+                  Audio is pre-generated locally via
+                  scripts/fetch-attraction-audio.mjs and served as a
+                  static asset — no runtime API calls or keys. */}
+              <div className="mt-3">
+                <ListenButton attractionId={poi.id} />
+              </div>
               {(poi.openingNote || poi.bookingNote) && (
                 <div className="mt-4 text-xs text-terracotta-700 bg-terracotta-500/10 border border-terracotta-500/25 rounded-lg px-3 py-2 leading-snug">
                   {poi.openingNote || poi.bookingNote}

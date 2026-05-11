@@ -29,11 +29,12 @@ section.
 11. [Geolocation ("you are here")](#11-geolocation-you-are-here)
 12. [Content guidelines](#12-content-guidelines)
 13. [Mobile-first UX](#13-mobile-first-ux)
-14. [Routing & persistence](#14-routing--persistence)
-15. [SEO & social sharing](#15-seo--social-sharing)
-16. [Deployment (GitHub Pages)](#16-deployment-github-pages)
-17. [Common gotchas](#17-common-gotchas)
-18. [If you only do five things](#18-if-you-only-do-five-things)
+14. [Audio narration (pre-generated TTS)](#14-audio-narration-pre-generated-tts)
+15. [Routing & persistence](#15-routing--persistence)
+16. [SEO & social sharing](#16-seo--social-sharing)
+17. [Deployment (GitHub Pages)](#17-deployment-github-pages)
+18. [Common gotchas](#18-common-gotchas)
+19. [If you only do five things](#19-if-you-only-do-five-things)
 
 ---
 
@@ -1091,7 +1092,121 @@ page or a chapter detail page.
 
 ---
 
-## 14. Routing & persistence
+## 14. Audio narration (pre-generated TTS)
+
+A static site has no backend, so there's no safe place to keep an
+ElevenLabs / OpenAI / Gemini API key at runtime — anything you ship
+in the JS bundle is public. The trick: **pre-generate the audio
+locally, commit MP3s as static assets, and stream them at runtime
+with no key in sight.**
+
+### When to use this pattern
+
+- The text doesn't change often (place descriptions, intros).
+- You want voice in the product without the runtime cost or risk.
+- Total characters per refresh fit your TTS plan (~5K characters
+  for ~15 attractions; well under most paid tiers).
+
+### Pipeline
+
+1. **Pick a voice.** ElevenLabs has a `shared-voices` library
+   filterable by language. For an "Italian tour guide who speaks
+   English", search `language=it&category=professional` and pick a
+   warm, broadcast-tone male/female voice. Keep the `voice_id`.
+2. **Author a generator script** that:
+   - Reads your data files (here: regex over `attractions.ts` —
+     fragile but fine for a controlled schema; for arbitrary code
+     reach for `tsx` and import the TS module directly).
+   - Calls the TTS endpoint with the description text.
+   - Writes the MP3 to `public/audio/<topic>/<id>.mp3`.
+   - Skips files that already exist unless `--force` is passed.
+3. **Run it locally**, never in CI. The API key lives in your
+   shell env (`$env:ELEVEN_API_KEY = "..."`) for the duration of
+   the run only — it never enters the repo.
+4. **Commit the MP3s** alongside the code. They're tiny (~300KB
+   each at 128kbps) and serve straight off GitHub Pages.
+
+### Voice settings that work for narration
+
+```json
+{
+  "stability": 0.55,
+  "similarity_boost": 0.85,
+  "style": 0.35,
+  "use_speaker_boost": true
+}
+```
+
+`stability` too low → wobbly cadence; too high → flat. `style`
+around `0.35` adds a guide-like lilt without going theatrical.
+
+### Sanity-check the response
+
+ElevenLabs returns JSON on errors but with a 2xx body looks like
+audio bytes — easy to silently write a 158-byte error file as
+`canyon-park.mp3`. Always check the first three bytes:
+
+- `49 44 33` (`"ID3"`) → MP3 with ID3 metadata. ✅
+- `FF Fx`            → raw MPEG sync. ✅
+- anything else      → throw and surface the body.
+
+### Two regex gotchas baked in by experience
+
+1. **CRLF vs LF.** Normalize the file to LF before regexing or
+   half your matches silently miss on Windows.
+2. **Lazy match consumes the next start.** A pattern like
+   `\n  \{([\s\S]*?)\n  \}` walks past the `\n` it needs to find
+   the *next* `\n  {`. The fix: use a lookahead for the closing —
+   `\n  \},?(?=\n)` — so the trailing newline stays available.
+   Tell-tale sign: you extract every other item.
+
+### Playback: a tiny audio bus
+
+Multiple cards on a page each get their own `<audio>` element, but
+without coordination two `Listen` taps layer voices. A trivial
+module-level singleton fixes it:
+
+```ts
+let currentAudio: HTMLAudioElement | null = null;
+
+function claimPlayback(audio: HTMLAudioElement) {
+  if (currentAudio && currentAudio !== audio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  currentAudio = audio;
+}
+```
+
+Each `ListenButton` calls `claimPlayback(this.audio)` before it
+plays, and `releasePlayback(this.audio)` on `ended` / unmount.
+Two clicks, one voice — always.
+
+### Asset URL (Vite + GitHub Pages)
+
+The deployed base is `/tuscany-2026/`, not `/`. Compose the audio
+URL with `import.meta.env.BASE_URL` so the same code works in dev
+and on Pages:
+
+```ts
+const url = `${import.meta.env.BASE_URL}audio/attractions/${id}.mp3`;
+```
+
+`BASE_URL` always ends in `/` per Vite contract — no slash-juggling.
+
+### When NOT to pre-generate
+
+- Generative chat replies (the words are different every time).
+- Long-form audio that would explode the repo size.
+- Per-user content.
+
+For those you need a backend (Cloudflare Worker / Vercel Function)
+that holds the TTS key as a secret and streams audio to the client.
+That's the next step beyond static narration.
+
+---
+
+## 15. Routing & persistence
 
 ### Hash routing
 
@@ -1116,7 +1231,7 @@ implementation; cards just call `focusOn(id)`. No prop drilling.
 
 ---
 
-## 15. SEO & social sharing
+## 16. SEO & social sharing
 
 The site is personal but you'll share the link in a family WhatsApp,
 maybe a status update. A nice link preview is worth 5 minutes:
@@ -1135,7 +1250,7 @@ so the path resolves under your GH Pages base.
 
 ---
 
-## 16. Deployment (GitHub Pages)
+## 17. Deployment (GitHub Pages)
 
 ### Vite config
 
@@ -1185,7 +1300,7 @@ In the repo settings: **Pages → Source: GitHub Actions**.
 
 ---
 
-## 17. Common gotchas
+## 18. Common gotchas
 
 A list of things that bit us so they don't bite you.
 
@@ -1277,7 +1392,7 @@ row it labels.
 
 ---
 
-## 18. If you only do five things
+## 19. If you only do five things
 
 Compressed, in priority order:
 
