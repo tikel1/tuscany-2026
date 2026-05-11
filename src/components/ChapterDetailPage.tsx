@@ -18,8 +18,6 @@ import {
   Activity,
   Backpack,
   StickyNote,
-  Quote,
-  Volume2,
   Utensils,
   Wine,
   Beer,
@@ -52,6 +50,7 @@ import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
 import ListenButton from "./ListenButton";
+import ItalianWordCarousel from "./ItalianWordCarousel";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -382,6 +381,11 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
   }, [slideIdx, slides]);
 
   const currentSlide = slides[slideIdx];
+  /** Photo place line + credit — kept below the chapter title so CC never overlaps Hebrew headlines. */
+  const heroSlideMeta =
+    currentSlide ??
+    ({ place: undefined, credit: lead.credit } as Pick<ChapterSlide, "place" | "credit">);
+  const italianWords = localDay.italianWords ?? [];
   const tips = tipsForDay(day.dayNumber).map(localizeTip);
 
   // POIs visited this day, in order, localized
@@ -508,32 +512,6 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
             </div>
           )}
 
-          {/* Per-slide place name + photo credit, crossfading with the image */}
-          {currentSlide && (currentSlide.place || currentSlide.credit) && (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`meta-${currentSlide.src}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.45 }}
-                className="absolute bottom-3 end-3 z-10 flex flex-col items-end gap-1"
-                dir="ltr"
-              >
-                {currentSlide.place && (
-                  <div className="font-serif italic text-cream-50/95 text-[11px] sm:text-xs px-2 py-0.5 rounded-full bg-ink-900/55 backdrop-blur-sm">
-                    {currentSlide.place}
-                  </div>
-                )}
-                {currentSlide.credit && (
-                  <div className="px-1.5 py-[3px] rounded-full bg-ink-900/45 backdrop-blur-sm">
-                    <PhotoCredit credit={currentSlide.credit} variant="light" />
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          )}
-
           <div className="absolute inset-x-0 bottom-0 px-4 sm:px-10 pb-6 sm:pb-12 text-cream-50">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-baseline gap-3 sm:gap-4">
@@ -575,70 +553,39 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                   {localDay.subtitle}
                 </p>
               )}
+              {(heroSlideMeta.place || heroSlideMeta.credit) && (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`hero-meta-${slides[slideIdx]?.src ?? lead.src ?? "none"}`}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 4 }}
+                    transition={{ duration: 0.35 }}
+                    className="mt-4 sm:mt-5 flex flex-wrap items-center gap-x-3 gap-y-2"
+                    dir="ltr"
+                  >
+                    {heroSlideMeta.place && (
+                      <div className="font-serif italic text-cream-50/95 text-[11px] sm:text-xs px-2 py-0.5 rounded-full bg-ink-900/55 backdrop-blur-sm">
+                        {heroSlideMeta.place}
+                      </div>
+                    )}
+                    {heroSlideMeta.credit && (
+                      <div className="px-1.5 py-[3px] rounded-full bg-ink-900/45 backdrop-blur-sm">
+                        <PhotoCredit credit={heroSlideMeta.credit} variant="light" />
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              )}
             </div>
           </div>
         </header>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12 sm:space-y-16">
-          {/* Italian word of the day — opens the chapter with a small
-              magazine flashcard, picked to fit the day's mood (water words
-              on water days, "arrivederci" on the flight home, etc.). */}
-          {localDay.wordOfTheDay && (
-            <section>
-              <article
-                className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cream-50 via-cream-100 to-gold-400/10 ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]"
-              >
-                {/* Decorative oversized quote glyph in the corner */}
-                <Quote
-                  size={140}
-                  strokeWidth={1}
-                  className="absolute -top-6 end-0 text-terracotta-500/8 pointer-events-none rtl:scale-x-[-1]"
-                  aria-hidden
-                />
-
-                <div className="relative px-5 sm:px-8 py-6 sm:py-8">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.32em] text-terracotta-600/85 font-medium">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-terracotta-500" />
-                    {t("word_eyebrow")}
-                  </div>
-
-                  <div className="mt-4 sm:mt-5 flex items-baseline flex-wrap gap-x-4 gap-y-2">
-                    <h2 className="font-serif italic text-4xl sm:text-6xl text-ink-900 leading-none">
-                      {localDay.wordOfTheDay.word}
-                    </h2>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cream-50 ring-1 ring-cream-300/80 text-ink-700/75">
-                      <Volume2 size={11} strokeWidth={2} className="opacity-70" />
-                      <span className="text-[12px] sm:text-[13px] font-medium tracking-wide">
-                        {localDay.wordOfTheDay.pronounce}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="mt-3 text-[15px] sm:text-[17px] text-ink-700/90 leading-snug">
-                    <span className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium me-2">
-                      {t("word_meaning_label")}
-                    </span>
-                    {localDay.wordOfTheDay.meaning}
-                  </p>
-
-                  {localDay.wordOfTheDay.example && (
-                    <div className="mt-5 pt-5 border-t border-cream-300/60">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
-                        {t("word_use_label")}
-                      </div>
-                      <p className="mt-1.5 font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug">
-                        “{localDay.wordOfTheDay.example}”
-                      </p>
-                      {localDay.wordOfTheDay.exampleMeaning && (
-                        <p className="mt-1 text-[13px] sm:text-[14px] text-ink-700/70 leading-snug">
-                          {localDay.wordOfTheDay.exampleMeaning}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </article>
-            </section>
+          {/* Italian words (carousel) — three themed flashcards per day;
+              audio is on the pronunciation chip; progress is remembered. */}
+          {italianWords.length > 0 && (
+            <ItalianWordCarousel dayNumber={day.dayNumber} words={italianWords} />
           )}
 
           {/* Activities */}
@@ -838,7 +785,7 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
 
           {/* Drink of the day — closing flourish, the literal end of the
               chapter (after all the practical info). Adults-only nightcap
-              suggestion that mirrors the wordOfTheDay card opening. */}
+              suggestion that mirrors the Italian word card opening. */}
           {localDay.drinkOfTheDay && (
             <DrinkOfTheDay drink={localDay.drinkOfTheDay} />
           )}
@@ -1017,9 +964,9 @@ function ActivityRow({
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="overflow-hidden"
+              className="relative z-40 overflow-hidden"
             >
-              <div className="mt-4 rounded-2xl bg-cream-100/80 ring-1 ring-cream-300/70 overflow-hidden grid sm:grid-cols-[200px_1fr]">
+              <div className="mt-4 rounded-2xl bg-cream-100/80 ring-1 ring-cream-300/70 overflow-hidden grid sm:grid-cols-[200px_1fr] shadow-lg">
                 <div className="relative aspect-[4/3] sm:aspect-auto bg-cream-200 overflow-hidden">
                   <PoiImage
                     src={att.image}
@@ -1198,7 +1145,7 @@ function RestaurantsForDay({ restaurants }: { restaurants: Service[] }) {
 
 /* ---------- Drink of the day ---------- */
 
-/* The closing flourish — visually echoes the wordOfTheDay opener but
+/* The closing flourish — visually echoes the Italian word card opener but
  * with a per-drink palette and a wine/cocktail/etc. icon. Keeps the
  * proper Italian name as a serif headline; the prose underneath gets
  * translated. Adults-only — that part is the kicker copy. */
@@ -1213,7 +1160,7 @@ function DrinkOfTheDay({ drink }: { drink: DayDrink }) {
         className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${style.gradient} ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]`}
       >
         {/* Oversized decorative glass icon in the corner, mirroring the
-            quote glyph on the wordOfTheDay card. RTL flips it so it
+            quote glyph on the Italian word card. RTL flips it so it
             still reads as a "watermark" on the trailing edge. */}
         <Icon
           size={140}

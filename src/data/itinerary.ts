@@ -50,13 +50,50 @@ export const itinerary: Day[] = [
       "Italian rentals require an International Driving Permit — keep it with the licence",
       "Aim to clear the FCO area before 16:00 to dodge Friday rush southbound"
     ],
-    wordOfTheDay: {
-      word: "Andiamo!",
-      pronounce: "ahn-DYAH-moh",
-      meaning: "Let's go!",
-      example: "Andiamo in Toscana!",
-      exampleMeaning: "Let's go to Tuscany!"
-    }
+    italianWords: [
+      {
+        word: "Andiamo!",
+        pronounce: "ahn-DYAH-moh",
+        meaning: "Let's go!",
+        example: "Andiamo in Toscana!",
+        exampleMeaning: "Let's go to Tuscany!"
+      },
+      {
+        word: "Autostrada",
+        pronounce: "ow-toh-STRAH-dah",
+        meaning: "Motorway",
+        example: "Sull'autostrada verso Firenze.",
+        exampleMeaning: "On the motorway toward Florence."
+      },
+      {
+        word: "Bagaglio",
+        pronounce: "bah-GAH-lyoh",
+        meaning: "Luggage",
+        example: "Il bagaglio è nel bagagliaio.",
+        exampleMeaning: "The luggage is in the boot."
+      },
+      {
+        word: "Dai!",
+        pronounce: "dye",
+        meaning: "Come on! (sounds like 'dye', not 'day')",
+        example: "Dai, facciamo le valigie!",
+        exampleMeaning: "Come on, let's pack the bags!"
+      },
+      {
+        word: "Forza!",
+        pronounce: "FOR-tzah",
+        meaning: "You can do it! (literally 'strength')",
+        example: "Forza, siamo quasi arrivati!",
+        exampleMeaning: "Hang in there — we're almost there!"
+      },
+      {
+        word: "Riposo",
+        pronounce: "ree-POH-zoh",
+        meaning: "A rest (not the English word 'repose')",
+        example: "Un piccolo riposo in macchina.",
+        exampleMeaning: "A little rest in the car."
+      }
+    ]
   },
   {
     dayNumber: 2,
@@ -116,13 +153,50 @@ export const itinerary: Day[] = [
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"
     ],
-    wordOfTheDay: {
-      word: "Acqua",
-      pronounce: "AH-kwah",
-      meaning: "Water",
-      example: "L'acqua è fresca!",
-      exampleMeaning: "The water is cool!"
-    }
+    italianWords: [
+      {
+        word: "Acqua",
+        pronounce: "AH-kwah",
+        meaning: "Water",
+        example: "L'acqua è fresca!",
+        exampleMeaning: "The water is cool!"
+      },
+      {
+        word: "Coraggio",
+        pronounce: "kor-AH-joh",
+        meaning: "Courage",
+        example: "Hai coraggio sul ponte!",
+        exampleMeaning: "You've got courage on the bridge!"
+      },
+      {
+        word: "Sole",
+        pronounce: "SOH-leh",
+        meaning: "Sun",
+        example: "Che sole oggi!",
+        exampleMeaning: "What sun today!"
+      },
+      {
+        word: "Spruzzo",
+        pronounce: "SPROOT-tzoh",
+        meaning: "Splash, spray",
+        example: "Che bello lo spruzzo dell'acqua!",
+        exampleMeaning: "How fun the water splash is!"
+      },
+      {
+        word: "Freddo",
+        pronounce: "FREHD-doh",
+        meaning: "Cold (double 'd' in the middle)",
+        example: "L'acqua non è freddissima.",
+        exampleMeaning: "The water isn't freezing cold."
+      },
+      {
+        word: "Attento!",
+        pronounce: "ah-TEN-toh",
+        meaning: "Watch out! Careful!",
+        example: "Attento, è scivoloso!",
+        exampleMeaning: "Careful, it's slippery!"
+      }
+    ]
   },
   {
     dayNumber: 3,
@@ -177,13 +251,50 @@ export const itinerary: Day[] = [
       "Tower climb at Pisa is timed — only book if you actually want the climb",
       "Late-afternoon light on the walls is the postcard moment — aim for 17:00"
     ],
-    wordOfTheDay: {
-      word: "Pendente",
-      pronounce: "pen-DEN-teh",
-      meaning: "Leaning, slanted",
-      example: "La torre pendente di Pisa.",
-      exampleMeaning: "The leaning tower of Pisa."
-    }
+    italianWords: [
+      {
+        word: "Pendente",
+        pronounce: "pen-DEN-teh",
+        meaning: "Leaning, slanted",
+        example: "La torre pendente di Pisa.",
+        exampleMeaning: "The leaning tower of Pisa."
+      },
+      {
+        word: "Gelato",
+        pronounce: "jeh-LAH-toh",
+        meaning: "Ice cream",
+        example: "Un gelato in piazza.",
+        exampleMeaning: "An ice cream in the square."
+      },
+      {
+        word: "Bicicletta",
+        pronounce: "bee-chee-keh-TEH-tah",
+        meaning: "Bicycle",
+        example: "In bicicletta sulle mura.",
+        exampleMeaning: "By bike on the walls."
+      },
+      {
+        word: "Campanile",
+        pronounce: "kahm-pah-NEE-leh",
+        meaning: "Bell tower (not 'campanile' in English)",
+        example: "Il campanile suona a mezzogiorno.",
+        exampleMeaning: "The bell tower rings at noon."
+      },
+      {
+        word: "Squisito",
+        pronounce: "skwee-ZEE-toh",
+        meaning: "Delicious (nothing like 'squirrel')",
+        example: "Questo gelato è squisito!",
+        exampleMeaning: "This gelato is delicious!"
+      },
+      {
+        word: "Torcia",
+        pronounce: "TOR-chah",
+        meaning: "Torch / flashlight (UK 'torch')",
+        example: "Metti la torcia nello zaino.",
+        exampleMeaning: "Put the torch in the backpack."
+      }
+    ]
   },
   {
     dayNumber: 4,
@@ -233,13 +344,50 @@ export const itinerary: Day[] = [
       "Cash for the gondola — card sometimes flaky at the booth",
       "Use the cool half of the day for the ridge walk; descend by 15:00 to start packing"
     ],
-    wordOfTheDay: {
-      word: "Montagna",
-      pronounce: "mon-TAH-nyah",
-      meaning: "Mountain",
-      example: "Andiamo in montagna.",
-      exampleMeaning: "We're heading to the mountains."
-    }
+    italianWords: [
+      {
+        word: "Montagna",
+        pronounce: "mon-TAH-nyah",
+        meaning: "Mountain",
+        example: "Andiamo in montagna.",
+        exampleMeaning: "We're heading to the mountains."
+      },
+      {
+        word: "Nuvola",
+        pronounce: "NOO-voh-lah",
+        meaning: "Cloud",
+        example: "Sopra le nuvole.",
+        exampleMeaning: "Above the clouds."
+      },
+      {
+        word: "Fresco",
+        pronounce: "FREH-skoh",
+        meaning: "Cool, fresh",
+        example: "Che aria fresca!",
+        exampleMeaning: "What cool air!"
+      },
+      {
+        word: "Berretto",
+        pronounce: "behr-REHT-toh",
+        meaning: "Beanie / woolly hat",
+        example: "Metti il berretto, c'è vento!",
+        exampleMeaning: "Put your hat on — it's windy!"
+      },
+      {
+        word: "Stella",
+        pronounce: "STEHL-lah",
+        meaning: "Star (say STEH-lla, not 'stella' like English Stella)",
+        example: "Contiamo le stelle stasera.",
+        exampleMeaning: "Let's count the stars tonight."
+      },
+      {
+        word: "Eco",
+        pronounce: "EH-koh",
+        meaning: "Echo (two short snaps)",
+        example: "Senti l'eco tra gli alberi!",
+        exampleMeaning: "Listen to the echo among the trees!"
+      }
+    ]
   },
   {
     dayNumber: 5,
@@ -285,13 +433,50 @@ export const itinerary: Day[] = [
       "No public toilets at Sentierelsa trailhead — go in Colle di Val d'Elsa first",
       "Plan an early-evening arrival; you don't want to discover the gravel road in the dark"
     ],
-    wordOfTheDay: {
-      word: "Sentiero",
-      pronounce: "sen-TYAIR-oh",
-      meaning: "Trail, path",
-      example: "Il sentiero passa nel fiume.",
-      exampleMeaning: "The trail runs through the river."
-    }
+    italianWords: [
+      {
+        word: "Sentiero",
+        pronounce: "sen-TYAIR-oh",
+        meaning: "Trail, path",
+        example: "Il sentiero passa nel fiume.",
+        exampleMeaning: "The trail runs through the river."
+      },
+      {
+        word: "Valigia",
+        pronounce: "vah-LEE-jah",
+        meaning: "Suitcase",
+        example: "Chiudi la valigia.",
+        exampleMeaning: "Close the suitcase."
+      },
+      {
+        word: "Sud",
+        pronounce: "sood",
+        meaning: "South",
+        example: "Andiamo verso sud.",
+        exampleMeaning: "We're heading south."
+      },
+      {
+        word: "Saltellare",
+        pronounce: "sahl-tehl-LAH-reh",
+        meaning: "To hop, skip (fun bouncy verb)",
+        example: "Saltelliamo sui sassi!",
+        exampleMeaning: "Let's hop on the stones!"
+      },
+      {
+        word: "Fango",
+        pronounce: "FAHN-goh",
+        meaning: "Mud (hard 'g', not 'fang')",
+        example: "Attenti al fango vicino al fiume.",
+        exampleMeaning: "Watch the mud near the river."
+      },
+      {
+        word: "Onda",
+        pronounce: "OHN-dah",
+        meaning: "Wave (in water — not 'under')",
+        example: "Piccola onda, grande divertimento!",
+        exampleMeaning: "Small wave, big fun!"
+      }
+    ]
   },
   {
     dayNumber: 6,
@@ -336,13 +521,50 @@ export const itinerary: Day[] = [
       "Anchor at Cala del Gesso early — by midday it fills with day boats",
       "Strong meltemi wind = waves: check forecast the night before, reschedule if rough"
     ],
-    wordOfTheDay: {
-      word: "Mare",
-      pronounce: "MAH-reh",
-      meaning: "Sea",
-      example: "Una giornata in mare.",
-      exampleMeaning: "A day at sea."
-    }
+    italianWords: [
+      {
+        word: "Mare",
+        pronounce: "MAH-reh",
+        meaning: "Sea",
+        example: "Una giornata in mare.",
+        exampleMeaning: "A day at sea."
+      },
+      {
+        word: "Barca",
+        pronounce: "BAR-kah",
+        meaning: "Boat",
+        example: "Saliamo in barca.",
+        exampleMeaning: "We're getting on the boat."
+      },
+      {
+        word: "Ancora",
+        pronounce: "AHN-kor-ah",
+        meaning: "Anchor; also 'still'",
+        example: "Gettiamo l'ancora.",
+        exampleMeaning: "We drop the anchor."
+      },
+      {
+        word: "Timone",
+        pronounce: "tee-MOH-neh",
+        meaning: "Ship's wheel / rudder (captain word)",
+        example: "Chi vuole tenere il timone?",
+        exampleMeaning: "Who wants to hold the wheel?"
+      },
+      {
+        word: "Rete",
+        pronounce: "REH-teh",
+        meaning: "Net (fishing net — not 'reet')",
+        example: "La rete per pescare i pesci.",
+        exampleMeaning: "The net for catching fish."
+      },
+      {
+        word: "Conchiglia",
+        pronounce: "kohn-KEE-lyah",
+        meaning: "Seashell (long musical word)",
+        example: "Ho trovato una conchiglia enorme!",
+        exampleMeaning: "I found a huge seashell!"
+      }
+    ]
   },
   {
     dayNumber: 7,
@@ -382,13 +604,50 @@ export const itinerary: Day[] = [
       "Arrive at opening (10:00) — slide queues triple after 13:00",
       "Polynesian show times are posted at the gate; don't miss the evening one"
     ],
-    wordOfTheDay: {
-      word: "Scivolo",
-      pronounce: "SHEE-voh-loh",
-      meaning: "Slide",
-      example: "Lo scivolo più alto, per favore!",
-      exampleMeaning: "The tallest slide, please!"
-    }
+    italianWords: [
+      {
+        word: "Scivolo",
+        pronounce: "SHEE-voh-loh",
+        meaning: "Slide",
+        example: "Lo scivolo più alto, per favore!",
+        exampleMeaning: "The tallest slide, please!"
+      },
+      {
+        word: "Divertimento",
+        pronounce: "dee-vehr-tee-MEN-toh",
+        meaning: "Fun",
+        example: "Che divertimento!",
+        exampleMeaning: "What fun!"
+      },
+      {
+        word: "Piscina",
+        pronounce: "pee-SHEE-nah",
+        meaning: "Swimming pool",
+        example: "Andiamo in piscina.",
+        exampleMeaning: "Let's go to the pool."
+      },
+      {
+        word: "Schizzo",
+        pronounce: "SKEET-tzoh",
+        meaning: "Splash, squirt, splotch",
+        example: "Che schizzo dalla piscina!",
+        exampleMeaning: "What a splash from the pool!"
+      },
+      {
+        word: "Tubo",
+        pronounce: "TOO-boh",
+        meaning: "Tube (slide tube — not 'tube-oh')",
+        example: "Scendo nel tubo blu!",
+        exampleMeaning: "I'm going down the blue tube!"
+      },
+      {
+        word: "Gridare",
+        pronounce: "gree-DAH-reh",
+        meaning: "To shout (not 'grid')",
+        example: "Non serve gridare, ti sento!",
+        exampleMeaning: "No need to shout — I can hear you!"
+      }
+    ]
   },
   {
     dayNumber: 8,
@@ -436,13 +695,50 @@ export const itinerary: Day[] = [
       "Vie Cave footing is shaded but uneven — grippy soles only",
       "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano"
     ],
-    wordOfTheDay: {
-      word: "Cavallo",
-      pronounce: "kah-VAH-loh",
-      meaning: "Horse",
-      example: "Un cavallo della Maremma.",
-      exampleMeaning: "A Maremma horse."
-    },
+    italianWords: [
+      {
+        word: "Cavallo",
+        pronounce: "kah-VAH-loh",
+        meaning: "Horse",
+        example: "Un cavallo della Maremma.",
+        exampleMeaning: "A Maremma horse."
+      },
+      {
+        word: "Grotta",
+        pronounce: "GROHT-tah",
+        meaning: "Cave, grotto",
+        example: "Entriamo nella grotta.",
+        exampleMeaning: "We're going into the cave."
+      },
+      {
+        word: "Storia",
+        pronounce: "STOH-ryah",
+        meaning: "History, story",
+        example: "Che storia affascinante!",
+        exampleMeaning: "What a fascinating history!"
+      },
+      {
+        word: "Stallo",
+        pronounce: "STAHL-loh",
+        meaning: "Stable stall (horses — not English 'stall')",
+        example: "Il cavallo torna allo stallo.",
+        exampleMeaning: "The horse goes back to the stall."
+      },
+      {
+        word: "Oscuro",
+        pronounce: "oh-SKOO-roh",
+        meaning: "Dark, shadowy",
+        example: "È un po' oscuro nella grotta.",
+        exampleMeaning: "It's a bit dark in the cave."
+      },
+      {
+        word: "Passo",
+        pronounce: "PAHS-soh",
+        meaning: "Step, pace (double 's')",
+        example: "Un passo alla volta, piano piano.",
+        exampleMeaning: "One step at a time, slowly slowly."
+      }
+    ],
     restaurants: ["rest-s-hostaria-ceccottino", "rest-s-trattoria-sovana"],
     drinkOfTheDay: {
       name: "Morellino di Scansano DOCG",
@@ -502,13 +798,50 @@ export const itinerary: Day[] = [
       "Civita footbridge ticket ~€5/adult, cash only",
       "Eat lunch by 13:30 — village kitchens close hard at 14:30"
     ],
-    wordOfTheDay: {
-      word: "Terme",
-      pronounce: "TAIR-meh",
-      meaning: "Thermal baths, hot springs",
-      example: "Le terme di Saturnia all'alba.",
-      exampleMeaning: "The Saturnia hot springs at dawn."
-    },
+    italianWords: [
+      {
+        word: "Terme",
+        pronounce: "TAIR-meh",
+        meaning: "Thermal baths, hot springs",
+        example: "Le terme di Saturnia all'alba.",
+        exampleMeaning: "The Saturnia hot springs at dawn."
+      },
+      {
+        word: "Lago",
+        pronounce: "LAH-goh",
+        meaning: "Lake",
+        example: "Un tuffo nel lago.",
+        exampleMeaning: "A dip in the lake."
+      },
+      {
+        word: "Panorama",
+        pronounce: "pah-noh-RAH-mah",
+        meaning: "View, panorama",
+        example: "Che panorama!",
+        exampleMeaning: "What a view!"
+      },
+      {
+        word: "Vapore",
+        pronounce: "vah-POH-reh",
+        meaning: "Steam (hot-springs mist)",
+        example: "Si vede il vapore sull'acqua calda.",
+        exampleMeaning: "You can see the steam on the hot water."
+      },
+      {
+        word: "Cannuccia",
+        pronounce: "kahn-NOOT-chah",
+        meaning: "Drinking straw (not 'can-ooch')",
+        example: "Una cannuccia per la granita.",
+        exampleMeaning: "A straw for the slush ice."
+      },
+      {
+        word: "Tuffo",
+        pronounce: "TOOF-foh",
+        meaning: "Dive, splash jump",
+        example: "Faccio un tuffo nel lago!",
+        exampleMeaning: "I'm doing a cannonball into the lake!"
+      }
+    ],
     restaurants: ["rest-s-i-due-cippi", "rest-s-trattoria-verdi"],
     drinkOfTheDay: {
       name: "Bianco di Pitigliano DOC",
@@ -556,13 +889,50 @@ export const itinerary: Day[] = [
       "Allow 10–15 min for the rental shuttle from car return to terminal",
       "Pre-pay airport tolls online to skip the boom-gate queue at exit"
     ],
-    wordOfTheDay: {
-      word: "Arrivederci",
-      pronounce: "ah-ree-veh-DAIR-chee",
-      meaning: "Goodbye (until we meet again)",
-      example: "Arrivederci, Toscana!",
-      exampleMeaning: "Goodbye, Tuscany!"
-    },
+    italianWords: [
+      {
+        word: "Arrivederci",
+        pronounce: "ah-ree-veh-DAIR-chee",
+        meaning: "Goodbye (until we meet again)",
+        example: "Arrivederci, Toscana!",
+        exampleMeaning: "Goodbye, Tuscany!"
+      },
+      {
+        word: "Volo",
+        pronounce: "VOH-loh",
+        meaning: "Flight",
+        example: "Il volo è in orario.",
+        exampleMeaning: "The flight is on time."
+      },
+      {
+        word: "A presto",
+        pronounce: "ah PRES-toh",
+        meaning: "See you soon",
+        example: "A presto, Italia!",
+        exampleMeaning: "See you soon, Italy!"
+      },
+      {
+        word: "Grazie",
+        pronounce: "GRAHT-tsyeh",
+        meaning: "Thank you (the 'zie' buzzes)",
+        example: "Grazie mille, è stato bellissimo!",
+        exampleMeaning: "Thanks a million — it was wonderful!"
+      },
+      {
+        word: "Subito",
+        pronounce: "SOO-bee-toh",
+        meaning: "Right away (airport hurry word)",
+        example: "Subito al gate, siamo in ritardo!",
+        exampleMeaning: "Straight to the gate — we're late!"
+      },
+      {
+        word: "Bacio",
+        pronounce: "BAH-choh",
+        meaning: "Kiss goodbye",
+        example: "Un bacio all'Italia!",
+        exampleMeaning: "A kiss for Italy!"
+      }
+    ],
     drinkOfTheDay: {
       name: "Espresso al banco",
       type: "coffee",

@@ -35,8 +35,8 @@ export interface DayHE
    *  the EN GearItem. The merge in `localizeDay` overlays these strings
    *  onto the EN objects by index. */
   gear?: string[];
-  /** Translated parts of the Italian-word-of-the-day card. */
-  wordOfTheDay?: WordOfTheDayHE;
+  /** Translated parts of each Italian word card (same order as EN). */
+  italianWords?: WordOfTheDayHE[];
   /** Translated parts of the end-of-day drink card. */
   drinkOfTheDay?: DrinkOfTheDayHE;
 }
@@ -81,11 +81,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "השכרה באיטליה דורשת רישיון נהיגה בינלאומי — לשמור עם הרישיון",
       "לכוון לצאת מאזור FCO לפני 16:00 כדי להתחמק מפקקי שישי דרומה"
     ],
-    wordOfTheDay: {
-      pronounce: "אַנדְיָאמוֹ",
-      meaning: "בואו נלך!",
-      exampleMeaning: "בואו ניסע לטוסקנה!"
-    }
+    italianWords: [
+      {
+        pronounce: "אַנדְיָאמוֹ",
+        meaning: "בואו נלך!",
+        exampleMeaning: "בואו ניסע לטוסקנה!"
+      },
+      {
+        pronounce: "אוֹטוֹסטְרָאדָה",
+        meaning: "כביש מהיר",
+        exampleMeaning: "בכביש המהיר לפירנצה."
+      },
+      {
+        pronounce: "בַּגַּלְיוֹ",
+        meaning: "מזוודות",
+        exampleMeaning: "המזוודות בתא המטען."
+      },
+      {
+        pronounce: "דַּיי!",
+        meaning: "יאללה! בואו כבר!",
+        exampleMeaning: "יאללה, נארוז את התיקים!"
+      },
+      {
+        pronounce: "פוֹרְצָה!",
+        meaning: "אל תוותרו! (מילה של עידוד)",
+        exampleMeaning: "עוד קצת — כמעט הגענו!"
+      },
+      {
+        pronounce: "רִיפּוֹזוֹ",
+        meaning: "מנוחה קצרה",
+        exampleMeaning: "מנוחה קצרה במכונית."
+      }
+    ]
   },
   2: {
     title: "קניון טורקיז, גשר השטן ומסלולי חבלים ביער",
@@ -132,11 +159,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "סלבה דל בופארדלו ביער ערמונים בגובה 850 מ׳ — להביא חולצה ארוכה",
       "מזומן לבר חטיפים הקטן בפארק ההרפתקאות"
     ],
-    wordOfTheDay: {
-      pronounce: "אָקווָה",
-      meaning: "מים",
-      exampleMeaning: "המים קרירים!"
-    }
+    italianWords: [
+      {
+        pronounce: "אָקווָה",
+        meaning: "מים",
+        exampleMeaning: "המים קרירים!"
+      },
+      {
+        pronounce: "קוֹרַג׳וֹ",
+        meaning: "אומץ",
+        exampleMeaning: "יש לך אומץ על הגשר!"
+      },
+      {
+        pronounce: "סוֹלֶה",
+        meaning: "שמש",
+        exampleMeaning: "איזו שמש היום!"
+      },
+      {
+        pronounce: "ספְּרוּצוֹ",
+        meaning: "ריסוס, התזת מים",
+        exampleMeaning: "כיף איזה ריסוס מים!"
+      },
+      {
+        pronounce: "פְרֶדּוֹ",
+        meaning: "קר (לא כמו באנגלית)",
+        exampleMeaning: "המים לא קפואים לגמרי."
+      },
+      {
+        pronounce: "אָטֶנְטוֹ!",
+        meaning: "זהירות!",
+        exampleMeaning: "זהירות, זה חלקק!"
+      }
+    ]
   },
   3: {
     title: "סופט ראפטינג + עצירה קצרה בפיזה",
@@ -181,11 +235,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "הטיפוס למגדל בפיזה דורש כרטיס מתוזמן — להזמין רק אם באמת רוצים לטפס",
       "האור של אחר הצהריים על החומות הוא הרגע הצילומי — לכוון ל־17:00"
     ],
-    wordOfTheDay: {
-      pronounce: "פֶּנדֶנְטֶה",
-      meaning: "נטוי, משופע",
-      exampleMeaning: "המגדל הנטוי של פיזה."
-    }
+    italianWords: [
+      {
+        pronounce: "פֶּנדֶנְטֶה",
+        meaning: "נטוי, משופע",
+        exampleMeaning: "המגדל הנטוי של פיזה."
+      },
+      {
+        pronounce: "גֶלָאטוֹ",
+        meaning: "גלידה",
+        exampleMeaning: "גלידה בכיכר."
+      },
+      {
+        pronounce: "בִּצִ'יקלֶטָה",
+        meaning: "אופניים",
+        exampleMeaning: "באופניים על החומות."
+      },
+      {
+        pronounce: "קַמפָּנִילֶה",
+        meaning: "פעמון במגדל",
+        exampleMeaning: "הפעמון מצלצל בצהריים."
+      },
+      {
+        pronounce: "סקווִיזִיטוֹ",
+        meaning: "טעים מאוד",
+        exampleMeaning: "הגלידה הזאת ממש טעימה!"
+      },
+      {
+        pronounce: "טוֹרְצָ'ה",
+        meaning: "פנס (אור ידני)",
+        exampleMeaning: "לשים את הפנס בתיק הגב."
+      }
+    ]
   },
   4: {
     title: "מעל העננים — רכבל אבטונה",
@@ -228,11 +309,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "מזומן לרכבל — האשראי לפעמים בעייתי בקופה",
       "להשתמש בחצי הקריר של היום לטיול הרכס; לרדת עד 15:00 כדי להתחיל לארוז"
     ],
-    wordOfTheDay: {
-      pronounce: "מוֹנְטָאנְיָה",
-      meaning: "הר",
-      exampleMeaning: "אנחנו עולים להרים."
-    }
+    italianWords: [
+      {
+        pronounce: "מוֹנְטָאנְיָה",
+        meaning: "הר",
+        exampleMeaning: "אנחנו עולים להרים."
+      },
+      {
+        pronounce: "נוּבוֹלָה",
+        meaning: "ענן",
+        exampleMeaning: "מעל העננים."
+      },
+      {
+        pronounce: "פְרֶסקוֹ",
+        meaning: "קריר, רענן",
+        exampleMeaning: "איזו אווירה קרירה!"
+      },
+      {
+        pronounce: "בֶּרֶטּוֹ",
+        meaning: "כובע צמר / כובע גרב",
+        exampleMeaning: "לשים כובע — יש רוח!"
+      },
+      {
+        pronounce: "סטֶלָה",
+        meaning: "כוכב",
+        exampleMeaning: "בואו נספור כוכבים הערב."
+      },
+      {
+        pronounce: "אֶקוֹ",
+        meaning: "הד (קול חוזר)",
+        exampleMeaning: "שומעים את ההד בין העצים!"
+      }
+    ]
   },
   5: {
     title: "טיול נחל דרומה, מתמקמים בווילה",
@@ -271,11 +379,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "אין שירותים ציבוריים בתחילת השביל — לעצור בקולה די ואל ד׳אלסה קודם",
       "לתכנן הגעה בשעת ערב מוקדמת; לא רוצים לגלות את דרך החצץ בחושך"
     ],
-    wordOfTheDay: {
-      pronounce: "סֶנטיֶירוֹ",
-      meaning: "שביל, מסלול",
-      exampleMeaning: "השביל עובר בתוך הנהר."
-    }
+    italianWords: [
+      {
+        pronounce: "סֶנטיֶירוֹ",
+        meaning: "שביל, מסלול",
+        exampleMeaning: "השביל עובר בתוך הנהר."
+      },
+      {
+        pronounce: "וַלִיגְיָה",
+        meaning: "מזוודה",
+        exampleMeaning: "סוגרים את המזוודה."
+      },
+      {
+        pronounce: "סוּד",
+        meaning: "דרום",
+        exampleMeaning: "פונים דרומה."
+      },
+      {
+        pronounce: "סַלטֶלָארֶה",
+        meaning: "לקפוץ קפיצות קטנות",
+        exampleMeaning: "בואו נקפוץ על האבנים!"
+      },
+      {
+        pronounce: "פָּנגוֹ",
+        meaning: "בוץ",
+        exampleMeaning: "זהירות מהבוץ ליד הנהר."
+      },
+      {
+        pronounce: "אוֹנדָה",
+        meaning: "גל במים",
+        exampleMeaning: "גל קטן — כיף גדול!"
+      }
+    ]
   },
   6: {
     title: "קברניטים ליום — סירה ושנורקלינג בארג'נטריו",
@@ -309,11 +444,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "לעגון בקאלה דל ג׳סו מוקדם — בצהריים זה מתמלא בסירות יום",
       "מלטמי חזק = גלים: לבדוק תחזית בערב הקודם, לדחות אם סוער"
     ],
-    wordOfTheDay: {
-      pronounce: "מָארֶה",
-      meaning: "ים",
-      exampleMeaning: "יום בים."
-    },
+    italianWords: [
+      {
+        pronounce: "מָארֶה",
+        meaning: "ים",
+        exampleMeaning: "יום בים."
+      },
+      {
+        pronounce: "בָּארקָה",
+        meaning: "סירה",
+        exampleMeaning: "עולים לסירה."
+      },
+      {
+        pronounce: "אָנקוֹרָה",
+        meaning: "עוגן; גם 'עדיין'",
+        exampleMeaning: "מורידים את העוגן."
+      },
+      {
+        pronounce: "טִימוֹנֶה",
+        meaning: "הגה של הסירה",
+        exampleMeaning: "מי רוצה להחזיק בהגה?"
+      },
+      {
+        pronounce: "רֶטֶה",
+        meaning: "רשת (דיג)",
+        exampleMeaning: "הרשת לתפוס דגים."
+      },
+      {
+        pronounce: "קוֹנקִילְיָה",
+        meaning: "צדף",
+        exampleMeaning: "מצאתי צדף ענק!"
+      }
+    ],
     drinkOfTheDay: {
       pairing:
         "אחרי יום מלוח על הסירה, הקלאסיקה החופית — מצונן, הדרי, ובדיוק מתוק במידה. המרפסת של דאל גרקו על הנמל היא קו הסיום הטבעי לזה.",
@@ -345,11 +507,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "להגיע בפתיחה (10:00) — תורים למגלשות משולשים אחרי 13:00",
       "לוחות הופעות הפולינזיות תלויים בכניסה; לא לפספס את ההופעה של הערב"
     ],
-    wordOfTheDay: {
-      pronounce: "שִיווֹלוֹ",
-      meaning: "מגלשה",
-      exampleMeaning: "המגלשה הכי גבוהה, בבקשה!"
-    },
+    italianWords: [
+      {
+        pronounce: "שִיווֹלוֹ",
+        meaning: "מגלשה",
+        exampleMeaning: "המגלשה הכי גבוהה, בבקשה!"
+      },
+      {
+        pronounce: "דִיוורטִימֶנְטוֹ",
+        meaning: "כיף",
+        exampleMeaning: "איזה כיף!"
+      },
+      {
+        pronounce: "פִּשִינָה",
+        meaning: "בריכה",
+        exampleMeaning: "בואו לבריכה."
+      },
+      {
+        pronounce: "סקִיצוֹ",
+        meaning: "התזה, כתם מים",
+        exampleMeaning: "איזו התזה מהבריכה!"
+      },
+      {
+        pronounce: "טוּבוֹ",
+        meaning: "צינור (מגלשת צינור)",
+        exampleMeaning: "יורדים במגלשת הצינור הכחולה!"
+      },
+      {
+        pronounce: "גרִידָארֶה",
+        meaning: "לצעוק",
+        exampleMeaning: "לא צריך לצעוק — אני שומע!"
+      }
+    ],
     drinkOfTheDay: {
       pairing:
         "אותה משפחת ספריץ של אפרול, אבל מבוסס לימונצ'לו — חד יותר, בהיר יותר, בדיוק משקה ההתאוששות אחרי יום ארוך של מגלשות וכלור.",
@@ -395,11 +584,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "השביל ב־Vie Cave מוצל אבל לא אחיד — רק נעליים עם אחיזה",
       "לקנות ׳סְפְרַטוֹ דֵיי גוֹיִים׳ במאפייה הכשרה בפיטיליאנו"
     ],
-    wordOfTheDay: {
-      pronounce: "קָוואלוֹ",
-      meaning: "סוס",
-      exampleMeaning: "סוס מהמרמה."
-    },
+    italianWords: [
+      {
+        pronounce: "קָוואלוֹ",
+        meaning: "סוס",
+        exampleMeaning: "סוס מהמרמה."
+      },
+      {
+        pronounce: "גְרוֹטָה",
+        meaning: "מערה",
+        exampleMeaning: "נכנסים למערה."
+      },
+      {
+        pronounce: "סטוֹרְיָה",
+        meaning: "היסטוריה, סיפור",
+        exampleMeaning: "איזו היסטוריה מרתקת!"
+      },
+      {
+        pronounce: "סטָאלּוֹ",
+        meaning: "אורווה (מקום הסוס)",
+        exampleMeaning: "הסוס חוזר לאורווה."
+      },
+      {
+        pronounce: "אוֹסקוּרוֹ",
+        meaning: "חשוך",
+        exampleMeaning: "קצת חשוך במערה."
+      },
+      {
+        pronounce: "פָּסוֹ",
+        meaning: "צעד",
+        exampleMeaning: "צעד אחר צעד, לאט לאט."
+      }
+    ],
     drinkOfTheDay: {
       pairing:
         "האדום הדגל של דרום המרמה, מיוצר ממש כאן בסביבה. פירות שחורים רכים, טאנינים עדינים — הכוס הנכונה לסיים יום של סוסים, כפרי טוף ומסדרונות חצובים בסלע.",
@@ -444,11 +660,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "כרטיס לגשר בצ׳יביטה ~€5 למבוגר, מזומן בלבד",
       "ארוחת צהריים עד 13:30 — מטבחים בכפרים סוגרים בחוזקה ב־14:30"
     ],
-    wordOfTheDay: {
-      pronounce: "טֶרְמֶה",
-      meaning: "מעיינות חמים, בית מרחץ",
-      exampleMeaning: "מעיינות סאטורניה בזריחה."
-    },
+    italianWords: [
+      {
+        pronounce: "טֶרְמֶה",
+        meaning: "מעיינות חמים, בית מרחץ",
+        exampleMeaning: "מעיינות סאטורניה בזריחה."
+      },
+      {
+        pronounce: "לָאגוֹ",
+        meaning: "אגם",
+        exampleMeaning: "צלילה באגם."
+      },
+      {
+        pronounce: "פָּנוֹרָמָה",
+        meaning: "נוף, פנורמה",
+        exampleMeaning: "איזה נוף!"
+      },
+      {
+        pronounce: "וָאפּוֹרֶה",
+        meaning: "אדים (מים חמים)",
+        exampleMeaning: "רואים אדים על המים החמים."
+      },
+      {
+        pronounce: "קַנּוּצָ'ה",
+        meaning: "קשית לשתייה",
+        exampleMeaning: "קשית לגרניטה המתוקה."
+      },
+      {
+        pronounce: "טוּפוֹ",
+        meaning: "צלילה, קפיצה למים",
+        exampleMeaning: "אני עושה צלילה לאגם!"
+      }
+    ],
     drinkOfTheDay: {
       pairing:
         "יין לבן דרומי מקומי מגבעות הטוף שדרכן נסעתם. קליל, מינרלי, רמז של שקד — המזיגה הנכונה ללילה האחרון אחרי זריחה במעיינות גופרית ואחה״צ בעיר צפה.",
@@ -484,11 +727,38 @@ export const itineraryHE: Record<number, DayHE> = {
       "להקצות 10–15 דק׳ לשאטל מהחזרת הרכב לטרמינל",
       "אגרות שדה התעופה אונליין — לדלג על תור הבריח ביציאה"
     ],
-    wordOfTheDay: {
-      pronounce: "אָרִיוֶודֵרְצִ'י",
-      meaning: "להתראות (עד שניפגש שוב)",
-      exampleMeaning: "להתראות, טוסקנה!"
-    },
+    italianWords: [
+      {
+        pronounce: "אָרִיוֶודֵרְצִ'י",
+        meaning: "להתראות (עד שניפגש שוב)",
+        exampleMeaning: "להתראות, טוסקנה!"
+      },
+      {
+        pronounce: "ווֹלוֹ",
+        meaning: "טיסה",
+        exampleMeaning: "הטיסה בזמן."
+      },
+      {
+        pronounce: "אָה פְּרֶסטוֹ",
+        meaning: "נתראה בקרוב",
+        exampleMeaning: "נתראה בקרוב, איטליה!"
+      },
+      {
+        pronounce: "גְרָציֶה",
+        meaning: "תודה",
+        exampleMeaning: "תודה רבה — היה מדהים!"
+      },
+      {
+        pronounce: "סוּבִּיטוֹ",
+        meaning: "מיד (בהולים לשער)",
+        exampleMeaning: "מיד לשער — באיחור!"
+      },
+      {
+        pronounce: "בָּצ׳וֹ",
+        meaning: "נשיקה (להתראות)",
+        exampleMeaning: "נשיקה לאיטליה!"
+      }
+    ],
     drinkOfTheDay: {
       pairing:
         "השיגור האיטלקי הראוי — שוט אחד, עומדים בבר של שדה התעופה, נגמר בשלוש לגימות. המשקה היחיד שהגיוני ב־04:00 לפני טיסה הביתה.",

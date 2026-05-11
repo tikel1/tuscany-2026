@@ -177,9 +177,9 @@ export interface Day {
   /** Day-specific advice (timing, money, mood) that doesn't belong to
    *  a single attraction — the things you'd whisper at breakfast. */
   dayTips?: string[];
-  /** A small Italian word or phrase picked to fit the day — rendered as
-   *  a magazine-style flashcard near the top of the chapter page. */
-  wordOfTheDay?: ItalianWord;
+  /** Up to six Italian words or phrases for the day — shown in a carousel
+   *  with audio for each clip. */
+  italianWords?: ItalianWord[];
   /** Curated list of `Service.id` values (restaurants only) that make
    *  sense to eat at on this day — typically the lunch spot mentioned
    *  in an activity, plus a dinner option near base. Looked up via

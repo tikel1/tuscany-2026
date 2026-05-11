@@ -1,105 +1,47 @@
-import { useEffect, useRef, useState } from "react";
 import { Play, Pause, Loader2 } from "lucide-react";
 import { useT } from "../lib/dict";
-
-/* ------------------------------------------------------------------ */
-/* Audio bus: a tiny singleton that guarantees only ONE clip plays at  */
-/* a time across the whole page. Without it, tapping "Listen" on a    */
-/* second card would layer voices on top of each other. The bus keeps */
-/* a reference to the current <audio> element and pauses it whenever  */
-/* a different one starts.                                             */
-/* ------------------------------------------------------------------ */
-
-let currentAudio: HTMLAudioElement | null = null;
-
-function claimPlayback(audio: HTMLAudioElement) {
-  if (currentAudio && currentAudio !== audio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-  }
-  currentAudio = audio;
-}
-
-function releasePlayback(audio: HTMLAudioElement) {
-  if (currentAudio === audio) currentAudio = null;
-}
-
-/* ------------------------------------------------------------------ */
-/* Public component                                                    */
-/* ------------------------------------------------------------------ */
+import { useLang } from "../lib/i18n";
+import { resolveAudioUrl, resolveAttractionListenUrls } from "../lib/audioUrl";
+import { usePageAudio } from "../lib/usePageAudio";
 
 type Variant = "default" | "compact";
 
 interface Props {
   /** Attraction id — maps to public/audio/attractions/<id>.mp3 */
-  attractionId: string;
+  attractionId?: string;
+  /** Path under public/audio/ without .mp3, e.g. `italian-words/day-01-0` */
+  audioAssetPath?: string;
   /** Label used for the tooltip + a11y; falls back to the dict copy. */
   label?: string;
   variant?: Variant;
 }
 
-/** Build the audio URL relative to the deployed base. We deliberately
- *  use BASE_URL so the same code works on `/` (dev) and on
- *  `/tuscany-2026/` (GitHub Pages). */
-function audioUrl(id: string): string {
-  const base = import.meta.env.BASE_URL || "/";
-  // BASE_URL always ends in `/` per Vite contract.
-  return `${base}audio/attractions/${id}.mp3`;
-}
-
-export default function ListenButton({ attractionId, label, variant = "default" }: Props) {
+export default function ListenButton({
+  attractionId,
+  audioAssetPath,
+  label,
+  variant = "default"
+}: Props) {
   const t = useT();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [state, setState] = useState<"idle" | "loading" | "playing" | "error">("idle");
+  const { lang } = useLang();
 
-  // Lazy-init the Audio element on first interaction. Creating it
-  // upfront would trigger a HEAD request for the MP3 even if the user
-  // never taps Listen — wasteful for a page with many cards.
-  function ensureAudio(): HTMLAudioElement {
-    if (!audioRef.current) {
-      const a = new Audio(audioUrl(attractionId));
-      a.preload = "none";
-      a.addEventListener("playing", () => setState("playing"));
-      a.addEventListener("waiting", () => setState("loading"));
-      a.addEventListener("pause", () => setState(s => (s === "loading" ? s : "idle")));
-      a.addEventListener("ended", () => {
-        setState("idle");
-        releasePlayback(a);
-      });
-      a.addEventListener("error", () => {
-        setState("error");
-        releasePlayback(a);
-      });
-      audioRef.current = a;
-    }
-    return audioRef.current;
+  let primary: string | null = null;
+  let fallback: string | null = null;
+  if (audioAssetPath) {
+    primary = resolveAudioUrl({ audioAssetPath });
+  } else if (attractionId) {
+    const r = resolveAttractionListenUrls(attractionId, lang);
+    primary = r.primary;
+    fallback = r.fallback;
   }
 
-  useEffect(() => {
-    return () => {
-      // Belt-and-braces: stop our audio when the host card unmounts.
-      const a = audioRef.current;
-      if (a) {
-        a.pause();
-        releasePlayback(a);
-      }
-    };
-  }, []);
+  const { state, toggle } = usePageAudio(
+    primary,
+    fallback ? { fallbackUrl: fallback } : undefined
+  );
 
-  function toggle(e: React.MouseEvent) {
-    // The card's reveal-panel listens for clicks at the article root.
-    // Don't let the toggle bubble up into "close the card" handlers.
-    e.stopPropagation();
-    const a = ensureAudio();
-    if (state === "playing" || state === "loading") {
-      a.pause();
-      setState("idle");
-      releasePlayback(a);
-      return;
-    }
-    setState("loading");
-    claimPlayback(a);
-    a.play().catch(() => setState("error"));
+  if (!primary) {
+    return null;
   }
 
   const aria =

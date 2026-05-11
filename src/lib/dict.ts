@@ -245,12 +245,12 @@ export const DICT = {
   gem_connecting: { en: "Connecting…", he: "מתחבר…" },
   gem_disconnected: { en: "Disconnected. Tap to reconnect.", he: "לא מחובר. הקישו כדי להתחבר." },
   gem_error_generic: {
-    en: "Something went wrong. Check your API key or your network.",
-    he: "משהו השתבש. בדקו את המפתח או את החיבור."
+    en: "Something went wrong. Please try again later.",
+    he: "משהו השתבש. נסו שוב מאוחר יותר."
   },
-  gem_error_mic: {
-    en: "Microphone access blocked. Allow it in your browser settings to talk.",
-    he: "הגישה למיקרופון נחסמה. אפשרו אותה בהגדרות הדפדפן כדי לדבר."
+  gem_error_occurred: {
+    en: "Something went wrong. Please try again later. (Ref: {code})",
+    he: "משהו השתבש. נסו שוב מאוחר יותר. (קוד: {code})"
   },
   gem_first_hint: {
     en: "Try: \"What should we do tomorrow morning?\" or \"Tell me a story about Pitigliano.\"",
@@ -276,11 +276,6 @@ export const DICT = {
     en: "Turn Google Search off for sends",
     he: "כיבוי חיפוש גוגל לשליחות"
   },
-  gem_typed_failed: {
-    en: "Could not get a reply: ",
-    he: "לא הצלחנו לקבל תשובה: "
-  },
-
   /* ---------- Stays section ---------- */
   stays_eyebrow: { en: "Where we sleep", he: "איפה אנחנו ישנים" },
   stays_title: { en: "Two homes, two halves", he: "שני בתים, שני חצאים" },
@@ -405,6 +400,17 @@ export const DICT = {
   word_pronounce_label: { en: "Pronounce it", he: "איך אומרים" },
   word_meaning_label: { en: "Meaning", he: "פירוש" },
   word_use_label: { en: "Try it", he: "נסו לומר" },
+  word_also_today: { en: "Also today", he: "גם היום" },
+  word_carousel_n_of_m: {
+    en: "Word {n} of {total}",
+    he: "מילה {n} מתוך {total}"
+  },
+  word_carousel_prev: { en: "Previous word", he: "המילה הקודמת" },
+  word_carousel_next: { en: "Next word", he: "המילה הבאה" },
+  word_pronounce_chip_listen: {
+    en: "Play pronunciation",
+    he: "השמעת הגייה"
+  },
   daytips_eyebrow: { en: "Notes for the day", he: "הערות ליום" },
   daytips_title: { en: "Good to know", he: "טוב לדעת" },
   daytips_kicker: {
