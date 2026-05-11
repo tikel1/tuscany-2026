@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createElement, useState } from "react";
 import { Home, Mountain, Waves, Castle, TreePine, Anchor, Camera } from "lucide-react";
 import type { Region, Category, AttractionTag } from "../data/types";
 
@@ -30,7 +30,6 @@ function pickIcon(category?: Category, tags?: AttractionTag[]) {
 export default function PoiImage({ src, alt, region = "north", category, tags, className }: Props) {
   const [failed, setFailed] = useState(false);
   const [from, to] = palette[region];
-  const Icon = pickIcon(category, tags);
 
   if (!src || failed) {
     return (
@@ -65,7 +64,7 @@ export default function PoiImage({ src, alt, region = "north", category, tags, c
         </svg>
         <div className="relative flex flex-col items-center gap-2 px-5 text-center text-cream-50">
           <div className="p-2 rounded-full bg-cream-50/15 backdrop-blur-[2px]">
-            <Icon size={22} strokeWidth={1.6} />
+            {createElement(pickIcon(category, tags), { size: 22, strokeWidth: 1.6 })}
           </div>
           <div className="font-serif text-lg sm:text-xl leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.35)]">
             {alt}

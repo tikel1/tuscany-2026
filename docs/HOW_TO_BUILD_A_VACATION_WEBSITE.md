@@ -191,6 +191,7 @@ do the talking.
 | Weather | **Open-Meteo** | Free, no key, accurate enough for casual planning. |
 | Hosting | **GitHub Pages** via Actions | Zero ops, custom domain optional, deploys on push. |
 | Fonts | **Google Fonts** — Cormorant Garamond, Inter, Rubik (HE), Frank Ruhl Libre (HE) | Editorial pairing in both scripts. *Avoid David Libre — it reads as "old school cheap" the way Times/Arial do.* |
+| Lint | **ESLint 9** (`eslint.config.js`, flat config) + TypeScript ESLint + `eslint-plugin-react-hooks` (React Compiler rules) + `eslint-plugin-react-refresh` | Run `npm run lint` locally before merging; keeps hooks valid and aligns with Vite Fast Refresh expectations. |
 
 What we deliberately **didn't** add:
 - A backend.
@@ -762,6 +763,20 @@ doesn't fit (e.g. when the day's title literally calls out the
 Don't bolt this on at the end. Write the dictionary scaffolding on
 day one and use it from the first component.
 
+### Language modules (`lang.ts` vs `i18n.tsx`)
+
+Split responsibilities so **Vite Fast Refresh** and ESLint stay happy:
+
+- **`src/lib/lang.ts`** — `Lang`, `Loc`, `loc()`, and static label maps
+  (`LANG_LABELS`, `LANG_SHORT`). No React imports; safe to use from
+  scripts, utilities, and `dict.ts`-like modules.
+- **`src/lib/i18n.tsx`** — `LangProvider`, `useLang()`, and `useLoc()`
+  only. Import `type { Lang }` from `./lang` in any file that only
+  needs the type (e.g. `audioUrl.ts`, `persona.ts`).
+- **`eslint.config.js`** turns off `react-refresh/only-export-components`
+  for `i18n.tsx` only, because context files legitimately export hooks
+  alongside the provider.
+
 ### The dictionary
 
 ```ts
@@ -1304,18 +1319,19 @@ with no key in sight.**
    each at 128kbps) and serve straight off GitHub Pages.
 
 **Italian “word of the day” clips** (`npm run tts:italian-words`) default to
-**Google Cloud Text-to-Speech (Chirp 3 HD)**: enable the Cloud TTS API on a
-GCP project, then use `gcloud auth application-default login` or set
-`GOOGLE_APPLICATION_CREDENTIALS` to a service-account JSON path (you can put
-that path in `.env.local`). Hebrew uses a separate Chirp 3 voice name from
-Italian/English; override with `GOOGLE_TTS_VOICE_HE` and related env vars
-documented in `scripts/fetch-italian-word-audio.mjs`. To regenerate with
-ElevenLabs instead, pass **`--elevenlabs`** (and `ELEVEN_API_KEY`).
+**Gemini 3.1 Flash TTS** (`GEMINI_API_KEY` in `.env.local` or the shell — same
+key family as the in-app Gemini features). Model and prebuilt voice names are
+configurable (`GEMINI_TTS_MODEL`, `GEMINI_TTS_VOICE_NAME`, per-language
+`GEMINI_TTS_VOICE_IT` / `_EN` / `_HE`); see `scripts/fetch-italian-word-audio.mjs`.
+For **legacy Cloud Chirp 3 HD** instead, pass **`--google-chirp3`** and use
+`gcloud auth application-default login` or `GOOGLE_APPLICATION_CREDENTIALS`.
+**`--elevenlabs`** (with `ELEVEN_API_KEY`) switches to ElevenLabs.
 
-**Hebrew attraction narration** (`npm run tts:attractions-he`) uses the same
-Google Cloud setup by default (`scripts/fetch-attraction-audio-he.mjs`);
-`GOOGLE_TTS_ATTRACTION_HE_VOICE` / `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` tune
-voice and pace. **`--elevenlabs`** switches that script back to ElevenLabs.
+**Hebrew attraction narration** (`npm run tts:attractions-he`) also defaults to
+Gemini Flash TTS (`scripts/fetch-attraction-audio-he.mjs`); tune with
+`GEMINI_TTS_ATTRACTION_VOICE` or the shared `GEMINI_TTS_VOICE_HE` vars.
+**`--google-chirp3`** uses Cloud Chirp3 (`GOOGLE_TTS_ATTRACTION_HE_VOICE` /
+`GOOGLE_TTS_ATTRACTION_SPEAKING_RATE`). **`--elevenlabs`** uses ElevenLabs.
 
 ### Voice settings that work for narration
 

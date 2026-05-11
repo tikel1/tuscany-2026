@@ -6,18 +6,7 @@ import {
   useState,
   type ReactNode
 } from "react";
-
-export type Lang = "en" | "he";
-
-export const LANG_LABELS: Record<Lang, string> = {
-  en: "English",
-  he: "עברית"
-};
-
-export const LANG_SHORT: Record<Lang, string> = {
-  en: "EN",
-  he: "עב"
-};
+import { type Lang, loc, type Loc } from "./lang";
 
 const STORAGE_KEY = "tuscany:lang";
 
@@ -73,27 +62,6 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
 export function useLang() {
   return useContext(LangContext);
-}
-
-/* ---------- Localized values (per-record overrides) ---------- */
-
-/**
- * A "localized" value is either a plain string (English fallback) or
- * an object that contains the value in each supported language.
- */
-export type Loc<T = string> = T | { en: T; he: T };
-
-export function loc<T>(value: Loc<T>, lang: Lang): T {
-  if (
-    value &&
-    typeof value === "object" &&
-    !Array.isArray(value) &&
-    "en" in (value as Record<string, unknown>) &&
-    "he" in (value as Record<string, unknown>)
-  ) {
-    return (value as { en: T; he: T })[lang];
-  }
-  return value as T;
 }
 
 /** Pick a localized value with the current language. */

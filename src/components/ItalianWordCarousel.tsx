@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -29,13 +29,23 @@ export default function ItalianWordCarousel({
   dayNumber: number;
   words: ItalianWord[];
 }) {
+  return (
+    <ItalianWordCarouselInner key={`${dayNumber}-${words.length}`} dayNumber={dayNumber} words={words} />
+  );
+}
+
+function ItalianWordCarouselInner({
+  dayNumber,
+  words
+}: {
+  dayNumber: number;
+  words: ItalianWord[];
+}) {
   const t = useT();
   const count = words.length;
-  const [slideIdx, setSlideIdx] = useState(0);
-
-  useEffect(() => {
-    setSlideIdx(firstUnheardItalianWordIndex(dayNumber, count));
-  }, [dayNumber, count]);
+  const [slideIdx, setSlideIdx] = useState(() =>
+    firstUnheardItalianWordIndex(dayNumber, count)
+  );
 
   const assetPath = useMemo(
     () => `italian-words/day-${padDay(dayNumber)}-${slideIdx}`,
@@ -47,9 +57,14 @@ export default function ItalianWordCarousel({
   );
   const url = resolveAudioUrl({ audioAssetPath: assetPath });
   const markIndexRef = useRef(0);
-  const { state, toggle } = usePageAudio(url, {
-    onEnded: () => markItalianWordHeard(dayNumber, markIndexRef.current)
-  });
+  const wordListenOpts = useMemo(
+    () => ({
+      preload: "auto" as const,
+      onEnded: () => markItalianWordHeard(dayNumber, markIndexRef.current)
+    }),
+    [dayNumber]
+  );
+  const { state, toggle } = usePageAudio(url, wordListenOpts);
 
   const exampleUrlForSlide = useMemo(() => {
     const w0 = words[slideIdx];
@@ -57,7 +72,8 @@ export default function ItalianWordCarousel({
     return resolveAudioUrl({ audioAssetPath: exampleAssetPath });
   }, [words, slideIdx, exampleAssetPath]);
 
-  const { state: exState, toggle: exToggle } = usePageAudio(exampleUrlForSlide);
+  const exampleListenOpts = useMemo(() => ({ preload: "auto" as const }), []);
+  const { state: exState, toggle: exToggle } = usePageAudio(exampleUrlForSlide, exampleListenOpts);
 
   const w = words[slideIdx];
   if (!w || count === 0) return null;

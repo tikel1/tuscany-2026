@@ -6,6 +6,8 @@ export type PageAudioState = "idle" | "loading" | "playing" | "error";
 type Options = {
   fallbackUrl?: string | null;
   onEnded?: () => void;
+  /** Default `none`. Long clips (e.g. trilingual word audio) use `auto` so the browser buffers ahead. */
+  preload?: HTMLMediaElement["preload"];
 };
 
 /**
@@ -18,23 +20,44 @@ export function usePageAudio(url: string | null, options?: Options) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<PageAudioState>("idle");
   const onEndedRef = useRef(options?.onEnded);
-  onEndedRef.current = options?.onEnded;
   const fallbackRef = useRef(fallbackUrl);
-  fallbackRef.current = fallbackUrl;
+  const preloadRef = useRef(options?.preload ?? "none");
 
-  const dispose = useCallback(() => {
+  useEffect(() => {
+    onEndedRef.current = options?.onEnded;
+  }, [options?.onEnded]);
+
+  useEffect(() => {
+    fallbackRef.current = fallbackUrl;
+  }, [fallbackUrl]);
+
+  useEffect(() => {
+    const p = options?.preload ?? "none";
+    preloadRef.current = p;
+    const a = audioRef.current;
+    if (a) a.preload = p;
+  }, [options?.preload]);
+
+  const stopAndDetach = useCallback(() => {
     const a = audioRef.current;
     if (a) {
       a.pause();
       releasePlayback(a);
       audioRef.current = null;
     }
-    setState("idle");
   }, []);
 
+  const dispose = useCallback(() => {
+    stopAndDetach();
+    setState("idle");
+  }, [stopAndDetach]);
+
   useEffect(() => {
-    dispose();
-  }, [url, fallbackUrl, dispose]);
+    stopAndDetach();
+    queueMicrotask(() => {
+      setState("idle");
+    });
+  }, [url, fallbackUrl, options?.preload, stopAndDetach]);
 
   useEffect(() => {
     return () => {
@@ -49,9 +72,12 @@ export function usePageAudio(url: string | null, options?: Options) {
   const ensureAudio = useCallback(() => {
     if (!audioRef.current) {
       const a = new Audio();
-      a.preload = "none";
+      a.preload = preloadRef.current;
       a.addEventListener("playing", () => setState("playing"));
-      a.addEventListener("waiting", () => setState("loading"));
+      /** Do not clobber `playing` with `loading` mid-playback (buffering at MP3 stitch points looks "stuck"). */
+      a.addEventListener("waiting", () =>
+        setState(s => (s === "playing" ? "playing" : "loading"))
+      );
       a.addEventListener("pause", () =>
         setState(s => (s === "loading" ? s : "idle"))
       );

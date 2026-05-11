@@ -1,17 +1,19 @@
 // Pre-generate Hebrew narration for each attraction (matches Hebrew UI copy
 // in src/data/i18n/attractions.he.ts). Writes public/audio/attractions/<id>.he.mp3
 //
-// **Default: Google Cloud Text-to-Speech** (Chirp 3 HD, Hebrew). Optional
-// `--elevenlabs` or `ATTRACTION_HE_TTS=elevenlabs` + `ELEVEN_API_KEY` for legacy.
+// **Default: Gemini 3.1 Flash TTS** (`GEMINI_API_KEY`). Optional `GEMINI_TTS_MODEL`,
+// `GEMINI_TTS_ATTRACTION_VOICE` / `GEMINI_TTS_VOICE_HE` / `GEMINI_TTS_VOICE_NAME`.
 //
-// Google: enable Cloud Text-to-Speech API; `gcloud auth application-default login`
-// or `GOOGLE_APPLICATION_CREDENTIALS` (see `.env.local` — loaded automatically).
-// Voice: `GOOGLE_TTS_ATTRACTION_HE_VOICE` (full name) or falls back to
-// `GOOGLE_TTS_VOICE_HE`, else `he-IL-Chirp3-HD-Despina`. Pace:
-// `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` (default `1`).
+// **Legacy Cloud Chirp 3 HD:** `--google-chirp3` or `ATTRACTION_HE_TTS=google-chirp3`
+// — Cloud Text-to-Speech API + gcloud / service account. Voice:
+// `GOOGLE_TTS_ATTRACTION_HE_VOICE` or `GOOGLE_TTS_VOICE_HE`, else Chirp3 Kore stem.
+// Pace: `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` (default `1`).
+//
+// **ElevenLabs:** `--elevenlabs` or `ATTRACTION_HE_TTS=elevenlabs` + `ELEVEN_API_KEY`.
 //
 //   node scripts/fetch-attraction-audio-he.mjs
 //   node scripts/fetch-attraction-audio-he.mjs --force
+//   node scripts/fetch-attraction-audio-he.mjs --google-chirp3 --force
 //   node scripts/fetch-attraction-audio-he.mjs --elevenlabs --force
 
 import { readFile, writeFile, mkdir, access, rm } from "node:fs/promises";
@@ -25,6 +27,7 @@ import {
   googleSynthesizeToMp3Buffer,
   loadProjectEnvLocal
 } from "./lib/google-tts.mjs";
+import { geminiTtsToMp3Buffer, getGeminiTtsModel } from "./lib/gemini-tts.mjs";
 
 const execFileP = promisify(execFile);
 
@@ -39,12 +42,30 @@ function useElevenLabs() {
   return process.argv.includes("--elevenlabs") || process.env.ATTRACTION_HE_TTS === "elevenlabs";
 }
 
+function useGoogleChirp3() {
+  return process.argv.includes("--google-chirp3") || process.env.ATTRACTION_HE_TTS === "google-chirp3";
+}
+
 function hebrewAttractionGoogleVoiceName() {
   const explicit =
     process.env.GOOGLE_TTS_ATTRACTION_HE_VOICE?.trim() || process.env.GOOGLE_TTS_VOICE_HE?.trim();
   if (explicit) return explicit;
-  const stem = process.env.GOOGLE_TTS_HEBREW_VOICE_STEM || "Despina";
+  const stem = process.env.GOOGLE_TTS_HEBREW_VOICE_STEM || "Kore";
   return `he-IL-Chirp3-HD-${stem}`;
+}
+
+function hebrewAttractionGeminiVoiceName() {
+  return (
+    process.env.GEMINI_TTS_ATTRACTION_VOICE?.trim() ||
+    process.env.GEMINI_TTS_VOICE_HE?.trim() ||
+    process.env.GEMINI_TTS_VOICE_NAME?.trim() ||
+    "Kore"
+  );
+}
+
+function hebrewAttractionGeminiPrompt(description) {
+  const body = description.replace(/\r\n/g, "\n");
+  return `Speak in Israeli Hebrew with a warm, clear travel-guide narration. Read the following description naturally:\n\n${body}`;
 }
 
 function attractionGoogleSpeakingRate() {
@@ -138,7 +159,11 @@ async function main() {
   const eleven = useElevenLabs();
 
   let googleToken = null;
+  let geminiKey = null;
   let elevenKey = null;
+  /** @type {"chirp3" | "gemini" | null} */
+  let googleMode = null;
+
   if (eleven) {
     elevenKey = process.env.ELEVEN_API_KEY?.trim();
     if (!elevenKey) {
@@ -148,9 +173,22 @@ async function main() {
     console.log(
       `TTS: ElevenLabs | model=${process.env.ELEVEN_HE_MODEL || "eleven_v3"} | voice=${process.env.ELEVEN_HE_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"}`
     );
-  } else {
+  } else if (useGoogleChirp3()) {
+    googleMode = "chirp3";
     googleToken = await getGoogleAccessToken();
     console.log(`TTS: Google Chirp 3 HD | HE voice=${hebrewAttractionGoogleVoiceName()}`);
+  } else {
+    googleMode = "gemini";
+    geminiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!geminiKey) {
+      console.error(
+        "Hebrew attraction TTS defaults to Gemini Flash TTS. Set GEMINI_API_KEY (or .env.local), or pass --google-chirp3 for Cloud Chirp3."
+      );
+      process.exit(1);
+    }
+    console.log(
+      `TTS: Gemini Flash TTS | model=${getGeminiTtsModel()} | HE voice=${hebrewAttractionGeminiVoiceName()}`
+    );
   }
 
   try {
@@ -183,7 +221,7 @@ async function main() {
         if (eleven) {
           const mp3 = await elevenSynthesize(elevenKey, description);
           await writeFile(outPath, mp3);
-        } else {
+        } else if (googleMode === "chirp3") {
           const voiceName = hebrewAttractionGoogleVoiceName();
           const rawBuf = await googleSynthesizeToMp3Buffer(
             googleToken,
@@ -195,9 +233,20 @@ async function main() {
           await writeFile(rawPath, rawBuf);
           await normalizeMp3ToAttractionStandard(rawPath, outPath);
           await rm(rawPath, { force: true });
+        } else {
+          const rawBuf = await geminiTtsToMp3Buffer(geminiKey, tmpDir, {
+            text: hebrewAttractionGeminiPrompt(description),
+            voiceName: hebrewAttractionGeminiVoiceName()
+          });
+          const rawPath = join(tmpDir, `raw-${id}-${randomUUID()}.mp3`);
+          await writeFile(rawPath, rawBuf);
+          await normalizeMp3ToAttractionStandard(rawPath, outPath);
+          await rm(rawPath, { force: true });
         }
         generated++;
-        await new Promise(r => setTimeout(r, eleven ? 320 : 150));
+        await new Promise(r =>
+          setTimeout(r, eleven ? 320 : googleMode === "chirp3" ? 150 : 230)
+        );
       } catch (e) {
         console.error(`  FAIL   ${id}.he.mp3 — ${e.message}`);
       }

@@ -1,6 +1,6 @@
 import type { EmergencyContact, EmergencyGroup } from "../types";
 
-interface EmergencyHEItem extends Partial<Pick<EmergencyContact, "label" | "value" | "detail">> {}
+type EmergencyHEItem = Partial<Pick<EmergencyContact, "label" | "value" | "detail">>;
 
 interface EmergencyHEGroup extends Partial<Pick<EmergencyGroup, "title">> {
   items?: EmergencyHEItem[];

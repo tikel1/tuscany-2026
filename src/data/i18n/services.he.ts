@@ -7,7 +7,7 @@ export const servicesHE: Record<
   // ---- North restaurants ----
   "rest-n-pizzeria-da-paolo": {
     name: "פיצריה ריסטורנטה דה פאולו",
-    shortDescription: "פיצריה משפחתית מקומית, פיצות קלאסיות מתנור עצים.",
+    shortDescription: "פיצריה משפחתית מקומית, פיצות קלאסיות מתנור עצים",
     description:
       "פינה שכונתית יומיומית בכפר לרצ'יאנו — פיצה מתנור עצים, פסטה פשוטה, שירות חביב, ילדים ברוכים. הפתרון הקל לערב עייף.",
     address: "לרצ'יאנו (PT)",
@@ -15,7 +15,7 @@ export const servicesHE: Record<
   },
   "rest-n-osteria-larciano": {
     name: "טרטוריה דל קסטלו",
-    shortDescription: "טרטוריה טוסקנית בלרצ'יאנו קסטלו עם נוף.",
+    shortDescription: "טרטוריה טוסקנית בלרצ'יאנו קסטלו עם נוף",
     description:
       "למעלה בכפר העליון מימי הביניים, מנות טוסקניות קלאסיות — פפרדלה אל צ'ינגיאלה, ביסטקה, קיאנטי מקומי — על מרפסת קטנה שצופה אל העמק.",
     address: "לרצ'יאנו קסטלו (PT)",
@@ -23,7 +23,7 @@ export const servicesHE: Record<
   },
   "rest-n-vinci": {
     name: "ריסטורנטה לה טורה — וינצ'י",
-    shortDescription: "קלאסיקה טוסקנית בעיר ההולדת של ליאונרדו.",
+    shortDescription: "קלאסיקה טוסקנית בעיר ההולדת של ליאונרדו",
     description:
       "ממש מעבר לעמק בווינצ'י (עיר הולדתו של ליאונרדו), מטבח טוסקני אמין — פסטה ביד, בשרים על האש, רשימת יין טובה. אפשר לשלב עם ביקור קצר במוזיאון ליאונרדו.",
     address: "Via della Torre 19, וינצ'י (FI)",
@@ -31,7 +31,7 @@ export const servicesHE: Record<
   },
   "rest-n-bagni-lucca": {
     name: "צ'ירקולו דיי פורסטיירי — באני די לוקה",
-    shortDescription: "אולם אירוח מהמאה ה־19 על הנהר.",
+    shortDescription: "אולם אירוח מהמאה ה־19 על הנהר",
     description:
       "מועדון ג'נטלמנים היסטורי שהפך למסעדה, ממש על נהר הלימה בבאני די לוקה. מרפסת מוצלת גדולה — צהריים מושלמים אחרי קניון פארק או ראפטינג.",
     address: "Piazza Jean Varraud 10, באני די לוקה (LU)",
@@ -39,7 +39,7 @@ export const servicesHE: Record<
   },
   "rest-n-pisa": {
     name: "אוסטריה דיי קווליירי — פיזה",
-    shortDescription: "אוסטריה פיזנית ותיקה במרחק הליכה מהמגדל.",
+    shortDescription: "אוסטריה פיזנית ותיקה במרחק הליכה מהמגדל",
     description:
       "עצירה בטוחה בפיזה במרחק הליכה קצר מפיאצה דיי מירקולי — קלאסיקות טוסקניות, מרקי שעועית, פסטה טרייה, מחירים הוגנים. כדאי להזמין לצהריים.",
     address: "Via San Frediano 16, פיזה (PI)",
@@ -49,7 +49,7 @@ export const servicesHE: Record<
   // ---- North supermarkets ----
   "sup-n-conad-larciano": {
     name: "קונאד — לרצ'יאנו",
-    shortDescription: "סופרמרקט מקומי בגודל מלא.",
+    shortDescription: "סופרמרקט מקומי בגודל מלא",
     description:
       "הסופרמרקט הגדול הכי קרוב לאכסניה בלרצ'יאנו — מים, ירקות ופירות טריים, מצרכי בוקר, ציוד תינוק/שמש. פתוח כל יום.",
     address: "Via Marx, לרצ'יאנו (PT)",
@@ -57,7 +57,7 @@ export const servicesHE: Record<
   },
   "sup-n-coop-monsummano": {
     name: "קוופ — מונסומנו טרמה",
-    shortDescription: "היפרמרקט קוופ גדול יותר בקרבת מקום.",
+    shortDescription: "היפרמרקט קוופ גדול יותר בקרבת מקום",
     description:
       "אם בקונאד חסר משהו, הקוופ במונסומנו (10 דק׳ נסיעה) גדול יותר — מעדנייה מלאה, מאפייה, ציוד בית, דברים לילדים.",
     address: "Via Empolese, מונסומנו טרמה (PT)",
@@ -67,7 +67,7 @@ export const servicesHE: Record<
   // ---- North gas stations ----
   "gas-n-eni-larciano": {
     name: "תחנת אני — לרצ'יאנו",
-    shortDescription: "תחנת הדלק הקרובה ביותר לבית בלרצ'יאנו.",
+    shortDescription: "תחנת הדלק הקרובה ביותר לבית בלרצ'יאנו",
     description:
       "תחנת אני סטנדרטית בכביש הראשי בלרצ'יאנו — שירות עצמי 24/7 בכרטיס. טיפ: באיטליה ׳סרביטו׳ זה תדלוק על־ידי עובד ועולה יותר; להשתמש ב׳fai da te׳ / שירות עצמי.",
     address: "Via Marx, לרצ'יאנו (PT)",
@@ -75,7 +75,7 @@ export const servicesHE: Record<
   },
   "gas-n-q8-monsummano": {
     name: "Q8 — מונסומנו טרמה",
-    shortDescription: "תחנת גיבוי על כביש SS-436.",
+    shortDescription: "תחנת גיבוי על כביש SS-436",
     description: "אופציית גיבוי בדרך אל/מאוטוסטרדה A11 — מקבלת כרטיסים זרים בצורה אמינה.",
     address: "Via Empolese, מונסומנו טרמה (PT)",
     hours: "שירות עצמי 24/7"
@@ -84,7 +84,7 @@ export const servicesHE: Record<
   // ---- South restaurants ----
   "rest-s-trattoria-verdi": {
     name: "טרטוריה ורדי — מנצ'יאנו",
-    shortDescription: "מטבח מרמה אותנטי בעיר.",
+    shortDescription: "מטבח מרמה אותנטי בעיר",
     description:
       "טרטוריה משפחתית ותיקה במנצ'יאנו — פיצ'י ביד, ראגו חזיר בר, כבש על האש, יין בית טוב. אופציית ה׳ארוחה האמיתית׳ הקרובה ביותר לטנוטה קורטווקיה.",
     address: "Via Cavour, 58014 מנצ'יאנו (GR)",
@@ -92,7 +92,7 @@ export const servicesHE: Record<
   },
   "rest-s-i-due-cippi": {
     name: "אי דואה צ׳יפי דה מיקלה — סאטורניה",
-    shortDescription: "קלאסיקה של סאטורניה — בשרים ופיצ'י.",
+    shortDescription: "קלאסיקה של סאטורניה — בשרים ופיצ'י",
     description:
       "בכיכר הראשית של כפר סאטורניה (העיירה על הגבעה מעל המעיינות החמים). חזק בבשרים על האש ובפסטה מסורתית של מרמה. מרפסת מוצלת נחמדה.",
     address: "Piazza Vittorio Veneto 26/A, סאטורניה (GR)",
@@ -100,7 +100,7 @@ export const servicesHE: Record<
   },
   "rest-s-hostaria-ceccottino": {
     name: "אוסטריה דל צ'קוטינו — פיטיליאנו",
-    shortDescription: "מטבח עדין בפיטיליאנו עם מסורת כשרה.",
+    shortDescription: "מטבח עדין בפיטיליאנו עם מסורת כשרה",
     description:
       "בלב העיר העתיקה של פיטיליאנו — פרשנויות מודרניות למרמה ולמטבח היהודי־איטלקי המקומי (קינוח ה־sfratto), רשימת יין טובה, חדר אוכל קטן וחמוד.",
     address: "Piazza San Gregorio VII, 58017 פיטיליאנו (GR)",
@@ -108,7 +108,7 @@ export const servicesHE: Record<
   },
   "rest-s-trattoria-sovana": {
     name: "טברנה אטרוסקה — סובאנה",
-    shortDescription: "טברנה אטמוספרית בקמרונות אבן בסובאנה הזעירה.",
+    shortDescription: "טברנה אטמוספרית בקמרונות אבן בסובאנה הזעירה",
     description:
       "סובאנה היא כפר אטרוסקי קטנטן בן רחוב אחד שנראה כמו גלויה ליד פיטיליאנו — חדר האוכל הקמורה של טברנה אטרוסקה הוא תחנת הערב אחרי יום ב־Vie Cave.",
     address: "Piazza del Pretorio 16, סובאנה, סוראנו (GR)",
@@ -116,7 +116,7 @@ export const servicesHE: Record<
   },
   "rest-s-porto-santo-stefano": {
     name: "דאל גרקו — פורטו סנטו סטפנו",
-    shortDescription: "דגים טריים בנמל שבו שוכרים את הסירה.",
+    shortDescription: "דגים טריים בנמל שבו שוכרים את הסירה",
     description:
       "ממש על הנמל בפורטו סנטו סטפנו — דייג יומי, ספגטי אלו סקוליו קלאסי, מרפסת עם נוף לים. סיום מושלם ליום הסירה לפני הנסיעה חזרה.",
     address: "Via del Molo 1, פורטו סנטו סטפנו (GR)",
@@ -126,7 +126,7 @@ export const servicesHE: Record<
   // ---- South supermarkets ----
   "sup-s-conad-manciano": {
     name: "קונאד — מנצ'יאנו",
-    shortDescription: "הסופרמרקט הראשי של הבסיס הדרומי.",
+    shortDescription: "הסופרמרקט הראשי של הבסיס הדרומי",
     description:
       "המכולת הראשית של אזור מנצ'יאנו / סמפרוניאנו — מצטיידים כאן בדרך לטנוטה קורטווקיה. מים, מצרכי בוקר, ירקות ופירות טריים, חטיפי בריכה.",
     address: "Via Roma, 58014 מנצ'יאנו (GR)",
@@ -134,7 +134,7 @@ export const servicesHE: Record<
   },
   "sup-s-coop-pitigliano": {
     name: "קוופ — פיטיליאנו",
-    shortDescription: "סופרמרקט גיבוי ליד פיטיליאנו.",
+    shortDescription: "סופרמרקט גיבוי ליד פיטיליאנו",
     description:
       "נוח אם כבר אתם בפיטיליאנו לטיול ב־Vie Cave — סופרמרקט מלא ואיכותי בדרך החוצה מהעיר.",
     address: "Via Generale Orsini, 58017 פיטיליאנו (GR)",
@@ -144,7 +144,7 @@ export const servicesHE: Record<
   // ---- South gas stations ----
   "gas-s-eni-manciano": {
     name: "תחנת אני — מנצ'יאנו",
-    shortDescription: "תחנת הדלק הקרובה ביותר לבסיס הדרומי.",
+    shortDescription: "תחנת הדלק הקרובה ביותר לבסיס הדרומי",
     description:
       "תחנת אני בכביש SR74 דרך מנצ'יאנו — עצירה קלה בכל נסיעה אל/מקורטווקיה. שירות עצמי 24/7 בכרטיס.",
     address: "SR74 — מנצ'יאנו (GR)",
@@ -152,7 +152,7 @@ export const servicesHE: Record<
   },
   "gas-s-q8-albinia": {
     name: "Q8 — אלביניה (אורליה)",
-    shortDescription: "על SS-1 אורליה — לתדלק לפני/אחרי ארג'נטריו.",
+    shortDescription: "על SS-1 אורליה — לתדלק לפני/אחרי ארג'נטריו",
     description:
       "על כביש החוף אורליה ליד אלביניה — תחנת דלק טבעית בדרך אל/מיום הסירה בפורטו סנטו סטפנו או מהלגונה של ארג'נטריו.",
     address: "SS-1 אורליה, אלביניה (GR)",

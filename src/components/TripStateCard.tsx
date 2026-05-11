@@ -9,7 +9,6 @@ import LiveCountdown from "./LiveCountdown";
 function useTripState() {
   const [state, setState] = useState<TripState>(() => getTripState());
   useEffect(() => {
-    setState(getTripState());
     const id = window.setInterval(() => setState(getTripState()), 30_000);
     return () => window.clearInterval(id);
   }, []);

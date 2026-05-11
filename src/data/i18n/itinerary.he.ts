@@ -104,8 +104,8 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "פוֹרְצָה!",
-        meaning: "אל תוותרו! (מילה של עידוד)",
-        exampleMeaning: "עוד קצת — כמעט הגענו!"
+        meaning: "קדימה!",
+        exampleMeaning: "קדימה, עוד קצת!"
       },
       {
         pronounce: "רִיפּוֹזוֹ",
@@ -177,18 +177,18 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "ספְּרוּצוֹ",
-        meaning: "ריסוס, התזת מים",
-        exampleMeaning: "כיף איזה ריסוס מים!"
+        meaning: "שפריץ",
+        exampleMeaning: "איזה שפריץ מים כיפי!"
       },
       {
         pronounce: "פְרֶדּוֹ",
-        meaning: "קר (לא כמו באנגלית)",
+        meaning: "קר",
         exampleMeaning: "המים לא קפואים לגמרי."
       },
       {
         pronounce: "אָטֶנְטוֹ!",
         meaning: "זהירות!",
-        exampleMeaning: "זהירות, זה חלקק!"
+        exampleMeaning: "זהירות, זה מחליק!"
       }
     ]
   },
@@ -253,8 +253,8 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "קַמפָּנִילֶה",
-        meaning: "פעמון במגדל",
-        exampleMeaning: "הפעמון מצלצל בצהריים."
+        meaning: "מגדל פעמונים",
+        exampleMeaning: "מגדל הפעמונים מצלצל בצהריים."
       },
       {
         pronounce: "סקווִיזִיטוֹ",
@@ -263,8 +263,8 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "טוֹרְצָ'ה",
-        meaning: "פנס (אור ידני)",
-        exampleMeaning: "לשים את הפנס בתיק הגב."
+        meaning: "פנס",
+        exampleMeaning: "שים את הפנס בתיק."
       }
     ]
   },
@@ -323,12 +323,12 @@ export const itineraryHE: Record<number, DayHE> = {
       {
         pronounce: "פְרֶסקוֹ",
         meaning: "קריר, רענן",
-        exampleMeaning: "איזו אווירה קרירה!"
+        exampleMeaning: "איזה אוויר קריר!"
       },
       {
         pronounce: "בֶּרֶטּוֹ",
-        meaning: "כובע צמר / כובע גרב",
-        exampleMeaning: "לשים כובע — יש רוח!"
+        meaning: "כובע צמר",
+        exampleMeaning: "שים כובע — יש רוח!"
       },
       {
         pronounce: "סטֶלָה",
@@ -337,8 +337,8 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "אֶקוֹ",
-        meaning: "הד (קול חוזר)",
-        exampleMeaning: "שומעים את ההד בין העצים!"
+        meaning: "הד",
+        exampleMeaning: "תקשיבו להד בין העצים!"
       }
     ]
   },
@@ -393,7 +393,7 @@ export const itineraryHE: Record<number, DayHE> = {
       {
         pronounce: "סוּד",
         meaning: "דרום",
-        exampleMeaning: "פונים דרומה."
+        exampleMeaning: "אנחנו נוסעים דרומה."
       },
       {
         pronounce: "סַלטֶלָארֶה",
@@ -407,7 +407,7 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "אוֹנדָה",
-        meaning: "גל במים",
+        meaning: "גל",
         exampleMeaning: "גל קטן — כיף גדול!"
       }
     ]
@@ -457,18 +457,18 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "אָנקוֹרָה",
-        meaning: "עוגן; גם 'עדיין'",
+        meaning: "עוגן",
         exampleMeaning: "מורידים את העוגן."
       },
       {
         pronounce: "טִימוֹנֶה",
-        meaning: "הגה של הסירה",
+        meaning: "הגה (של סירה)",
         exampleMeaning: "מי רוצה להחזיק בהגה?"
       },
       {
         pronounce: "רֶטֶה",
-        meaning: "רשת (דיג)",
-        exampleMeaning: "הרשת לתפוס דגים."
+        meaning: "רשת לדיג",
+        exampleMeaning: "הרשת לדיג דגים."
       },
       {
         pronounce: "קוֹנקִילְיָה",
@@ -525,13 +525,13 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "סקִיצוֹ",
-        meaning: "התזה, כתם מים",
-        exampleMeaning: "איזו התזה מהבריכה!"
+        meaning: "שפריץ מים",
+        exampleMeaning: "איזה שפריץ מהבריכה!"
       },
       {
         pronounce: "טוּבוֹ",
-        meaning: "צינור (מגלשת צינור)",
-        exampleMeaning: "יורדים במגלשת הצינור הכחולה!"
+        meaning: "מגלשת צינור",
+        exampleMeaning: "אני יורד במגלשת הצינור הכחולה!"
       },
       {
         pronounce: "גרִידָארֶה",
@@ -602,7 +602,7 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "סטָאלּוֹ",
-        meaning: "אורווה (מקום הסוס)",
+        meaning: "אורווה",
         exampleMeaning: "הסוס חוזר לאורווה."
       },
       {
@@ -663,33 +663,33 @@ export const itineraryHE: Record<number, DayHE> = {
     italianWords: [
       {
         pronounce: "טֶרְמֶה",
-        meaning: "מעיינות חמים, בית מרחץ",
+        meaning: "מעיינות חמים",
         exampleMeaning: "מעיינות סאטורניה בזריחה."
       },
       {
         pronounce: "לָאגוֹ",
         meaning: "אגם",
-        exampleMeaning: "צלילה באגם."
+        exampleMeaning: "טבילה באגם."
       },
       {
         pronounce: "פָּנוֹרָמָה",
-        meaning: "נוף, פנורמה",
+        meaning: "נוף",
         exampleMeaning: "איזה נוף!"
       },
       {
         pronounce: "וָאפּוֹרֶה",
-        meaning: "אדים (מים חמים)",
-        exampleMeaning: "רואים אדים על המים החמים."
+        meaning: "אדים",
+        exampleMeaning: "אפשר לראות את האדים על המים החמים."
       },
       {
         pronounce: "קַנּוּצָ'ה",
-        meaning: "קשית לשתייה",
+        meaning: "קשית",
         exampleMeaning: "קשית לגרניטה המתוקה."
       },
       {
         pronounce: "טוּפוֹ",
-        meaning: "צלילה, קפיצה למים",
-        exampleMeaning: "אני עושה צלילה לאגם!"
+        meaning: "קפיצת ראש",
+        exampleMeaning: "אני קופץ קפיצת ראש לאגם!"
       }
     ],
     drinkOfTheDay: {
@@ -730,7 +730,7 @@ export const itineraryHE: Record<number, DayHE> = {
     italianWords: [
       {
         pronounce: "אָרִיוֶודֵרְצִ'י",
-        meaning: "להתראות (עד שניפגש שוב)",
+        meaning: "להתראות",
         exampleMeaning: "להתראות, טוסקנה!"
       },
       {
@@ -750,12 +750,12 @@ export const itineraryHE: Record<number, DayHE> = {
       },
       {
         pronounce: "סוּבִּיטוֹ",
-        meaning: "מיד (בהולים לשער)",
-        exampleMeaning: "מיד לשער — באיחור!"
+        meaning: "מיד",
+        exampleMeaning: "ישר לשער — אנחנו מאחרים!"
       },
       {
         pronounce: "בָּצ׳וֹ",
-        meaning: "נשיקה (להתראות)",
+        meaning: "נשיקה",
         exampleMeaning: "נשיקה לאיטליה!"
       }
     ],

@@ -1,6 +1,6 @@
 /** Resolved URL for static MP3s under `public/audio/`, respecting Vite `base`. */
 
-import type { Lang } from "./i18n";
+import type { Lang } from "./lang";
 
 /** Vite `base` should include a trailing slash; normalize so we never emit `/reporepo/audio`. */
 function baseUrl(): string {

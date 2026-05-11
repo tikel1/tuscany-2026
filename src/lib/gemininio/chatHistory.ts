@@ -19,7 +19,7 @@ export function completedTurnsForApi(
  * Keeps tail only so the trip digest + this block stay within limits.
  */
 export function formatRecentChatBlock(turns: ChatTurn[], maxChars = 6000): string {
-  let slice = turns.length > 20 ? turns.slice(-20) : turns;
+  const slice = turns.length > 20 ? turns.slice(-20) : turns;
   const lines = slice.map(
     m => `${m.role === "user" ? "User" : "Gemininio"}: ${m.text}`
   );

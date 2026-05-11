@@ -1,4 +1,5 @@
-import { useLang, type Lang } from "./i18n";
+import { useLang } from "./i18n";
+import type { Lang } from "./lang";
 
 /**
  * The full UI dictionary. Every visible string in the shell of the app
@@ -242,6 +243,7 @@ export const DICT = {
   gem_mic_release: { en: "Release to send", he: "שחררו כדי לשלוח" },
   gem_listening: { en: "Listening…", he: "מקשיב…" },
   gem_thinking: { en: "Thinking…", he: "חושב…" },
+  gem_speaking: { en: "Speaking…", he: "מדבר…" },
   gem_connecting: { en: "Connecting…", he: "מתחבר…" },
   gem_disconnected: { en: "Disconnected. Tap to reconnect.", he: "לא מחובר. הקישו כדי להתחבר." },
   gem_error_generic: {

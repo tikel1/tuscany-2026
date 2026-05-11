@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, createElement, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -312,10 +312,6 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
   const t = useT();
   const { lang } = useLang();
   const isRTL = lang === "he";
-  const localizeDay = useLocalizeDay();
-  const localizePoi = useLocalizePoi();
-  const localizeService = useLocalizeService();
-  const localizeTip = useLocalizeTip();
 
   const day = useMemo(
     () => itinerary.find(d => d.dayNumber === dayNumber),
@@ -345,6 +341,18 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
     );
   }
 
+  return <ChapterDetailContent day={day} />;
+}
+
+function ChapterDetailContent({ day }: { day: Day }) {
+  const t = useT();
+  const { lang } = useLang();
+  const isRTL = lang === "he";
+  const localizeDay = useLocalizeDay();
+  const localizePoi = useLocalizePoi();
+  const localizeService = useLocalizeService();
+  const localizeTip = useLocalizeTip();
+
   const localDay = localizeDay(day);
   const tripState = getTripState();
   const isToday =
@@ -355,11 +363,11 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
     [day, localizePoi]
   );
   const [slideIdx, setSlideIdx] = useState(0);
-
-  // Reset to the first slide whenever we land on a new chapter
-  useEffect(() => {
+  const [prevDayNumber, setPrevDayNumber] = useState(day.dayNumber);
+  if (day.dayNumber !== prevDayNumber) {
+    setPrevDayNumber(day.dayNumber);
     setSlideIdx(0);
-  }, [day.dayNumber]);
+  }
 
   // Auto-advance the hero carousel (only if we have more than one slide)
   useEffect(() => {
@@ -869,7 +877,6 @@ function ActivityRow({
 }) {
   const t = useT();
   const localizePoi = useLocalizePoi();
-  const Icon = activityIcon(activity);
   const rawAtt = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
   const att = rawAtt ? localizePoi(rawAtt) : undefined;
   const [open, setOpen] = useState(false);
@@ -897,7 +904,11 @@ function ActivityRow({
         <div
           className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${iconClasses}`}
         >
-          <Icon size={16} className="sm:w-5 sm:h-5" strokeWidth={1.7} />
+          {createElement(activityIcon(activity), {
+            size: 16,
+            className: "sm:w-5 sm:h-5",
+            strokeWidth: 1.7
+          })}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { ExternalLink, MapPin, AlertTriangle, Check } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { stays } from "../data/stays";
 import type { Stay } from "../data/types";
 import Section from "./Section";
@@ -17,9 +17,11 @@ const STAY_SLIDE_MS = 5000;
 /* Crossfading hero image for a stay card. Falls back to a single static
    PoiImage when the stay only has one photo. */
 function StayHero({ stay }: { stay: Stay }) {
-  const slides = stay.image
-    ? [stay.image, ...(stay.gallery ?? [])]
-    : (stay.gallery ?? []);
+  const slides = useMemo(
+    () =>
+      stay.image ? [stay.image, ...(stay.gallery ?? [])] : (stay.gallery ?? []),
+    [stay.image, stay.gallery]
+  );
 
   const [idx, setIdx] = useState(0);
 

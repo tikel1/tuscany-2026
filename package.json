@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "tts:italian-words": "node scripts/fetch-italian-word-audio.mjs",
+    "repair:italian-words-audio": "node scripts/repair-italian-word-mp3.mjs",
     "tts:attractions-he": "node scripts/fetch-attraction-audio-he.mjs",
     "preview": "vite preview"
   },

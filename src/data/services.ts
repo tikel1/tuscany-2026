@@ -10,7 +10,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "north",
     base: "north",
-    shortDescription: "Local family pizzeria, classic wood-fired pies.",
+    shortDescription: "Local family pizzeria, classic wood-fired pies",
     description:
       "An everyday neighbourhood spot in Larciano village — wood-fired pizza, simple pasta, friendly service, kids welcome. The easy go-to on a tired evening.",
     address: "Larciano (PT)",
@@ -23,7 +23,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "north",
     base: "north",
-    shortDescription: "Tuscan trattoria up in Larciano Castello with a view.",
+    shortDescription: "Tuscan trattoria up in Larciano Castello with a view",
     description:
       "Up in the medieval upper village, classic Tuscan plates — pappardelle al cinghiale, bistecca, local Chianti — on a small terrace looking over the valley.",
     address: "Larciano Castello (PT)",
@@ -36,7 +36,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "north",
     base: "north",
-    shortDescription: "Tuscan classics in Leonardo's hometown.",
+    shortDescription: "Tuscan classics in Leonardo's hometown",
     description:
       "Just across the valley in Vinci (Leonardo's birthplace), a reliable Tuscan kitchen — handmade pasta, grilled meats, good wine list. Pair with a quick walk to the Leonardo museum.",
     address: "Via della Torre 19, Vinci (FI)",
@@ -49,7 +49,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "north",
     base: "north",
-    shortDescription: "Belle-époque dining hall on the river.",
+    shortDescription: "Belle-époque dining hall on the river",
     description:
       "A historic former gentlemen's club turned restaurant, right on the Lima river in Bagni di Lucca. Big shaded terrace — perfect lunch after Canyon Park or rafting.",
     address: "Piazza Jean Varraud 10, Bagni di Lucca (LU)",
@@ -62,7 +62,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "north",
     base: "north",
-    shortDescription: "Long-standing Pisan osteria, walking distance from the Tower.",
+    shortDescription: "Long-standing Pisan osteria, walking distance from the Tower",
     description:
       "A solid Pisa stop a short walk from Piazza dei Miracoli — Tuscan classics, bean soups, fresh pasta, fair prices. Reserve for lunch.",
     address: "Via San Frediano 16, Pisa (PI)",
@@ -77,7 +77,7 @@ export const services: Service[] = [
     category: "supermarket",
     region: "north",
     base: "north",
-    shortDescription: "Full-size local supermarket.",
+    shortDescription: "Full-size local supermarket",
     description:
       "Closest large supermarket to the Larciano stay — water, fresh produce, breakfast supplies, baby/sun gear. Open every day.",
     address: "Via Marx, Larciano (PT)",
@@ -90,7 +90,7 @@ export const services: Service[] = [
     category: "supermarket",
     region: "north",
     base: "north",
-    shortDescription: "Larger Coop hypermarket nearby.",
+    shortDescription: "Larger Coop hypermarket nearby",
     description:
       "If Conad is missing something, the Coop in Monsummano (10 min drive) is bigger — full deli, bakery, household, kids' stuff.",
     address: "Via Empolese, Monsummano Terme (PT)",
@@ -105,7 +105,7 @@ export const services: Service[] = [
     category: "gas",
     region: "north",
     base: "north",
-    shortDescription: "Closest fuel stop to the Larciano house.",
+    shortDescription: "Closest fuel stop to the Larciano house",
     description:
       "Standard Eni station on the main road through Larciano — 24/7 self-service via card. Tip: in Italy, 'servito' is staff-served and costs more; use 'fai da te' / self-service.",
     address: "Via Marx, Larciano (PT)",
@@ -118,7 +118,7 @@ export const services: Service[] = [
     category: "gas",
     region: "north",
     base: "north",
-    shortDescription: "Backup station on the SS-436 road.",
+    shortDescription: "Backup station on the SS-436 road",
     description:
       "Backup option en route to/from the A11 motorway — accepts foreign cards reliably.",
     address: "Via Empolese, Monsummano Terme (PT)",
@@ -135,7 +135,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Down-to-earth Maremma cooking in town.",
+    shortDescription: "Down-to-earth Maremma cooking in town",
     description:
       "A long-running family trattoria in Manciano — handmade pici, wild boar ragù, grilled lamb, good house wine. Closest 'real meal' option to Tenuta Cortevecchia.",
     address: "Via Cavour, 58014 Manciano (GR)",
@@ -148,7 +148,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Saturnia village classic — meats and pici.",
+    shortDescription: "Saturnia village classic — meats and pici",
     description:
       "On the main square of Saturnia village (the hilltop town above the hot springs). Strong on grilled meats and traditional Maremma pasta. Nice shaded terrace.",
     address: "Piazza Vittorio Veneto 26/A, Saturnia (GR)",
@@ -161,7 +161,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Refined Pitigliano cooking with kosher tradition.",
+    shortDescription: "Refined Pitigliano cooking with kosher tradition",
     description:
       "In the heart of Pitigliano's old town — modern takes on Maremma and local Jewish-Italian dishes (sfratto dessert), good wine list, lovely small dining room.",
     address: "Piazza San Gregorio VII, 58017 Pitigliano (GR)",
@@ -174,7 +174,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Atmospheric stone-vaulted tavern in tiny Sovana.",
+    shortDescription: "Atmospheric stone-vaulted tavern in tiny Sovana",
     description:
       "Sovana is a postcard-perfect single-street Etruscan village near Pitigliano — Taverna Etrusca's vaulted dining room is the dinner stop after a day at the Vie Cave.",
     address: "Piazza del Pretorio 16, Sovana, Sorano (GR)",
@@ -187,7 +187,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Fresh fish in the harbour where you rent the boat.",
+    shortDescription: "Fresh fish in the harbour where you rent the boat",
     description:
       "Right on the harbour at Porto Santo Stefano — daily catch, classic spaghetti allo scoglio, sea-view terrace. Perfect end to the boat day before driving back.",
     address: "Via del Molo 1, Porto Santo Stefano (GR)",
@@ -202,7 +202,7 @@ export const services: Service[] = [
     category: "supermarket",
     region: "south",
     base: "south",
-    shortDescription: "Main supermarket for the southern base.",
+    shortDescription: "Main supermarket for the southern base",
     description:
       "The main grocery for the Manciano / Semproniano area — stock up here on the way in to Tenuta Cortevecchia. Water, breakfast, fresh produce, pool snacks.",
     address: "Via Roma, 58014 Manciano (GR)",
@@ -215,7 +215,7 @@ export const services: Service[] = [
     category: "supermarket",
     region: "south",
     base: "south",
-    shortDescription: "Backup supermarket near Pitigliano.",
+    shortDescription: "Backup supermarket near Pitigliano",
     description:
       "Convenient if you're already in Pitigliano for the Vie Cave — solid full-size supermarket on the way out of town.",
     address: "Via Generale Orsini, 58017 Pitigliano (GR)",
@@ -230,7 +230,7 @@ export const services: Service[] = [
     category: "gas",
     region: "south",
     base: "south",
-    shortDescription: "Closest fuel stop to the southern base.",
+    shortDescription: "Closest fuel stop to the southern base",
     description:
       "Eni station on the SR74 through Manciano — easy stop on every drive in/out of Cortevecchia. Self-service 24/7 with card.",
     address: "SR74 — Manciano (GR)",
@@ -243,7 +243,7 @@ export const services: Service[] = [
     category: "gas",
     region: "south",
     base: "south",
-    shortDescription: "On the SS-1 Aurelia — fill up before/after Argentario.",
+    shortDescription: "On the SS-1 Aurelia — fill up before/after Argentario",
     description:
       "On the Aurelia coastal highway near Albinia — natural fuel stop on the way to/from the Porto Santo Stefano boat day or the Argentario lagoon.",
     address: "SS-1 Aurelia, Albinia (GR)",

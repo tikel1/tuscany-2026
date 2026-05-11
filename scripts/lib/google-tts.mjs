@@ -7,7 +7,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const ENV_LINE_RE =
-  /^\s*(ELEVEN_[A-Z0-9_]+|GOOGLE_[A-Z0-9_]+|GOOGLE_APPLICATION_CREDENTIALS)\s*=\s*(.*)$/;
+  /^\s*(ELEVEN_[A-Z0-9_]+|GOOGLE_[A-Z0-9_]+|GEMINI_[A-Z0-9_]+|GOOGLE_APPLICATION_CREDENTIALS)\s*=\s*(.*)$/;
 
 /** Merge `.env.local` into `process.env` for known keys (does not override existing). */
 export async function loadProjectEnvLocal(repoRoot) {

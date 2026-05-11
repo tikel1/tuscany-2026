@@ -4,25 +4,20 @@
 //   • day-NN-M.mp3      — word + EN meaning + HE meaning
 //   • day-NN-M-ex.mp3  — Italian example + EN exampleMeaning + HE exampleMeaning
 //
-// **Default provider: Google Cloud Text-to-Speech** (Chirp 3 HD — latest GA
-// generative voices). Hebrew uses a separate Chirp 3 voice name from Italian/English.
-// Optional: `--elevenlabs` or `ITALIAN_WORDS_TTS=elevenlabs` for ElevenLabs.
+// **Default (Google path): Gemini 3.1 Flash TTS** — `GEMINI_API_KEY` (AI Studio key;
+// same family as the site’s Gemini features). Model: `GEMINI_TTS_MODEL` or
+// `gemini-3.1-flash-tts-preview`. Voices: prebuilt names, e.g. `GEMINI_TTS_VOICE_NAME=Kore`
+// or per-language `GEMINI_TTS_VOICE_IT` / `_EN` / `_HE`.
 //
-// Google setup
-//   • Enable **Cloud Text-to-Speech API** on a GCP project.
-//   • Auth: `gcloud auth application-default login` **or** set
-//     `GOOGLE_APPLICATION_CREDENTIALS` to a service-account JSON path (also
-//     loadable from `.env.local`).
-//   • Env (optional): `GOOGLE_TTS_VOICE_IT`, `GOOGLE_TTS_VOICE_EN`, `GOOGLE_TTS_VOICE_HE`
-//     — full voice names, e.g. `it-IT-Chirp3-HD-Kore`. Defaults pick Kore for
-//     IT+EN and Despina for HE. `GOOGLE_TTS_SPEAKING_RATE` (default `0.9`).
-//     Optional: `GOOGLE_TTS_SAMPLE_RATE_HERTZ` if your project requires a fixed rate.
+// **Legacy Cloud Chirp 3 HD:** `--google-chirp3` or `ITALIAN_WORDS_TTS=google-chirp3`
+// — requires Cloud Text-to-Speech API + `gcloud auth application-default login`
+// or `GOOGLE_APPLICATION_CREDENTIALS`. See `scripts/lib/google-tts.mjs` for env vars.
 //
-// ElevenLabs setup (only with `--elevenlabs`)
-//   • `ELEVEN_API_KEY`, optional `ELEVEN_IT_WORDS_*`, `ELEVEN_HE_VOICE_ID` (see script history).
+// **ElevenLabs:** `--elevenlabs` or `ITALIAN_WORDS_TTS=elevenlabs` + `ELEVEN_API_KEY`.
 //
 //   node scripts/fetch-italian-word-audio.mjs
 //   node scripts/fetch-italian-word-audio.mjs --force
+//   node scripts/fetch-italian-word-audio.mjs --google-chirp3 --force
 //   node scripts/fetch-italian-word-audio.mjs --elevenlabs --force
 //
 // Source of truth: `src/data/itinerary.ts` + `src/data/i18n/itinerary.he.ts`
@@ -39,6 +34,7 @@ import {
   googleSynthesizeToMp3Buffer,
   loadProjectEnvLocal
 } from "./lib/google-tts.mjs";
+import { geminiTtsToMp3Buffer, getGeminiTtsModel } from "./lib/gemini-tts.mjs";
 
 const execFileP = promisify(execFile);
 
@@ -65,7 +61,8 @@ function getElevenTtsConfig() {
 /** Full `voice.name` values for Cloud TTS (Chirp 3 HD). */
 function getGoogleVoiceConfig() {
   const stemItEn = process.env.GOOGLE_TTS_VOICE_STEM || "Kore";
-  const stemHe = process.env.GOOGLE_TTS_HEBREW_VOICE_STEM || "Despina";
+  /** Same stem as IT/EN by default — Despina’s Hebrew leg often sounded thin vs Kore. */
+  const stemHe = process.env.GOOGLE_TTS_HEBREW_VOICE_STEM || stemItEn;
   return {
     voiceIt: process.env.GOOGLE_TTS_VOICE_IT || `it-IT-Chirp3-HD-${stemItEn}`,
     voiceEn: process.env.GOOGLE_TTS_VOICE_EN || `en-US-Chirp3-HD-${stemItEn}`,
@@ -86,6 +83,34 @@ const PAUSE_SEC = 0.65;
 
 function useElevenLabs() {
   return process.argv.includes("--elevenlabs") || process.env.ITALIAN_WORDS_TTS === "elevenlabs";
+}
+
+/** Legacy Cloud Text-to-Speech Chirp 3 HD (OAuth). Default is Gemini Flash TTS (API key). */
+function useGoogleChirp3() {
+  return process.argv.includes("--google-chirp3") || process.env.ITALIAN_WORDS_TTS === "google-chirp3";
+}
+
+function getGeminiVoiceConfig() {
+  const d = process.env.GEMINI_TTS_VOICE_NAME?.trim() || "Kore";
+  return {
+    voiceIt: process.env.GEMINI_TTS_VOICE_IT?.trim() || d,
+    voiceEn: process.env.GEMINI_TTS_VOICE_EN?.trim() || d,
+    voiceHe: process.env.GEMINI_TTS_VOICE_HE?.trim() || d
+  };
+}
+
+function geminiPromptFor(lang, literal) {
+  const body = literal.replace(/\r\n/g, "\n");
+  switch (lang) {
+    case "it":
+      return `Speak in Italian with a calm, clear travel-phrasebook tone. Read exactly the following text, with natural pacing:\n\n${body}`;
+    case "en":
+      return `Speak in American English with a calm, clear travel-phrasebook tone. Read exactly the following text, with natural pacing:\n\n${body}`;
+    case "he":
+      return `Speak in Israeli Hebrew with a calm, clear travel-phrasebook tone. Read exactly the following text, with natural pacing:\n\n${body}`;
+    default:
+      return body;
+  }
 }
 
 async function exists(path) {
@@ -228,10 +253,6 @@ function parseHeWordsForDay(src, dayNum) {
   }));
 }
 
-function ffmpegPathForList(p) {
-  return p.replace(/\\/g, "/").replace(/'/g, "'\\''");
-}
-
 async function ensureSilenceMp3(tmpDir) {
   const p = join(tmpDir, `silence-${Math.round(PAUSE_SEC * 1000)}ms.mp3`);
   if (await exists(p)) return p;
@@ -252,25 +273,37 @@ async function ensureSilenceMp3(tmpDir) {
   return p;
 }
 
-/** Concatenate MP3 parts + silence with a **single re-encode** (handles mixed TTS sources). */
+/**
+ * Concatenate MP3 segments + silence by decoding each leg, **normalizing format**
+ * (`aformat`), then `concat`. Plain `concat=n` on mixed layouts produced MP3s
+ * that browsers reject or stall on after the first segment.
+ */
 async function concatMp3PartsWithPauses(segmentPaths, silencePath, outPath) {
-  const list = [];
+  const args = ["-y"];
+  let inputIdx = 0;
+  const norm = [];
+  const concatLabels = [];
+  const aformat =
+    "aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo";
   for (let i = 0; i < segmentPaths.length; i++) {
-    list.push(`file '${ffmpegPathForList(segmentPaths[i])}'`);
+    args.push("-i", segmentPaths[i]);
+    norm.push(`[${inputIdx}:a]${aformat}[x${inputIdx}]`);
+    concatLabels.push(`[x${inputIdx}]`);
+    inputIdx++;
     if (i < segmentPaths.length - 1) {
-      list.push(`file '${ffmpegPathForList(silencePath)}'`);
+      args.push("-i", silencePath);
+      norm.push(`[${inputIdx}:a]${aformat}[x${inputIdx}]`);
+      concatLabels.push(`[x${inputIdx}]`);
+      inputIdx++;
     }
   }
-  const listFile = join(dirname(outPath), `concat-${randomUUID()}.txt`);
-  await writeFile(listFile, list.join("\n"), "utf8");
-  await execFileP("ffmpeg", [
-    "-y",
-    "-f",
-    "concat",
-    "-safe",
-    "0",
-    "-i",
-    listFile,
+  const n = concatLabels.length;
+  const filterComplex = `${norm.join(";")};${concatLabels.join("")}concat=n=${n}:v=0:a=1[aout]`;
+  args.push(
+    "-filter_complex",
+    filterComplex,
+    "-map",
+    "[aout]",
     "-c:a",
     "libmp3lame",
     "-ar",
@@ -280,15 +313,35 @@ async function concatMp3PartsWithPauses(segmentPaths, silencePath, outPath) {
     "-b:a",
     "128k",
     outPath
-  ]);
-  await rm(listFile, { force: true });
+  );
+  await execFileP("ffmpeg", args);
+}
+
+function googleSpeakingRates() {
+  const mainRaw = process.env.GOOGLE_TTS_SPEAKING_RATE?.trim();
+  const main = mainRaw !== undefined && mainRaw !== "" ? Number(mainRaw) : 0.9;
+  const mainOk = Number.isFinite(main) ? main : 0.9;
+  const heRaw = process.env.GOOGLE_TTS_SPEAKING_RATE_HE?.trim();
+  const he =
+    heRaw !== undefined && heRaw !== "" ? Number(heRaw) : mainOk;
+  const heOk = Number.isFinite(he) ? he : mainOk;
+  return { it: mainOk, en: mainOk, he: heOk };
 }
 
 function googleWordSegments(cfg, it, enMeaning, heMeaning) {
+  const r = googleSpeakingRates();
   return [
-    { text: it, languageCode: "it-IT", name: cfg.voiceIt },
-    { text: enMeaning, languageCode: "en-US", name: cfg.voiceEn },
-    { text: heMeaning, languageCode: "he-IL", name: cfg.voiceHe }
+    { text: it, languageCode: "it-IT", name: cfg.voiceIt, speakingRate: r.it },
+    { text: enMeaning, languageCode: "en-US", name: cfg.voiceEn, speakingRate: r.en },
+    { text: heMeaning, languageCode: "he-IL", name: cfg.voiceHe, speakingRate: r.he }
+  ];
+}
+
+function geminiWordSegments(cfg, it, enMeaning, heMeaning) {
+  return [
+    { text: geminiPromptFor("it", it), voiceName: cfg.voiceIt },
+    { text: geminiPromptFor("en", enMeaning), voiceName: cfg.voiceEn },
+    { text: geminiPromptFor("he", heMeaning), voiceName: cfg.voiceHe }
   ];
 }
 
@@ -304,8 +357,28 @@ async function buildTrilingualGoogle(accessToken, tmpDir, silencePath, segments,
   const segPaths = [];
   for (let i = 0; i < segments.length; i++) {
     const p = join(tmpDir, `seg-${randomUUID()}-${i}.mp3`);
-    const { text, languageCode, name } = segments[i];
-    const buf = await googleSynthesizeToMp3Buffer(accessToken, { languageCode, name }, text);
+    const { text, languageCode, name, speakingRate } = segments[i];
+    const buf = await googleSynthesizeToMp3Buffer(
+      accessToken,
+      { languageCode, name },
+      text,
+      speakingRate != null && Number.isFinite(speakingRate)
+        ? { speakingRate }
+        : {}
+    );
+    await writeFile(p, buf);
+    segPaths.push(p);
+  }
+  await concatMp3PartsWithPauses(segPaths, silencePath, outPath);
+  for (const p of segPaths) await rm(p, { force: true });
+}
+
+async function buildTrilingualGemini(apiKey, tmpDir, silencePath, segments, outPath) {
+  const segPaths = [];
+  for (let i = 0; i < segments.length; i++) {
+    const p = join(tmpDir, `seg-${randomUUID()}-${i}.mp3`);
+    const { text, voiceName } = segments[i];
+    const buf = await geminiTtsToMp3Buffer(apiKey, tmpDir, { text, voiceName });
     await writeFile(p, buf);
     segPaths.push(p);
   }
@@ -328,6 +401,8 @@ async function buildTrilingualEleven(apiKey, modelId, tmpDir, silencePath, segme
 async function main() {
   const force = process.argv.includes("--force");
   const parseOnly = process.argv.includes("--parse-only");
+  /** Skip the `*-ex.mp3` example sentences; only build the word/meaning clip. */
+  const wordsOnly = process.argv.includes("--words-only");
   const eleven = useElevenLabs();
 
   const enSrc = (await readFile(ITINERARY_EN, "utf8")).replace(/\r\n/g, "\n");
@@ -353,9 +428,13 @@ async function main() {
   await loadProjectEnvLocal(REPO_ROOT);
 
   let googleToken = null;
+  let geminiKey = null;
   let elevenKey = null;
   let elevenCfg = null;
   let googleVoices = null;
+  let geminiVoices = null;
+  /** @type {"chirp3" | "gemini" | null} */
+  let googleMode = null;
 
   if (eleven) {
     elevenKey = process.env.ELEVEN_API_KEY?.trim();
@@ -367,11 +446,26 @@ async function main() {
     console.log(
       `TTS: ElevenLabs | model=${elevenCfg.modelId} | IT+EN voice=${elevenCfg.voiceItEn} | HE voice=${elevenCfg.voiceHe}`
     );
-  } else {
+  } else if (useGoogleChirp3()) {
+    googleMode = "chirp3";
     googleToken = await getGoogleAccessToken();
     googleVoices = getGoogleVoiceConfig();
     console.log(
       `TTS: Google Cloud Chirp 3 HD | IT=${googleVoices.voiceIt} | EN=${googleVoices.voiceEn} | HE=${googleVoices.voiceHe}`
+    );
+  } else {
+    googleMode = "gemini";
+    geminiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!geminiKey) {
+      console.error(
+        "Italian words TTS defaults to Gemini 3.1 Flash TTS. Set GEMINI_API_KEY (e.g. in `.env.local`).\n" +
+          "For legacy Cloud Chirp3 instead: pass --google-chirp3 and authenticate with gcloud / a service account."
+      );
+      process.exit(1);
+    }
+    geminiVoices = getGeminiVoiceConfig();
+    console.log(
+      `TTS: Gemini Flash TTS | model=${getGeminiTtsModel()} | IT=${geminiVoices.voiceIt} | EN=${geminiVoices.voiceEn} | HE=${geminiVoices.voiceHe}`
     );
   }
 
@@ -424,7 +518,7 @@ async function main() {
           );
           console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
           wrote++;
-        } else {
+        } else if (googleMode === "chirp3") {
           await buildTrilingualGoogle(
             googleToken,
             tmpDir,
@@ -434,9 +528,21 @@ async function main() {
           );
           console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
           wrote++;
+        } else {
+          await buildTrilingualGemini(
+            geminiKey,
+            tmpDir,
+            silencePath,
+            geminiWordSegments(geminiVoices, en.word, en.meaning, he.meaning),
+            wordDest
+          );
+          console.log(`+ ${prefix}-${i}.mp3 (IT · EN · HE)`);
+          wrote++;
         }
 
-        if (en.example && en.exampleMeaning && he.exampleMeaning) {
+        if (wordsOnly) {
+          /** keep existing example clips; just don't (re)generate them. */
+        } else if (en.example && en.exampleMeaning && he.exampleMeaning) {
           const skipEx = !force && (await exists(exDest));
           if (skipEx) {
             skipped++;
@@ -451,7 +557,7 @@ async function main() {
             );
             console.log(`+ ${prefix}-${i}-ex.mp3 (IT · EN · HE)`);
             wrote++;
-          } else {
+          } else if (googleMode === "chirp3") {
             await buildTrilingualGoogle(
               googleToken,
               tmpDir,
@@ -461,12 +567,24 @@ async function main() {
             );
             console.log(`+ ${prefix}-${i}-ex.mp3 (IT · EN · HE)`);
             wrote++;
+          } else {
+            await buildTrilingualGemini(
+              geminiKey,
+              tmpDir,
+              silencePath,
+              geminiWordSegments(geminiVoices, en.example, en.exampleMeaning, he.exampleMeaning),
+              exDest
+            );
+            console.log(`+ ${prefix}-${i}-ex.mp3 (IT · EN · HE)`);
+            wrote++;
           }
         } else {
           if (await exists(exDest)) await rm(exDest, { force: true });
         }
 
-        await new Promise(r => setTimeout(r, eleven ? 280 : 120));
+        await new Promise(r =>
+          setTimeout(r, eleven ? 280 : googleMode === "chirp3" ? 120 : 220)
+        );
       }
     }
 

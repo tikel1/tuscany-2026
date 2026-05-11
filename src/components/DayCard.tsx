@@ -8,7 +8,7 @@ import {
   Plus,
   X
 } from "lucide-react";
-import { useState } from "react";
+import { createElement, useState } from "react";
 import type { Day, ImageCredit, POI } from "../data/types";
 import { getAttraction } from "../data/attractions";
 import { useMapFocus } from "../lib/mapContext";
@@ -256,7 +256,6 @@ function ActivityRow({
   isToday: boolean;
   focusOn: (id: string) => void;
 }) {
-  const Icon = activityIcon(activity);
   const att = activity.attractionId ? getAttraction(activity.attractionId) : undefined;
   const [open, setOpen] = useState(false);
 
@@ -273,7 +272,11 @@ function ActivityRow({
               : "bg-cream-100 text-terracotta-600 ring-1 ring-cream-300/80"
           }`}
         >
-          <Icon size={15} className="sm:w-5 sm:h-5" strokeWidth={1.7} />
+          {createElement(activityIcon(activity), {
+            size: 15,
+            className: "sm:w-5 sm:h-5",
+            strokeWidth: 1.7
+          })}
         </div>
         {activity.time && (
           <div className="absolute -bottom-4 sm:-bottom-5 left-0 right-0 text-[8px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-ink-700/55 font-medium text-center">

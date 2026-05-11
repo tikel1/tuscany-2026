@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Cloud, CloudRain, Sun, CloudSun, Loader2 } from "lucide-react";
 import { useT } from "../lib/dict";
-import { useLang, type Lang } from "../lib/i18n";
+import { useLang } from "../lib/i18n";
+import type { Lang } from "../lib/lang";
 
 const SPOT_LABEL: Record<"north" | "south", { en: string; he: string }> = {
   north: { en: "Larciano", he: "לרצ'יאנו" },

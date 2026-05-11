@@ -19,4 +19,11 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/lib/i18n.tsx'],
+    rules: {
+      // Context module exports provider + hooks; Fast Refresh only wants components.
+      'react-refresh/only-export-components': 'off'
+    }
+  },
 ])

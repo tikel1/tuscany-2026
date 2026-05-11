@@ -122,7 +122,6 @@ const PHOTO_DURATION_MS = 7000;
 function useTripStateLive() {
   const [state, setState] = useState<TripState>(() => getTripState());
   useEffect(() => {
-    setState(getTripState());
     const id = window.setInterval(() => setState(getTripState()), 30_000);
     return () => window.clearInterval(id);
   }, []);
@@ -178,15 +177,13 @@ function buildDayHeroPhotos(day: Day, getPoi: (p: POI) => POI): HeroPhoto[] {
 }
 
 function useHeroPhoto(photos: HeroPhoto[]) {
+  const sig = useMemo(() => photos.map(p => p.src).join("|"), [photos]);
   const [idx, setIdx] = useState(0);
-
-  // The photo source can change when the trip phase shifts or the
-  // 20:00 evening cutoff flips us from today → tomorrow. Reset to the
-  // first slide whenever that happens so we don't read past the new
-  // (possibly shorter) array's bounds.
-  useEffect(() => {
+  const [prevSig, setPrevSig] = useState(sig);
+  if (sig !== prevSig) {
+    setPrevSig(sig);
     setIdx(0);
-  }, [photos]);
+  }
 
   // Lazy preload: keep memory low and avoid hammering the network with
   // ~25 MB of full-resolution screensavers all at once. Strategy:

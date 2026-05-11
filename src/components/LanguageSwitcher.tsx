@@ -1,5 +1,6 @@
 import { Languages } from "lucide-react";
-import { useLang, type Lang } from "../lib/i18n";
+import { useLang } from "../lib/i18n";
+import type { Lang } from "../lib/lang";
 
 interface Props {
   /** "navbar" — sits in the desktop/mobile top bar.

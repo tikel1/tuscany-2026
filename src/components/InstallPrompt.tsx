@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share, MoreVertical, PlusSquare, Smartphone, Download, X, Check } from "lucide-react";
 import { useT, type DictKey } from "../lib/dict";
@@ -94,12 +94,11 @@ export default function InstallPrompt() {
    * the choice when the user actually closes the popup, so that ticking
    * + then hitting "Install" doesn't punish them later. */
   const [neverAgain, setNeverAgain] = useState(false);
-
-  /* Reset the checkbox each time the popup opens — otherwise a previously
-   * ticked-and-cancelled state would carry over to a future visit. */
-  useEffect(() => {
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) setNeverAgain(false);
-  }, [open]);
+  }
 
   const handleClose = () => {
     if (neverAgain) dismissForever();

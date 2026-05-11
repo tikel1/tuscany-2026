@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -85,7 +85,9 @@ export default function Gemininio() {
   const [messages, setMessages] = useState<Message[]>(() => loadHistory());
   /** Always matches `messages` for async paths (Live connect after send). */
   const messagesRef = useRef<Message[]>(messages);
-  messagesRef.current = messages;
+  useEffect(() => {
+    messagesRef.current = messages;
+  });
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   // Audio is OFF by default — most use is read-and-tap. Live always
@@ -988,38 +990,45 @@ function StatusBar({
   errorDetail: string | null;
 }) {
   const t = useT();
-  let label: string | null = null;
-  let icon: React.ReactNode = null;
 
-  switch (status) {
-    case "connecting":
-      label = t("gem_connecting");
-      icon = <Loader2 size={12} className="animate-spin" />;
-      break;
-    case "listening":
-      label = t("gem_listening");
-      icon = <Mic size={12} className="text-terracotta-600" />;
-      break;
-    case "thinking":
-      label = t("gem_thinking");
-      icon = <Loader2 size={12} className="animate-spin" />;
-      break;
-    case "speaking":
-      label = t("gem_thinking"); // same icon, just to show activity
-      icon = <Sparkles size={12} className="text-terracotta-500" />;
-      break;
-    case "error":
-      label =
-        errorDetail?.trim() ? errorDetail : t("gem_error_generic");
-      break;
-    default:
-      return null;
-  }
+  const row = (() => {
+    switch (status) {
+      case "connecting":
+        return {
+          label: t("gem_connecting"),
+          icon: <Loader2 size={12} className="animate-spin" />
+        };
+      case "listening":
+        return {
+          label: t("gem_listening"),
+          icon: <Mic size={12} className="text-terracotta-600" />
+        };
+      case "thinking":
+        return {
+          label: t("gem_thinking"),
+          icon: <Loader2 size={12} className="animate-spin" />
+        };
+      case "speaking":
+        return {
+          label: t("gem_speaking"),
+          icon: <Sparkles size={12} className="text-terracotta-500" />
+        };
+      case "error":
+        return {
+          label: errorDetail?.trim() ? errorDetail : t("gem_error_generic"),
+          icon: null as ReactNode
+        };
+      default:
+        return null;
+    }
+  })();
+
+  if (!row) return null;
 
   return (
     <div className="px-4 py-1.5 text-[11px] uppercase tracking-[0.14em] text-ink-700/65 bg-cream-100/70 border-t border-cream-300/40 flex items-center gap-1.5">
-      {icon}
-      <span>{label}</span>
+      {row.icon}
+      <span>{row.label}</span>
     </div>
   );
 }

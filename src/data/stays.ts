@@ -6,7 +6,7 @@ export const stays: Stay[] = [
     name: "Home in Larciano",
     category: "stay",
     region: "north",
-    shortDescription: "Private Tuscan home, base for the northern half of the trip.",
+    shortDescription: "Private Tuscan home, base for the northern half of the trip",
     description:
       "Your base for the active northern week. Larciano sits between Pistoia and Lucca, putting you within an easy drive of Bagni di Lucca, Pisa, Abetone and the Sentierelsa river walk.",
     image: "./images/stay-larciano-sunflowers.png",
@@ -39,7 +39,7 @@ export const stays: Stay[] = [
     name: "Tenuta Cortevecchia",
     category: "stay",
     region: "south",
-    shortDescription: "Restored farm estate near Saturnia — your southern base.",
+    shortDescription: "Restored farm estate near Saturnia — your southern base",
     description:
       "A 2,000-hectare organic estate in the rolling Maremma hills, just 12 km from the Saturnia hot springs. Apartment-style stays with private pool, perfect for an evening with a private chef. Remote setting — bring everything you need from Manciano.",
     image: "./images/stay-cortevecchia-poolview.png",

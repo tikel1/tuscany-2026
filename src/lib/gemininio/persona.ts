@@ -13,7 +13,7 @@ import { dishes } from "../../data/dishes";
 import { wineries } from "../../data/wineries";
 
 import { localizeDay, localizePoi, localizeStay, localizeService, localizeDish, localizeWinery } from "../../data/i18n";
-import type { Lang } from "../i18n";
+import type { Lang } from "../lang";
 import { formatRecentChatBlock, type ChatTurn } from "./chatHistory";
 
 /* ------------------------------------------------------------------ */

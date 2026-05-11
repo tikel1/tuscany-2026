@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, AlertCircle, Briefcase, ClipboardCheck } from "lucide-react";
 import { bookingChecklist, packingChecklist } from "../data/checklist";
@@ -83,11 +83,7 @@ function ChecklistList({
 export default function ChecklistSection() {
   const t = useT();
   const [tab, setTab] = useState<"booking" | "packing">("booking");
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    setChecked(loadChecked());
-  }, []);
+  const [checked, setChecked] = useState<Record<string, boolean>>(() => loadChecked());
 
   const toggle = (id: string) => {
     setChecked(prev => {
