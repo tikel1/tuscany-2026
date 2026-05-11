@@ -760,6 +760,16 @@ Apply it to the digits and separator while letting the unit labels
 The same trick is useful for any number-heavy chrome (clocks,
 temperature widgets, file sizes, version numbers in a footer).
 
+**One more thing about serif numerals in tight backgrounds:** they
+look optically high inside an evenly-padded pill or chip, because the
+font's line-box reserves space below the baseline for descenders
+(`g`, `p`, `y`) that digits never have. With `padding: 4px 4px` you
+end up with a visible empty band below the digit. Bias the padding
+upward without changing total height — e.g. `pt-2 pb-0` instead of
+`py-1` — and the visible glyph drops back to the visual center.
+Only worth fussing over at large display sizes (the live countdown,
+big stat cards); body-size numerals don't need the correction.
+
 ### Persist the choice
 
 ```ts

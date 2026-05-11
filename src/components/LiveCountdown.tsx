@@ -68,10 +68,20 @@ interface BlockProps {
 function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
   const str = String(value).padStart(pad, "0");
 
+  /* Optical centering for serif numerals.
+   * Cormorant Garamond's line-box reserves space below the baseline
+   * for descenders (g/p/y) that digits never have, so equal py
+   * padding leaves a visible empty band below each numeral and pushes
+   * the visible glyph toward the top of the pill. We bias the padding
+   * upward (more pt, less pb) without changing the pill's total
+   * vertical padding — the pill keeps its current height; the digit
+   * just sits where the eye expects it. */
+  const padCls = size === "lg" ? "pt-2 pb-0" : "pt-1.5 pb-0.5";
+
   return (
     <div className="flex flex-col items-center gap-1.5 sm:gap-2">
       <div
-        className={`flex items-baseline justify-center px-2 sm:px-3 py-1 rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
+        className={`flex items-baseline justify-center px-2 sm:px-3 ${padCls} rounded-xl bg-cream-50/12 backdrop-blur-[2px] ${
           pulse ? "ring-1 ring-cream-50/25" : ""
         }`}
       >
