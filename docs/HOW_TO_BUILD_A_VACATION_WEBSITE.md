@@ -1627,6 +1627,55 @@ The same trick applies to the voice flow — drop the placeholder
 in `stopMic()` so the dots show up the moment they release the
 mic, then `outputTranscription` flows into the same bubble.
 
+### Pull-to-refresh hijacks scroll inside fixed bottom-sheets
+
+The very first mobile test of the chat panel had a maddening bug:
+swipe down inside the message list and the whole page refreshed
+instead of scrolling. The chat is a fixed-position bottom-sheet,
+the body is technically still scrollable underneath, and Chrome
+Android happily routed the gesture to the body's pull-to-refresh.
+
+Two-layer fix that any modal / bottom-sheet on mobile needs:
+
+1. **`overscroll-behavior: contain`** on every internal scroll
+   container (chat list, setup view, settings view). This stops
+   a scroll that hits a top/bottom extreme from chaining up to
+   the body — no chain, no pull-to-refresh.
+
+   ```tsx
+   <div className="flex-1 overflow-y-auto overscroll-contain ...">
+   ```
+
+2. **Lock body scroll while the panel is open.** Belt-and-suspenders
+   for iOS Safari (which sometimes routes touches to the body even
+   when a fixed element is on top) and for the case where the user
+   touches the panel's background area, not a scroll container:
+
+   ```tsx
+   useEffect(() => {
+     if (status === "closed") return;
+     const prevHtml = document.documentElement.style.overflow;
+     const prevBody = document.body.style.overflow;
+     const prevOverscroll = document.body.style.overscrollBehavior;
+     document.documentElement.style.overflow = "hidden";
+     document.body.style.overflow = "hidden";
+     document.body.style.overscrollBehavior = "contain";
+     return () => {
+       document.documentElement.style.overflow = prevHtml;
+       document.body.style.overflow = prevBody;
+       document.body.style.overscrollBehavior = prevOverscroll;
+     };
+   }, [status]);
+   ```
+
+   Stash and restore the previous values on cleanup — never
+   hard-code `""` back, because something else might legitimately
+   want `hidden` (a parent modal, a dev-tool, etc.).
+
+This combo also stops "rubber-banding" on iOS where the page
+jiggles behind your modal as you drag — the whole thing now feels
+like a native sheet.
+
 ### Chat bubble corners: logical, not physical
 
 Chat bubbles classically have three rounded corners and one sharp

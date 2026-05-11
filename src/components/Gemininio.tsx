@@ -139,6 +139,28 @@ export default function Gemininio() {
     playerRef.current = null;
   }, [status]);
 
+  // Lock the background page from scrolling while the chat panel is
+  // open. Without this, swipes on the panel bubble through to the
+  // body — on Chrome Android they trigger pull-to-refresh, on iOS
+  // Safari they scroll the page behind the modal. The internal
+  // scroll containers (chat list, setup, settings) all have
+  // `overscroll-contain` as a second line of defence so touches that
+  // hit a scroll-extreme don't chain either.
+  useEffect(() => {
+    if (status === "closed") return;
+    const prevHtml = document.documentElement.style.overflow;
+    const prevBody = document.body.style.overflow;
+    const prevOverscroll = document.body.style.overscrollBehavior;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.overscrollBehavior = "contain";
+    return () => {
+      document.documentElement.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
+      document.body.style.overscrollBehavior = prevOverscroll;
+    };
+  }, [status]);
+
   // Cleanup on unmount.
   useEffect(() => {
     return () => {
@@ -560,7 +582,7 @@ function SetupView({
 }) {
   const t = useT();
   return (
-    <div className="px-5 py-5 overflow-y-auto flex-1 flex flex-col gap-4">
+    <div className="px-5 py-5 overflow-y-auto overscroll-contain flex-1 flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="shrink-0 w-9 h-9 rounded-full bg-cream-200 text-ink-700 flex items-center justify-center">
           <MessageCircle size={16} />
@@ -615,7 +637,7 @@ function SettingsView({
 }) {
   const t = useT();
   return (
-    <div className="px-5 py-5 overflow-y-auto flex-1 flex flex-col gap-3">
+    <div className="px-5 py-5 overflow-y-auto overscroll-contain flex-1 flex flex-col gap-3">
       <button
         onClick={onBack}
         className="self-start text-[12px] uppercase tracking-[0.16em] text-ink-700/70 hover:text-ink-900"
@@ -674,7 +696,7 @@ function ChatView({
     <>
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3 bg-cream-100/40"
+        className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 flex flex-col gap-3 bg-cream-100/40"
       >
         {messages.length === 0 && (
           <div className="text-[12.5px] italic text-ink-700/65 leading-relaxed self-center max-w-[280px] text-center pt-6">
