@@ -759,8 +759,8 @@ function Bubble({ message }: { message: Message }) {
       <div
         className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
           isUser
-            ? "bg-gradient-to-br from-ink-800 to-ink-900 text-cream-50 rounded-br-md shadow-ink-900/15"
-            : "bg-cream-50 text-ink-800 ring-1 ring-cream-300/70 rounded-bl-md shadow-ink-900/5"
+            ? "bg-gradient-to-br from-ink-800 to-ink-900 text-cream-50 rounded-ee-md shadow-ink-900/15"
+            : "bg-cream-50 text-ink-800 ring-1 ring-cream-300/70 rounded-es-md shadow-ink-900/5"
         }`}
       >
         {isWaiting ? (

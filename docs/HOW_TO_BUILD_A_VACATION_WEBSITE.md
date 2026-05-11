@@ -1545,6 +1545,65 @@ What actually worked:
 - An explicit "never say `my response will…`, `let me think…`,
   `assessing…`" — calling out the exact filler phrases stops them.
 
+### Persona colour: restraint is the actual instruction
+
+The first pass at the FAMILY_PROFILES block said "name-drop freely
+whenever it fits". The model interpreted that as "name-drop in
+every reply", and within ten messages every answer had a Marina
+joke. Fun for two minutes; exhausting for the trip.
+
+What actually worked: **invert the default**. The new instruction
+is structured around restraint:
+
+- "DEFAULT to no family reference."
+- "AT MOST one family wink every ~10 turns."
+- "If you're searching for a way to fit a name in, you've already
+  lost — answer the question and move on."
+- A list of question shapes that *do* earn a wink ("Which wine
+  would they love?", "Anything to watch out for on this trail?")
+  vs. shapes that don't ("What's the drive time to Florence?").
+
+You can't make the model count past turns reliably, but reframing
+the rule as "don't, except when X / Y / Z" produces a much
+sparser, much funnier output than "do whenever it fits". Same
+applies to any "fun colour" prompt: the LLM defaults to "always
+fun" unless you defaults-flip it.
+
+### Language purity in non-Latin scripts
+
+Italian persona + Hebrew user = a model that happily mixes
+"Allora!" (Latin) with "סָטוּרְנְיָה פתוח 24/7" (Hebrew) inside
+one sentence. Looks broken. The fix is a hard rule, with explicit
+transliteration examples for the categories the model actually
+slips on:
+
+```
+שפה אחידה — חוק קשיח. כשהתשובה בעברית, כל המילים בעברית. זה כולל:
+  • קריאות איטלקיות → "אללוֹרָה", "ממה מיה", "דאי", "אקו"
+    (לא "Allora", לא "Mamma mia").
+  • שמות אנשים → "ג׳ני", "מייק", "מרינה", "נועם" (לא "Jenny").
+  • שמות מקומות → "סָטוּרְנְיָה", "פִּיֶנְצָה", "פירנצה",
+    "לוּקה" (לא "Saturnia", לא "Florence").
+חריג יחיד: ראשי תיבות בינלאומיים סטנדרטיים כמו FCO. אסור
+לערבב כתבים באותו משפט מעבר לכך.
+```
+
+Three pieces are doing the work:
+
+- **The categories**: the model needs to be told *which kinds*
+  of words it might leave in Latin (interjections, names of
+  people, place names) — generic "use Hebrew" doesn't catch
+  these cases because the model considers them already-localised.
+- **Worked transliterations** of the exact words in your data,
+  not invented ones. The model copies what it sees.
+- **One explicit exception** (`FCO`) so the model doesn't
+  overcorrect and try to write "אף-סי-או".
+
+Mirror the rule in the English persona too, just with the polarity
+flipped ("don't mix Hebrew script into an English reply") — the
+model is otherwise prone to throwing in a stray word in the
+"other" script when it remembers something from the system prompt.
+
 ### Typing animation
 
 Streaming text already arrives in chunks, but there's a 0.5–2 s
@@ -1567,6 +1626,34 @@ bubble during that gap looks broken. Fix:
 The same trick applies to the voice flow — drop the placeholder
 in `stopMic()` so the dots show up the moment they release the
 mic, then `outputTranscription` flows into the same bubble.
+
+### Chat bubble corners: logical, not physical
+
+Chat bubbles classically have three rounded corners and one sharp
+"tail" corner pointing toward the speaker's side. Tailwind has
+both physical (`rounded-br-md`, "bottom-right") and logical
+(`rounded-ee-md`, "end-end") classes, and the difference is
+invisible until the page flips to RTL.
+
+CSS flexbox already does the right thing with `justify-end` /
+`justify-start` — in a `dir="rtl"` parent they swap visual
+sides automatically. So the user bubble that lived on the right
+in English now sits on the LEFT in Hebrew. But its *sharp
+corner*, locked in with `rounded-br-md`, stays on the bottom-
+**right** physically — i.e. on the wrong side of the bubble.
+
+Logical radius classes fix this in one swap:
+
+| Bubble | Was (physical)   | Now (logical)     | LTR result    | RTL result   |
+| ------ | ---------------- | ----------------- | ------------- | ------------ |
+| User   | `rounded-br-md`  | `rounded-ee-md`   | bottom-right  | bottom-left  |
+| Model  | `rounded-bl-md`  | `rounded-es-md`   | bottom-left   | bottom-right |
+
+Same trick for any margin/padding that should follow the writing
+direction (`ms-*` / `me-*` instead of `ml-*` / `mr-*`). Bake the
+habit in early — chasing down physical-vs-logical bugs after the
+fact is tedious because nothing breaks loudly, it just looks a
+bit "off".
 
 ---
 
