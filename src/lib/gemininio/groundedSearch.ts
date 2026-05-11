@@ -1,8 +1,7 @@
 /**
  * One-shot Gemini `generateContent` with Google Search grounding.
- * Used only when the user explicitly enables "Web search" in the
- * chat — the Live WebSocket path stays the default for voice and
- * for normal typed chat.
+ * Used for every typed chat turn; the model decides when a search
+ * actually runs. Voice stays on the Live WebSocket (see live.ts).
  *
  * Docs: https://ai.google.dev/gemini-api/docs/google-search
  */

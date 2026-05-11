@@ -1357,20 +1357,22 @@ Fix pattern:
 5. Backdrop: `touch-none` so drags on the dimmed area do not scroll
    the page underneath.
 
-### Optional Google Search (REST, not Live)
+### Google Search on typed messages only (REST, not Live)
 
 Live `bidiGenerateContent` is the wrong place to bolt on search
-grounding for most accounts. Instead: a **Globe toggle** that only
-affects **typed** sends. When on, skip the WebSocket for that turn
-and call `v1beta/models/{gemini-2.5-flash}:generateContent` with
-`tools: [{ google_search: {} }]` and the **same** trip-grounded
-system prompt **plus** a short discipline block ("itinerary wins;
-web only for hours/prices/closures; never contradict the plan
-without saying so"). Voice/mic stays on Live without web — avoids
-half-open bidi state and makes the limitation obvious in UI copy.
+grounding for most accounts. **Every typed send** uses REST
+`generateContent` on `gemini-2.5-flash` (fallback: `gemini-2.0-flash`)
+with `tools: [{ google_search: {} }]`. The API lets the **model**
+decide whether a search actually runs — the system prompt explicitly
+says: search only when fresh external facts would materially help;
+if the answer is entirely in the itinerary, answer from memory with
+no forced search. A second discipline block still says the plan wins
+if the web disagrees. **Voice/mic** stays on the Live WebSocket
+(trip-grounded only, no search tool) — one line of UI copy under the
+input bar explains the split.
 
-Try `gemini-2.5-flash` then fall back to `gemini-2.0-flash` if the
-first rejects the tool.
+There is **no user-facing toggle**; behaviour is always "search when
+the model judges it helpful."
 
 `.env.example` lives in the repo as a documentation-only file
 that teaches new clones which variables exist. Real values go in

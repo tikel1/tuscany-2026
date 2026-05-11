@@ -279,36 +279,38 @@ function digestFood(lang: Lang): string {
 /* Public: build the full system prompt for the current language       */
 /* ------------------------------------------------------------------ */
 
-/** Extra rules when the user turns on "Web search" for a typed turn.
- *  Appended to the full trip-grounded prompt so search never overrides
- *  the itinerary — only supplements it with fresh public facts. */
-const WEB_SEARCH_DISCIPLINE_EN = `WEB SEARCH MODE (this turn only — Google Search is enabled):
+/** Appended for typed REST replies (Google Search tool attached). The
+ *  model decides whether a search actually runs; these rules keep the
+ *  itinerary authoritative and stop forced "web for everything". */
+const TYPED_SEARCH_DISCIPLINE_EN = `GOOGLE SEARCH (tool attached — you choose when it helps):
 - The itinerary, dates, bases, and POIs in your system context are the
   SOURCE OF TRUTH for "our plan". Treat them as fixed unless the user
   explicitly asks to change plans.
-- Use the web ONLY for fresh or external facts the trip data cannot
-  know: opening hours, weather headlines, road closures, ticket prices,
-  whether a museum is open this week, etc.
-- If web results disagree with our plan, OUR PLAN WINS. Say so briefly
+- Invoke search ONLY when fresh or external facts would materially help
+  the answer: opening hours, weather this week, road closures, current
+  ticket prices, whether a venue is open today, etc. If the question is
+  fully answerable from the itinerary alone, answer from memory — do
+  NOT run a search just to look busy.
+- If search results disagree with our plan, OUR PLAN WINS. Say so briefly
   ("the site says X, but on our plan we're doing Y") and stick to Y.
 - Never invent bookings or changes the user did not ask for.
-- Stay concise (same 1–3 sentence discipline as always). No markdown.
-- If the question is purely about the trip as written, you may answer
-  without leaning on web — do not force a search angle.`;
+- Stay concise (same 1–3 sentence discipline as always). No markdown.`;
 
-const WEB_SEARCH_DISCIPLINE_HE = `מצב חיפוש באינטרנט (רק בתור הזה — חיפוש Google מופעל):
+const TYPED_SEARCH_DISCIPLINE_HE = `חיפוש Google (כלי מצורף — אתה בוחר מתי זה עוזר):
 - המסלול, התאריכים, הבסיסים והאטרקציות בהקשר שלך הם מקור האמת ל"התוכנית
   שלנו". התייחסו אליהם כקבועים אלא אם המשתמש מבקש במפורש לשנות.
-- השתמשו באינטרנט רק לעובדות עדכניות שהמסלול לא יכול לדעת: שעות פתיחה,
-  מזג אוויר, סגירות כבישים, מחירי כרטיסים, האם מוזיאון פתוח השבוע וכו'.
+- הפעילו חיפוש רק כשעובדות עדכניות או חיצוניות באמת ישפרו את התשובה:
+  שעות פתיחה, מזג אוויר השבוע, סגירות כבישים, מחירי כרטיסים, האם אתר
+  פתוח היום וכו'. אם אפשר לענות במלואו מהמסלול — ענו מהזיכרון בלי חיפוש
+  "למראית עין".
 - אם תוצאות רשת סותרות את התוכנית שלנו — התוכנית שלנו מנצחת. אמורו
   בקצרה ("באתר כתוב X, אבל אצלנו בתוכנית עושים Y") והמשיכו עם Y.
 - אל תמציאו הזמנות או שינויים שלא ביקשו.
-- תשובה קצרה (אותו כלל 1–3 משפטים). בלי מרקדאון.
-- אם השאלה רק על הטיול כפי שכתוב, אפשר לענות בלי להכריח זווית חיפוש.`;
+- תשובה קצרה (אותו כלל 1–3 משפטים). בלי מרקדאון.`;
 
-export function buildGroundedSystemPrompt(lang: Lang): string {
-  const extra = lang === "he" ? WEB_SEARCH_DISCIPLINE_HE : WEB_SEARCH_DISCIPLINE_EN;
+/** System prompt for typed messages: full trip context + search discipline. */
+export function buildTypedReplySystemPrompt(lang: Lang): string {
+  const extra = lang === "he" ? TYPED_SEARCH_DISCIPLINE_HE : TYPED_SEARCH_DISCIPLINE_EN;
   return `${buildSystemPrompt(lang)}\n\n${extra}`;
 }
 

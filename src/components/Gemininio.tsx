@@ -11,14 +11,13 @@ import {
   Loader2,
   MessageCircle,
   Volume2,
-  VolumeX,
-  Globe
+  VolumeX
 } from "lucide-react";
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { LiveSession } from "../lib/gemininio/live";
 import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
-import { buildSystemPrompt, buildGroundedSystemPrompt } from "../lib/gemininio/persona";
+import { buildSystemPrompt, buildTypedReplySystemPrompt } from "../lib/gemininio/persona";
 import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
 import {
   getApiKey,
@@ -40,8 +39,9 @@ import {
  * - Static SPA on GitHub Pages → no backend, so no shared API key.
  * - Each user pastes their own free Gemini key once; saved in
  *   localStorage on their device only.
- * - Browser opens a WebSocket directly to the Gemini Live API,
- *   streaming 16 kHz PCM mic audio up and 24 kHz PCM voice down.
+ * - Typed messages use REST generateContent + Google Search (model
+ *   chooses when to search); voice opens a WebSocket to Gemini Live,
+ *   streaming 16 kHz PCM mic up and 24 kHz PCM voice down.
  * - System prompt rebuilt from the live trip data so any itinerary
  *   edit is immediately known to Gemininio.
  *
@@ -90,16 +90,6 @@ export default function Gemininio() {
       return false;
     }
   });
-  /** Typed messages only — uses REST + Google Search; Live/voice stays trip-only. */
-  const [webSearchEnabled, setWebSearchEnabled] = useState<boolean>(() => {
-    try {
-      return typeof localStorage !== "undefined" &&
-        localStorage.getItem("gem-web-search") === "true";
-    } catch {
-      return false;
-    }
-  });
-
   /* ---------------- refs ---------------- */
 
   const sessionRef = useRef<LiveSession | null>(null);
@@ -131,14 +121,6 @@ export default function Gemininio() {
       /* private mode etc. — silent */
     }
   }, [audioEnabled]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("gem-web-search", String(webSearchEnabled));
-    } catch {
-      /* ignore */
-    }
-  }, [webSearchEnabled]);
 
   // Auto-scroll the message list when something new lands.
   useEffect(() => {
@@ -334,55 +316,48 @@ export default function Gemininio() {
     setStatus("thinking");
     setError(null);
 
-    if (webSearchEnabled) {
-      const apiKey = getApiKey();
-      if (!apiKey) {
-        setStatus("needs-key");
-        setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
-        return;
-      }
-      try {
-        const sys = buildGroundedSystemPrompt(lang);
-        const reply = await generateGroundedReply({
-          apiKey,
-          systemInstruction: sys,
-          userMessage: trimmed
-        });
-        setMessages(ms => {
-          const next = [...ms];
-          const last = next[next.length - 1];
-          if (last?.role === "model" && last.streaming) {
-            next[next.length - 1] = { ...last, text: reply, streaming: false };
-          }
-          return next;
-        });
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        setMessages(ms => {
-          const next = [...ms];
-          const last = next[next.length - 1];
-          if (last?.role === "model" && last.streaming) {
-            next[next.length - 1] = {
-              ...last,
-              text: `${t("gem_web_failed")}${msg}`,
-              streaming: false
-            };
-          }
-          return next;
-        });
-      }
-      setStatus("ready");
-      return;
-    }
-
-    const s = await ensureSession();
-    if (!s) {
-      // Connection failed — strip the placeholder back out so the
-      // user isn't left staring at perpetually-bouncing dots.
+    /* Typed chat always uses REST generateContent + Google Search tool.
+     * The API lets the model decide when a search actually runs — we
+     * never expose a toggle; discipline in buildTypedReplySystemPrompt
+     * keeps the itinerary as source of truth. Live WebSocket is only
+     * for voice (see startMic / onText from Live). */
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      setStatus("needs-key");
       setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
       return;
     }
-    s.sendText(trimmed);
+    try {
+      const sys = buildTypedReplySystemPrompt(lang);
+      const reply = await generateGroundedReply({
+        apiKey,
+        systemInstruction: sys,
+        userMessage: trimmed
+      });
+      setMessages(ms => {
+        const next = [...ms];
+        const last = next[next.length - 1];
+        if (last?.role === "model" && last.streaming) {
+          next[next.length - 1] = { ...last, text: reply, streaming: false };
+        }
+        return next;
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setMessages(ms => {
+        const next = [...ms];
+        const last = next[next.length - 1];
+        if (last?.role === "model" && last.streaming) {
+          next[next.length - 1] = {
+            ...last,
+            text: `${t("gem_typed_failed")}${msg}`,
+            streaming: false
+          };
+        }
+        return next;
+      });
+    }
+    setStatus("ready");
   }
 
   async function startMic() {
@@ -620,8 +595,6 @@ export default function Gemininio() {
                     onSend={sendText}
                     onMicDown={startMic}
                     onMicUp={stopMic}
-                    webSearchEnabled={webSearchEnabled}
-                    onToggleWebSearch={() => setWebSearchEnabled(v => !v)}
                   />
                 )}
               </div>
@@ -743,9 +716,7 @@ function ChatView({
   inputRef,
   onSend,
   onMicDown,
-  onMicUp,
-  webSearchEnabled,
-  onToggleWebSearch
+  onMicUp
 }: {
   messages: Message[];
   status: ChatStatus;
@@ -757,8 +728,6 @@ function ChatView({
   onSend: () => void;
   onMicDown: () => void;
   onMicUp: () => void;
-  webSearchEnabled: boolean;
-  onToggleWebSearch: () => void;
 }) {
   const t = useT();
 
@@ -786,26 +755,10 @@ function ChatView({
       <StatusBar status={status} />
 
       <div className="shrink-0 border-t border-cream-300/70 bg-cream-50">
-        {webSearchEnabled && (
-          <p className="px-3 pt-2 pb-0 text-[10px] leading-snug text-ink-700/75 text-center">
-            {t("gem_web_voice_note")}
-          </p>
-        )}
+        <p className="px-3 pt-2 pb-0 text-[10px] leading-snug text-ink-700/75 text-center">
+          {t("gem_input_mode_note")}
+        </p>
         <div className="px-2 sm:px-3 py-3 flex items-center gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={onToggleWebSearch}
-            aria-pressed={webSearchEnabled}
-            aria-label={webSearchEnabled ? t("gem_web_search_aria_on") : t("gem_web_search_aria")}
-            title={webSearchEnabled ? t("gem_web_search_aria_on") : t("gem_web_search_aria")}
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition ${
-              webSearchEnabled
-                ? "bg-terracotta-500/20 text-terracotta-700 ring-1 ring-terracotta-500/35"
-                : "text-ink-700/70 hover:bg-cream-200"
-            }`}
-          >
-            <Globe size={18} strokeWidth={webSearchEnabled ? 2.2 : 1.7} />
-          </button>
           <input
             ref={inputRef}
             value={text}
