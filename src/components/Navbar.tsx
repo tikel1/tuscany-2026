@@ -3,7 +3,7 @@ import { useT, type DictKey } from "../lib/dict";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 // Nav order requested by the user: Plan → Places → Food → Map →
-// Neighborhood → Tips → Lists → Emergency. Services (local gas /
+// Stays → Tips → Lists → Emergency. Services (local gas /
 // supermarket) intentionally lives on the page but not in the nav.
 const links: { id: string; key: DictKey }[] = [
   { id: "trip",        key: "nav_plan" },

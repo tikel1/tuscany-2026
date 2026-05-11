@@ -1,7 +1,6 @@
 import { useCallback, useRef } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import HighlightsCarousel from "./components/HighlightsCarousel";
 import TripStats from "./components/TripStats";
 import ItinerarySection from "./components/ItinerarySection";
 import MapView from "./components/MapView";
@@ -54,14 +53,6 @@ export default function App() {
 
       <SectionOrnament />
       <MapView registerFocus={registerFocus} />
-
-      {/* "In this issue" teaser — a curated peek at the trip's highlights
-          right before we open the full attractions catalog. */}
-      <section className="relative py-14 sm:py-20 bg-cream-100/40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <HighlightsCarousel />
-        </div>
-      </section>
 
       <SectionOrnament />
       <AttractionsGrid />

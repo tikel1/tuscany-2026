@@ -59,7 +59,7 @@ export const DICT = {
   nav_map: { en: "Map", he: "מפה" },
   // The two stays — Larciano & Cortevecchia — are the trip's two
   // "neighborhoods", which is what we surface in the nav.
-  nav_stays: { en: "Neighborhood", he: "שכונה" },
+  nav_stays: { en: "Stays", he: "לינות" },
   nav_attractions: { en: "Places", he: "מקומות" },
   // Services (gas / supermarket / nearby restaurants) is no longer in
   // the nav, but the section still lives on the page; keeping a clean
@@ -226,12 +226,7 @@ export const DICT = {
   stay_warnings: { en: "Worth knowing", he: "כדאי לדעת" },
   stay_open_booking: { en: "Open booking", he: "פתח הזמנה" },
 
-  /* ---------- Highlights / TripStats ---------- */
-  highlights_eyebrow: { en: "In this issue", he: "בגליון הזה" },
-  highlights_title: {
-    en: "Ten moments worth flying for",
-    he: "עשרה רגעים ששווה לטוס בשבילם"
-  },
+  /* ---------- TripStats ---------- */
   trip_stats_eyebrow: { en: "By the numbers", he: "במספרים" },
   trip_stats_days: { en: "Days", he: "ימים" },
   trip_stats_chapters: { en: "Chapters", he: "פרקים" },
@@ -239,7 +234,7 @@ export const DICT = {
   trip_stats_stays: { en: "Stays", he: "לינות" },
 
   /* ---------- Attractions grid ---------- */
-  attr_eyebrow: { en: "Postcards from Tuscany", he: "גלויות מטוסקנה" },
+  attr_eyebrow: { en: "Where we'll go", he: "לאן נלך" },
   attr_title: { en: "Places we'll fall for", he: "מקומות שנתאהב בהם" },
   attr_kicker: {
     en: "Sixteen stops — water, walls, cliffs, caves, and a few good meals",
@@ -254,7 +249,7 @@ export const DICT = {
   attr_filter_nature: { en: "Nature", he: "טבע" },
 
   /* ---------- Services section ---------- */
-  services_eyebrow: { en: "The neighborhood", he: "השכונה" },
+  services_eyebrow: { en: "Around you", he: "סביבך" },
   services_title: { en: "Eat, shop, refuel", he: "אוכל, קניות, תדלוק" },
   services_kicker: {
     en: "Hand-picked spots near both bases — saves you the panic-Google",

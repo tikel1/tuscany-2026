@@ -297,7 +297,6 @@ export default function MapView({ registerFocus }: Props) {
   );
   const [showRoute, setShowRoute] = useState(true);
   const [showSpokes, setShowSpokes] = useState(true);
-  const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
 
   // Geolocation: live "you are here" dot. We use watchPosition so the
   // marker stays current as we drive around during the trip; centering
@@ -460,13 +459,12 @@ export default function MapView({ registerFocus }: Props) {
       {/* Route ribbon: legend + toggle */}
       <div className="flex items-center justify-between gap-3 mb-3 px-1 flex-wrap">
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          {/* Static legend — used to hover-highlight the matching route
+              polyline on the map, but the spotlight effect was more
+              distracting than useful. Now they're just pure legend. */}
           {ROUTE_SEGMENTS.map(seg => (
-            <button
+            <span
               key={seg.id}
-              type="button"
-              onClick={() => setHoveredSegment(s => (s === seg.id ? null : seg.id))}
-              onMouseEnter={() => setHoveredSegment(seg.id)}
-              onMouseLeave={() => setHoveredSegment(null)}
               className={`flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] font-medium transition-opacity ${
                 showRoute ? "opacity-100" : "opacity-40"
               }`}
@@ -478,7 +476,7 @@ export default function MapView({ registerFocus }: Props) {
                 }}
               />
               <span className="text-ink-800">{t(seg.dayKey)}</span>
-            </button>
+            </span>
           ))}
         </div>
         <div className="flex items-center gap-2">
@@ -545,30 +543,24 @@ export default function MapView({ registerFocus }: Props) {
               />
             ))}
 
-          {/* Route polylines */}
+          {/* Route polylines — flat styling, no hover spotlight (the
+              spotlight added more visual noise than clarity). */}
           {showRoute &&
-            ROUTE_SEGMENTS.map(seg => {
-              const isHover = hoveredSegment === seg.id;
-              const isDimmed = hoveredSegment !== null && !isHover;
-              return (
-                <Polyline
-                  key={seg.id}
-                  positions={seg.coords}
-                  pathOptions={{
-                    color: seg.color,
-                    weight: isHover ? 6 : 4,
-                    opacity: isDimmed ? 0.25 : isHover ? 1 : 0.85,
-                    dashArray: "10 8",
-                    lineCap: "round",
-                    lineJoin: "round"
-                  }}
-                  eventHandlers={{
-                    mouseover: () => setHoveredSegment(seg.id),
-                    mouseout: () => setHoveredSegment(null)
-                  }}
-                />
-              );
-            })}
+            ROUTE_SEGMENTS.map(seg => (
+              <Polyline
+                key={seg.id}
+                positions={seg.coords}
+                pathOptions={{
+                  color: seg.color,
+                  weight: 4,
+                  opacity: 0.85,
+                  dashArray: "10 8",
+                  lineCap: "round",
+                  lineJoin: "round"
+                }}
+                interactive={false}
+              />
+            ))}
 
           {/* "You are here" — soft pulsing blue dot. Sits above all
               other markers via Leaflet's default z-index handling. */}
@@ -667,15 +659,6 @@ export default function MapView({ registerFocus }: Props) {
         </button>
       </div>
 
-      {/* Hovered segment label */}
-      {hoveredSegment && (
-        <div className="mt-3 text-center text-[12px] sm:text-sm text-ink-700/85 font-serif italic">
-          {(() => {
-            const seg = ROUTE_SEGMENTS.find(s => s.id === hoveredSegment);
-            return seg ? t(seg.labelKey) : null;
-          })()}
-        </div>
-      )}
     </Section>
   );
 }
