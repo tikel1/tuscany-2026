@@ -7,7 +7,11 @@
  * Docs: https://ai.google.dev/gemini-api/docs/google-search
  */
 
+import type { ChatTurn } from "./chatHistory";
+
 const MODELS_TO_TRY = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
+
+const MAX_REST_HISTORY_TURNS = 40;
 
 function extractTextFromCandidate(candidate: unknown): string {
   if (!candidate || typeof candidate !== "object") return "";
@@ -31,6 +35,8 @@ export interface GroundedReplyParams {
   signal?: AbortSignal;
   /** When true, attach `google_search` so the model may query the web. */
   useGoogleSearch?: boolean;
+  /** Prior completed turns (same chat). Current `userMessage` is appended last. */
+  history?: ChatTurn[];
 }
 
 /**
@@ -41,11 +47,20 @@ export async function generateGroundedReply(params: GroundedReplyParams): Promis
   const useSearch = params.useGoogleSearch === true;
   let lastErr = "No model accepted the request.";
 
+  const prior = (params.history ?? []).slice(-MAX_REST_HISTORY_TURNS);
+  const contents: Array<{ role: string; parts: { text: string }[] }> = prior.map(
+    m => ({ role: m.role, parts: [{ text: m.text }] })
+  );
+  contents.push({
+    role: "user",
+    parts: [{ text: params.userMessage }]
+  });
+
   for (const model of MODELS_TO_TRY) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(params.apiKey)}`;
     const body: Record<string, unknown> = {
       systemInstruction: { parts: [{ text: params.systemInstruction }] },
-      contents: [{ role: "user", parts: [{ text: params.userMessage }] }],
+      contents,
       generationConfig: {
         temperature: 0.45,
         maxOutputTokens: 1200

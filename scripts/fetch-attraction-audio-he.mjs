@@ -1,33 +1,58 @@
 // Pre-generate Hebrew narration for each attraction (matches Hebrew UI copy
 // in src/data/i18n/attractions.he.ts). Writes public/audio/attractions/<id>.he.mp3
 //
-// Hebrew is not in eleven_multilingual_v2 — this script uses eleven_v3 by default.
-// Override voice/model with env if needed:
-//   ELEVEN_HE_VOICE_ID, ELEVEN_HE_MODEL
+// **Default: Google Cloud Text-to-Speech** (Chirp 3 HD, Hebrew). Optional
+// `--elevenlabs` or `ATTRACTION_HE_TTS=elevenlabs` + `ELEVEN_API_KEY` for legacy.
 //
-//   $env:ELEVEN_API_KEY = "sk_…"; node scripts/fetch-attraction-audio-he.mjs
-// Add `--force` to overwrite existing files.
+// Google: enable Cloud Text-to-Speech API; `gcloud auth application-default login`
+// or `GOOGLE_APPLICATION_CREDENTIALS` (see `.env.local` — loaded automatically).
+// Voice: `GOOGLE_TTS_ATTRACTION_HE_VOICE` (full name) or falls back to
+// `GOOGLE_TTS_VOICE_HE`, else `he-IL-Chirp3-HD-Despina`. Pace:
+// `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` (default `1`).
+//
+//   node scripts/fetch-attraction-audio-he.mjs
+//   node scripts/fetch-attraction-audio-he.mjs --force
+//   node scripts/fetch-attraction-audio-he.mjs --elevenlabs --force
 
-import { readFile, writeFile, mkdir, access } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
+import { readFile, writeFile, mkdir, access, rm } from "node:fs/promises";
+import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { randomUUID } from "node:crypto";
+import {
+  getGoogleAccessToken,
+  googleSynthesizeToMp3Buffer,
+  loadProjectEnvLocal
+} from "./lib/google-tts.mjs";
+
+const execFileP = promisify(execFile);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const SOURCE_FILE = resolve(REPO_ROOT, "src", "data", "i18n", "attractions.he.ts");
 const OUT_DIR = resolve(REPO_ROOT, "public", "audio", "attractions");
 
-/** Default: Rachel — works with eleven_v3 for many locales; override with ELEVEN_HE_VOICE_ID. */
-const VOICE_ID = process.env.ELEVEN_HE_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
-const MODEL_ID = process.env.ELEVEN_HE_MODEL || "eleven_v3";
-const OUTPUT_FORMAT = "mp3_44100_128";
+const ELEVEN_OUTPUT_FORMAT = "mp3_44100_128";
 
-const VOICE_SETTINGS = {
-  stability: 0.5,
-  similarity_boost: 0.82,
-  style: 0.25,
-  use_speaker_boost: true
-};
+function useElevenLabs() {
+  return process.argv.includes("--elevenlabs") || process.env.ATTRACTION_HE_TTS === "elevenlabs";
+}
+
+function hebrewAttractionGoogleVoiceName() {
+  const explicit =
+    process.env.GOOGLE_TTS_ATTRACTION_HE_VOICE?.trim() || process.env.GOOGLE_TTS_VOICE_HE?.trim();
+  if (explicit) return explicit;
+  const stem = process.env.GOOGLE_TTS_HEBREW_VOICE_STEM || "Despina";
+  return `he-IL-Chirp3-HD-${stem}`;
+}
+
+function attractionGoogleSpeakingRate() {
+  const raw = process.env.GOOGLE_TTS_ATTRACTION_SPEAKING_RATE;
+  if (raw === undefined || raw === "") return 1;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 1;
+}
 
 async function readAttractionsHe() {
   const src = (await readFile(SOURCE_FILE, "utf8")).replace(/\r\n/g, "\n");
@@ -45,8 +70,10 @@ async function readAttractionsHe() {
   return items;
 }
 
-async function synthesize(apiKey, text) {
-  const url = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}?output_format=${OUTPUT_FORMAT}`;
+async function elevenSynthesize(apiKey, text) {
+  const voiceId = process.env.ELEVEN_HE_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
+  const modelId = process.env.ELEVEN_HE_MODEL || "eleven_v3";
+  const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=${ELEVEN_OUTPUT_FORMAT}`;
   const res = await fetch(url, {
     method: "POST",
     headers: {
@@ -55,8 +82,13 @@ async function synthesize(apiKey, text) {
     },
     body: JSON.stringify({
       text,
-      model_id: MODEL_ID,
-      voice_settings: VOICE_SETTINGS
+      model_id: modelId,
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.82,
+        style: 0.25,
+        use_speaker_boost: true
+      }
     })
   });
   if (!res.ok) {
@@ -73,6 +105,24 @@ async function synthesize(apiKey, text) {
   return buffer;
 }
 
+/** Re-encode to 44.1 kHz stereo 128k to match English attraction clips. */
+async function normalizeMp3ToAttractionStandard(rawMp3Path, outPath) {
+  await execFileP("ffmpeg", [
+    "-y",
+    "-i",
+    rawMp3Path,
+    "-c:a",
+    "libmp3lame",
+    "-ar",
+    "44100",
+    "-ac",
+    "2",
+    "-b:a",
+    "128k",
+    outPath
+  ]);
+}
+
 async function fileExists(path) {
   try {
     await access(path);
@@ -83,37 +133,77 @@ async function fileExists(path) {
 }
 
 async function main() {
-  const apiKey = process.env.ELEVEN_API_KEY;
-  if (!apiKey) {
-    console.error("Missing ELEVEN_API_KEY env var.");
+  await loadProjectEnvLocal(REPO_ROOT);
+  const force = process.argv.includes("--force");
+  const eleven = useElevenLabs();
+
+  let googleToken = null;
+  let elevenKey = null;
+  if (eleven) {
+    elevenKey = process.env.ELEVEN_API_KEY?.trim();
+    if (!elevenKey) {
+      console.error("ElevenLabs mode: set ELEVEN_API_KEY (or .env.local).");
+      process.exit(1);
+    }
+    console.log(
+      `TTS: ElevenLabs | model=${process.env.ELEVEN_HE_MODEL || "eleven_v3"} | voice=${process.env.ELEVEN_HE_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"}`
+    );
+  } else {
+    googleToken = await getGoogleAccessToken();
+    console.log(`TTS: Google Chirp 3 HD | HE voice=${hebrewAttractionGoogleVoiceName()}`);
+  }
+
+  try {
+    await execFileP("ffmpeg", ["-version"]);
+  } catch {
+    console.error("ffmpeg is required on PATH (normalize MP3 output).");
     process.exit(1);
   }
-  const force = process.argv.includes("--force");
 
   await mkdir(OUT_DIR, { recursive: true });
   const items = await readAttractionsHe();
   console.log(`Found ${items.length} Hebrew attraction entries in attractions.he.ts`);
-  console.log(`Using model ${MODEL_ID}, voice ${VOICE_ID}`);
 
   let generated = 0;
   let skipped = 0;
 
-  for (const { id, description } of items) {
-    const outPath = resolve(OUT_DIR, `${id}.he.mp3`);
-    if (!force && (await fileExists(outPath))) {
-      console.log(`  skip   ${id}.he.mp3 (exists)`);
-      skipped++;
-      continue;
+  const tmpDir = resolve(OUT_DIR, ".tmp-tts-he");
+  await mkdir(tmpDir, { recursive: true });
+
+  try {
+    for (const { id, description } of items) {
+      const outPath = resolve(OUT_DIR, `${id}.he.mp3`);
+      if (!force && (await fileExists(outPath))) {
+        console.log(`  skip   ${id}.he.mp3 (exists)`);
+        skipped++;
+        continue;
+      }
+      console.log(`  fetch  ${id}.he.mp3  (${description.length} chars)`);
+      try {
+        if (eleven) {
+          const mp3 = await elevenSynthesize(elevenKey, description);
+          await writeFile(outPath, mp3);
+        } else {
+          const voiceName = hebrewAttractionGoogleVoiceName();
+          const rawBuf = await googleSynthesizeToMp3Buffer(
+            googleToken,
+            { languageCode: "he-IL", name: voiceName },
+            description,
+            { speakingRate: attractionGoogleSpeakingRate() }
+          );
+          const rawPath = join(tmpDir, `raw-${id}-${randomUUID()}.mp3`);
+          await writeFile(rawPath, rawBuf);
+          await normalizeMp3ToAttractionStandard(rawPath, outPath);
+          await rm(rawPath, { force: true });
+        }
+        generated++;
+        await new Promise(r => setTimeout(r, eleven ? 320 : 150));
+      } catch (e) {
+        console.error(`  FAIL   ${id}.he.mp3 — ${e.message}`);
+      }
     }
-    console.log(`  fetch  ${id}.he.mp3  (${description.length} chars)`);
-    try {
-      const mp3 = await synthesize(apiKey, description);
-      await writeFile(outPath, mp3);
-      generated++;
-      await new Promise(r => setTimeout(r, 300));
-    } catch (e) {
-      console.error(`  FAIL   ${id}.he.mp3 — ${e.message}`);
-    }
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
   }
 
   console.log(`\nDone. Generated ${generated}, skipped ${skipped}.`);

@@ -35,6 +35,8 @@ import {
   hasUserOverride,
   type PersistedMessage
 } from "../lib/gemininio/storage";
+import { logGemError } from "../lib/gemininio/logUserFacingError";
+import { completedTurnsForApi, type ChatTurn } from "../lib/gemininio/chatHistory";
 
 /**
  * Gemininio — the AI tour-guide chat. A floating button on every
@@ -81,6 +83,9 @@ export default function Gemininio() {
   const [keyDraft, setKeyDraft] = useState("");
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>(() => loadHistory());
+  /** Always matches `messages` for async paths (Live connect after send). */
+  const messagesRef = useRef<Message[]>(messages);
+  messagesRef.current = messages;
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   // Audio is OFF by default — most use is read-and-tap. Live always
@@ -218,8 +223,11 @@ export default function Gemininio() {
   }
 
   /** Open or reuse a Live session. We connect lazily on first send so
-   *  opening the panel for a peek doesn't establish a socket. */
-  async function ensureSession(): Promise<LiveSession | null> {
+   *  opening the panel for a peek doesn't establish a socket.
+   *  Pass `recentTurns` as completed turns **before** the user message
+   *  you are about to `sendText` (so we do not duplicate that line in
+   *  the system block). Omit to derive from `messagesRef` (e.g. mic). */
+  async function ensureSession(recentTurns?: ChatTurn[]): Promise<LiveSession | null> {
     if (sessionRef.current?.isOpen()) return sessionRef.current;
 
     const apiKey = getApiKey();
@@ -231,10 +239,13 @@ export default function Gemininio() {
     setStatus("connecting");
     setError(null);
 
+    const turnsForPrompt =
+      recentTurns ?? completedTurnsForApi(messagesRef.current);
+
     const session = new LiveSession(
       {
         apiKey,
-        systemInstruction: buildLiveSessionSystemPrompt(lang),
+        systemInstruction: buildLiveSessionSystemPrompt(lang, turnsForPrompt),
         language: lang
         // Sessions are always AUDIO modality on the wire (Live's
         // TEXT modality is currently broken across every model on
@@ -299,7 +310,8 @@ export default function Gemininio() {
           setStatus("ready");
         },
         onError: msg => {
-          setError(msg);
+          const code = logGemError("live:onError", new Error(msg));
+          setError(t("gem_error_occurred", { code }));
           setStatus("error");
           // Strip any in-flight empty placeholder so the user isn't
           // staring at typing dots that will never resolve.
@@ -319,7 +331,8 @@ export default function Gemininio() {
       setStatus("ready");
       return session;
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const code = logGemError("live:connect", e);
+      setError(t("gem_error_occurred", { code }));
       setStatus("error");
       return null;
     }
@@ -333,6 +346,7 @@ export default function Gemininio() {
   async function submitTypedUserMessage() {
     const trimmed = text.trim();
     if (!trimmed) return;
+    const priorForApi = completedTurnsForApi(messages);
     setText("");
     setMessages(ms => [
       ...ms,
@@ -358,7 +372,7 @@ export default function Gemininio() {
       } catch {
         /* still try Live */
       }
-      const s = await ensureSession();
+      const s = await ensureSession(priorForApi);
       if (!s) {
         setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
         return;
@@ -376,7 +390,8 @@ export default function Gemininio() {
         apiKey,
         systemInstruction: sys,
         userMessage: trimmed,
-        useGoogleSearch
+        useGoogleSearch,
+        history: priorForApi
       });
       setMessages(ms => {
         const next = [...ms];
@@ -387,14 +402,14 @@ export default function Gemininio() {
         return next;
       });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const code = logGemError("typed:rest", e);
       setMessages(ms => {
         const next = [...ms];
         const last = next[next.length - 1];
         if (last?.role === "model" && last.streaming) {
           next[next.length - 1] = {
             ...last,
-            text: `${t("gem_typed_failed")}${msg}`,
+            text: t("gem_error_occurred", { code }),
             streaming: false
           };
         }
@@ -409,6 +424,10 @@ export default function Gemininio() {
   }
 
   function toggleWebSearch() {
+    // Drop Live so the next globe-off connect rebuilds setup with a
+    // transcript that includes anything said on the REST path.
+    sessionRef.current?.close();
+    sessionRef.current = null;
     setWebSearchEnabled(v => !v);
   }
 
@@ -423,13 +442,8 @@ export default function Gemininio() {
       transcriptRef.current = "";
       setStatus("listening");
     } catch (e) {
-      const m = e instanceof Error ? e.message : String(e);
-      // Heuristic: NotAllowedError → permission blocked.
-      if (m.toLowerCase().includes("not allow") || m.toLowerCase().includes("denied")) {
-        setError(t("gem_error_mic"));
-      } else {
-        setError(m);
-      }
+      const code = logGemError("mic:start", e);
+      setError(t("gem_error_occurred", { code }));
       setStatus("error");
     }
   }
@@ -828,7 +842,7 @@ function ChatView({
         )}
       </div>
 
-      <StatusBar status={status} />
+      <StatusBar status={status} errorDetail={error} />
 
       <div className="shrink-0 border-t border-cream-300/70 bg-cream-50">
         <p className="px-3 pt-2 pb-0 text-[10px] leading-snug text-ink-700/75 text-center">
@@ -966,7 +980,13 @@ function BlinkingCaret() {
   );
 }
 
-function StatusBar({ status }: { status: ChatStatus }) {
+function StatusBar({
+  status,
+  errorDetail
+}: {
+  status: ChatStatus;
+  errorDetail: string | null;
+}) {
   const t = useT();
   let label: string | null = null;
   let icon: React.ReactNode = null;
@@ -989,7 +1009,8 @@ function StatusBar({ status }: { status: ChatStatus }) {
       icon = <Sparkles size={12} className="text-terracotta-500" />;
       break;
     case "error":
-      label = t("gem_error_generic");
+      label =
+        errorDetail?.trim() ? errorDetail : t("gem_error_generic");
       break;
     default:
       return null;

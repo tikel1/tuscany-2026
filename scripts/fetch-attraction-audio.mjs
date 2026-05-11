@@ -3,7 +3,7 @@
 // resulting MP3s into public/audio/attractions/<id>.mp3.
 //
 // Hebrew UI uses separate clips: run `npm run tts:attractions-he` to build
-// `<id>.he.mp3` from `src/data/i18n/attractions.he.ts` (eleven_v3).
+// `<id>.he.mp3` from `src/data/i18n/attractions.he.ts` (Google Chirp 3 HD by default).
 //
 // Why pre-generate instead of calling at runtime?
 //   1. The site is a static SPA on GitHub Pages — there's no backend,

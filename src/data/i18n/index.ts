@@ -74,13 +74,16 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
       ? d.gear.map((g, i) => ({ ...g, item: he.gear?.[i] ?? g.item }))
       : d.gear;
 
-  /* Italian word of the day: keep `word` and `example` as the original
-     Italian, but let HE override the human-readable bits (pronunciation
-     in Hebrew letters, meaning, example translation). */
-  const localizedWord =
-    d.wordOfTheDay && he.wordOfTheDay
-      ? { ...d.wordOfTheDay, ...stripUndefined(he.wordOfTheDay) }
-      : d.wordOfTheDay;
+  /* Italian words (up to three per day): keep `word` and `example` as the
+     original Italian, but let HE override per-index (pronunciation in Hebrew
+     letters, meaning, example translation). */
+  const localizedItalianWords =
+    d.italianWords && he.italianWords
+      ? d.italianWords.map((w, i) => ({
+          ...w,
+          ...stripUndefined(he.italianWords?.[i] ?? {})
+        }))
+      : d.italianWords;
 
   /* End-of-day drink: keep the proper Italian name (e.g. "Aperol Spritz",
      "Chianti Classico DOCG") and the universal `type` enum, but overlay
@@ -97,7 +100,7 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
     driveNotes: he.driveNotes,
     gear: localizedGear,
     dayTips: he.dayTips,
-    wordOfTheDay: localizedWord,
+    italianWords: localizedItalianWords,
     drinkOfTheDay: localizedDrink
   });
   if (!he.activities) return baseMerged;

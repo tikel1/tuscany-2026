@@ -411,6 +411,10 @@ export const DICT = {
     en: "Play pronunciation",
     he: "השמעת הגייה"
   },
+  word_example_chip_listen: {
+    en: "Play example (Italian, then English, then Hebrew)",
+    he: "השמעת המשפט (איטלקית, אחר כך אנגלית, ואז עברית)"
+  },
   daytips_eyebrow: { en: "Notes for the day", he: "הערות ליום" },
   daytips_title: { en: "Good to know", he: "טוב לדעת" },
   daytips_kicker: {

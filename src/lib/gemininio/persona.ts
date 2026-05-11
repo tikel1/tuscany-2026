@@ -14,6 +14,7 @@ import { wineries } from "../../data/wineries";
 
 import { localizeDay, localizePoi, localizeStay, localizeService, localizeDish, localizeWinery } from "../../data/i18n";
 import type { Lang } from "../i18n";
+import { formatRecentChatBlock, type ChatTurn } from "./chatHistory";
 
 /* ------------------------------------------------------------------ */
 /* Trip facts (kept here so the persona can quote them precisely)      */
@@ -225,8 +226,15 @@ function digestItinerary(lang: Lang): string {
         (acts ? `    Activities:\n${acts}\n` : "") +
         (d.driveNotes ? `    Drive: ${d.driveNotes}\n` : "") +
         (d.drinkOfTheDay ? `    Drink of the day: ${d.drinkOfTheDay.name} (${d.drinkOfTheDay.type})\n` : "") +
-        (d.wordOfTheDay
-          ? `    Italian word: "${d.wordOfTheDay.word}" — "${d.wordOfTheDay.meaning}"\n`
+        (d.italianWords?.length
+          ? d.italianWords
+              .map(
+                (w, i) =>
+                  `    Italian word ${i + 1}: "${w.word}" — "${w.meaning}"` +
+                  (w.example ? ` (e.g. ${w.example})` : "") +
+                  "\n"
+              )
+              .join("")
           : "")
     );
   }
@@ -321,8 +329,18 @@ const LIVE_CHANNEL_NO_WEB_SEARCH = `THIS LIVE WEBSOCKET (you receive both stream
 - If a question truly needs live web facts (today's opening hours, current weather, is this venue open right now), say briefly that you cannot browse the web from here, give the best answer you can from the plan, and suggest they turn ON the web search toggle (globe, left of the text field), then send the same question again — that uses REST with Google Search (text-only reply for that path).
 - Otherwise follow every persona rule as usual (brevity, reply language matches the user, thick Italian delivery on audio, etc.).`;
 
-export function buildLiveSessionSystemPrompt(lang: Lang): string {
-  return `${buildSystemPrompt(lang)}\n\n${LIVE_CHANNEL_NO_WEB_SEARCH}`;
+const LIVE_RECENT_CHAT_NOTE = `RECENT CONVERSATION (true on-device transcript for continuity):
+- Treat every line below as something you already said or the user already asked in this chat. Stay consistent; do not contradict unless you briefly correct a mistake.
+- The user's latest message still arrives on the wire separately — answer that message; do not assume it is duplicated inside this block unless you see it here too.`;
+
+export function buildLiveSessionSystemPrompt(
+  lang: Lang,
+  recentTurns?: ChatTurn[]
+): string {
+  const base = `${buildSystemPrompt(lang)}\n\n${LIVE_CHANNEL_NO_WEB_SEARCH}`;
+  if (!recentTurns?.length) return base;
+  const block = formatRecentChatBlock(recentTurns);
+  return `${base}\n\n${LIVE_RECENT_CHAT_NOTE}\n${block}`;
 }
 
 export function buildSystemPrompt(lang: Lang): string {

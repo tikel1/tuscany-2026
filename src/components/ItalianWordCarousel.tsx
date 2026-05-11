@@ -41,11 +41,23 @@ export default function ItalianWordCarousel({
     () => `italian-words/day-${padDay(dayNumber)}-${slideIdx}`,
     [dayNumber, slideIdx]
   );
+  const exampleAssetPath = useMemo(
+    () => `italian-words/day-${padDay(dayNumber)}-${slideIdx}-ex`,
+    [dayNumber, slideIdx]
+  );
   const url = resolveAudioUrl({ audioAssetPath: assetPath });
   const markIndexRef = useRef(0);
   const { state, toggle } = usePageAudio(url, {
     onEnded: () => markItalianWordHeard(dayNumber, markIndexRef.current)
   });
+
+  const exampleUrlForSlide = useMemo(() => {
+    const w0 = words[slideIdx];
+    if (!w0?.example || !w0.exampleMeaning) return null;
+    return resolveAudioUrl({ audioAssetPath: exampleAssetPath });
+  }, [words, slideIdx, exampleAssetPath]);
+
+  const { state: exState, toggle: exToggle } = usePageAudio(exampleUrlForSlide);
 
   const w = words[slideIdx];
   if (!w || count === 0) return null;
@@ -135,8 +147,38 @@ export default function ItalianWordCarousel({
 
                 {w.example && (
                   <div className="mt-5 pt-5 border-t border-cream-300/60 flex-1">
-                    <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
-                      {t("word_use_label")}
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
+                        {t("word_use_label")}
+                      </div>
+                      {w.exampleMeaning && exampleUrlForSlide && (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            exToggle(e);
+                          }}
+                          dir="ltr"
+                          className={`inline-flex items-center gap-1.5 rounded-full bg-cream-50/90 px-2.5 py-1 text-left ring-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-terracotta-400/80 ${
+                            exState === "error"
+                              ? "ring-amber-400/90 text-ink-700/70"
+                              : exState === "playing"
+                                ? "ring-terracotta-400 text-ink-900 shadow-sm"
+                                : "ring-cream-300/90 text-ink-700/85 hover:ring-terracotta-300/80"
+                          }`}
+                          aria-label={t("word_example_chip_listen")}
+                          title={t("word_example_chip_listen")}
+                        >
+                          <Volume2 size={11} strokeWidth={2} className="opacity-80 shrink-0" aria-hidden />
+                          {exState === "loading" ? (
+                            <Loader2 size={11} className="animate-spin" aria-hidden />
+                          ) : exState === "playing" ? (
+                            <Pause size={11} strokeWidth={2.2} aria-hidden />
+                          ) : exState === "error" ? (
+                            <Play size={11} strokeWidth={2.2} className="opacity-40" aria-hidden />
+                          ) : null}
+                        </button>
+                      )}
                     </div>
                     <p className="mt-1.5 font-serif italic text-[16px] sm:text-[18px] text-ink-900 leading-snug">
                       “{w.example}”
@@ -146,6 +188,9 @@ export default function ItalianWordCarousel({
                         {w.exampleMeaning}
                       </p>
                     )}
+                    {exState === "error" && w.exampleMeaning && exampleUrlForSlide && (
+                      <p className="mt-1 text-[11px] text-ink-600/80">{t("listen_unavailable")}</p>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -153,6 +198,7 @@ export default function ItalianWordCarousel({
           </div>
 
           <div
+            dir="ltr"
             className="mt-5 pt-4 border-t border-cream-300/50 flex items-center justify-center gap-2 shrink-0"
             role="group"
             aria-label={t("word_carousel_n_of_m", { n: slideIdx + 1, total: count })}

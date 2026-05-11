@@ -12,10 +12,13 @@ between trips — read this top to bottom. If you're just looking for
 one pattern (the map, the itinerary, geolocation, i18n…) skip to the
 section.
 
+**Starting your next trip?** Open [§0 — AI-led onboarding](#0-next-trip-ai-led-onboarding): load this file into your assistant, paste the trip skeleton, and work the checklist in order (itinerary, stays, flights, **AI persona & party** [§15](#15-ai-assistant--persona--traveling-party), keys, deploy).
+
 ---
 
 ## Table of contents
 
+0. [Next trip: AI-led onboarding](#0-next-trip-ai-led-onboarding)
 1. [North star](#1-north-star)
 2. [Tech stack](#2-tech-stack)
 3. [Visual system](#3-visual-system)
@@ -30,12 +33,119 @@ section.
 12. [Content guidelines](#12-content-guidelines)
 13. [Mobile-first UX](#13-mobile-first-ux)
 14. [Audio narration (pre-generated TTS)](#14-audio-narration-pre-generated-tts)
-15. [AI tour guide (Gemini Live, no backend)](#15-ai-tour-guide-gemini-live-no-backend)
-16. [Routing & persistence](#16-routing--persistence)
-17. [SEO & social sharing](#17-seo--social-sharing)
-18. [Deployment (GitHub Pages)](#18-deployment-github-pages)
-19. [Common gotchas](#19-common-gotchas)
-20. [If you only do five things](#20-if-you-only-do-five-things)
+15. [AI assistant — persona & traveling party](#15-ai-assistant--persona--traveling-party)
+16. [AI tour guide — implementation (Gemini Live, no backend)](#16-ai-tour-guide--implementation-gemini-live-no-backend)
+17. [Routing & persistence](#17-routing--persistence)
+18. [SEO & social sharing](#18-seo--social-sharing)
+19. [Deployment (GitHub Pages)](#19-deployment-github-pages)
+20. [Common gotchas](#20-common-gotchas)
+21. [If you only do five things](#21-if-you-only-do-five-things)
+
+---
+
+## 0. Next trip: AI-led onboarding
+
+This section is the **fast path** for cloning the pattern to another
+destination without re-discovering every decision buried in §§1–21.
+Your workflow should be: **open this markdown in Cursor (or similar),
+say where you are going, paste the skeleton below, and let the model
+execute the checklist** — still grounded in the rest of this document
+for depth (map behaviour, hero state machine, audio pipeline, etc.).
+
+### First message you can paste (fill the brackets)
+
+Use verbatim structure so the assistant knows what to ask next.
+
+```text
+I'm building the next family vacation site using the guide at
+docs/HOW_TO_BUILD_A_VACATION_WEBSITE.md (same stack as tuscany-2026).
+
+TRIP
+- Destination / region: [e.g. Sicily, Hokkaido, Dolomites]
+- Dates (local): [YYYY-MM-DD] → [YYYY-MM-DD]
+- Travellers: [names, ages of kids if relevant]
+- Site languages: [e.g. EN primary, HE bilingual UI]
+
+LOGISTICS (as much as you have now)
+- Flights: [airports, times, record locators if useful]
+- Car / trains: [pickup & dropoff, company, caveats]
+- Stays: [property names, towns, check-in/out]
+- Hard bookings / tickets: [museums, boats, guides]
+
+TECH
+- GitHub repo slug (for Pages): [e.g. sicily-2027]
+- Install / home-screen label I want: [short string, e.g. Sicily '27]
+
+Walk me through updates in dependency order. Start with repo/Vite
+base + trip dates, then data files, i18n, dict, branding, Gemininio
+persona + keys, then deploy checks.
+```
+
+The assistant should **not** improvise away from the architecture
+here—fork the repo or scaffold the same Vite+React+Tailwind shape,
+then mutate data and copy.
+
+### Master checklist (what "done" looks like)
+
+Work top to bottom; each row depends on the ones above.
+
+| # | Area | What to touch |
+|---|------|----------------|
+| 1 | **Vite / GitHub Pages** | `vite.config.ts` → `base: '/<repo>/'` matches the repo name. Every asset path under `public/` is referenced as `./…` from HTML/JSON, never root-absolute `/…` (see §20). |
+| 2 | **Trip clock** | Trip start/end constants consumed by hero, chapter picker, stats (§5). Use **local** `YYYY-MM-DD` for "today" — never `toISOString().slice(0,10)` for itinerary keys (§20). |
+| 3 | **Typed data (source of truth)** | `src/data/types.ts` first, then English modules: `itinerary.ts`, `attractions.ts`, `stays.ts`, `services.ts`, `tips.ts`, `emergency.ts`, `checklist.ts`, optional `dishes.ts` / `wineries.ts`. |
+| 4 | **i18n overlays** | Parallel files under `src/data/i18n/` (`itinerary.he.ts`, `attractions.he.ts`, …) plus `i18n/index.ts` lookup wiring. |
+| 5 | **UI strings** | `src/lib/dict.ts` — brand, nav, sections, install copy, Gemininio strings. Grep `brand_`, `nav_`, `gem_`, `install_` in the previous trip repo as a template list. |
+| 6 | **Page composition** | `src/App.tsx` (and section components) — reorder sections to match the new trip's rhythm (§4). |
+| 7 | **Map** | Defaults: centre, zoom, bounding behaviour, country filter for "you are here" (§6, §11). |
+| 8 | **Install / PWA metadata** | `public/manifest.webmanifest` (`name`, `short_name`), `index.html` meta (`apple-mobile-web-app-title`, OG/Twitter). Short install label ≠ long `<title>` (e.g. **"Tuscany '26"** on the home-screen icon vs a longer browser-tab title). |
+| 9 | **Gemininio** | **Persona & party:** §15 (`persona.ts`). **Keys, Live, REST:** §16. `.env.local` `VITE_GEMINI_API_KEY` + GitHub Actions secret; restrict key by **HTTP referrer** in AI Studio. |
+| 10 | **Optional audio** | Pre-generated MP3s + scripts (§14) — run locally, never commit TTS secrets. |
+| 11 | **Deploy** | `.github/workflows/deploy.yml`; Pages **Source = GitHub Actions** (§19). |
+
+### Where flights, car, and paperwork belong
+
+There is no dedicated `flights.ts` in the reference project—spread
+logistics across the structures readers already open:
+
+- **Itinerary day 1 & last day** — airport ↔ car counter ↔ first/last
+  stay, realistic times, toll / ZTL notes.
+- **`tips.ts` / `checklist.ts`** — documents, insurance, "photograph
+  the rental return form" class reminders.
+- **`emergency.ts`** — roadside, consulate, insurer **phone** numbers.
+
+Tell the assistant your preference: some families want every leg in
+the day-by-day; others keep flights only in tips.
+
+### Files the coding assistant should read first
+
+| Priority | Path | Reason |
+|----------|------|--------|
+| 1 | `docs/HOW_TO_BUILD_A_VACATION_WEBSITE.md` | Full playbook (you are here). |
+| 2 | `src/data/types.ts` | Shapes for days, POIs, stays, lists. |
+| 3 | `src/App.tsx` | Section order and composition. |
+| 4 | `src/lib/gemininio/persona.ts` | Persona + traveling party + digests ([§15](#15-ai-assistant--persona--traveling-party)). |
+| 5 | `src/components/Gemininio.tsx` | Live vs REST, toggles, history ([§16](#16-ai-tour-guide--implementation-gemini-live-no-backend)). |
+
+### Optional "session script" for the AI
+
+Ask for numbered responses so you can stop between steps:
+
+1. Confirm **repo slug**, **`vite.config.ts` `base`**, and **install
+   short name** (manifest + `apple-mobile-web-app-title`).
+2. Emit a **diff-style todo** mapping your rough itinerary → concrete
+   `itinerary.ts` / `attractions.ts` edits.
+3. List every **`dict.ts` key** that still mentions the old destination
+   or family name.
+4. Rewrite **`persona.ts`** per [§15](#15-ai-assistant--persona--traveling-party),
+   then **Gemini key** setup ([§16](#16-ai-tour-guide--implementation-gemini-live-no-backend)):
+   `.env.local`, GitHub secret, referrer allow-list, send a test message.
+5. **Deploy dry-run**: `npm run build` locally, then push to `main`
+   and verify Pages + OG image URL.
+
+When something in the codebase disagrees with this guide, **the code
+wins**—but then update this markdown in the same PR so the next trip
+stays honest.
 
 ---
 
@@ -88,8 +198,9 @@ What we deliberately **didn't** add:
 - A state library (React `useState` + a small `MapFocusContext` was
   enough for ~5 cross-component interactions).
 - A router library (a tiny `useHashRoute` hook handled `#chapter/N`).
-- Service workers / PWA. (Tempting; not worth the complexity for a
-  10-day trip.)
+- A **service worker** — we still ship a **Web App Manifest** + install
+  UX (§13) for Add to Home Screen; we simply do not use a caching SW
+  layer. Add Workbox later only if offline-first becomes a requirement.
 
 ---
 
@@ -1053,13 +1164,17 @@ The site lives or dies by whether the family pins it to their home
 screen. Don't make them hunt through Safari's share menu — surface
 the prompt yourself:
 
-1. **`public/manifest.webmanifest`** — name, short_name, theme color,
-   background color, `display: "standalone"`, `start_url: "./"`,
-   `scope: "./"`, plus an icon (the SVG favicon works fine for now).
+1. **`public/manifest.webmanifest`** — `name` + **`short_name`** (these
+   are the **installed app label** on Android/desktop—pick something
+   short like **"Tuscany '26"**, not the full marketing title), theme
+   color, background color, `display: "standalone"`, `start_url: "./"`,
+   `scope: "./"`, plus **PNG** icons (`192` + `512`, `purpose: "any
+   maskable"` helps Android circular masks).
 2. **iOS-specific meta in `index.html`** — `apple-touch-icon`,
    `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`,
-   `apple-mobile-web-app-title`. iOS Safari ignores the manifest for
-   A2HS, so these are required.
+   **`apple-mobile-web-app-title`** (must mirror the short install
+   label—iOS ignores `manifest` for the home-screen name). Keep a
+   longer `<title>` / OG title for browser tabs and link previews.
 3. **`src/lib/install.ts`** — a small `useInstallPrompt` hook that:
    - Detects platform: iOS Safari, iOS non-Safari (Chrome, FB browser),
      Android Chrome, other.
@@ -1188,6 +1303,20 @@ with no key in sight.**
 4. **Commit the MP3s** alongside the code. They're tiny (~300KB
    each at 128kbps) and serve straight off GitHub Pages.
 
+**Italian “word of the day” clips** (`npm run tts:italian-words`) default to
+**Google Cloud Text-to-Speech (Chirp 3 HD)**: enable the Cloud TTS API on a
+GCP project, then use `gcloud auth application-default login` or set
+`GOOGLE_APPLICATION_CREDENTIALS` to a service-account JSON path (you can put
+that path in `.env.local`). Hebrew uses a separate Chirp 3 voice name from
+Italian/English; override with `GOOGLE_TTS_VOICE_HE` and related env vars
+documented in `scripts/fetch-italian-word-audio.mjs`. To regenerate with
+ElevenLabs instead, pass **`--elevenlabs`** (and `ELEVEN_API_KEY`).
+
+**Hebrew attraction narration** (`npm run tts:attractions-he`) uses the same
+Google Cloud setup by default (`scripts/fetch-attraction-audio-he.mjs`);
+`GOOGLE_TTS_ATTRACTION_HE_VOICE` / `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE` tune
+voice and pace. **`--elevenlabs`** switches that script back to ElevenLabs.
+
 ### Voice settings that work for narration
 
 ```json
@@ -1268,7 +1397,110 @@ That's the next step beyond static narration.
 
 ---
 
-## 15. AI tour guide (Gemini Live, no backend)
+## 15. AI assistant — persona & traveling party
+
+The difference between a **generic travel bot** and a **family guide**
+is not the API — it is the **system prompt**: role, boundaries, who
+is on the trip, and how much "colour" the model is allowed to use.
+In **tuscany-2026** almost all of that lives in one file:
+`src/lib/gemininio/persona.ts`. Wire-up (keys, WebSocket, REST,
+globe toggle) is [§16](#16-ai-tour-guide--implementation-gemini-live-no-backend);
+this section is **what to write** before you touch the socket code.
+
+### Stack the layers in this order
+
+`buildSystemPrompt(lang)` concatenates **fixed blocks** — order matters
+because models obey constraints better when related rules sit together:
+
+1. **Public persona** — `PERSONA_EN` or `PERSONA_FOR_HEBREW_RESPONSES`:
+   who the assistant is (e.g. Italian tour guide for *these* families),
+   **ABSOLUTE RULES** (1–3 sentences, no markdown, no preamble,
+   reply language follows the user's message), plus **good vs bad**
+   example replies. Keep it short; the model imitates examples more
+   reliably than adjectives.
+2. **Traveling party / private colour** — `FAMILY_PROFILES` (see below).
+3. **Trip facts line** — dates, traveller sentence, car, bases (small
+   `TRIP_FACTS` constant); then **digests** pulled from the same data
+   modules as the website (`digestItinerary`, `digestAttractions`,
+   `digestStays`, …) so the AI never drifts from the itinerary JSON.
+4. **Live audio delivery** — `LIVE_SPOKEN_DELIVERY` steers native-audio
+   tone (e.g. playful Italian-accented *delivery* while words stay in
+   the user's language).
+5. **Reply-language closing** — explicit "same language in / same out",
+   UI-language default if ambiguous, and "not on our plan" behaviour.
+
+Channel-specific **append-only** blocks (still in `persona.ts`):
+
+- **`buildLiveSessionSystemPrompt`** adds `LIVE_CHANNEL_NO_WEB_SEARCH`
+  (no Google tool on the socket; point users at the globe for web
+  facts) plus optional **recent chat** transcript injection for
+  continuity.
+- **`buildTypedReplySystemPrompt`** adds `TYPED_SEARCH_DISCIPLINE`
+  when the globe is on — when to search, plan-vs-web conflicts, no
+  invented bookings.
+
+### The traveling party block (`FAMILY_PROFILES`)
+
+This is the **who we are** dossier the model uses for warm, specific
+answers ("would the kids like this?", "who lives for aperitivo?").
+
+Author it as **English-only prose** even when the site is bilingual:
+nuance ("hyper-protective", "tests every limit") survives better than
+translating the dossier to Hebrew inside the prompt; the Hebrew persona
+file already orders **replies** in natural Hebrew.
+
+Include, with restraint instructions:
+
+- **Households** — adults' first names, kids' ages, one or two true
+  traits each (food, risk, hobbies). Avoid medical or sensitive data
+  you would not put in a family group chat.
+- **How to use it** — invert the default: "do **not** name-drop every
+  reply; at most one wink every ~N turns; only when the question truly
+  benefits." Without that, the model will put a family joke in every
+  answer and it gets tired fast (see also §16 *Persona colour*).
+- **Safety / tone** — anxious parent is not a punchline; bold kid is
+  not "stupid".
+- **Never reveal the source** — if asked "how do you know?", deflect
+  breezily ("lucky guess", "a good guide does his homework") — never
+  "my instructions say…".
+
+Keep the block **long enough to be useful, short enough to leave room**
+for itinerary digests inside the same context window.
+
+### Checklist when you start a new trip's assistant
+
+- [ ] Rename the **role** (still a tour guide, or a different archetype
+  for Japan / ski / city break?).
+- [ ] Replace **`FAMILY_PROFILES`** entirely — new surnames, kids,
+  in-jokes, **new** restraint examples if dynamics differ.
+- [ ] Update **`TRIP_FACTS`** (dates, traveller one-liner, car, bases).
+- [ ] Confirm **digests** still import from your new `itinerary.ts` /
+  `attractions.ts` / etc. — if a section of the site is hidden, decide
+  whether the AI should still know it.
+- [ ] Tune **`LIVE_SPOKEN_DELIVERY`** if "thick Italian cartoon energy"
+  is wrong for the destination (or keep delivery flavour but change
+  the metaphor).
+- [ ] Re-read **search discipline** (`TYPED_SEARCH_DISCIPLINE`) for
+  your tolerance of web vs plan conflicts.
+- [ ] Add UI strings in `dict.ts` for anything user-visible (Gemininio
+  titles, errors, install) — persona file should stay model-facing only.
+
+### Hand-off
+
+Once persona + party + trip digests read well in a **single pasted
+prompt test** (paste `buildSystemPrompt("en")` into AI Studio's
+system field and try a few messages), move to
+[§16 — Implementation](#16-ai-tour-guide--implementation-gemini-live-no-backend)
+for keys, Live vs REST, audio, and error handling.
+
+---
+
+## 16. AI tour guide — implementation (Gemini Live, no backend)
+
+Narrative design — persona, traveling party, trip digests — lives in
+[§15](#15-ai-assistant--persona--traveling-party). **This section is
+plumbing:** keys, WebSocket protocol, REST search path, audio, errors,
+and UI toggles.
 
 The chat assistant — Gemininio in this project — uses Google's
 **Gemini Live API** for bidirectional realtime audio + text. The
@@ -1357,22 +1589,37 @@ Fix pattern:
 5. Backdrop: `touch-none` so drags on the dimmed area do not scroll
    the page underneath.
 
-### Google Search on typed messages only (REST, not Live)
+### Globe: trip-only Live vs REST + Google Search
 
 Live `bidiGenerateContent` is the wrong place to bolt on search
-grounding for most accounts. **Every typed send** uses REST
-`generateContent` on `gemini-2.5-flash` (fallback: `gemini-2.0-flash`)
-with `tools: [{ google_search: {} }]`. The API lets the **model**
-decide whether a search actually runs — the system prompt explicitly
-says: search only when fresh external facts would materially help;
-if the answer is entirely in the itinerary, answer from memory with
-no forced search. A second discipline block still says the plan wins
-if the web disagrees. **Voice/mic** stays on the Live WebSocket
-(trip-grounded only, no search tool) — one line of UI copy under the
-input bar explains the split.
+grounding for most accounts, so the UI exposes a **globe toggle**
+(default **off**):
 
-There is **no user-facing toggle**; behaviour is always "search when
-the model judges it helpful."
+- **Globe OFF** — typed sends and the mic use **Gemini Live**
+  (`gemini-3.1-flash-live-preview`, fallback `gemini-2.5-flash-native-audio-latest`).
+  Trip context only; no `google_search` tool on the wire.
+- **Globe ON** — typed sends use REST `generateContent` on
+  `gemini-2.5-flash` (fallback `gemini-2.0-flash`) with optional
+  `tools: [{ google_search: {} }]`. The **model** decides whether a
+  search actually runs; the system prompt says to search only when
+  fresh external facts would materially help, and that **our plan wins**
+  if the web disagrees. Mic stays on Live (trip-grounded).
+
+**Chat continuity across toggles:** REST requests include prior
+completed turns in `contents` (`groundedSearch.ts`). Each new Live
+`setup` appends a **recent transcript block** into the system
+instruction (`chatHistory.ts` + `buildLiveSessionSystemPrompt`).
+Toggling the globe **closes** the Live socket so the next Live session
+rebuilds setup with anything that happened on the REST path—no more
+silent context loss mid-trip.
+
+### User-visible errors (family-friendly)
+
+Do **not** stream raw API or WebSocket errors into the chat bubble.
+Pattern: generate a short numeric **reference code**, `console.error`
+the real payload tagged with that code, and show a single translated
+line ("something went wrong, try later, ref #______"). Same string in
+the status bar when `status === "error"`. (`logUserFacingError.ts`.)
 
 `.env.example` lives in the repo as a documentation-only file
 that teaches new clones which variables exist. Real values go in
@@ -1438,6 +1685,9 @@ hallucinated travel-brochure prose.
 
 Build the prompt **at session-open time** so any itinerary edit
 applied since the last chat is immediately known. Don't cache it.
+Append the **recent chat transcript** into the Live system text when
+opening a new socket (see §0 / globe toggle) so reconnects stay aligned
+with the on-screen history.
 
 For an Italian-tour-guide voice:
 - Pick a warm prebuilt voice (`Charon` worked best for our taste).
@@ -1526,16 +1776,16 @@ Also: when `setupComplete` doesn't arrive and the socket closes,
 the WebSocket close event has both a `code` and a `reason`. The
 reason carries the actionable detail (*"thinking_config is not
 supported"*, *"Cannot extract voices from a non-audio request"*).
-Surface BOTH in your error message — it would have saved an hour
-of debugging the bugs above. Throwing only the code leaves you
-guessing.
+Log **code + reason + model id** verbosely for developers; keep the
+**family-facing** copy generic (see "User-visible errors" above).
 
 ### Model fallback
 
-The newest preview models (`gemini-2.5-flash-native-audio-preview-…`)
-aren't enabled on every Google account. Wrap `connect()` so a
-clean failure auto-falls-back to the stable `gemini-live-2.5-flash-preview`
-once before surfacing an error.
+`LiveSession.connect()` tries **`gemini-3.1-flash-live-preview`**
+first, then on setup failure retries once with
+**`gemini-2.5-flash-native-audio-latest`**. Do not reference retired
+Live ids (`gemini-live-2.5-flash-preview`, `gemini-2.0-flash-live-001`)
+—they return 1008 *model not found*.
 
 ### When this pattern stops working
 
@@ -1556,13 +1806,16 @@ the response stream. Out of the box you'll get bubbles like:
 > Colosseum visit represents a substantial deviation from the
 > direct route north to Larciano…
 
-Three layers of defense, all needed:
+Three layers of defense (mix and match by channel):
 
-1. **Setup-time:** `generation_config.thinking_config.thinking_budget = 0`
-   tells the server to skip thinking entirely.
-2. **Client filter:** even with the budget at 0, preview models
-   sometimes still emit parts tagged `thought: true`. Skip them
-   in the message handler.
+1. **Setup-time (REST only):** `thinking_config.thinking_budget = 0` on
+   `generateContent` can suppress thinking leakage where the API
+   accepts it. **Do not blindly send this on Gemini Live** — current
+   `gemini-3.1-flash-live-preview` setup rejected `thinking_config`
+   with a policy / 1008-style failure; Live relies on the client
+   filters below instead.
+2. **Client filter:** preview models sometimes still emit parts tagged
+   `thought: true`. Skip them in the WebSocket / REST message handler.
 3. **Don't double-source for AUDIO sessions.** When response
    modality is `AUDIO`, the canonical visible text is
    `outputTranscription` (the ASR'd version of what the voice is
@@ -1572,6 +1825,9 @@ Three layers of defense, all needed:
    - TEXT: use `modelTurn.text`, there is no `outputTranscription`.
 
 ### Persona discipline > prompt verbosity
+
+*High-level persona layering is in [§15](#15-ai-assistant--persona--traveling-party);
+below is what we learned from iteration once the plumbing existed.*
 
 The first version of Gemininio's persona was 12 paragraphs of
 "warm, knowledgeable, slightly poetic Italian guide" prose. The
@@ -1747,7 +2003,7 @@ bit "off".
 
 ---
 
-## 16. Routing & persistence
+## 17. Routing & persistence
 
 ### Hash routing
 
@@ -1772,7 +2028,7 @@ implementation; cards just call `focusOn(id)`. No prop drilling.
 
 ---
 
-## 17. SEO & social sharing
+## 18. SEO & social sharing
 
 The site is personal but you'll share the link in a family WhatsApp,
 maybe a status update. A nice link preview is worth 5 minutes:
@@ -1791,7 +2047,7 @@ so the path resolves under your GH Pages base.
 
 ---
 
-## 18. Deployment (GitHub Pages)
+## 19. Deployment (GitHub Pages)
 
 ### Vite config
 
@@ -1841,7 +2097,7 @@ In the repo settings: **Pages → Source: GitHub Actions**.
 
 ---
 
-## 19. Common gotchas
+## 20. Common gotchas
 
 A list of things that bit us so they don't bite you.
 
@@ -1933,10 +2189,14 @@ row it labels.
 
 ---
 
-## 20. If you only do five things
+## 21. If you only do five things
 
 Compressed, in priority order:
 
+0. **For trip #2+:** load [§0](#0-next-trip-ai-led-onboarding) into your
+   assistant first—paste destination, dates, flights, stays, repo slug,
+   and let it drive the checklist so you do not miss keys, `base`, or
+   manifest renames.
 1. **Real verified data on day one.** Address, opening hours, phone,
    coords, website. Lorem ipsum dies hard.
 2. **One typography pairing, one palette, one card surface.** Re-use
@@ -1950,10 +2210,11 @@ Compressed, in priority order:
    tap targets ≥ 44px, horizontal-scrolling chip rows everywhere.
 
 Everything else — i18n, deep navigation links, food & wine,
-checklists, geolocation pulses, sharing previews — adds love but
-won't decide whether the site gets used. The five above will.
+checklists, geolocation pulses, sharing previews, Gemininio ([§15](#15-ai-assistant--persona--traveling-party) + [§16](#16-ai-tour-guide--implementation-gemini-live-no-backend)) —
+adds love but won't decide whether the site gets used. Items 1–5 above will.
 
 ---
 
-*Built for the Horowitz × Racz × Kaplan family Tuscany 2026 trip.
-Steal the pattern, change the destination, have a great holiday.*
+*Born on the Horowitz × Racz × Kaplan Tuscany 2026 build; §0 exists so
+your next destination ships faster—steal the pattern, update this file
+when the code moves ahead of the prose, have a great holiday.*
