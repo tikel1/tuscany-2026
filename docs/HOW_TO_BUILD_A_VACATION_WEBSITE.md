@@ -731,6 +731,35 @@ Conditionally swap `ChevronLeft`/`ChevronRight` and `ArrowLeft`/
 const Chevron = dir === "rtl" ? ChevronLeft : ChevronRight;
 ```
 
+### Pin elements that should NOT swap fonts per language
+
+The Hebrew serif (Frank Ruhl Libre) and the Latin serif (Cormorant
+Garamond) have noticeably different tabular numerals and italic
+shapes. Most prose should swap — that's the whole point — but a few
+elements look better staying in the Latin serif regardless of
+language. The big one is **the live countdown**: when the digits
+swap to the Hebrew serif, the design loses continuity and the
+"99 : 23 : 59 : 42" stops feeling like the same component you saw
+in English. The fix is a one-line CSS utility:
+
+```css
+.font-latin-serif {
+  font-family: "Cormorant Garamond", "Georgia", ui-serif, serif;
+}
+```
+
+Apply it to the digits and separator while letting the unit labels
+(days/hrs/min/sec) translate normally:
+
+```tsx
+<DigitCell className="font-latin-serif" /> { /* numbers */ }
+<Sep      className="font-latin-serif" /> { /* the colon */ }
+<Label    className="">                   { t("countdown_days") } </Label>
+```
+
+The same trick is useful for any number-heavy chrome (clocks,
+temperature widgets, file sizes, version numbers in a footer).
+
 ### Persist the choice
 
 ```ts

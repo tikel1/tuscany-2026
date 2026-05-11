@@ -38,6 +38,16 @@ html[dir="rtl"] {
   --font-serif: "Frank Ruhl Libre", "Cormorant Garamond", "Georgia", ui-serif, serif;
 }
 
+/* Always-Latin serif. Use this on numerals and any glyphs that should
+   keep their Cormorant Garamond rendering even when the page is in
+   Hebrew (e.g. the live countdown digits — Frank Ruhl Libre's tabular
+   numerals are noticeably different and break the design's continuity
+   between EN and HE). The unit labels next to those numerals can still
+   be translated; only the digits stay Latin-serif. */
+.font-latin-serif {
+  font-family: "Cormorant Garamond", "Georgia", ui-serif, serif;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;

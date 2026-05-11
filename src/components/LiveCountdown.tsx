@@ -29,10 +29,15 @@ interface DigitCellProps {
 }
 
 function DigitCell({ value, size }: DigitCellProps) {
+  /* Numerals always render in the Latin serif (Cormorant Garamond)
+     even when the page is in Hebrew. Frank Ruhl Libre's tabular
+     numerals are visually quite different from Cormorant's, and the
+     design depends on the countdown looking the same across languages.
+     Only the unit labels (days/hrs/min/sec) below switch language. */
   const cls =
     size === "lg"
-      ? "font-serif text-5xl sm:text-7xl leading-none"
-      : "font-serif text-4xl sm:text-6xl leading-none";
+      ? "font-latin-serif text-5xl sm:text-7xl leading-none"
+      : "font-latin-serif text-4xl sm:text-6xl leading-none";
   return (
     <span className="relative inline-block overflow-hidden tabular-nums" style={{ minWidth: "1ch" }}>
       <AnimatePresence mode="popLayout" initial={false}>
@@ -86,10 +91,12 @@ function CountdownBlock({ value, label, pad, size, pulse }: BlockProps) {
 }
 
 function Sep({ size }: { size: "md" | "lg" }) {
+  /* Same reasoning as DigitCell — the colon separator stays in the
+     Latin serif so the countdown reads identically in EN and HE. */
   const cls =
     size === "lg"
-      ? "font-serif text-4xl sm:text-6xl leading-none opacity-60"
-      : "font-serif text-3xl sm:text-5xl leading-none opacity-60";
+      ? "font-latin-serif text-4xl sm:text-6xl leading-none opacity-60"
+      : "font-latin-serif text-3xl sm:text-5xl leading-none opacity-60";
   return (
     <span className={`${cls} -translate-y-1 sm:-translate-y-2 px-0.5 sm:px-1 self-start`}>:</span>
   );
