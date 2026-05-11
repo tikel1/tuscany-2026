@@ -52,6 +52,40 @@ say where you are going, paste the skeleton below, and let the model
 execute the checklist** — still grounded in the rest of this document
 for depth (map behaviour, hero state machine, audio pipeline, etc.).
 
+### Tomorrow morning execution checklist
+
+Use this as the short runbook before diving into the detailed sections:
+
+1. **Clone / fork the previous trip app** — start from the same
+   Vite + React + Tailwind repo shape unless you have a reason to
+   rebuild from scratch.
+2. **Rename the project shell** — package name, repo slug,
+   `vite.config.ts` `base`, GitHub Pages workflow, install label,
+   manifest, `<title>`, OG/Twitter metadata, and favicon/cover assets.
+3. **Replace trip identity** — destination, dates, traveler group,
+   languages, countdown labels, hero copy, and every old destination /
+   family reference found by grep.
+4. **Fill the data source of truth** — update `src/data/types.ts` only
+   if the new trip needs new fields, then work through `itinerary.ts`,
+   `attractions.ts`, `stays.ts`, `services.ts`, `tips.ts`,
+   `emergency.ts`, `checklist.ts`, and optional food / winery modules.
+5. **Add translations and UI copy** — update `src/data/i18n/*`,
+   `src/data/i18n/index.ts`, and `src/lib/dict.ts`; verify RTL layout
+   if Hebrew or another RTL language is enabled.
+6. **Refresh media** — replace photos under `public/images`, keep image
+   paths relative (`./images/...`), update credits, generate `og-cover`,
+   and optionally regenerate pre-built audio clips.
+7. **Rewrite the AI guide** — replace `src/lib/gemininio/persona.ts`
+   with the new destination persona, traveling party, trip facts, and
+   tone rules; set `.env.local` / GitHub secrets if Gemini is enabled.
+8. **Run validation locally** — `npm install` if dependencies changed,
+   then `npm run lint`, `npm run build`, and a quick mobile viewport
+   pass for hero, chapter detail, map, language switch, install prompt,
+   and chat.
+9. **Deploy and verify** — push to `main`, confirm Pages uses GitHub
+   Actions, open the production URL, test asset loading under the repo
+   base path, and check the shared-link preview image.
+
 ### First message you can paste (fill the brackets)
 
 Use verbatim structure so the assistant knows what to ask next.
@@ -100,7 +134,7 @@ Work top to bottom; each row depends on the ones above.
 | 7 | **Map** | Defaults: centre, zoom, bounding behaviour, country filter for "you are here" (§6, §11). |
 | 8 | **Install / PWA metadata** | `public/manifest.webmanifest` (`name`, `short_name`), `index.html` meta (`apple-mobile-web-app-title`, OG/Twitter). Short install label ≠ long `<title>` (e.g. **"Tuscany '26"** on the home-screen icon vs a longer browser-tab title). |
 | 9 | **Gemininio** | **Persona & party:** §15 (`persona.ts`). **Keys, Live, REST:** §16. `.env.local` `VITE_GEMINI_API_KEY` + GitHub Actions secret; restrict key by **HTTP referrer** in AI Studio. |
-| 10 | **Optional audio** | Pre-generated MP3s + scripts (§14) — run locally, never commit TTS secrets. |
+| 10 | **Optional audio** | Pre-generated MP3s + scripts (§14) — run locally, never commit TTS secrets. Scripts read **`GEMINI_API_KEY`** (no `VITE_` prefix), separate from the in-app key. |
 | 11 | **Deploy** | `.github/workflows/deploy.yml`; Pages **Source = GitHub Actions** (§19). |
 
 ### Where flights, car, and paperwork belong
@@ -484,11 +518,56 @@ back arrow, and a content order designed for **the day of**:
 5. **Mini map** — the day's stops
 6. **What to bring** — gear list (with "for X" chips that link to the
    activity below)
-7. **Good to know** — day-specific tips
-8. **Things to know** — global tips relevant to the chapter
+7. **Good to know** — a single merged section that renders the day's
+   own `dayTips` first and then any global `tips.ts` entries mapped to
+   this chapter via `src/lib/tipsForDay.ts` (see below). Use the same
+   detailed card style for both kinds so the section reads as one
+   thing, not two.
 
 Use `sessionStorage` to remember the last viewed chapter so the
 browser back-button feels natural.
+
+##### `src/lib/tipsForDay.ts` — per-chapter tip routing
+
+Global trip tips live in `src/data/tips.ts` (ZTL warnings,
+self-service fuel, water shoes, etc.) and render in the home page's
+"Tips" section. Some of those tips are situational — they only matter
+on a specific day — and you want them to surface inside that day's
+"Good to know" block on the chapter detail page rather than buried in
+the global list.
+
+A tiny mapping does the routing without duplicating data:
+
+```ts
+// src/lib/tipsForDay.ts
+const TIP_IDS_PER_DAY: Record<number, string[]> = {
+  1: ["self-service-fuel"],
+  8: ["ztl"],
+  9: ["car-return-night-before"],
+  /* days with no situational tips can be omitted or set to [] */
+};
+
+export function tipsForDay(dayNumber: number): Tip[] {
+  const ids = TIP_IDS_PER_DAY[dayNumber] ?? [];
+  return ids.map(id => tips.find(t => t.id === id)).filter(Boolean) as Tip[];
+}
+```
+
+Two rules to keep this clean:
+
+- **Don't double-source the same advice.** If `dayTips` on the day
+  already says "wear closed-toe shoes for the cave hike", do not also
+  map the global `water-shoes` tip into that chapter — readers will
+  see two near-identical bullets and assume one is wrong.
+- **The home page tips section still shows everything.** Mapping a tip
+  to a day does not remove it from the global list; it adds an entry
+  to that chapter's "Good to know". Use the global list for advice
+  that's true across the trip; use day mapping for advice with a
+  specific day attached.
+
+When you start a new trip, audit `gear`, `dayTips`, and the global
+`tips` list together for each chapter and prune duplicates before
+mapping anything new.
 
 #### Activity rows
 
@@ -1162,6 +1241,44 @@ horizontally-scrolling container with `overflow-x-auto`,
 `scrollbar-hide`, and `min-w-max` so they never wrap on narrow
 screens. Feels native.
 
+### Carousels: swipe on mobile, arrows on desktop
+
+Hero photo carousel, chapter detail carousel, and the Italian Word of
+the Day card all need horizontal swipe on phones — tapping a tiny
+arrow with your thumb feels broken when the rest of the OS is
+gesture-driven. Centralize the gesture in `src/lib/useCarouselSwipe.ts`
+so every carousel behaves the same way:
+
+```ts
+const { swipeHandlers, swipeTouchAction } = useCarouselSwipe({
+  onPrev: () => step(-1),
+  onNext: () => step(+1),
+  // Default: only active below 640px (Tailwind `sm`).
+  // Pass maxWidthPx: 767 to enable on small tablets too.
+});
+
+<article {...swipeHandlers} style={{ touchAction: swipeTouchAction }}>
+  …
+</article>
+```
+
+Three details that make it feel right and not fight the page:
+
+- **Capture-phase listeners** (`onTouchStartCapture` /
+  `onTouchEndCapture` / `onTouchCancelCapture`) so a swipe that
+  starts on a nested button or link still registers — bubble-phase
+  listeners get eaten by interactive children.
+- **Horizontal-dominance check** (`|dx| > |dy| * 1.15`) plus a
+  ~48px threshold, so vertical scroll always wins ties and tiny
+  finger jitter doesn't fire a swipe.
+- **`touch-action: pan-y`** on the swipeable element so the browser
+  still handles vertical scroll natively while we capture the
+  horizontal axis. Without this, iOS sometimes hijacks the gesture
+  and the page won't scroll while you're inside the carousel.
+
+Ship the same hook for every carousel; consistency is the whole
+point of a swipeable surface.
+
 ### Floating action buttons
 
 Two on the map (Fit-all + Locate). Always cream-on-blur, with a
@@ -1312,11 +1429,19 @@ with no key in sight.**
    - Calls the TTS endpoint with the description text.
    - Writes the MP3 to `public/audio/<topic>/<id>.mp3`.
    - Skips files that already exist unless `--force` is passed.
-3. **Run it locally**, never in CI. The API key lives in your
-   shell env (`$env:ELEVEN_API_KEY = "..."`) for the duration of
-   the run only — it never enters the repo.
+3. **Run it locally**, never in CI. API keys live in `.env.local`
+   (gitignored) or are exported into the shell for the duration of
+   the run only — they never enter the repo or the browser bundle.
 4. **Commit the MP3s** alongside the code. They're tiny (~300KB
    each at 128kbps) and serve straight off GitHub Pages.
+
+> **Heads-up — script env vars are NOT prefixed with `VITE_`.** The
+> in-app Gemini chat reads `VITE_GEMINI_API_KEY` (baked into the
+> bundle). The TTS scripts read **`GEMINI_API_KEY`** (server-side
+> only). Same key family, but the unprefixed one is what `npm run
+> tts:*` looks for. If your script fails with "missing key" when
+> `VITE_GEMINI_API_KEY` is set, that's why — set the unprefixed
+> version too. `.env.example` documents both.
 
 **Italian “word of the day” clips** (`npm run tts:italian-words`) default to
 **Gemini 3.1 Flash TTS** (`GEMINI_API_KEY` in `.env.local` or the shell — same
@@ -1410,6 +1535,32 @@ const url = `${import.meta.env.BASE_URL}audio/attractions/${id}.mp3`;
 For those you need a backend (Cloudflare Worker / Vercel Function)
 that holds the TTS key as a secret and streams audio to the client.
 That's the next step beyond static narration.
+
+### `scripts/` index
+
+A flat one-line cheat sheet so a new trip knows what's in the box
+before re-implementing anything. All scripts are local-only (run from
+your machine, never CI) and read API keys from `.env.local` or the
+shell:
+
+| Script | What it does |
+|---|---|
+| `fetch-images.mjs` | Pulls every POI/attraction image from Wikipedia / Commons / Unsplash to `public/images/`. Idempotent; skips files already on disk. |
+| `fetch-hero-images.mjs` | Same idea, scoped to the home-page hero carousel set. |
+| `fetch-food-wine-images.mjs` | Same idea, scoped to dishes + wineries. |
+| `find-hotel-images.mjs` | Helper to discover a usable lead image for each stay (interactive — you eyeball results before committing). |
+| `fetch-attraction-audio.mjs` | English narration MP3s for attractions (legacy ElevenLabs flow). |
+| `fetch-attraction-audio-he.mjs` | Hebrew narration MP3s for attractions. Defaults to Gemini Flash TTS; `--google-chirp3` or `--elevenlabs` to switch backends. |
+| `fetch-italian-word-audio.mjs` | "Word of the day" audio in IT/EN/HE per language. `--examples-only` rebuilds just the example sentence clips. |
+| `repair-italian-word-mp3.mjs` | Re-encodes a malformed MP3 in place — useful when a TTS provider returns a partially-truncated file. |
+| `smoke-test-gemini-live.mjs` | Opens a one-shot Live WebSocket against Gemini to confirm a key works before debugging the in-app flow. |
+| `lib/gemini-tts.mjs`, `lib/google-tts.mjs` | Internal helpers shared by the audio scripts; not run directly. |
+
+When porting to a new trip, the only scripts you usually run are
+`fetch-images.mjs` (after the data files are filled), then
+`fetch-italian-word-audio.mjs` and the attraction audio scripts if
+you keep the audio feature. Everything else stays in the repo for
+when you need it.
 
 ---
 
@@ -2067,16 +2218,24 @@ so the path resolves under your GH Pages base.
 
 ### Vite config
 
+The base path differs between local dev and production: GH Pages
+serves under `/<repo>/`, but `npm run dev` only opens at the root
+(`http://localhost:5173/`). Hard-coding `base: '/<repo>/'` makes the
+local dev URL 404 — the asset graph is rewritten with the repo prefix
+that doesn't exist on `localhost`. Switch on the Vite `command`:
+
 ```ts
 // vite.config.ts
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
-  base: '/your-repo-name/',
-});
+  // GH Pages needs `/your-repo-name/`; local dev uses `/` so opening
+  // http://localhost:5173/ works the way Vite users expect.
+  base: command === "serve" ? "/" : "/your-repo-name/",
+}));
 ```
 
-Without `base`, your assets resolve to `/assets/...` and 404 in
-production. With it, **all data file references must be relative**
+Without `base`, your production assets resolve to `/assets/...` and
+404 on Pages. With it, **all data file references must be relative**
 (`./images/foo.jpg`, not `/images/foo.jpg`). See gotchas below.
 
 ### Workflow
