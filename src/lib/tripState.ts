@@ -14,11 +14,40 @@ export interface CountdownParts {
 
 export type TripState =
   | { phase: "before"; daysUntil: number; countdown: CountdownParts }
-  | { phase: "during"; today: Day; tomorrow?: Day; dayIndex: number; elapsed: CountdownParts }
+  | {
+      phase: "during";
+      /** The actual calendar day we're on. */
+      today: Day;
+      /** The next calendar day, if one exists in the itinerary. */
+      tomorrow?: Day;
+      /** The day to *feature* in the hero. Same as `today` for most of
+       *  the day, but flips to `tomorrow` after 20:00 local time so the
+       *  evening view nudges the family toward the next day's plan
+       *  instead of replaying one that's already done. Falls back to
+       *  `today` on the last day of the trip (no tomorrow to show). */
+      featured: Day;
+      /** True when `featured !== today` — i.e. we've crossed the 20:00
+       *  evening cutoff and are now showing tomorrow. Hero uses this to
+       *  swap the "Today" eyebrow for "Tomorrow". */
+      isFeaturingTomorrow: boolean;
+      dayIndex: number;
+      elapsed: CountdownParts;
+    }
   | { phase: "after" };
 
 function startOfDayLocal(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/** The trip is structured as 10 day-chapters, each centered on the
+ *  morning + afternoon. By 20:00 local time the day's plan is essentially
+ *  done — dinner is starting, the family is winding down — so the hero
+ *  flips from "Today" to "Tomorrow" so you wake up to the next chapter
+ *  already on screen. The local hour matches what the family experiences
+ *  on the ground (in Italy during the trip; "before"/"after" never use
+ *  this anyway). */
+function isAfterEveningCutoff(now: Date): boolean {
+  return now.getHours() >= 20;
 }
 
 export function partsFromMs(ms: number): CountdownParts {
@@ -31,14 +60,17 @@ export function partsFromMs(ms: number): CountdownParts {
 }
 
 /**
- * Returns the day number to feature by default.
- * - During the trip: today's chapter.
+ * Returns the day number to feature by default. Mirrors `state.featured`
+ * during the trip (so consumers stay in sync with the hero's 20:00
+ * evening cutoff).
+ *
+ * - During the trip: featured chapter (today, or tomorrow after 20:00).
  * - Before the trip: Day 1 (the upcoming chapter).
  * - After the trip: Day 1 (back to the start).
  */
 export function getCurrentOrUpcomingDayNumber(now: Date = new Date()): number {
   const state = getTripState(now);
-  if (state.phase === "during") return state.today.dayNumber;
+  if (state.phase === "during") return state.featured.dayNumber;
   return 1;
 }
 
@@ -57,15 +89,33 @@ export function getTripState(now: Date = new Date()): TripState {
     return { phase: "after" };
   }
 
-  const todayIso = today.toISOString().slice(0, 10);
-  const idx = itinerary.findIndex(d => d.date === todayIso);
+  /* `toISOString()` after `startOfDayLocal` returns a UTC ISO string of
+     midnight in the *local* zone — but `slice(0,10)` of the UTC ISO can
+     be off by a day for negative-UTC offsets, so build the ISO from the
+     local date parts directly. */
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, "0");
+  const d = String(today.getDate()).padStart(2, "0");
+  const todayIso = `${y}-${m}-${d}`;
+  const idx = itinerary.findIndex(day => day.date === todayIso);
   const safeIdx = idx === -1 ? 0 : idx;
   const elapsed = partsFromMs(now.getTime() - TRIP_START.getTime());
 
+  const todayDay = itinerary[safeIdx];
+  const tomorrowDay = itinerary[safeIdx + 1];
+  /* Show tomorrow once we're past the 20:00 evening cutoff, *unless*
+     it's the last day of the trip (no tomorrow exists — keep showing
+     today). */
+  const featured =
+    isAfterEveningCutoff(now) && tomorrowDay ? tomorrowDay : todayDay;
+  const isFeaturingTomorrow = featured !== todayDay;
+
   return {
     phase: "during",
-    today: itinerary[safeIdx],
-    tomorrow: itinerary[safeIdx + 1],
+    today: todayDay,
+    tomorrow: tomorrowDay,
+    featured,
+    isFeaturingTomorrow,
     dayIndex: safeIdx,
     elapsed
   };

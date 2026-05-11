@@ -17,6 +17,7 @@ import MobileBottomNav from "./components/MobileBottomNav";
 import FloatingMapButton from "./components/FloatingMapButton";
 import SectionOrnament from "./components/SectionOrnament";
 import ChapterDetailPage from "./components/ChapterDetailPage";
+import InstallPrompt from "./components/InstallPrompt";
 import { MapFocusContext } from "./lib/mapContext";
 import { useHashRoute } from "./lib/route";
 
@@ -33,7 +34,14 @@ export default function App() {
   }, []);
 
   if (route.kind === "chapter") {
-    return <ChapterDetailPage dayNumber={route.day} />;
+    return (
+      <>
+        <ChapterDetailPage dayNumber={route.day} />
+        {/* The Add-to-Home-Screen coachmark lives at the app root so it
+            shows regardless of which page the user landed on. */}
+        <InstallPrompt />
+      </>
+    );
   }
 
   return (
@@ -90,6 +98,7 @@ export default function App() {
 
       <FloatingMapButton />
       <MobileBottomNav />
+      <InstallPrompt />
     </MapFocusContext.Provider>
   );
 }

@@ -82,6 +82,14 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
       ? { ...d.wordOfTheDay, ...stripUndefined(he.wordOfTheDay) }
       : d.wordOfTheDay;
 
+  /* End-of-day drink: keep the proper Italian name (e.g. "Aperol Spritz",
+     "Chianti Classico DOCG") and the universal `type` enum, but overlay
+     the localized prose (`pairing`, optional `servingNote`). */
+  const localizedDrink =
+    d.drinkOfTheDay && he.drinkOfTheDay
+      ? { ...d.drinkOfTheDay, ...stripUndefined(he.drinkOfTheDay) }
+      : d.drinkOfTheDay;
+
   const baseMerged = mergeIfDefined(d, {
     title: he.title,
     subtitle: he.subtitle,
@@ -89,15 +97,26 @@ export function localizeDay(d: Day, lang: "en" | "he"): Day {
     driveNotes: he.driveNotes,
     gear: localizedGear,
     dayTips: he.dayTips,
-    wordOfTheDay: localizedWord
+    wordOfTheDay: localizedWord,
+    drinkOfTheDay: localizedDrink
   });
   if (!he.activities) return baseMerged;
   const activities = d.activities.map((a, i) => {
     const aHe = he.activities?.[i];
+    /* `rideToNext`: only present on activities with a meaningful drive
+       to the next stop. We overlay the HE duration / note onto the EN
+       object so the connector reads natively in either language; if the
+       EN side has no rideToNext we don't synthesize one even if HE
+       happens to have a stray entry. */
+    const localizedRide =
+      a.rideToNext && aHe?.rideToNext
+        ? { ...a.rideToNext, ...stripUndefined(aHe.rideToNext) }
+        : a.rideToNext;
     return mergeIfDefined(a, {
       time: aHe?.time,
       title: aHe?.title,
-      description: aHe?.description
+      description: aHe?.description,
+      rideToNext: localizedRide
     });
   });
   return { ...baseMerged, activities };

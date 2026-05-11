@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { getTripState, TRIP_START } from "../lib/tripState";
@@ -6,7 +6,9 @@ import type { TripState } from "../lib/tripState";
 import { formatDate } from "../lib/nav";
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
-import { useLocalizeDay } from "../data/i18n";
+import { useLocalizeDay, useLocalizePoi } from "../data/i18n";
+import { getAttraction } from "../data/attractions";
+import type { Day, POI } from "../data/types";
 import LiveCountdown from "./LiveCountdown";
 import WeatherStrip from "./WeatherStrip";
 
@@ -127,28 +129,89 @@ function useTripStateLive() {
   return state;
 }
 
-function useHeroPhoto() {
+/* Build the hero photo carousel from a single day's actual content:
+ * every attraction with a photo (in itinerary order), plus the day's
+ * explicit `leadImage` if it's not already in the set. Used during the
+ * trip so the hero shows what the family is *actually doing today /
+ * tomorrow* rather than the generic Tuscany screensavers used pre-trip. */
+function buildDayHeroPhotos(day: Day, getPoi: (p: POI) => POI): HeroPhoto[] {
+  const out: HeroPhoto[] = [];
+  const seen = new Set<string>();
+
+  for (const a of day.activities) {
+    if (!a.attractionId) continue;
+    const att = getAttraction(a.attractionId);
+    if (!att?.image || seen.has(att.image)) continue;
+    seen.add(att.image);
+    const local = getPoi(att);
+    out.push({
+      src: att.image,
+      place: local.name,
+      credit: att.imageCredit
+        ? `${att.imageCredit.author} · ${att.imageCredit.license}`
+        : "",
+      source:
+        att.imageCredit?.source ??
+        att.imageCredit?.licenseUrl ??
+        "#",
+      dayNumber: day.dayNumber
+    });
+  }
+
+  if (day.leadImage && !seen.has(day.leadImage)) {
+    seen.add(day.leadImage);
+    out.push({
+      src: day.leadImage,
+      place: day.title,
+      credit: day.leadImageCredit
+        ? `${day.leadImageCredit.author} · ${day.leadImageCredit.license}`
+        : "",
+      source:
+        day.leadImageCredit?.source ??
+        day.leadImageCredit?.licenseUrl ??
+        "#",
+      dayNumber: day.dayNumber
+    });
+  }
+
+  return out;
+}
+
+function useHeroPhoto(photos: HeroPhoto[]) {
   const [idx, setIdx] = useState(0);
 
-  // Lazy preload: keep memory low and avoid hammering the network with ~25 MB
-  // of full-resolution screensavers all at once. Strategy:
+  // The photo source can change when the trip phase shifts or the
+  // 20:00 evening cutoff flips us from today → tomorrow. Reset to the
+  // first slide whenever that happens so we don't read past the new
+  // (possibly shorter) array's bounds.
+  useEffect(() => {
+    setIdx(0);
+  }, [photos]);
+
+  // Lazy preload: keep memory low and avoid hammering the network with
+  // ~25 MB of full-resolution screensavers all at once. Strategy:
   //   - First photo loads with the page itself (no preload needed).
   //   - As soon as a photo becomes active, kick off a preload for the NEXT one
   //     so it's ready by the time we crossfade.
   useEffect(() => {
-    const next = (idx + 1) % HERO_PHOTOS.length;
+    if (photos.length === 0) return;
+    const next = (idx + 1) % photos.length;
     const img = new Image();
-    img.src = HERO_PHOTOS[next].src;
-  }, [idx]);
+    img.src = photos[next].src;
+  }, [idx, photos]);
 
   useEffect(() => {
+    if (photos.length <= 1) return;
     const id = window.setInterval(() => {
-      setIdx(i => (i + 1) % HERO_PHOTOS.length);
+      setIdx(i => (i + 1) % photos.length);
     }, PHOTO_DURATION_MS);
     return () => window.clearInterval(id);
-  }, []);
+  }, [photos]);
 
-  return { photo: HERO_PHOTOS[idx], idx };
+  // Defensive read — if `photos` was mutated to empty between renders,
+  // fall back to the first hero photo so the page never renders blank.
+  const safe = photos[idx] ?? photos[0] ?? HERO_PHOTOS[0];
+  return { photo: safe, idx };
 }
 
 function HeroBody({ state }: { state: TripState }) {
@@ -177,34 +240,40 @@ function HeroBody({ state }: { state: TripState }) {
     );
   }
   if (state.phase === "during") {
-    const today = localizeDay(state.today);
+    /* `featured` is the day to surface in the hero — same as `today`
+       most of the time, but flips to tomorrow after the 20:00 evening
+       cutoff (see tripState.ts). The eyebrow + the small label above the
+       big day-number both swap between "Today" and "Tomorrow" copy. */
+    const day = localizeDay(state.featured);
+    const leadKey = state.isFeaturingTomorrow ? "hero_tomorrow_lead" : "hero_today_lead";
+    const dayLabelKey = state.isFeaturingTomorrow ? "hero_tomorrow_day" : "hero_today_day";
     return (
       <>
         <div className="font-serif italic text-cream-50/90 text-base sm:text-lg drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-          {t("hero_today_lead")}
+          {t(leadKey)}
         </div>
         <div className="mt-4 sm:mt-6 flex items-end gap-4 sm:gap-6 justify-center">
           <div className="text-cream-50/95 text-end">
             <div className="text-[10px] uppercase tracking-[0.28em] font-medium opacity-90">
-              {t("hero_today_day")}
+              {t(dayLabelKey)}
             </div>
             <div className="font-serif text-7xl sm:text-9xl leading-none mt-1">
-              {String(today.dayNumber).padStart(2, "0")}
+              {String(day.dayNumber).padStart(2, "0")}
             </div>
           </div>
           <div className="text-cream-50/85 pb-2 sm:pb-4 text-start max-w-[55%]">
             <div className="text-[10px] uppercase tracking-[0.22em] font-medium opacity-90">
-              {t("hero_of_ten")} · {formatDate(today.date)}
+              {t("hero_of_ten")} · {formatDate(day.date)}
             </div>
             <div className="font-serif text-xl sm:text-3xl leading-tight mt-1">
-              {today.title}
+              {day.title}
             </div>
           </div>
         </div>
-        {today.activities[0] && (
+        {day.activities[0] && (
           <div className="mt-5 font-serif italic text-cream-50/85 text-sm sm:text-base max-w-md mx-auto px-2">
-            {today.activities[0].time} ·{" "}
-            {today.activities[0].title}
+            {day.activities[0].time} ·{" "}
+            {day.activities[0].title}
           </div>
         )}
       </>
@@ -225,9 +294,26 @@ function HeroBody({ state }: { state: TripState }) {
 
 export default function Hero() {
   const state = useTripStateLive();
-  const { photo, idx } = useHeroPhoto();
   const t = useT();
   const { dir } = useLang();
+  const localizePoi = useLocalizePoi();
+
+  /* Pick the carousel source per trip phase:
+   *  - "before": the curated screensaver-style HERO_PHOTOS (anticipation).
+   *  - "during": photos of the *featured* day's actual stops, so the hero
+   *    shows what the family is doing today (or tomorrow, after 20:00).
+   *    Falls back to HERO_PHOTOS if a sparse day (Day 1 land, Day 10 fly)
+   *    happens to have no attraction photos at all.
+   *  - "after":  back to HERO_PHOTOS as a memorial of all the places. */
+  const photos = useMemo<HeroPhoto[]>(() => {
+    if (state.phase === "during") {
+      const dayPhotos = buildDayHeroPhotos(state.featured, localizePoi);
+      if (dayPhotos.length > 0) return dayPhotos;
+    }
+    return HERO_PHOTOS;
+  }, [state, localizePoi]);
+
+  const { photo, idx } = useHeroPhoto(photos);
 
   return (
     <header
@@ -251,12 +337,16 @@ export default function Hero() {
         />
       </AnimatePresence>
 
-      {/* Progress dashes — bottom corner, indicate position in the carousel */}
+      {/* Progress dashes — bottom corner, indicate position in the carousel.
+          Maps over `photos` (not the global HERO_PHOTOS) so the count
+          matches whatever source the carousel is actually rendering —
+          general screensavers pre/post-trip, or the featured day's stops
+          during the trip. */}
       <div
         className={`absolute ${dir === "rtl" ? "left-4 sm:left-8" : "right-4 sm:right-8"} bottom-3 sm:bottom-5 z-10 flex gap-1 pointer-events-none`}
         aria-hidden
       >
-        {HERO_PHOTOS.map((_, i) => (
+        {photos.map((_, i) => (
           <span
             key={i}
             className={`block h-px transition-all duration-500 ${

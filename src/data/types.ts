@@ -86,6 +86,21 @@ export interface DayActivity {
   description: string;
   attractionId?: string;
   tag?: AttractionTag;
+  /** Drive time from this stop to the NEXT activity, rendered as a small
+   *  inline connector on the chapter detail page. Only set when there's a
+   *  meaningful drive between stops — skip for sub-5-minute hops or when
+   *  the next activity is at the same place. Examples: "45 min", "1 h 15".
+   *  `note` is a short hint like "via A1" or "winding mountain road". */
+  rideToNext?: { duration: string; note?: string };
+  /** When true, render this activity with an "Optional" badge and slightly
+   *  muted styling — signal to the family that the day's plan still works
+   *  if they skip this one. When undefined, the chapter page applies a
+   *  rule-of-thumb: on a day with more than 2 attractionId-bearing
+   *  activities, the 3rd-and-later ones are treated as optional (you can
+   *  realistically only fit ~2 multi-hour stops in a day with drives).
+   *  Set explicitly to `false` to opt a specific activity OUT of the
+   *  auto-rule (e.g. Day 9's Civita is always part of the plan). */
+  optional?: boolean;
 }
 
 /** A single item on the per-day pack list. `item` is the description that
@@ -115,6 +130,34 @@ export interface ItalianWord {
   exampleMeaning?: string;
 }
 
+/** Categories for the "drink of the day" closing flourish — drives the
+ *  card's icon and accent color. `other` is the catch-all for anything
+ *  exotic (grappa, vermouth, vin santo, etc.). */
+export type DrinkType =
+  | "wine"
+  | "cocktail"
+  | "beer"
+  | "aperitif"
+  | "digestif"
+  | "coffee"
+  | "other";
+
+/** An adults-only "what to pour tonight" suggestion that closes each
+ *  chapter — picked to match the day's mood and to lean into local
+ *  Tuscan / Maremmano grapes & rituals where possible. */
+export interface DayDrink {
+  /** The drink's name — "Aperol Spritz", "Chianti Classico DOCG". The
+   *  Italian / proper-noun part stays universal across languages. */
+  name: string;
+  /** Italian-friendly category — drives icon + chip color. */
+  type: DrinkType;
+  /** One or two sentences on why this drink fits this specific day. */
+  pairing: string;
+  /** Optional serving / glassware note ("tall glass with ice and an orange
+   *  slice", "served chilled, never with ice"). */
+  servingNote?: string;
+}
+
 export interface Day {
   dayNumber: number;
   date: string;
@@ -137,6 +180,14 @@ export interface Day {
   /** A small Italian word or phrase picked to fit the day — rendered as
    *  a magazine-style flashcard near the top of the chapter page. */
   wordOfTheDay?: ItalianWord;
+  /** Curated list of `Service.id` values (restaurants only) that make
+   *  sense to eat at on this day — typically the lunch spot mentioned
+   *  in an activity, plus a dinner option near base. Looked up via
+   *  `getService` and rendered in the chapter detail page. */
+  restaurants?: string[];
+  /** Adults-only "what to pour tonight" suggestion — closes the chapter
+   *  with a small drink card after the tips. */
+  drinkOfTheDay?: DayDrink;
 }
 
 /* ---------- Food & Wine ---------- */

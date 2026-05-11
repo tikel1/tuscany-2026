@@ -1,0 +1,22 @@
+{
+  "name": "Tuscany 2026 — The Horowitz × Racz × Kaplan Families",
+  "short_name": "Tuscany '26",
+  "description": "Ten days in Tuscany, north to south, 17–26 August 2026. Itinerary, map, stays and tips for the family adventure.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5EFE0",
+  "theme_color": "#C45A3D",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -20,7 +20,8 @@ export const itinerary: Day[] = [
       {
         time: "14:00",
         title: "Land at Rome Fiumicino (FCO)",
-        description: "Pick up the rental car. International driving permit required. Confirm a credit card on the driver's name."
+        description: "Pick up the rental car. International driving permit required. Confirm a credit card on the driver's name.",
+        rideToNext: { duration: "3 h 30", note: "via A1 + A11 · ≈ 280 km" }
       },
       {
         time: "Evening",
@@ -29,6 +30,13 @@ export const itinerary: Day[] = [
       }
     ],
     driveNotes: "FCO → Larciano ≈ 3 h 30 min via A1 + A11",
+    restaurants: ["rest-n-pizzeria-da-paolo"],
+    drinkOfTheDay: {
+      name: "Aperol Spritz",
+      type: "aperitif",
+      pairing: "The official 'you made it' drink of Italy. Bittersweet, low-strength, fizzy — exactly what tired travellers need on a poolside lounger before a light dinner.",
+      servingNote: "Tall glass packed with ice · 3 parts Prosecco · 2 parts Aperol · 1 splash of soda · orange wheel"
+    },
     gear: [
       { item: "Comfortable travel layers (FCO is air-conditioned, the car will be hot)" },
       { item: "Slip-on shoes for security" },
@@ -63,24 +71,37 @@ export const itinerary: Day[] = [
         title: "Canyon Park — Big SUP",
         description: "Family stand-up paddleboard through the turquoise Lima canyon. Big SUP only (the high zip line needs 140 cm).",
         attractionId: "canyon-park",
-        tag: "water"
+        tag: "water",
+        rideToNext: { duration: "10 min", note: "Bagni di Lucca → Borgo a Mozzano" }
       },
       {
         time: "Lunch",
         title: "Ponte del Diavolo photo stop",
         description: "Climb the medieval humpback bridge, tell the kids the devil legend, grab a quick lunch in Borgo a Mozzano.",
         attractionId: "ponte-del-diavolo",
-        tag: "culture"
+        tag: "culture",
+        rideToNext: { duration: "30 min", note: "winding climb to 850 m" }
       },
       {
         time: "Afternoon",
         title: "Selva del Buffardello ropes course",
         description: "Shaded forest adventure park with kid-height routes (from 100 cm) — the kids get the real ropes experience.",
         attractionId: "selva-buffardello",
-        tag: "extreme"
+        tag: "extreme",
+        // Day 2's title literally calls out "forest ropes" — the ropes
+        // course is the headline finale, not a "skip if tired" extra.
+        // Opt out of the auto-rule that would mark the 3rd attraction optional.
+        optional: false
       }
     ],
     driveNotes: "Larciano ↔ Bagni di Lucca ≈ 1 h",
+    restaurants: ["rest-n-bagni-lucca", "rest-n-osteria-larciano"],
+    drinkOfTheDay: {
+      name: "Vermentino di Toscana IGT",
+      type: "wine",
+      pairing: "After a wet morning in the canyon and a forest afternoon, this crisp white from the Tuscan coast is the perfect cool-down — citrus, sea-breeze and a flinty edge.",
+      servingNote: "Served well-chilled (8–10 °C), in a tall white-wine glass"
+    },
     gear: [
       { item: "Quick-dry swimwear under your clothes — saves a wet changing room", for: "canyon-park" },
       { item: "Closed-toe water shoes for the SUP & rocks", for: "canyon-park" },
@@ -116,17 +137,19 @@ export const itinerary: Day[] = [
         title: "Soft Rafting on the Serchio",
         description: "Family-friendly raft float — wet, splashy, plenty of jump-in stops.",
         attractionId: "soft-rafting-serchio",
-        tag: "water"
+        tag: "water",
+        rideToNext: { duration: "45 min", note: "Garfagnana → Pisa" }
       },
       {
         time: "Afternoon",
         title: "Pisa — Leaning Tower & gelato",
         description: "Park outside the walls (ZTL!), walk into Piazza dei Miracoli, take the silly photos, eat gelato, leave.",
         attractionId: "pisa",
-        tag: "culture"
+        tag: "culture",
+        rideToNext: { duration: "30 min", note: "Pisa → Lucca, mostly motorway" }
       },
       {
-        time: "Optional",
+        time: "Late afternoon",
         title: "Lucca city walls bike loop",
         description: "On the way back, rent bikes near Porta San Pietro or Piazzale Verdi and ride the 4 km tree-lined ring on top of Lucca's Renaissance walls. Flat, traffic-free, glorious in the late-afternoon light. Drop the bikes and disappear into the old town for gelato.",
         attractionId: "lucca-walls",
@@ -134,6 +157,13 @@ export const itinerary: Day[] = [
       }
     ],
     driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
+    restaurants: ["rest-n-pisa", "rest-n-osteria-larciano"],
+    drinkOfTheDay: {
+      name: "Chianti Classico DOCG",
+      type: "wine",
+      pairing: "After a day that ends in Pisa and Lucca, you owe yourself the most iconic Tuscan red — black cherry, dried herbs and that signature Sangiovese acidity that loves a wood-fired pizza.",
+      servingNote: "Served at cellar temperature (16–18 °C), opened 30 minutes before pouring"
+    },
     gear: [
       { item: "Swimwear under your clothes for the rafting", for: "soft-rafting-serchio" },
       { item: "Water shoes; dry change of clothes & towels in a sealed bag", for: "soft-rafting-serchio" },
@@ -178,10 +208,18 @@ export const itinerary: Day[] = [
       {
         time: "Afternoon",
         title: "Pine forest picnic, then home to pack",
-        description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south."
+        description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south.",
+        rideToNext: { duration: "1 h", note: "Abetone → Larciano, the long descent" }
       }
     ],
     driveNotes: "Larciano ↔ Abetone ≈ 1 h",
+    restaurants: ["rest-n-pizzeria-da-paolo", "rest-n-vinci"],
+    drinkOfTheDay: {
+      name: "Negroni",
+      type: "cocktail",
+      pairing: "Tuscany invented the Negroni in Florence — equal parts gin, Campari and sweet vermouth, bracing and bitter. The right drink after a long day at altitude and a packing-night to come.",
+      servingNote: "Old-fashioned glass · big ice cube · half-orange peel, pinched over the surface"
+    },
     gear: [
       { item: "Long sleeves & a light jacket — 12–15 °C cooler at 1,900 m", for: "abetone-monte-gomito" },
       { item: "Long trousers for the ridge walk (sunburn at altitude is real)", for: "abetone-monte-gomito" },
@@ -217,7 +255,8 @@ export const itinerary: Day[] = [
         title: "Drive south, stop at Sentierelsa",
         description: "Wade the turquoise Elsa river to the Diborrato waterfall — closed-toe water shoes mandatory.",
         attractionId: "sentierelsa",
-        tag: "water"
+        tag: "water",
+        rideToNext: { duration: "2 h 30", note: "Sentierelsa → Cortevecchia, via SS223 + SS74" }
       },
       {
         time: "Late afternoon",
@@ -226,6 +265,13 @@ export const itinerary: Day[] = [
       }
     ],
     driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min",
+    restaurants: ["rest-s-trattoria-verdi"],
+    drinkOfTheDay: {
+      name: "Vernaccia di San Gimignano DOCG",
+      type: "wine",
+      pairing: "You drove past its hills today. A crisp, mineral white with notes of green apple and almond — Tuscany's first DOC, and the perfect 'we made it south' pour after the long transfer.",
+      servingNote: "Well-chilled · the slim white-wine glass keeps the aromatics tight"
+    },
     gear: [
       { item: "Closed-toe water shoes — mandatory at Sentierelsa", for: "sentierelsa" },
       { item: "Swimwear under your clothes; quick-change towel", for: "sentierelsa" },
@@ -269,6 +315,13 @@ export const itinerary: Day[] = [
       }
     ],
     driveNotes: "Cortevecchia ↔ Porto Santo Stefano ≈ 1 h 15 min",
+    restaurants: ["rest-s-porto-santo-stefano", "rest-s-trattoria-verdi"],
+    drinkOfTheDay: {
+      name: "Limoncello",
+      type: "digestif",
+      pairing: "After a salty day on the boat, the coastal classic — chilled, citrusy and just sweet enough. Dal Greco's harbour-side terrace is the natural finish line for this one.",
+      servingNote: "Served straight from the freezer in tiny chilled glasses · sip, never shoot"
+    },
     gear: [
       { item: "Swimwear (a dry second set for the drive home)", for: "porto-santo-stefano" },
       { item: "Snorkel masks — bring your own; rentals are pricey at the marina", for: "porto-santo-stefano" },
@@ -308,6 +361,13 @@ export const itinerary: Day[] = [
       }
     ],
     driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
+    restaurants: ["rest-s-trattoria-verdi", "rest-s-i-due-cippi"],
+    drinkOfTheDay: {
+      name: "Spritz al Limone",
+      type: "aperitif",
+      pairing: "Same Spritz family as the Aperol, but built on Limoncello — sharper, brighter, exactly the recovery drink after a long day of slides and chlorine.",
+      servingNote: "Tall glass · ice · 3 parts Prosecco · 2 parts Limoncello · soda · lemon wheel"
+    },
     gear: [
       { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
       { item: "Waterproof phone case", for: "acqua-village-follonica" },
@@ -343,17 +403,19 @@ export const itinerary: Day[] = [
         title: "Horseback ride in the Maremma",
         description: "1-hour family pony / horse trail through pine forest and dunes. Cool morning slot.",
         attractionId: "maremma-horseback",
-        tag: "nature"
+        tag: "nature",
+        rideToNext: { duration: "1 h", note: "Maremma coast → Pitigliano hills" }
       },
       {
         time: "Afternoon",
         title: "Pitigliano + Via Cava di San Giuseppe",
         description: "Photograph Pitigliano from the viewpoint, walk the old Jewish quarter, then dive into the cool Etruscan rock corridors.",
         attractionId: "pitigliano",
-        tag: "culture"
+        tag: "culture",
+        rideToNext: { duration: "20 min", note: "Pitigliano → Vitozza, scenic tufa road" }
       },
       {
-        time: "Alternative",
+        time: "Late afternoon",
         title: "Vitozza cave city (wilder option)",
         description: "Swap the Vie Cave for the abandoned cave dwellings of Vitozza — bring headlamps.",
         attractionId: "vitozza",
@@ -380,6 +442,13 @@ export const itinerary: Day[] = [
       meaning: "Horse",
       example: "Un cavallo della Maremma.",
       exampleMeaning: "A Maremma horse."
+    },
+    restaurants: ["rest-s-hostaria-ceccottino", "rest-s-trattoria-sovana"],
+    drinkOfTheDay: {
+      name: "Morellino di Scansano DOCG",
+      type: "wine",
+      pairing: "The flagship red of the southern Maremma, made just up the road. Plush dark fruit, soft tannins — the right glass to finish a day of horses, tufa villages and rock-cut corridors.",
+      servingNote: "Served at 16–18 °C, in a wide Burgundy-style bowl"
     }
   },
   {
@@ -396,21 +465,27 @@ export const itinerary: Day[] = [
         title: "Saturnia — Cascate del Mulino",
         description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
         attractionId: "saturnia",
-        tag: "water"
+        tag: "water",
+        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes" }
       },
       {
         time: "Midday",
         title: "Swim in Lago di Bolsena",
         description: "Cool, clean volcanic lake — gentler than the August coast.",
         attractionId: "lago-di-bolsena",
-        tag: "water"
+        tag: "water",
+        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio" }
       },
       {
         time: "Afternoon",
         title: "Civita di Bagnoregio",
         description: "Walk the long footbridge into the 'dying city' on its tufa pedestal.",
         attractionId: "civita-di-bagnoregio",
-        tag: "culture"
+        tag: "culture",
+        // Day 9's title literally calls out "the floating city" — Civita is
+        // the headline finale, not a "skip if tired" extra. Opt it out of
+        // the auto-rule that would otherwise mark the 3rd attraction optional.
+        optional: false
       }
     ],
     gear: [
@@ -433,6 +508,13 @@ export const itinerary: Day[] = [
       meaning: "Thermal baths, hot springs",
       example: "Le terme di Saturnia all'alba.",
       exampleMeaning: "The Saturnia hot springs at dawn."
+    },
+    restaurants: ["rest-s-i-due-cippi", "rest-s-trattoria-verdi"],
+    drinkOfTheDay: {
+      name: "Bianco di Pitigliano DOC",
+      type: "wine",
+      pairing: "A local southern white from the tufa hills you've been driving through. Light, mineral, faintly almond — the right last-night pour after a sunrise in sulphur springs and an afternoon in a floating city.",
+      servingNote: "Served well-chilled (8 °C), in the everyday white-wine glass"
     }
   },
   {
@@ -480,6 +562,12 @@ export const itinerary: Day[] = [
       meaning: "Goodbye (until we meet again)",
       example: "Arrivederci, Toscana!",
       exampleMeaning: "Goodbye, Tuscany!"
+    },
+    drinkOfTheDay: {
+      name: "Espresso al banco",
+      type: "coffee",
+      pairing: "The proper Italian send-off — a single shot, standing at the airport bar, downed in three sips. The only nightcap that makes sense at 04:00 before a flight home.",
+      servingNote: "Tiny porcelain cup · drink it standing · pay €1.20 · don't ask for it 'to go'"
     }
   }
 ];

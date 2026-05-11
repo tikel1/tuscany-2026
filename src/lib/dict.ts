@@ -25,6 +25,7 @@ export const DICT = {
     he: "סופרים לאחור לקיץ בגבעות טוסקנה"
   },
   hero_today_lead: { en: "Today in Tuscany", he: "היום בטוסקנה" },
+  hero_tomorrow_lead: { en: "Tomorrow in Tuscany", he: "מחר בטוסקנה" },
   hero_after_lead: { en: "That summer in Tuscany", he: "אותו קיץ בטוסקנה" },
   hero_after_title: { en: "Buon ritorno", he: "ברוכים השבים" },
   hero_after_sub: {
@@ -48,6 +49,7 @@ export const DICT = {
     he: "קיץ איטלקי, באופק"
   },
   hero_today_day: { en: "Day", he: "יום" },
+  hero_tomorrow_day: { en: "Tomorrow", he: "מחר" },
   hero_of_ten: { en: "of ten", he: "מתוך עשרה" },
   scroll_to_plan: { en: "the plan", he: "התוכנית" },
   hero_photo_day: { en: "Day {n}", he: "יום {n}" },
@@ -378,6 +380,131 @@ export const DICT = {
   /* ---------- Floating buttons / common ---------- */
   open_map: { en: "Open the map", he: "פתח מפה" },
   open_external: { en: "Open", he: "פתח" },
+
+  /* ---------- Ride times (inline connector between activities) ---------- */
+  ride_to_next: { en: "Drive", he: "נסיעה" },
+
+  /* ---------- Restaurants for the day ---------- */
+  restaurants_eyebrow: { en: "Where to eat", he: "איפה לאכול" },
+  restaurants_title: { en: "Tonight's tables", he: "השולחנות של היום" },
+  restaurants_kicker: {
+    en: "Hand-picked spots near today's plan",
+    he: "מקומות נבחרים בקרבת היום"
+  },
+
+  /* ---------- Drink of the day (closing flourish) ---------- */
+  drink_eyebrow: { en: "After dinner", he: "אחרי ארוחת הערב" },
+  drink_title: { en: "A glass to close the day", he: "כוסית לסיום היום" },
+  drink_kicker: {
+    en: "Adults only — Tuscany pours generously",
+    he: "למבוגרים בלבד — טוסקנה מוזגת ברוחב יד"
+  },
+  drink_pairing_label: { en: "Why tonight", he: "למה הערב" },
+  drink_serving_label: { en: "Serving", he: "הגשה" },
+  drink_type_wine: { en: "Wine", he: "יין" },
+  drink_type_cocktail: { en: "Cocktail", he: "קוקטייל" },
+  drink_type_beer: { en: "Beer", he: "בירה" },
+  drink_type_aperitif: { en: "Aperitif", he: "אפריטיף" },
+  drink_type_digestif: { en: "Digestif", he: "דיג'סטיף" },
+  drink_type_coffee: { en: "Coffee", he: "קפה" },
+  drink_type_other: { en: "Drink", he: "משקה" },
+
+  /* ---------- Activity flags (rendered as small badges) ---------- */
+  optional_label: { en: "Optional", he: "לבחירה" },
+  optional_aria: {
+    en: "Optional — skip if you're tired",
+    he: "לבחירה — אפשר לדלג אם עייפים"
+  },
+
+  /* ---------- Install / Add to Home Screen ---------- */
+  install_eyebrow: { en: "Take it with you", he: "קחו אתכם" },
+  install_title_ios: {
+    en: "Save the trip to your home screen",
+    he: "שמרו את הטיול למסך הבית"
+  },
+  install_title_android: {
+    en: "Install the trip as an app",
+    he: "התקינו את הטיול כאפליקציה"
+  },
+  install_subtitle_ios: {
+    en: "Open like a real app — no app store, works offline-friendly",
+    he: "פתיחה כמו אפליקציה רגילה — בלי חנות, ידידותי גם ללא רשת"
+  },
+  install_subtitle_android: {
+    en: "One tap from your home screen, full-screen, no browser bar",
+    he: "הקשה אחת ממסך הבית, מסך מלא, בלי שורת דפדפן"
+  },
+  install_subtitle_android_fallback: {
+    en: "Add a one-tap shortcut from Chrome's menu",
+    he: "הוסיפו קיצור דרך מתפריט Chrome"
+  },
+  install_install_button: { en: "Install", he: "התקנה" },
+  install_dismiss: { en: "Maybe later", he: "אולי אחר כך" },
+  install_dont_show_again: { en: "Don't show this again", he: "אל תציגו לי שוב" },
+  install_close_aria: { en: "Close install prompt", he: "סגור חלונית התקנה" },
+
+  /* iOS Safari steps (iPhone) */
+  install_step_share_iphone: {
+    en: "Tap the Share icon",
+    he: "הקישו על סמל השיתוף"
+  },
+  install_step_share_iphone_hint: {
+    en: "The square with an up-arrow at the bottom of Safari",
+    he: "הריבוע עם החץ למעלה, בתחתית Safari"
+  },
+  /* iOS Safari steps (iPad) */
+  install_step_share_ipad: {
+    en: "Tap the Share icon",
+    he: "הקישו על סמל השיתוף"
+  },
+  install_step_share_ipad_hint: {
+    en: "The square with an up-arrow in the top-right toolbar",
+    he: "הריבוע עם החץ למעלה, בסרגל העליון מימין"
+  },
+  install_step_a2hs: {
+    en: "Choose \u201CAdd to Home Screen\u201D",
+    he: "בחרו ב\u05F4הוסף למסך הבית\u05F4"
+  },
+  install_step_a2hs_hint: {
+    en: "Scroll down in the share sheet if you don't see it",
+    he: "אם לא רואים, גללו בתפריט השיתוף"
+  },
+  install_step_confirm: {
+    en: "Tap \u201CAdd\u201D in the top corner",
+    he: "הקישו על \u05F4הוסף\u05F4 בפינה העליונה"
+  },
+  install_step_confirm_hint: {
+    en: "The Tuscany icon lands on your home screen",
+    he: "הסמל של טוסקנה מופיע במסך הבית"
+  },
+
+  /* iOS – not Safari (Chrome / Firefox / Edge on iOS) */
+  install_ios_open_in_safari: {
+    en: "Open this page in Safari to install",
+    he: "פתחו את הדף ב־Safari כדי להתקין"
+  },
+  install_ios_open_in_safari_hint: {
+    en: "Adding to the home screen on iPhone & iPad only works from Safari",
+    he: "הוספה למסך הבית באייפון ובאייפד עובדת רק מתוך Safari"
+  },
+
+  /* Android fallback steps (when beforeinstallprompt didn't fire) */
+  install_step_android_menu: {
+    en: "Tap the menu (\u22EE) at the top right",
+    he: "הקישו על תפריט (\u22EE) למעלה מימין"
+  },
+  install_step_android_menu_hint: {
+    en: "Three vertical dots in the Chrome toolbar",
+    he: "שלוש נקודות אנכיות בסרגל של Chrome"
+  },
+  install_step_android_a2hs: {
+    en: "Choose \u201CInstall app\u201D or \u201CAdd to Home screen\u201D",
+    he: "בחרו ב\u05F4התקנת אפליקציה\u05F4 או \u05F4הוסף למסך הבית\u05F4"
+  },
+  install_step_android_a2hs_hint: {
+    en: "The wording depends on your Chrome version",
+    he: "הניסוח תלוי בגרסת Chrome"
+  },
 
   /* ---------- TripStrip ---------- */
   scroll_chapters_prev: {

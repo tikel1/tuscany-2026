@@ -28,11 +28,14 @@
 
 /* Hebrew typography — applied automatically when <html dir="rtl">.
    Rubik is a warm, humanist Hebrew sans (used by many Israeli editorial
-   sites). David Libre is the classic elegant Hebrew serif — pairs well
-   with Cormorant on the Latin side and gives a real magazine feel. */
+   sites). Frank Ruhl Libre is the modern (2014) redrawing of the classic
+   1908 Frank-Ruhl Hebrew typeface — Haaretz uses it, and it's the
+   contemporary editorial serif of choice. It carries the same warmth as
+   Cormorant on the Latin side, without the "Word 2003 default" baggage
+   of older system serifs (David, Times, Arial). */
 html[dir="rtl"] {
   --font-sans: "Rubik", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "David Libre", "Cormorant Garamond", "Georgia", ui-serif, serif;
+  --font-serif: "Frank Ruhl Libre", "Cormorant Garamond", "Georgia", ui-serif, serif;
 }
 
 html {

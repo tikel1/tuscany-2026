@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -19,16 +19,25 @@ import {
   Backpack,
   StickyNote,
   Quote,
-  Volume2
+  Volume2,
+  Utensils,
+  Wine,
+  Beer,
+  Martini,
+  Coffee,
+  GlassWater
 } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
+import { getService } from "../data/services";
 import type {
   Day,
   DayActivity,
+  DayDrink,
   Difficulty,
   ImageCredit,
   POI,
+  Service,
   Tip
 } from "../data/types";
 import NavigateLinks from "./NavigateLinks";
@@ -38,7 +47,7 @@ import { tipsForDay } from "../lib/tipsForDay";
 import { navigateChapter, navigateHome, rememberChapter } from "../lib/route";
 import { useT, localizeShortDate, localizeWeekday, type DictKey } from "../lib/dict";
 import { useLang } from "../lib/i18n";
-import { useLocalizeDay, useLocalizePoi, useLocalizeTip } from "../data/i18n";
+import { useLocalizeDay, useLocalizePoi, useLocalizeService, useLocalizeTip } from "../data/i18n";
 import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
@@ -62,6 +71,34 @@ const REGION_KEY: Record<string, DictKey> = {
   south: "region_south_long",
   transit: "region_transit_long"
 };
+
+/** Decide whether an activity should render with the "Optional" badge.
+ *
+ *  Source-of-truth waterfall:
+ *   1. If the data sets `activity.optional` explicitly (true OR false), honor
+ *      it — that's the curator's intent (e.g. Day 9's Civita is the headline,
+ *      so it sets optional:false to opt OUT of the auto-rule).
+ *   2. Otherwise apply a rule of thumb: a day full of multi-hour stops can
+ *      realistically only fit ~2 of them with drives in between. So once a
+ *      day has more than 2 activities tied to a real attraction (anything
+ *      with `attractionId`), the 3rd-and-later attractions are auto-marked
+ *      optional. Activities without an attractionId (drives, picnics,
+ *      check-ins) never count toward the threshold and never auto-go optional.
+ *
+ *  This lets the data stay terse — most days get the right behavior
+ *  for free — while still allowing per-activity overrides where the
+ *  heuristic doesn't match the curator's intent. */
+function isActivityOptional(activity: DayActivity, index: number, day: Day): boolean {
+  if (activity.optional !== undefined) return activity.optional;
+  if (!activity.attractionId) return false;
+  const attractionCount = day.activities.filter(a => a.attractionId).length;
+  if (attractionCount <= 2) return false;
+  // Position of THIS activity among attractionId-bearing siblings (1-indexed).
+  const attractionPosition = day.activities
+    .slice(0, index + 1)
+    .filter(a => a.attractionId).length;
+  return attractionPosition > 2;
+}
 
 interface ResolvedLead {
   src?: string;
@@ -172,6 +209,78 @@ const DIFFICULTY_DETAIL_STYLE: Record<
   }
 };
 
+/* Per-drink-type accent: chip color, gradient, and icon. Picked so each
+ * type reads as its own little universe — wine is wine-red, beer warms
+ * to amber, the digestif slides into sienna, the espresso into ink. */
+const DRINK_STYLES: Record<
+  DayDrink["type"],
+  {
+    Icon: typeof Wine;
+    chipBg: string;
+    chipText: string;
+    gradient: string;
+    accentDot: string;
+    labelKey: DictKey;
+  }
+> = {
+  wine: {
+    Icon: Wine,
+    chipBg: "bg-terracotta-500/12",
+    chipText: "text-terracotta-700",
+    gradient: "from-cream-50 via-cream-100 to-terracotta-500/12",
+    accentDot: "bg-terracotta-500",
+    labelKey: "drink_type_wine"
+  },
+  cocktail: {
+    Icon: Martini,
+    chipBg: "bg-gold-400/18",
+    chipText: "text-sienna-600",
+    gradient: "from-cream-50 via-cream-100 to-gold-400/15",
+    accentDot: "bg-gold-500",
+    labelKey: "drink_type_cocktail"
+  },
+  beer: {
+    Icon: Beer,
+    chipBg: "bg-gold-400/18",
+    chipText: "text-sienna-600",
+    gradient: "from-cream-50 via-cream-100 to-gold-400/12",
+    accentDot: "bg-gold-500",
+    labelKey: "drink_type_beer"
+  },
+  aperitif: {
+    Icon: GlassWater,
+    chipBg: "bg-terracotta-500/12",
+    chipText: "text-terracotta-700",
+    gradient: "from-cream-50 via-cream-100 to-terracotta-400/15",
+    accentDot: "bg-terracotta-400",
+    labelKey: "drink_type_aperitif"
+  },
+  digestif: {
+    Icon: Wine,
+    chipBg: "bg-sienna-500/12",
+    chipText: "text-sienna-600",
+    gradient: "from-cream-50 via-cream-100 to-sienna-500/12",
+    accentDot: "bg-sienna-500",
+    labelKey: "drink_type_digestif"
+  },
+  coffee: {
+    Icon: Coffee,
+    chipBg: "bg-ink-800/12",
+    chipText: "text-ink-800",
+    gradient: "from-cream-50 via-cream-100 to-ink-800/10",
+    accentDot: "bg-ink-800",
+    labelKey: "drink_type_coffee"
+  },
+  other: {
+    Icon: GlassWater,
+    chipBg: "bg-olive-500/12",
+    chipText: "text-olive-700",
+    gradient: "from-cream-50 via-cream-100 to-olive-500/12",
+    accentDot: "bg-olive-500",
+    labelKey: "drink_type_other"
+  }
+};
+
 const SEVERITY_STYLES: Record<
   Tip["severity"],
   { Icon: typeof Info; ring: string; bg: string; text: string; labelKey: DictKey }
@@ -205,6 +314,7 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
   const isRTL = lang === "he";
   const localizeDay = useLocalizeDay();
   const localizePoi = useLocalizePoi();
+  const localizeService = useLocalizeService();
   const localizeTip = useLocalizeTip();
 
   const day = useMemo(
@@ -278,6 +388,15 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
     .map(a => (a.attractionId ? getAttraction(a.attractionId) : undefined))
     .filter((p): p is POI => !!p)
     .map(localizePoi);
+
+  /* Restaurants curated for this day. We resolve EN by id from the full
+     services list (skip silently if a stale id slips through), then run
+     each through the same localizer the homepage Services section uses
+     so Hebrew names + descriptions render the same everywhere. */
+  const dayRestaurants: Service[] = (day.restaurants ?? [])
+    .map(id => getService(id))
+    .filter((s): s is Service => !!s && s.category === "restaurant")
+    .map(localizeService);
 
   /* Lookup table for the per-day pack list: when a gear item references a
      specific attraction (`for: "canyon-park"`) we need its localized name
@@ -526,7 +645,20 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
             <ol className="mt-6 sm:mt-8 space-y-5 sm:space-y-8">
               {localDay.activities.map((a, i) => (
-                <ActivityRow key={i} activity={a} index={i} isToday={isToday} />
+                <Fragment key={i}>
+                  <ActivityRow
+                    activity={a}
+                    index={i}
+                    isToday={isToday}
+                    optional={isActivityOptional(a, i, localDay)}
+                  />
+                  {/* Inline ride connector — rendered only when this stop
+                      has a meaningful drive to the next one. Slips into
+                      the ordered list between two activity rows. */}
+                  {a.rideToNext && i < localDay.activities.length - 1 && (
+                    <RideConnector ride={a.rideToNext} />
+                  )}
+                </Fragment>
               ))}
             </ol>
 
@@ -634,6 +766,14 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
             </section>
           )}
 
+          {/* Where to eat — curated restaurants for today's plan. Sits
+              right after the day pack so it reads as part of the
+              "what does this day look like" sequence, before the
+              day-tips and chapter-tips informational blocks. */}
+          {dayRestaurants.length > 0 && (
+            <RestaurantsForDay restaurants={dayRestaurants} />
+          )}
+
           {/* Day notes — money, timing, mood */}
           {localDay.dayTips && localDay.dayTips.length > 0 && (
             <section>
@@ -693,6 +833,13 @@ export default function ChapterDetailPage({ dayNumber }: { dayNumber: number }) 
                 })}
               </ul>
             </section>
+          )}
+
+          {/* Drink of the day — closing flourish, the literal end of the
+              chapter (after all the practical info). Adults-only nightcap
+              suggestion that mirrors the wordOfTheDay card opening. */}
+          {localDay.drinkOfTheDay && (
+            <DrinkOfTheDay drink={localDay.drinkOfTheDay} />
           )}
         </div>
 
@@ -764,11 +911,13 @@ function SectionLabel({ eyebrow, title }: { eyebrow: string; title: string }) {
 function ActivityRow({
   activity,
   index,
-  isToday
+  isToday,
+  optional
 }: {
   activity: DayActivity;
   index: number;
   isToday: boolean;
+  optional: boolean;
 }) {
   const t = useT();
   const localizePoi = useLocalizePoi();
@@ -778,40 +927,68 @@ function ActivityRow({
   const [open, setOpen] = useState(false);
   const hasMoreInfo = !!att;
 
+  /* Icon styling: optional always renders in the muted "not today" palette
+     so the badge in the eyebrow doesn't have to fight a saturated terracotta
+     circle. Today + optional is rare but handled cleanly this way. */
+  const iconClasses = optional
+    ? "bg-cream-50 text-terracotta-600/55 ring-1 ring-cream-300/60"
+    : isToday
+      ? "bg-terracotta-500 text-cream-50"
+      : "bg-cream-100 text-terracotta-600 ring-1 ring-cream-300/80";
+
   return (
     <li
       id={activity.attractionId ? `activity-${activity.attractionId}` : undefined}
       className="grid grid-cols-[40px_1fr] sm:grid-cols-[64px_1fr] gap-3 sm:gap-6 scroll-mt-24"
     >
-      <div className="relative">
+      {/* Icon column. The time used to live BELOW the icon (-bottom-4),
+          which floated it into the gap before the next row and read as if
+          it labeled the wrong activity. Time now lives in the eyebrow of
+          the content column, where it's unambiguously attached. */}
+      <div className="relative pt-0.5 sm:pt-1">
         <div
-          className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${
-            isToday
-              ? "bg-terracotta-500 text-cream-50"
-              : "bg-cream-100 text-terracotta-600 ring-1 ring-cream-300/80"
-          }`}
+          className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${iconClasses}`}
         >
           <Icon size={16} className="sm:w-5 sm:h-5" strokeWidth={1.7} />
         </div>
-        {activity.time && (
-          <div className="absolute -bottom-4 sm:-bottom-5 left-0 right-0 text-[8px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-ink-700/55 font-medium text-center">
-            {activity.time.length > 10 ? activity.time.slice(0, 10) + "…" : activity.time}
-          </div>
-        )}
       </div>
 
       <div className="min-w-0 pt-0.5 sm:pt-1">
-        <div className="flex items-baseline flex-wrap gap-x-2.5 gap-y-1">
+        <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
           <span className="text-[9px] uppercase tracking-[0.22em] text-ink-700/45 font-medium">
             {String(index + 1).padStart(2, "0")}
           </span>
+          {activity.time && (
+            <>
+              <span className="text-ink-700/30 text-[9px]" aria-hidden>·</span>
+              <span className="text-[10px] uppercase tracking-[0.22em] text-ink-800 font-semibold">
+                {activity.time}
+              </span>
+            </>
+          )}
           {activity.tag && (
-            <span className="text-[9px] uppercase tracking-[0.22em] text-terracotta-600/85 font-medium">
-              · {t(TAG_KEY[activity.tag] ?? "tag_view")}
+            <>
+              <span className="text-ink-700/30 text-[9px]" aria-hidden>·</span>
+              <span className="text-[9px] uppercase tracking-[0.22em] text-terracotta-600/85 font-medium">
+                {t(TAG_KEY[activity.tag] ?? "tag_view")}
+              </span>
+            </>
+          )}
+          {optional && (
+            <span
+              className="ms-1 inline-flex items-center px-1.5 py-[2px] rounded-full bg-olive-500/12 text-olive-700 text-[8.5px] uppercase tracking-[0.22em] font-semibold"
+              title={t("optional_aria")}
+              aria-label={t("optional_aria")}
+            >
+              {t("optional_label")}
             </span>
           )}
         </div>
-        <h4 className="mt-1 font-serif text-[18px] sm:text-[24px] text-ink-900 leading-snug">
+        <h4
+          className={`mt-1 font-serif text-[18px] sm:text-[24px] leading-snug ${
+            optional ? "text-ink-800/90" : "text-ink-900"
+          }`}
+        >
           {activity.title}
         </h4>
         {activity.description && (
@@ -920,5 +1097,161 @@ function ActivityRow({
         </AnimatePresence>
       </div>
     </li>
+  );
+}
+
+/* ---------- Inline ride connector ---------- */
+
+/* A small "↓ 30 min · winding climb" pill that slips between two
+ * activity rows. Visually it sits in the timeline column (left, where
+ * the activity icons live) and threads a soft dashed line into the next
+ * row, so the eye reads it as a connector rather than a separate item. */
+function RideConnector({ ride }: { ride: NonNullable<DayActivity["rideToNext"]> }) {
+  const t = useT();
+  return (
+    <li
+      className="grid grid-cols-[40px_1fr] sm:grid-cols-[64px_1fr] gap-3 sm:gap-6 -mt-1 sm:-mt-2"
+      aria-hidden={false}
+    >
+      {/* Timeline rail with a small Car icon, mirroring the activity
+          column to the left. The dashed border continues the timeline. */}
+      <div className="relative flex justify-center">
+        <span className="absolute inset-x-0 top-0 bottom-0 mx-auto w-px border-l border-dashed border-cream-300/90" />
+        <span className="relative z-10 mt-1 inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-cream-100 ring-1 ring-cream-300/80 text-olive-700">
+          <Car size={11} strokeWidth={1.9} />
+        </span>
+      </div>
+      <div className="min-w-0 ps-1 pt-0.5">
+        <div className="inline-flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
+          <span className="text-[10px] uppercase tracking-[0.22em] text-olive-700/85 font-medium">
+            {t("ride_to_next")}
+          </span>
+          <span className="font-serif text-[14px] sm:text-[15px] text-ink-900">
+            {ride.duration}
+          </span>
+          {ride.note && (
+            <span className="text-[12px] sm:text-[13px] text-ink-700/65 italic">
+              · {ride.note}
+            </span>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+/* ---------- Restaurants for the day ---------- */
+
+function RestaurantsForDay({ restaurants }: { restaurants: Service[] }) {
+  const t = useT();
+  return (
+    <section>
+      <SectionLabel eyebrow={t("restaurants_eyebrow")} title={t("restaurants_title")} />
+      <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+        {t("restaurants_kicker")}
+      </p>
+      <ul className="grid sm:grid-cols-2 gap-2.5">
+        {restaurants.map(r => (
+          <li
+            key={r.id}
+            className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
+          >
+            <span className="shrink-0 w-9 h-9 rounded-full bg-terracotta-500/12 text-terracotta-700 flex items-center justify-center">
+              <Utensils size={15} strokeWidth={1.8} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="font-serif text-[15px] sm:text-[16px] text-ink-900 leading-tight">
+                {r.name}
+              </div>
+              {r.shortDescription && (
+                <div className="mt-0.5 text-[12.5px] sm:text-[13.5px] text-ink-700/85 leading-snug">
+                  {r.shortDescription}
+                </div>
+              )}
+              {r.address && (
+                <div className="mt-1 text-[11.5px] sm:text-[12px] text-ink-700/55 leading-snug">
+                  {r.address}
+                </div>
+              )}
+              {r.hours && (
+                <div className="mt-0.5 text-[11.5px] sm:text-[12px] text-ink-700/55 leading-snug">
+                  {t("hours")} · {r.hours}
+                </div>
+              )}
+              <div className="mt-2">
+                <NavigateLinks coords={r.coords} size={11} />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/* ---------- Drink of the day ---------- */
+
+/* The closing flourish — visually echoes the wordOfTheDay opener but
+ * with a per-drink palette and a wine/cocktail/etc. icon. Keeps the
+ * proper Italian name as a serif headline; the prose underneath gets
+ * translated. Adults-only — that part is the kicker copy. */
+function DrinkOfTheDay({ drink }: { drink: DayDrink }) {
+  const t = useT();
+  const style = DRINK_STYLES[drink.type] ?? DRINK_STYLES.other;
+  const Icon = style.Icon;
+
+  return (
+    <section>
+      <article
+        className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${style.gradient} ring-1 ring-cream-300/70 shadow-[0_18px_50px_-30px_rgba(151,109,76,0.45)]`}
+      >
+        {/* Oversized decorative glass icon in the corner, mirroring the
+            quote glyph on the wordOfTheDay card. RTL flips it so it
+            still reads as a "watermark" on the trailing edge. */}
+        <Icon
+          size={140}
+          strokeWidth={1}
+          className={`absolute -top-6 end-0 ${style.chipText} opacity-[0.06] pointer-events-none rtl:scale-x-[-1]`}
+          aria-hidden
+        />
+
+        <div className="relative px-5 sm:px-8 py-6 sm:py-8">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.32em] text-terracotta-600/85 font-medium">
+            <span className={`inline-block w-1.5 h-1.5 rounded-full ${style.accentDot}`} />
+            {t("drink_eyebrow")}
+          </div>
+
+          <div className="mt-4 sm:mt-5 flex items-baseline flex-wrap gap-x-4 gap-y-2">
+            <h2 className="font-serif italic text-3xl sm:text-5xl text-ink-900 leading-none">
+              {drink.name}
+            </h2>
+            <div
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${style.chipBg} ${style.chipText} text-[10px] uppercase tracking-[0.18em] font-medium`}
+            >
+              <Icon size={11} strokeWidth={1.9} />
+              {t(style.labelKey)}
+            </div>
+          </div>
+
+          <p className="mt-4 text-[14.5px] sm:text-[16px] text-ink-700/90 leading-relaxed">
+            <span className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium me-2">
+              {t("drink_pairing_label")}
+            </span>
+            {drink.pairing}
+          </p>
+
+          {drink.servingNote && (
+            <div className="mt-5 pt-5 border-t border-cream-300/60">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-ink-700/55 font-medium">
+                {t("drink_serving_label")}
+              </div>
+              <p className="mt-1.5 font-serif italic text-[15px] sm:text-[17px] text-ink-900 leading-snug">
+                {drink.servingNote}
+              </p>
+            </div>
+          )}
+        </div>
+      </article>
+    </section>
   );
 }

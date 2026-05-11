@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#C45A3D" />
 
+    <!-- Installable web app: lets Android Chrome fire `beforeinstallprompt`
+         and gives the saved-to-home-screen launcher a name + icon. -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+
+    <!-- iOS Safari: Apple ignores the manifest, so these meta tags are how
+         we get a clean home-screen icon, a custom short label, and a
+         standalone (chrome-less) launch experience. -->
+    <link rel="apple-touch-icon" href="./favicon.svg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Tuscany '26" />
+
     <title>Tuscany 2026 — The Horowitz × Racz × Kaplan Families</title>
     <meta
       name="description"
@@ -46,7 +59,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=David+Libre:wght@400;500;700&family=Rubik:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Rubik:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>

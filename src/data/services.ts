@@ -251,3 +251,15 @@ export const services: Service[] = [
     hours: "Self-service 24/7"
   }
 ];
+
+/** Fast id → Service lookup used by the chapter detail page when it
+ *  renders a curated list of restaurants for a given day. Built lazily
+ *  on first call and cached at module level — repeated lookups are O(1). */
+let _serviceById: Map<string, Service> | null = null;
+
+export function getService(id: string): Service | undefined {
+  if (!_serviceById) {
+    _serviceById = new Map(services.map(s => [s.id, s]));
+  }
+  return _serviceById.get(id);
+}
