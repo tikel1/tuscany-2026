@@ -73,6 +73,39 @@ interface Message extends PersistedMessage {
   streaming?: boolean;
 }
 
+/**
+ * Per-turn nudge appended to the model-bound text so the assistant
+ * reliably keeps the Italian accent on every reply (audio AND text).
+ * The system prompt's `LIVE_SPOKEN_DELIVERY` block already says this,
+ * but a fresh per-turn reminder survives long conversations and any
+ * prompt drift. The user never sees this in their bubble — only the
+ * raw text they typed is rendered and persisted.
+ *
+ * Language is matched to the user's input so the instruction does
+ * not break the persona's "ONE language per reply" rule.
+ */
+const ACCENT_INSTRUCTION: Record<"he" | "en", string> = {
+  en: "(say it in a heavy italian accent)",
+  he: "(תגיד במבטא איטלקי כבד)"
+};
+
+/** Hebrew vs Latin char count — same heuristic as bubbleTextDir. */
+function detectInputLang(text: string): "he" | "en" {
+  let he = 0;
+  let lat = 0;
+  for (const ch of text) {
+    const c = ch.codePointAt(0)!;
+    if (c >= 0x0590 && c <= 0x05ff) he++;
+    else if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) lat++;
+  }
+  return he > lat ? "he" : "en";
+}
+
+function withHiddenAccentNudge(userText: string): string {
+  const instruction = ACCENT_INSTRUCTION[detectInputLang(userText)];
+  return `${userText}\n\n${instruction}`;
+}
+
 export default function Gemininio() {
   const t = useT();
   const { lang } = useLang();
@@ -348,6 +381,10 @@ export default function Gemininio() {
   async function submitTypedUserMessage() {
     const trimmed = text.trim();
     if (!trimmed) return;
+    // What the chat bubble + persisted history shows.
+    // What we send on the wire — same text plus a hidden accent nudge
+    // in the user's language. Bubble/persistence stays untouched.
+    const wireMessage = withHiddenAccentNudge(trimmed);
     const priorForApi = completedTurnsForApi(messages);
     setText("");
     setMessages(ms => [
@@ -379,7 +416,7 @@ export default function Gemininio() {
         setMessages(ms => ms.filter(m => !(m.role === "model" && m.streaming && !m.text)));
         return;
       }
-      s.sendText(trimmed);
+      s.sendText(wireMessage);
       return;
     }
 
@@ -391,7 +428,7 @@ export default function Gemininio() {
       const reply = await generateGroundedReply({
         apiKey,
         systemInstruction: sys,
-        userMessage: trimmed,
+        userMessage: wireMessage,
         useGoogleSearch,
         history: priorForApi
       });
