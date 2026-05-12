@@ -145,7 +145,7 @@ export const attractionsHE: Record<
     ],
     quizFacts: [
       {
-        question: "מה קורה לטמפרטורה כשמגיעים לפסגת הר גומיטו?",
+        question: "בפסגת מונטה גומיטו, מה קורה לטמפרטורה?",
         correctAnswer: "נהיה הרבה יותר קר",
         distractors: ["נהיה רותח מחום", "היא נשארת בדיוק אותו הדבר", "משתנה כל חמש דקות"]
       },

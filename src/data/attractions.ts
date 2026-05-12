@@ -238,7 +238,7 @@ export const attractions: POI[] = [
     ],
     quizFacts: [
       {
-        question: "What happens to the temperature when you reach the top of Monte Gomito?",
+        question: "At the top of Monte Gomito, what happens to the temperature?",
         correctAnswer: "It gets much colder",
         distractors: ["It gets boiling hot", "It stays exactly the same", "It changes every five minutes"]
       },

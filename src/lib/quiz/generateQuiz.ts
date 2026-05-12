@@ -21,6 +21,7 @@
 import type { Lang } from "../lang";
 import type { Quiz, QuizQuestion } from "../../data/types";
 import { buildQuizSystemPrompt, buildQuizUserMessage } from "./quizPersona";
+import { questionViolatesScheduleOrTripGuessing } from "./quizContentFilters";
 
 const MODELS_TO_TRY = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"] as const;
 
@@ -36,7 +37,7 @@ export const QUESTIONS_PER_OFFLINE_PACK = 10;
 /* Offline pack storage (one entry per (day, lang), no expiry)         */
 /* ------------------------------------------------------------------ */
 
-const OFFLINE_PACK_PREFIX = "tuscany2026.quiz.offlinePack.v4";
+const OFFLINE_PACK_PREFIX = "tuscany2026.quiz.offlinePack.v5";
 
 function offlinePackKey(dayNumber: number, lang: Lang): string {
   return `${OFFLINE_PACK_PREFIX}.day${dayNumber}.${lang}`;
@@ -251,9 +252,12 @@ export async function generateQuiz(params: GenerateQuizParams): Promise<Quiz> {
       continue;
     }
 
-    const questions = wrapper.questions.filter(isValidQuestion).slice(0, count);
+    const questionsRaw = wrapper.questions.filter(isValidQuestion);
+    const questions = questionsRaw
+      .filter(q => !questionViolatesScheduleOrTripGuessing(q.question))
+      .slice(0, count);
     if (questions.length !== count) {
-      lastErr = `Quizzo wrote ${questions.length} valid questions, needed ${count}.`;
+      lastErr = `Quizzo wrote ${questions.length} acceptable questions after filters, needed ${count}.`;
       continue;
     }
 

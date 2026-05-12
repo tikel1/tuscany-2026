@@ -15,6 +15,7 @@ import { itinerary } from "../../data/itinerary";
 import { getAttraction } from "../../data/attractions";
 import { localizeDay, localizePoi } from "../../data/i18n";
 import type { Lang } from "../lang";
+import { stripSchedulingHintsFromPlaceBlurb } from "./quizContentFilters";
 
 /** Build the day-grounding block fed to Quizzo: title + activities +
  *  enriched attraction descriptions for any stop with an `attractionId`.
@@ -26,24 +27,31 @@ function buildDayDigest(dayNumber: number, lang: Lang): string {
   const day = lang === "he" ? localizeDay(rawDay, "he") : rawDay;
 
   const lines: string[] = [
-    `DAY ${day.dayNumber} — ${day.title}` +
-      (day.subtitle ? ` (${day.subtitle})` : ""),
+    // Omit subtitle here — it often contains flight times / arrival clocks
+    // that the model turns into "what time did you land?" questions.
+    `DAY ${day.dayNumber} — ${day.title}`,
     `Date: ${day.date} · ${day.weekday} · region: ${day.region}` +
-      (day.base ? ` · base: ${day.base}` : "")
+      (day.base ? ` · base: ${day.base}` : ""),
+    "",
+    "NOTE FOR QUIZZO: Clock times, flight arrivals, drive lengths, and",
+    "plain-text activity blurbs are intentionally omitted or trimmed below.",
+    "Do NOT ask about times, arrival order, or what the family did first/last.",
+    "Only ask about: (1) attraction story/fact/sensory detail, (2) Italian",
+    "words listed below, or (3) general Italy trivia with zero reference to",
+    "this family's schedule."
   ];
 
   if (day.activities?.length) {
     lines.push("");
-    lines.push("ACTIVITIES (in order):");
+    lines.push("STOPS TODAY (names + attraction facts only — not a timetable):");
     for (const a of day.activities) {
-      const time = a.time ? `${a.time} — ` : "";
-      lines.push(`  • ${time}${a.title}`);
-      if (a.description) lines.push(`      ${a.description}`);
+      lines.push(`  • ${a.title}`);
       if (a.attractionId) {
         const rawAtt = getAttraction(a.attractionId);
         if (rawAtt) {
           const att = lang === "he" ? localizePoi(rawAtt, "he") : rawAtt;
-          const desc = (att.shortDescription || att.description || "").slice(0, 240);
+          const rawDesc = att.shortDescription || att.description || "";
+          const desc = stripSchedulingHintsFromPlaceBlurb(rawDesc).slice(0, 240);
           if (desc) lines.push(`      About ${att.name}: ${desc}`);
           if (att.tags?.length) lines.push(`      Tags: ${att.tags.join(", ")}`);
           // Hand-curated story trivia — surface these to Gemini as
@@ -114,10 +122,15 @@ always treat the experience as something the kid has just lived
 "how many bells did you see at the top of the Leaning Tower?").
 
 ROLE:
-- You write a quiz of EXACTLY ${count} multiple-choice questions about
-  the actual attractions the family visited TODAY — their stories,
-  legends, signature details, and the fun cultural background you
-  noticed there.
+- You write a quiz of EXACTLY ${count} multiple-choice questions drawn
+  ONLY from these three buckets (mix them across the quiz):
+  (1) Today's ATTRACTIONS — stories, legends, sensory details, or
+      facts grounded in the attraction blocks below (not the family's
+      personal timing there).
+  (2) Today's ITALIAN WORDS — meanings / phrases from the list below.
+  (3) GENERAL ITALY — fun culture, food, history, geography, sports,
+      art — must NOT mention this family's day, order of visits, or any
+      clock time.
 - You also write a one-line WARM reaction for each question — one for when
   the kid picks the correct answer, one for when they pick wrong. Reactions
   are short (max ~10 words), enthusiastic, never mean.
@@ -132,10 +145,9 @@ TONE:
 
 QUESTION DESIGN RULES (these matter — read carefully):
 
-(A) STICK TO TODAY'S ATTRACTIONS. Almost every question should be about
-    a place, story, legend, or characteristic detail of an attraction the
-    family ACTUALLY VISITED today (the digest below lists them). Don't
-    drift into yesterday's stops or tomorrow's plan.
+(A) STICK TO THE THREE BUCKETS ABOVE. Attraction questions must be
+    about places the family ACTUALLY VISITED today (listed below).
+    Don't drift into yesterday's stops or tomorrow's plan.
 
 (B) ABSOLUTELY DO NOT ASK ABOUT:
     × Equipment / kit ("what should you bring?", "from what minimum
@@ -151,6 +163,11 @@ QUESTION DESIGN RULES (these matter — read carefully):
     × Travel time or driving logistics ("how long is the drive?", "do
       we need an international driver license?", "how many hours in the
       car?")
+    × Arrival / clock / schedule trivia ("what time did you land?",
+      "when did you get to the pool?", "what did you do first today?",
+      "before or after lunch?", "morning vs afternoon?", any question
+      whose answer depends on the itinerary clock or guessing what the
+      family did when)
     × "What country is [Local Brand/Food] from?" ("Where is [brand] from?",
       "Where is [food] from?") — the kids know they are in the destination country, so the
       answer is too obvious. Ask about the brand/food itself instead!
@@ -187,9 +204,10 @@ ${distributionText}
     the villagers send across the Devil's Bridge?"), and ~20% harder
     fun-facts ("how many years did the Leaning Tower take to build?").
 
-(G) Questions must be ANSWERABLE from the day's data below — EXCEPT
-    for the "general destination culture" questions, which you can pull from
-    your own general knowledge.
+(G) Attraction + Italian-word questions must be ANSWERABLE from the
+    blocks below (or obvious paraphrases of the same facts). General
+    Italy questions may use your own general knowledge but must stay
+    unrelated to this family's timing or order of events.
 
 (H) VARIETY — every question on a different aspect / different
     attraction. Don't ask three questions about the same stop.
@@ -266,10 +284,12 @@ REPLY LANGUAGE — HARD RULE:
   itinerary uses below.
 
 ROLE:
-- You write a quiz of EXACTLY ${count} multiple-choice questions
-  about the actual attractions the family visited TODAY — their
-  stories, legends, signature details, and the fun cultural
-  background you noticed there.
+- You write a quiz of EXACTLY ${count} multiple-choice questions from
+  ONLY these three buckets: (1) today's ATTRACTIONS — stories, legends,
+  sensory details grounded in the blocks below (not when the family
+  arrived or what they did first); (2) today's ITALIAN WORDS from the
+  list below; (3) GENERAL ITALY — culture, food, history, sports, art,
+  with zero reference to this family's schedule or clock times.
 - You also write a one-line WARM reaction for each question — one for
   when the kid picks the correct answer, one for when they pick wrong.
   Reactions are short (~10 Hebrew words max), enthusiastic, never mean.
@@ -283,11 +303,9 @@ TONE:
 
 QUESTION DESIGN RULES (read carefully):
 
-(A) STICK TO TODAY'S ATTRACTIONS. Almost every question should be
-    about a place, story, legend, or characteristic detail of an
-    attraction the family ACTUALLY VISITED today (the digest below
-    lists them). Don't drift into yesterday's stops or tomorrow's
-    plan.
+(A) STICK TO THE THREE BUCKETS ABOVE. Attraction questions must be about
+    places the family ACTUALLY VISITED today (listed below). Don't drift
+    into yesterday's stops or tomorrow's plan.
 
 (B) ABSOLUTELY DO NOT ASK ABOUT:
     × Equipment / kit ("מה צריך להביא?", "מאיזה גובה מינימלי
@@ -301,6 +319,9 @@ QUESTION DESIGN RULES (read carefully):
       או דרום?")
     × Travel time or driving logistics ("כמה זמן הנסיעה?", "האם
       צריך רישיון נהיגה בינלאומי?", "כמה שעות נהיגה?")
+    × שאלות על שעות, הגעה, סדר היום ("באיזו שעה נחתתם?", "מתי הגעתם
+      לבריכה?", "מה עשיתם קודם היום?", "לפני או אחרי ארוחת צהריים?",
+      כל שאלה שמנחשת מה המשפחה עשתה מתי)
     × "What country is [Italian Brand/Food] from?" ("מאיזו מדינה חברת פיאט?",
       "מאיפה הגיעה הפיצה?") — the kids know they are in Italy, so the
       answer is too obvious. Ask about the brand/food itself instead!
@@ -341,9 +362,10 @@ ${distributionText}
     הכפר ראשונה על גשר השטן?"), and ~20% harder fun-facts ("כמה
     זמן בנו את המגדל הנטוי?").
 
-(G) Questions must be ANSWERABLE from the day's data below — EXCEPT
-    for the "general destination culture" questions, which you can pull from
-    your own general knowledge.
+(G) Attraction + Italian-word questions must be ANSWERABLE from the
+    blocks below (or obvious paraphrases of the same facts). General
+    Italy questions may use your own general knowledge but must stay
+    unrelated to this family's timing or order of events.
 
 (H) VARIETY — every question on a different aspect / different
     attraction. Don't ask three questions about the same stop.
@@ -404,7 +426,8 @@ export function buildQuizSystemPrompt(
   return [
     persona,
     "",
-    "DAY DATA (the only source of truth — every question must come from here):",
+    "DAY DATA (attraction blocks + Italian words below; general-Italy",
+    "questions must not reference this family's schedule or times):",
     digest
   ].join("\n");
 }
@@ -420,9 +443,17 @@ export function buildQuizUserMessage(lang: Lang, count: number, avoidQuestions?:
   }
 
   if (lang === "he") {
-    return `כתוב את ${count} שאלות החידון בפורמט JSON כפי שצוין למעלה.${avoidInstruction}`;
+    return (
+      `כתוב את ${count} שאלות החידון בפורמט JSON כפי שצוין למעלה.` +
+      ` אסור לשאול על שעות, הגעה, סדר ביקורים, או לנחש מה המשפחה עשתה מתי.` +
+      avoidInstruction
+    );
   }
-  return `Write the ${count} quiz questions now, in the JSON format above.${avoidInstruction}`;
+  return (
+    `Write the ${count} quiz questions now, in the JSON format above.` +
+    ` Do NOT ask about arrival times, visit order, or guessing what the family did when.` +
+    avoidInstruction
+  );
 }
 
 /** A short spoken intro Quizzo says when the kid taps Start. Used by
