@@ -72,23 +72,12 @@ function buildDayDigest(dayNumber: number, lang: Lang): string {
     }
   }
 
-  if (day.driveNotes) {
-    lines.push("");
-    lines.push(`DRIVE NOTES: ${day.driveNotes}`);
-  }
-
   if (day.italianWords?.length) {
     lines.push("");
     lines.push("ITALIAN WORDS LEARNED TODAY:");
     for (const w of day.italianWords) {
       lines.push(`  • "${w.word}" — ${w.meaning}` + (w.example ? ` (e.g. ${w.example})` : ""));
     }
-  }
-
-  if (day.dayTips?.length) {
-    lines.push("");
-    lines.push("THINGS THAT HAPPENED / NOTES:");
-    for (const tip of day.dayTips) lines.push(`  • ${tip}`);
   }
 
   return lines.join("\n");
@@ -155,6 +144,7 @@ QUESTION DESIGN RULES (these matter — read carefully):
     × "Good to know" / opening-hours / parking / booking / safety
       logistics ("when does it open?", "do you need a reservation?",
       "is it cash or card?")
+    × Restaurant hours or meal schedules ("when do kitchens close?", "what time is lunch?")
     × Meta-trip bookkeeping ("what is day N called?", "which day of
       the week is this?", "how many stops does today have?", "are we
       in the north or south?")
@@ -305,6 +295,7 @@ QUESTION DESIGN RULES (read carefully):
     × "Good to know" / opening hours / parking / booking / safety
       logistics ("מתי נפתח?", "צריך הזמנה?", "מקבלים מזומן או רק
       כרטיס?")
+    × Restaurant hours or meal schedules ("מתי נסגר המטבח?", "באיזו שעה אוכלים צהריים?")
     × Meta-trip bookkeeping ("מה שם יום מספר X?", "איזה יום בשבוע
       זה?", "כמה תחנות יש היום?", "באיזה חלק של הטיול אנחנו, צפון
       או דרום?")
