@@ -144,6 +144,9 @@ QUESTION DESIGN RULES (these matter — read carefully):
     × Meta-trip bookkeeping ("what is day N called?", "which day of
       the week is this?", "how many stops does today have?", "are we
       in the north or south?")
+    × Travel time or driving logistics ("how long is the drive?", "do
+      we need an international driver license?", "how many hours in the
+      car?")
     These bore an 8-year-old instantly. Ask about the STORY of the
     place, not the rules of visiting it.
 
@@ -285,6 +288,8 @@ QUESTION DESIGN RULES (read carefully):
     × Meta-trip bookkeeping ("מה שם יום מספר X?", "איזה יום בשבוע
       זה?", "כמה תחנות יש היום?", "באיזה חלק של הטיול אנחנו, צפון
       או דרום?")
+    × Travel time or driving logistics ("כמה זמן הנסיעה?", "האם
+      צריך רישיון נהיגה בינלאומי?", "כמה שעות נהיגה?")
     These bore an 8-year-old instantly. Ask about the STORY of the
     place, not the rules of visiting it.
 
