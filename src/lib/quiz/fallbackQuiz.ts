@@ -178,24 +178,6 @@ function buildQ(opts: {
   };
 }
 
-/** Pull the town name out of a POI's `address`, e.g.
- *  "Località il Pianello, Bagni di Lucca (LU)" → "Bagni di Lucca",
- *  "Piazza del Duomo, 56126 Pisa (PI)" → "Pisa".
- *  Returns null when the address is missing or the trailing segment
- *  before "(XX)" is a street-level locality (Via / Piazza / Mura /
- *  Loc.) rather than a town — those would mislead the kid. */
-function extractTown(address: string | undefined): string | null {
-  if (!address) return null;
-  const provinceMatch = address.match(/([^,]+?)\s*\([A-Z]{2}\)\s*$/);
-  if (!provinceMatch) return null;
-  // Strip a leading 4–5-digit Italian postal code, e.g. "56126 Pisa".
-  const town = provinceMatch[1].replace(/^\d{4,5}\s+/, "").trim();
-  if (!town) return null;
-  if (/^(?:Via|Viale|Piazza|Piazzale|Mura|Loc\.|Località|Strada|Vicolo|Corso)\b/i.test(town)) {
-    return null;
-  }
-  return town;
-}
 
 /* ------------------------------------------------------------------ */
 /* Italian-culture wildcard bank                                       */
@@ -691,123 +673,6 @@ function tplAttractionStory(ctx: TemplateContext): QuizQuestion | null {
   });
 }
 
-/** Q: which place is described as "[short description]"? Picks a
- *  real attraction the family visits today, asks the kid to identify
- *  it from its short description. */
-function tplAttractionDescription(ctx: TemplateContext): QuizQuestion | null {
-  const { todaysAttractions, allAttractions, lang, rng } = ctx;
-  const candidates = todaysAttractions.filter(a => a.shortDescription);
-  if (candidates.length === 0) return null;
-  const a = candidates[Math.floor(rng() * candidates.length)];
-  if (!a.shortDescription) return null;
-  const distractors = pickDistractors(
-    allAttractions.map(o => o.name),
-    a.name,
-    OPTIONS_PER_QUESTION - 1,
-    rng
-  );
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? `איזה מקום מתואר כך: "${a.shortDescription}"?`
-        : `Which place is described as: "${a.shortDescription}"?`,
-    correct: a.name,
-    distractors,
-    rng
-  });
-}
-
-/** Q: in which town is [attraction] located? Uses the address field. */
-function tplAttractionTown(ctx: TemplateContext): QuizQuestion | null {
-  const { todaysAttractions, allAttractions, lang, rng } = ctx;
-  // Pair every today-attraction with its extracted town; skip ones
-  // whose addresses are too messy to extract a real town from.
-  const pairs = todaysAttractions
-    .map(a => ({ name: a.name, town: extractTown(a.address) }))
-    .filter((p): p is { name: string; town: string } => Boolean(p.town));
-  if (pairs.length === 0) return null;
-  const pick = pairs[Math.floor(rng() * pairs.length)];
-  // Distractor towns from the WHOLE itinerary's attractions so the
-  // kid is choosing between real Tuscan places, not random words.
-  const otherTowns = allAttractions
-    .map(a => extractTown(a.address))
-    .filter((t): t is string => Boolean(t) && t !== pick.town);
-  const distractors = pickDistractors(otherTowns, pick.town, OPTIONS_PER_QUESTION - 1, rng);
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? `באיזו עיר נמצא ${pick.name}?`
-        : `Which town is ${pick.name} in?`,
-    correct: pick.town,
-    distractors,
-    rng
-  });
-}
-
-/** Q: which of these places is great for [tag-flavored activity]?
- *  Picks an attraction we visit today that has a tag, asks the kid
- *  to find it; distractors are attractions WITHOUT that tag, so the
- *  question is genuinely answerable from what each place is about. */
-function tplAttractionByTag(ctx: TemplateContext): QuizQuestion | null {
-  const { todaysAttractions, allAttractions, lang, rng } = ctx;
-  const tagCopy = COPY[lang].tag;
-  const tagged = todaysAttractions.filter(a => (a.tags ?? []).some(t => tagCopy[t]));
-  if (tagged.length === 0) return null;
-  const a = tagged[Math.floor(rng() * tagged.length)];
-  const tag = (a.tags ?? []).find(t => tagCopy[t]);
-  if (!tag) return null;
-  const tagLabel = tagCopy[tag];
-
-  // Distractors: attractions across the whole trip that DO NOT have
-  // this tag (so the answer is uniquely correct).
-  const distractorPool = allAttractions
-    .filter(o => o.id !== a.id && !(o.tags ?? []).includes(tag))
-    .map(o => o.name);
-  const distractors = pickDistractors(distractorPool, a.name, OPTIONS_PER_QUESTION - 1, rng);
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? `איזה מהמקומות האלה הוא הכי מתאים ל${tagLabel}?`
-        : `Which of these places is the best one for ${tagLabel}?`,
-    correct: a.name,
-    distractors,
-    rng
-  });
-}
-
-/** Q: which of these places is in the same area as [today's place]?
- *  Tests whether the kid is paying attention to the regional rhythm
- *  of the trip — north vs south. Uses POI.region (data-driven), not
- *  the day-level region (meta). */
-function tplAttractionRegion(ctx: TemplateContext): QuizQuestion | null {
-  const { todaysAttractions, allAttractions, lang, rng } = ctx;
-  if (todaysAttractions.length === 0) return null;
-  const today = todaysAttractions[Math.floor(rng() * todaysAttractions.length)];
-  const sameRegion = allAttractions.filter(
-    a => a.region === today.region && a.id !== today.id
-  );
-  if (sameRegion.length === 0) return null;
-  const correct = sameRegion[Math.floor(rng() * sameRegion.length)].name;
-  // Distractors: attractions in a DIFFERENT region from today's, so
-  // the answer is uniquely correct on geography.
-  const distractorPool = allAttractions
-    .filter(a => a.region !== today.region)
-    .map(a => a.name);
-  const distractors = pickDistractors(distractorPool, correct, OPTIONS_PER_QUESTION - 1, rng);
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? `איזה מקום נמצא באותו אזור כמו ${today.name}?`
-        : `Which of these places is in the same area as ${today.name}?`,
-    correct,
-    distractors,
-    rng
-  });
-}
 
 const WORD_TEMPLATES: Array<(ctx: TemplateContext) => QuizQuestion | null> = [
   tplWordMeaning,
@@ -819,11 +684,7 @@ const TEMPLATES: Array<(ctx: TemplateContext) => QuizQuestion | null> = [
   // Curated story trivia first — when the attraction author has
   // written quizFacts for today's stops, these are the highest-
   // quality questions in the deck.
-  tplAttractionStory,
-  tplAttractionDescription,
-  tplAttractionTown,
-  tplAttractionByTag,
-  tplAttractionRegion
+  tplAttractionStory
 ];
 
 /* ------------------------------------------------------------------ */
