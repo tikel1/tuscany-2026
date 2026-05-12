@@ -350,7 +350,7 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       question: "Tuscan bread is famous for missing one important ingredient. What is it?",
       correctAnswer: "Salt (it's completely unsalted!)",
       distractors: ["Flour", "Water", "Yeast"]
-    }
+    },
     {
       question: "For which famous Italian soccer team did Cristiano Ronaldo play?",
       correctAnswer: "Juventus",
@@ -539,28 +539,6 @@ interface TemplateContext {
    *  Templates use this for the "correct" answer when the question
    *  is grounded in the day's plan. */
   todaysAttractions: POI[];
-}
-
-/** Q: where does the family stay tonight? Real Italian town. */
-function tplBaseTonight(ctx: TemplateContext): QuizQuestion | null {
-  const { day, otherDays, lang, rng } = ctx;
-  if (!day.base) return null;
-  const distractors = pickDistractors(
-    otherDays.map(d => d.base ?? "").filter(Boolean),
-    day.base,
-    OPTIONS_PER_QUESTION - 1,
-    rng
-  );
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? "באיזו עיר מתארחים הלילה?"
-        : "Which town are we staying in tonight?",
-    correct: day.base,
-    distractors,
-    rng
-  });
 }
 
 /** Q: what does the Italian word X mean? */
@@ -794,31 +772,6 @@ function tplAttractionByTag(ctx: TemplateContext): QuizQuestion | null {
       lang === "he"
         ? `איזה מהמקומות האלה הוא הכי מתאים ל${tagLabel}?`
         : `Which of these places is the best one for ${tagLabel}?`,
-    correct: a.name,
-    distractors,
-    rng
-  });
-}
-
-/** Q: which of these places do we visit on this day? Real attraction
- *  names from today's plan, distractors from other days. */
-function tplVisitToday(ctx: TemplateContext): QuizQuestion | null {
-  const { todaysAttractions, allAttractions, lang, rng, day } = ctx;
-  if (todaysAttractions.length === 0) return null;
-  const a = todaysAttractions[Math.floor(rng() * todaysAttractions.length)];
-  // Distractors: attractions we are NOT visiting today, anywhere in
-  // the trip.
-  const todaysIds = new Set(todaysAttractions.map(t => t.id));
-  const distractorPool = allAttractions
-    .filter(o => !todaysIds.has(o.id))
-    .map(o => o.name);
-  const distractors = pickDistractors(distractorPool, a.name, OPTIONS_PER_QUESTION - 1, rng);
-  return buildQ({
-    lang,
-    question:
-      lang === "he"
-        ? `איזה מהמקומות האלה רואים היום (יום ${day.dayNumber})?`
-        : `Which of these places do we visit today (day ${day.dayNumber})?`,
     correct: a.name,
     distractors,
     rng
