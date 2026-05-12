@@ -179,7 +179,9 @@ export default function Quiz({
    *  always non-fatal. */
   function speak(text: string): void {
     if (mutedRef.current) return;
-    void voiceRef.current?.speak(text).catch(() => {
+    // Strip quotes that can cause TTS or Gemini Live to choke/stop prematurely
+    const safeText = text.replace(/['"]/g, "");
+    void voiceRef.current?.speak(safeText).catch(() => {
       /* swallow — voice is best-effort */
     });
   }

@@ -904,7 +904,7 @@ export function buildFallbackQuiz(
 
   // PASS 1 — Words (Target 2 questions). The user explicitly requested
   // 1-2 questions about Italian words learned today.
-  const MAX_WORDS = 2;
+  const MAX_WORDS = todaysAttractions.length < 2 ? 1 : 2;
   let wordsAdded = 0;
   for (let pass = 0; pass < 3 && wordsAdded < MAX_WORDS && collected.length < count; pass++) {
     const order = shuffleInPlace([...WORD_TEMPLATES.keys()], rng);

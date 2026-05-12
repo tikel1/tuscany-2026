@@ -100,7 +100,7 @@ function buildDayDigest(dayNumber: number, lang: Lang): string {
 
 function quizzoPersonaEn(count: number, attractionCount: number): string {
   const distributionText = attractionCount < 2
-    ? `    - Include EXACTLY 1-2 questions about the local words learned today.
+    ? `    - Include EXACTLY 1 question about the local words learned today (DO NOT exceed 1).
     - Since today has very few or no actual attractions, fill ALL remaining questions with GENERAL DESTINATION CULTURE (e.g., local foods, national geography, historical empires, famous artists, sports teams, etc.).
       You can invent these! (e.g., "Who painted the Mona Lisa?", "Which band won Eurovision in 2021?", "Who ruled here 2000 years ago?"). Keep them kid-friendly.`
     : `    - Include EXACTLY 1-2 questions about the local words learned today.
@@ -239,7 +239,7 @@ A single JSON object, no prose around it, no code fences, no markdown:
 
 function quizzoPersonaHe(count: number, attractionCount: number): string {
   const distributionText = attractionCount < 2
-    ? `    - Include EXACTLY 1-2 questions about the local words learned today.
+    ? `    - Include EXACTLY 1 question about the local words learned today (DO NOT exceed 1).
     - Since today has very few or no actual attractions, fill ALL remaining questions with GENERAL DESTINATION CULTURE (e.g., local foods, national geography, historical empires, famous artists, sports teams, etc.).
       You can invent these! (e.g., "Who painted the famous local painting?", "Which local band won Eurovision?", "Who ruled here 2000 years ago?"). Keep them kid-friendly.`
     : `    - Include EXACTLY 1-2 questions about the local words learned today.
