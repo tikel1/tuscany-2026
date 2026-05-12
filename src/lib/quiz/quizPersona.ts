@@ -164,10 +164,13 @@ QUESTION DESIGN RULES (these matter — read carefully):
 
 (D) REQUIRED QUESTION DISTRIBUTION:
     - Include EXACTLY 1-2 questions about the Italian words learned today.
-    - Include EXACTLY 3-4 questions about GENERAL ITALIAN CULTURE (like the
-      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa).
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
+      cities like Florence and Siena, what Tuscany is famous for like vineyards
+      or hills, the Maremma cowboys).
       You can invent these! (e.g. "Is spaghetti with meatballs an Italian
-      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?").
+      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Which famous leaning tower is in Tuscany?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
       Do NOT ask about attractions they haven't visited yet.
@@ -300,10 +303,13 @@ QUESTION DESIGN RULES (read carefully):
 
 (D) REQUIRED QUESTION DISTRIBUTION:
     - Include EXACTLY 1-2 questions about the Italian words learned today.
-    - Include EXACTLY 3-4 questions about GENERAL ITALIAN CULTURE (like the
-      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa).
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
+      cities like Florence and Siena, what Tuscany is famous for like vineyards
+      or hills, the Maremma cowboys).
       You can invent these! (e.g. "Is spaghetti with meatballs an Italian
-      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?").
+      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Which famous leaning tower is in Tuscany?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
       Do NOT ask about attractions they haven't visited yet.

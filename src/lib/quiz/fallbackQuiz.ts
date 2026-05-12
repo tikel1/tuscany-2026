@@ -299,6 +299,39 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       question: "Italy has the most active volcano in Europe. What is its name?",
       correctAnswer: "Mount Etna (in Sicily)",
       distractors: ["Mount Everest", "Mount Fuji", "Mount Kilimanjaro"]
+    },
+    {
+      question: "Which of these is a famous big city in Tuscany?",
+      correctAnswer: "Florence",
+      distractors: ["Rome", "Venice", "Naples"]
+    },
+    {
+      question: "Tuscany is famous for its beautiful countryside. What does it look like?",
+      correctAnswer: "Rolling green hills with vineyards and cypress trees",
+      distractors: [
+        "Flat sandy deserts with cactus",
+        "Snowy mountains with pine trees",
+        "Deep jungles with monkeys"
+      ]
+    },
+    {
+      question: "In the Maremma area of Tuscany, you can find 'Butteri'. What are they?",
+      correctAnswer: "Italian cowboys who ride horses",
+      distractors: [
+        "A type of creamy butter",
+        "People who make pizza",
+        "Little green frogs"
+      ]
+    },
+    {
+      question: "What type of thick, hand-rolled pasta is super famous in Tuscany?",
+      correctAnswer: "Pici",
+      distractors: ["Spaghetti", "Macaroni", "Ravioli"]
+    },
+    {
+      question: "Tuscan bread is famous for missing one important ingredient. What is it?",
+      correctAnswer: "Salt (it's completely unsalted!)",
+      distractors: ["Flour", "Water", "Yeast"]
     }
   ],
   he: [
@@ -386,6 +419,39 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       question: "באיטליה נמצא הוולקן הפעיל ביותר באירופה. מה שמו?",
       correctAnswer: "הר האטנה (בסיציליה)",
       distractors: ["הר אוורסט", "הר פוג׳י", "הר קילימנג׳רו"]
+    },
+    {
+      question: "איזו מבין אלו היא עיר גדולה ומפורסמת בטוסקנה?",
+      correctAnswer: "פירנצה",
+      distractors: ["רומא", "ונציה", "נאפולי"]
+    },
+    {
+      question: "טוסקנה מפורסמת באזורי הכפר היפים שלה. איך הם נראים?",
+      correctAnswer: "גבעות ירוקות מתגלגלות עם כרמים ועצי ברוש",
+      distractors: [
+        "מדבריות חול שטוחים עם קקטוסים",
+        "הרים מושלגים עם עצי אורן",
+        "ג'ונגלים עמוקים עם קופים"
+      ]
+    },
+    {
+      question: "באזור המארמה בטוסקנה, אפשר למצוא 'בוּטֶרִי'. מה הם?",
+      correctAnswer: "קאובויס איטלקים שרוכבים על סוסים",
+      distractors: [
+        "סוג של חמאה רכה",
+        "אנשים שמכינים פיצה",
+        "צפרדעים ירוקות קטנות"
+      ]
+    },
+    {
+      question: "איזה סוג של פסטה עבה המגולגלת ביד מפורסמת מאוד בטוסקנה?",
+      correctAnswer: "פיצ'י",
+      distractors: ["ספגטי", "מקרוני", "רביולי"]
+    },
+    {
+      question: "הלחם הטוסקני מפורסם בגלל שחסר בו מרכיב אחד חשוב. מהו?",
+      correctAnswer: "מלח (הוא לגמרי ללא מלח!)",
+      distractors: ["קמח", "מים", "שמרים"]
     }
   ]
 };
