@@ -160,46 +160,45 @@ QUESTION DESIGN RULES (these matter — read carefully):
       carved into the cliffs at Pitigliano?")
     - Local food, language, and fun cultural details ATTACHED to a
       place the family visited today ("what's the famous Pitigliano
-      sweet stick called?", "what's the Italian word for ice
-      cream?")
-    - Up to ONE OR TWO general "Italian culture" questions per quiz
-      (the Italian flag's colours, pizza Margherita's three classic
-      toppings, the Vespa scooter, Ferrari/Lamborghini, the boot
-      shape of Italy, gelato, Mt Etna). These are wildcards — keep
-      them few, and always kid-friendly: NO booze, NO politics, NO
-      scary detail.
+      sweet stick called?")
 
-(D) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
+(D) REQUIRED QUESTION DISTRIBUTION:
+    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa).
+      You can invent these! (e.g. "Is spaghetti with meatballs an Italian
+      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?").
+      Keep them kid-friendly.
+    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
+      Do NOT ask about attractions they haven't visited yet.
+
+(E) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
     blocks for the day's attractions — these are HAND-CURATED,
     kid-tested story facts (legends, signature details, fun
     history). When they're present they are your HIGHEST-PRIORITY
-    question fodder: at least HALF of the questions should come from
-    those blocks (lift the question text verbatim, or rephrase it
-    slightly while keeping the same fact and the same correct
-    answer). The "plausible wrong answers" list under each one is
-    the recommended distractor set — use it as-is.
+    question fodder for the attractions portion.
 
-(E) Difficulty mix: about 40% easy headline facts ("which colour is
+(F) Difficulty mix: about 40% easy headline facts ("which colour is
     the canyon water?"), 40% medium story details ("which animal did
     the villagers send across the Devil's Bridge?"), and ~20% harder
     fun-facts ("how many years did the Leaning Tower take to build?").
 
-(F) Questions must be ANSWERABLE from the day's data below — do NOT
-    invent facts the data doesn't support. If you're unsure, pick a
-    different question.
+(G) Questions must be ANSWERABLE from the day's data below — EXCEPT
+    for the "general Italian culture" questions, which you can pull from
+    your own general knowledge.
 
-(G) VARIETY — every question on a different aspect / different
+(H) VARIETY — every question on a different aspect / different
     attraction. Don't ask three questions about the same stop.
 
-(H) Wrong options are plausible-but-clearly-wrong, not technicalities.
+(I) Wrong options are plausible-but-clearly-wrong, not technicalities.
     Italian-place questions get Italian-place distractors. Never
-    random words or non-Italian destinations.
+    random words or non-Italian destinations (unless it's a joke option).
 
-(I) Vary the question STARTERS — mix "What…", "Which…", "Where…",
+(J) Vary the question STARTERS — mix "What…", "Which…", "Where…",
     "Why…", "How many…", "True or false…" (with 4 options still —
     e.g. True/False/Maybe/Both).
 
-(J) Kid-appropriate vocabulary at all times. No alcohol references
+(K) Kid-appropriate vocabulary at all times. No alcohol references
     in the questions themselves (the day's "drink of the day" is
     for parents, not the quiz).
 
@@ -285,59 +284,63 @@ QUESTION DESIGN RULES (read carefully):
     place, not the rules of visiting it.
 
 (C) GOOD QUESTION TYPES (lean heavily on these):
-    - Legends and folklore tied to the attraction
-      ("איזו חיה שלחו תושבי הכפר ראשונה על גשר השטן?",
-      "ברקים של איזה אל רומי יצרו את המעיינות החמים בסאטורניה?")
-    - Signature physical / sensory details the kid noticed
-      ("מה צבע המים בקניון?", "למה המים בסאטורניה מריחים כמו
-      ביצים?", "כמה פעמונים יש בראש המגדל הנטוי?")
-    - Real history with a memorable hook
-      ("כמה זמן בנו את המגדל הנטוי?", "אילו שתי קהילות עתיקות
-      חצבו בצוקי פיטיליאנו?")
-    - Local food, language, and cultural details ATTACHED to a
-      place visited today ("איך נקרא הקינוח המפורסם של פיטיליאנו?",
-      "מה המילה האיטלקית לגלידה?")
-    - Up to ONE OR TWO general "Italian culture" questions per
-      quiz (Italian flag colours, pizza Margherita's three classic
-      toppings, the Vespa scooter, Ferrari/Lamborghini, the boot
-      shape of Italy, gelato, Mt Etna). These are wildcards — keep
-      them few, and always kid-friendly: NO booze, NO politics,
-      NO scary detail.
+    - Legends and folklore tied to the attraction ("which animal did
+      the villagers send across the Devil's Bridge first?", "which
+      Roman god's lightning bolts created Saturnia's hot springs?")
+    - Signature physical / sensory details the kid will have noticed
+      ("what colour is the water in the canyon?", "why does the
+      water at Saturnia smell like eggs?", "how many bells sit at
+      the top of the Leaning Tower?")
+    - Real history with a memorable hook ("how many years did the
+      Leaning Tower take to build?", "which two ancient peoples
+      carved into the cliffs at Pitigliano?")
+    - Local food, language, and fun cultural details ATTACHED to a
+      place the family visited today ("what's the famous Pitigliano
+      sweet stick called?")
 
-(D) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
+(D) REQUIRED QUESTION DISTRIBUTION:
+    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa).
+      You can invent these! (e.g. "Is spaghetti with meatballs an Italian
+      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?").
+      Keep them kid-friendly.
+    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
+      Do NOT ask about attractions they haven't visited yet.
+
+(E) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
     blocks for the day's attractions — these are HAND-CURATED,
     kid-tested story facts (legends, signature details, fun
     history). When they're present they are your HIGHEST-PRIORITY
-    question fodder: at least HALF of the questions should come
-    from those blocks. Translate the question wording into natural
-    Hebrew, but keep the same fact and the same correct answer.
-    The "plausible wrong answers" list under each one is the
-    recommended distractor set — translate it into Hebrew and use
-    as-is.
+    question fodder for the attractions portion. Translate the question
+    wording into natural Hebrew, but keep the same fact and the same
+    correct answer. The "plausible wrong answers" list under each one
+    is the recommended distractor set — translate it into Hebrew and
+    use as-is.
 
-(E) Difficulty mix: about 40% easy headline facts ("מה צבע המים
+(F) Difficulty mix: about 40% easy headline facts ("מה צבע המים
     בקניון?"), 40% medium story details ("איזו חיה שלחו תושבי
     הכפר ראשונה על גשר השטן?"), and ~20% harder fun-facts ("כמה
     זמן בנו את המגדל הנטוי?").
 
-(F) Questions must be ANSWERABLE from the day's data below — do
-    NOT invent facts the data doesn't support. If you're unsure,
-    pick a different question.
+(G) Questions must be ANSWERABLE from the day's data below — EXCEPT
+    for the "general Italian culture" questions, which you can pull from
+    your own general knowledge.
 
-(G) VARIETY — every question on a different aspect / different
+(H) VARIETY — every question on a different aspect / different
     attraction. Don't ask three questions about the same stop.
 
-(H) Wrong options are plausible-but-clearly-wrong, not technicalities.
+(I) Wrong options are plausible-but-clearly-wrong, not technicalities.
     Italian-place questions get Italian-place distractors (preferably
     other places the family visits on the trip). Never random words
-    or non-Italian destinations.
+    or non-Italian destinations (unless it's a joke option).
 
-(I) Vary the question STARTERS — don't open every Hebrew question
+(J) Vary the question STARTERS — don't open every Hebrew question
     with "מה...". Mix in "איזה...", "איפה...", "למה...", "כמה...",
     "נכון או לא נכון..." (still 4 options, e.g. נכון/לא נכון/
     אולי/שניהם).
 
-(J) Kid-appropriate vocabulary at all times. No alcohol references
+(K) Kid-appropriate vocabulary at all times. No alcohol references
     in the questions themselves (the day's "drink of the day" is
     for parents, not the quiz).
 

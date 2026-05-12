@@ -212,12 +212,12 @@ function extractTown(address: string | undefined): string | null {
 const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
   en: [
     {
-      question: "What three colours are on the Italian flag?",
-      correctAnswer: "Green, white and red",
+      question: "What three colours are on the Italian flag, from left to right?",
+      correctAnswer: "Green, white, and red",
       distractors: [
-        "Blue, white and red",
-        "Yellow, black and white",
-        "Red, white and blue"
+        "Red, white, and blue",
+        "Yellow, black, and white",
+        "Blue, white, and red"
       ]
     },
     {
@@ -227,6 +227,42 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
         "Pineapple, ham and corn",
         "Mushrooms, olives and pepperoni",
         "Sweetcorn, egg and broccoli"
+      ]
+    },
+    {
+      question: "True or False: Spaghetti with meatballs is a traditional dish from Italy.",
+      correctAnswer: "False — it's an Italian-American invention!",
+      distractors: [
+        "True — it was invented in Rome",
+        "True — Julius Caesar ate it",
+        "False — it's actually from France"
+      ]
+    },
+    {
+      question: "The Teenage Mutant Ninja Turtles are named after four famous Italian Renaissance artists. Who are they?",
+      correctAnswer: "Leonardo, Michelangelo, Donatello, and Raphael",
+      distractors: [
+        "Mario, Luigi, Toad, and Bowser",
+        "Romeo, Juliet, Hamlet, and Othello",
+        "Vivaldi, Puccini, Verdi, and Rossini"
+      ]
+    },
+    {
+      question: "Who painted the world's most famous painting, the Mona Lisa?",
+      correctAnswer: "Leonardo da Vinci, an Italian artist",
+      distractors: [
+        "Pablo Picasso",
+        "Vincent van Gogh",
+        "Michelangelo"
+      ]
+    },
+    {
+      question: "The main international airport in Rome is named after which famous Italian inventor and artist?",
+      correctAnswer: "Leonardo da Vinci",
+      distractors: [
+        "Julius Caesar",
+        "Marco Polo",
+        "Christopher Columbus"
       ]
     },
     {
@@ -267,9 +303,9 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
   ],
   he: [
     {
-      question: "אילו שלושה צבעים יש בדגל האיטלקי?",
+      question: "אילו שלושה צבעים יש בדגל האיטלקי, משמאל לימין?",
       correctAnswer: "ירוק, לבן ואדום",
-      distractors: ["כחול, לבן ואדום", "צהוב, שחור ולבן", "אדום, לבן וכחול"]
+      distractors: ["אדום, לבן וכחול", "צהוב, שחור ולבן", "כחול, לבן ואדום"]
     },
     {
       question: "פיצה מרגריטה נקראת על שם מלכה איטלקית אמיתית, ומציגה את צבעי הדגל האיטלקי. מה שלוש התוספות הקלאסיות?",
@@ -278,6 +314,42 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
         "אננס, אגוזים ותירס",
         "פטריות, זיתים ופפרוני",
         "תירס מתוק, ביצה וברוקולי"
+      ]
+    },
+    {
+      question: "נכון או לא נכון: ספגטי עם כדורי בשר זה מאכל איטלקי מסורתי.",
+      correctAnswer: "לא נכון — זו המצאה של איטלקים שהיגרו לאמריקה!",
+      distractors: [
+        "נכון — זה הומצא ברומא",
+        "נכון — יוליוס קיסר נהג לאכול את זה",
+        "לא נכון — זה בכלל מצרפת"
+      ]
+    },
+    {
+      question: "צבי הנינג׳ה נקראים על שם ארבעה אמנים איטלקים מפורסמים מתקופת הרנסנס. מי הם?",
+      correctAnswer: "לאונרדו, מיכלאנג׳לו, דונטלו ורפאל",
+      distractors: [
+        "מריו, לואיג׳י, טואד ובאוזר",
+        "רומיאו, יוליה, המלט ואותלו",
+        "ויוואלדי, פוצ׳יני, ורדי ורוסיני"
+      ]
+    },
+    {
+      question: "מי צייר את הציור המפורסם בעולם, המונה ליזה?",
+      correctAnswer: "לאונרדו דה וינצ׳י, אמן איטלקי",
+      distractors: [
+        "פבלו פיקאסו",
+        "וינסנט ואן גוך",
+        "מיכלאנג׳לו"
+      ]
+    },
+    {
+      question: "נמל התעופה הבינלאומי המרכזי של רומא נקרא על שם איזה ממציא ואמן איטלקי מפורסם?",
+      correctAnswer: "לאונרדו דה וינצ׳י",
+      distractors: [
+        "יוליוס קיסר",
+        "מרקו פולו",
+        "כריסטופר קולומבוס"
       ]
     },
     {
@@ -652,17 +724,17 @@ function tplAttractionRegion(ctx: TemplateContext): QuizQuestion | null {
   });
 }
 
+const WORD_TEMPLATES: Array<(ctx: TemplateContext) => QuizQuestion | null> = [
+  tplWordMeaning,
+  tplWordReverse,
+  tplPhraseExample
+];
+
 const TEMPLATES: Array<(ctx: TemplateContext) => QuizQuestion | null> = [
   // Curated story trivia first — when the attraction author has
   // written quizFacts for today's stops, these are the highest-
-  // quality questions in the deck (real legends, real history,
-  // real signature details), so they should dominate the pack.
+  // quality questions in the deck.
   tplAttractionStory,
-  tplWordMeaning,
-  tplWordReverse,
-  tplPhraseExample,
-  tplBaseTonight,
-  tplVisitToday,
   tplAttractionDescription,
   tplAttractionTown,
   tplAttractionByTag,
@@ -702,9 +774,15 @@ export function buildFallbackQuiz(
     .filter(d => d.dayNumber !== dayNumber)
     .map(d => (lang === "he" ? localizeDay(d, "he") : d));
 
-  const allAttractions = attractions.map(a =>
-    lang === "he" ? localizePoi(a, "he") : a
+  const pastDays = itinerary.filter(d => d.dayNumber <= dayNumber);
+  const pastAttractionIds = new Set(
+    pastDays.flatMap(d => d.activities.map(a => a.attractionId).filter(Boolean))
   );
+
+  const allAttractions = attractions
+    .filter(a => pastAttractionIds.has(a.id))
+    .map(a => (lang === "he" ? localizePoi(a, "he") : a));
+
   // Today's attractions: pull every activity with an `attractionId`
   // and look it up. This gives us proper rich POIs (with shortDesc,
   // tags, address) instead of the bare activity titles, which is
@@ -739,29 +817,28 @@ export function buildFallbackQuiz(
     collected.push(q);
   };
 
-  // PASS 1 — greedy curated trivia. When attractions on this day
-  // have hand-authored `quizFacts`, those are by far the highest-
-  // quality questions in the deck (real legends, real history,
-  // signature details — see attractions.ts), so we drain that
-  // catalog FIRST until either we hit the count or run out of
-  // unique facts. On a story-rich day this is the entire pack
-  // (minus the small culture-wildcard slots reserved below).
-  const CULTURE_BUDGET = 2; // max "general Italy" facts per pack
-  const STORY_BUDGET = Math.max(0, count - CULTURE_BUDGET);
-  for (let i = 0; i < STORY_BUDGET * 2 && collected.length < STORY_BUDGET; i++) {
-    tryAdd(tplAttractionStory(ctx));
+  // PASS 1 — Words (Target 2 questions). The user explicitly requested
+  // 1-2 questions about Italian words learned today.
+  const MAX_WORDS = 2;
+  let wordsAdded = 0;
+  for (let pass = 0; pass < 3 && wordsAdded < MAX_WORDS && collected.length < count; pass++) {
+    const order = shuffleInPlace([...WORD_TEMPLATES.keys()], rng);
+    for (const idx of order) {
+      if (wordsAdded >= MAX_WORDS || collected.length >= count) break;
+      const before = collected.length;
+      tryAdd(WORD_TEMPLATES[idx](ctx));
+      if (collected.length > before) wordsAdded++;
+    }
   }
 
-  // PASS 2 — Italian-culture wildcards (flag, pizza Margherita,
-  // Vespa, Ferrari, …) capped at CULTURE_BUDGET. Stops the deck
-  // from feeling repetitive when an attraction has only one or
-  // two facts authored, without crowding out the day's actual
-  // attractions. The bank dedup happens via the question-text
-  // `seen` set, so even if RNG repeats it won't duplicate.
+  // PASS 2 — Italian-culture wildcards (Target 4 questions).
+  // The user explicitly requested 3-5 questions about general Italy
+  // (flag, pizza Margherita, artists, geography).
+  const MAX_CULTURE = 4;
   let cultureAdded = 0;
   for (
     let i = 0;
-    i < CULTURE_BUDGET * 4 && cultureAdded < CULTURE_BUDGET && collected.length < count;
+    i < MAX_CULTURE * 4 && cultureAdded < MAX_CULTURE && collected.length < count;
     i++
   ) {
     const before = collected.length;
@@ -769,13 +846,15 @@ export function buildFallbackQuiz(
     if (collected.length > before) cultureAdded++;
   }
 
-  // PASS 3 — fill remaining slots with the diverse template mix
-  // (places, towns, italian words, regions, …). Multiple shuffled
-  // sub-passes so a single template can fire more than once when
-  // it has multiple source items to pick from (e.g. several
-  // italian words on the day). Runs LAST so curated story trivia
-  // and culture wildcards land first; this is the catch-all
-  // when the day has thin or no `quizFacts`.
+  // PASS 3 — Curated Attraction Stories. When attractions on this day
+  // have hand-authored `quizFacts`, those are the highest-quality
+  // questions about the specific attractions.
+  for (let i = 0; i < 10 && collected.length < count; i++) {
+    tryAdd(tplAttractionStory(ctx));
+  }
+
+  // PASS 4 — fill remaining slots with the diverse generic attraction templates
+  // (description, town, tag, region).
   const MAX_PASSES = 4;
   for (let pass = 0; pass < MAX_PASSES && collected.length < count; pass++) {
     const order = shuffleInPlace([...TEMPLATES.keys()], rng);
