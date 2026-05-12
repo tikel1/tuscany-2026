@@ -167,10 +167,10 @@ QUESTION DESIGN RULES (these matter — read carefully):
     - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
       flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
       cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys).
-      You can invent these! (e.g. "Is spaghetti with meatballs an Italian
-      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?",
-      "Which famous leaning tower is in Tuscany?").
+      or hills, the Maremma cowboys, ancient Romans, or countries bordering Italy).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
+      "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
       Do NOT ask about attractions they haven't visited yet.
@@ -306,10 +306,10 @@ QUESTION DESIGN RULES (read carefully):
     - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
       flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
       cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys).
-      You can invent these! (e.g. "Is spaghetti with meatballs an Italian
-      dish?", "Who painted the Mona Lisa?", "What are the TMNT named after?",
-      "Which famous leaning tower is in Tuscany?").
+      or hills, the Maremma cowboys, ancient Romans, or countries bordering Italy).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
+      "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
       Do NOT ask about attractions they haven't visited yet.

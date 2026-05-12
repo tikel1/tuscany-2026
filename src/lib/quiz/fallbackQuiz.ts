@@ -230,12 +230,30 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       ]
     },
     {
-      question: "True or False: Spaghetti with meatballs is a traditional dish from Italy.",
-      correctAnswer: "False — it's an Italian-American invention!",
+      question: "Which of these famous foods is NOT actually from Italy?",
+      correctAnswer: "Spaghetti with meatballs (it's American!)",
       distractors: [
-        "True — it was invented in Rome",
-        "True — Julius Caesar ate it",
-        "False — it's actually from France"
+        "Pizza Margherita",
+        "Gelato (ice cream)",
+        "Lasagna"
+      ]
+    },
+    {
+      question: "Italy shares its northern border with a few other countries. Which of these countries does NOT border Italy?",
+      correctAnswer: "Spain",
+      distractors: [
+        "France",
+        "Switzerland",
+        "Austria"
+      ]
+    },
+    {
+      question: "About 2000 years ago, a powerful empire ruled Italy and much of the world. What were the people of this empire called?",
+      correctAnswer: "The Romans",
+      distractors: [
+        "The Greeks",
+        "The Egyptians",
+        "The Vikings"
       ]
     },
     {
@@ -350,12 +368,30 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       ]
     },
     {
-      question: "נכון או לא נכון: ספגטי עם כדורי בשר זה מאכל איטלקי מסורתי.",
-      correctAnswer: "לא נכון — זו המצאה של איטלקים שהיגרו לאמריקה!",
+      question: "איזה מהמאכלים המפורסמים האלה לא באמת הומצא באיטליה?",
+      correctAnswer: "ספגטי עם כדורי בשר (זה אמריקאי!)",
       distractors: [
-        "נכון — זה הומצא ברומא",
-        "נכון — יוליוס קיסר נהג לאכול את זה",
-        "לא נכון — זה בכלל מצרפת"
+        "פיצה מרגריטה",
+        "גלידה (ג'לאטו)",
+        "לזניה"
+      ]
+    },
+    {
+      question: "איטליה חולקת את הגבול הצפוני שלה עם כמה מדינות. איזו מהמדינות האלה לא גובלת באיטליה?",
+      correctAnswer: "ספרד",
+      distractors: [
+        "צרפת",
+        "שווייץ",
+        "אוסטריה"
+      ]
+    },
+    {
+      question: "לפני כ-2000 שנה, אימפריה חזקה שלטה באיטליה ובחלק גדול מהעולם. איך קראו לאנשי האימפריה הזו?",
+      correctAnswer: "הרומאים",
+      distractors: [
+        "היוונים",
+        "המצרים",
+        "הוויקינגים"
       ]
     },
     {
