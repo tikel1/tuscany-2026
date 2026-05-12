@@ -309,9 +309,9 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       distractors: ["A small boat", "A song", "A train"]
     },
     {
-      question: "Which tiny famous Italian car of the 1950s is called 'Cinquecento' — meaning 'five hundred' in Italian?",
-      correctAnswer: "The Fiat 500",
-      distractors: ["The Vespa 500", "The Ferrari 500", "The Lamborghini 500"]
+      question: "In 2014, the Israeli basketball team Maccabi Tel Aviv won the European Championship. In which Italian city did they play the final?",
+      correctAnswer: "Milan",
+      distractors: ["Rome", "Venice", "Florence"]
     },
     {
       question: "Italy has the most active volcano in Europe. What is its name?",
@@ -462,9 +462,9 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       distractors: ["סירה קטנה", "שיר", "רכבת"]
     },
     {
-      question: "איזו מכונית איטלקית קטנה ומפורסמת משנות החמישים נקראת ׳צ׳ינקווצ׳נטו׳ — שזה ׳חמש מאות׳ באיטלקית?",
-      correctAnswer: "הפיאט 500",
-      distractors: ["הוֶספַּה 500", "הפרארי 500", "הלמבורגיני 500"]
+      question: "בשנת 2014, מכבי תל אביב בכדורסל זכתה באליפות אירופה. באיזו עיר איטלקית נערך משחק הגמר?",
+      correctAnswer: "מילאנו",
+      distractors: ["רומא", "ונציה", "פירנצה"]
     },
     {
       question: "באיטליה נמצא הוולקן הפעיל ביותר באירופה. מה שמו?",
