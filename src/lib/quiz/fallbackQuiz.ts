@@ -352,9 +352,9 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       distractors: ["Flour", "Water", "Yeast"]
     }
     {
-      question: "Which famous Portuguese soccer player, CR7, played for the Italian team Juventus?",
-      correctAnswer: "Cristiano Ronaldo",
-      distractors: ["Lionel Messi", "Neymar", "Kylian Mbappé"]
+      question: "For which famous Italian soccer team did Cristiano Ronaldo play?",
+      correctAnswer: "Juventus",
+      distractors: ["AC Milan", "Inter Milan", "AS Roma"]
     },
     {
       question: "Which Italian rock band won the Eurovision Song Contest in 2021?",
@@ -505,9 +505,9 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       distractors: ["קמח", "מים", "שמרים"]
     },
     {
-      question: "איזה שחקן כדורגל פורטוגלי מפורסם, הידוע כ-CR7, שיחק בקבוצה האיטלקית יובנטוס?",
-      correctAnswer: "כריסטיאנו רונאלדו",
-      distractors: ["ליונל מסי", "ניימאר", "קיליאן אמבפה"]
+      question: "באיזו קבוצת כדורגל איטלקית מפורסמת שיחק כריסטיאנו רונאלדו?",
+      correctAnswer: "יובנטוס",
+      distractors: ["מילאן", "אינטר", "רומא"]
     },
     {
       question: "איזו להקת רוק איטלקית זכתה באירוויזיון בשנת 2021?",
