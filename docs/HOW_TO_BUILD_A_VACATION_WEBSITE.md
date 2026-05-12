@@ -507,14 +507,17 @@ Tapping "Read more" navigates to `#chapter/3` (hash routing — no
 router library needed). The detail page has its own image carousel,
 back arrow, and a content order designed for **the day of**:
 
-1. **Italian word of the day** — fun, sets the mood
+1. **Word of the day in the destination's language** — fun, sets the
+   mood (Italian for this trip; pick whatever language travellers will
+   actually hear at the destination).
 2. **The plan** — activities, drive notes, and inline ride times
    between stops (see "Activity rows" below)
 3. **Restaurants nearby** — curated by day, not just by region. A
    restaurant in northern Maremma is useless on a Lucca day.
-4. **Suggested end-of-day drink** — one Italian drink (wine, aperitif,
-   cocktail, beer, digestif) with a one-line "why tonight" pairing
-   to the day's vibe and an optional serving note. Adults only.
+4. **Suggested end-of-day drink** — one drink local to the destination
+   (wine, aperitif, cocktail, beer, digestif) with a one-line "why
+   tonight" pairing to the day's vibe and an optional serving note.
+   Adults only.
 5. **Mini map** — the day's stops
 6. **What to bring** — gear list (with "for X" chips that link to the
    activity below)
@@ -599,11 +602,14 @@ day, not a sibling of the activities. Only render it when the
 preceding activity has a `rideToNext` field — skip for sub-5-minute
 hops or when the next activity is at the same place.
 
-### Italian word of the day
+### Word of the day (destination language)
 
-A magazine-style flashcard at the top:
+A magazine-style flashcard at the top, picking up a word in whatever
+language travellers will actually hear at the destination — Italian
+on this trip, but call yours `JapaneseWord`, `FrenchWord`, etc.:
 
 ```ts
+// In this example app the type is `ItalianWord`; rename per trip.
 interface ItalianWord {
   word: string;          // "Acqua"
   pronounce: string;     // "AH-kwah"
@@ -613,9 +619,10 @@ interface ItalianWord {
 }
 ```
 
-Pick words that fit the day (water words on water days, "arrivederci"
-on departure day). Translate `meaning` and `exampleMeaning` per
-language; the Italian itself stays universal.
+Pick words that fit the day (water words on water days, the local
+equivalent of "goodbye" on departure day). Translate `meaning` and
+`exampleMeaning` per UI language; the source word + example stay in
+the destination language across all UI languages.
 
 ---
 
@@ -1089,19 +1096,29 @@ then taps Directions / Go themselves. Auto-navigating from a quick tap
 felt aggressive in practice (especially when "is this place even open
 right now?" was the real question).
 
+Define a single `TRIP_COUNTRY` constant somewhere central
+(`src/data/trip.ts` or wherever your trip-wide config lives) — both
+URL builders below append it as a fallback when a POI has no street
+address, so the search disambiguates instead of landing on a
+same-named place in another country. (Example app pins this to
+`"Italy"`; for a Japan trip you'd write `"Japan"`, for France
+`"France"`, etc.)
+
 ```ts
+const TRIP_COUNTRY = "Italy"; // change per trip
+
 // Google Maps — search URL opens the top hit's place card directly.
-// Address sharpens the search; falling back to "<name>, Italy" is
-// usually disambiguating enough on its own.
+// Address sharpens the search; the country fallback is usually
+// disambiguating enough on its own.
 export function googleMapsPlaceUrl(t: NavTarget): string {
-  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, Italy`;
+  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, ${TRIP_COUNTRY}`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
 // Waze — q= runs a search inside Waze; navigate=no keeps the user
 // in control instead of auto-starting nav on tap.
 export function wazePlaceUrl(t: NavTarget): string {
-  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, Italy`;
+  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, ${TRIP_COUNTRY}`;
   return `https://waze.com/ul?q=${encodeURIComponent(query)}&navigate=no`;
 }
 ```
@@ -1143,10 +1160,12 @@ useEffect(() => {
     pos => {
       const c: [number, number] = [pos.coords.latitude, pos.coords.longitude];
       setUserLocation(c);
-      // Only fly to the dot the first time we see it inside Italy —
-      // don't snap the map away from Tuscany when the user is still
-      // pre-trip in Tel Aviv.
-      if (!hasAutoCentered.current && isInItaly(c[0], c[1])) {
+      // Only fly to the dot the first time we see it inside the
+      // destination's bounding box — don't snap the map away from
+      // the trip area when the user is still tapping pre-trip from
+      // home. (In this example app the helper is `isInItaly`; for a
+      // different trip name it after your destination.)
+      if (!hasAutoCentered.current && isInDestination(c[0], c[1])) {
         hasAutoCentered.current = true;
         flyRef.current?.flyToCoords(c, 11);
       }
@@ -1160,7 +1179,7 @@ useEffect(() => {
 
 Three rules that make this feel right:
 - **`watchPosition`, not `getCurrentPosition`.** The marker should
-  follow you as you drive across Tuscany.
+  follow you as you drive across the destination.
 - **Only auto-center inside the destination country.** Use a generous
   bounding box. Otherwise pre-trip taps yank the map to the user's
   home city.
@@ -1192,7 +1211,7 @@ keepsake. Some things we wish we'd written down sooner:
 ### Per-day enrichment
 
 For every day, include:
-- **Italian word of the day** — the flashcard at the top.
+- **Word of the day in the destination's language** — the flashcard at the top.
 - **Gear list** with `for: <activity-id>` references where applicable.
 - **Day tips** — short bullets only, one or two sentences each.
 - **Ride times** — populate `rideToNext` on activities with a
@@ -1202,10 +1221,10 @@ For every day, include:
 - **Restaurants for the day** — 2–4 ids from the services list.
   Curate by **the day's location**, not just region — a restaurant
   in southern Maremma is useless on a Lucca day.
-- **Drink of the day** — one Italian drink (wine, cocktail, beer,
-  aperitif, digestif, coffee) with a one-line "why tonight" pairing.
-  Keep `name` and `type` universal across languages; localize only
-  `pairing` and `servingNote`.
+- **Drink of the day** — one drink local to the destination (wine,
+  cocktail, beer, aperitif, digestif, coffee) with a one-line "why
+  tonight" pairing. Keep `name` and `type` universal across UI
+  languages; localize only `pairing` and `servingNote`.
 
 ### Per-attraction enrichment
 
@@ -1216,13 +1235,21 @@ For every attraction:
 
 ### Global tips
 
-Don't forget the cultural ones that make or break a trip:
-- **August closures** — many family restaurants close for Ferragosto
-  (mid-August). Worth surfacing as a yellow warning tip.
+Don't forget the cultural ones that make or break a trip. The
+specifics will differ by destination — the bullets below are this
+trip's Italy examples; substitute your destination's equivalents
+(public-holiday closures, peak-hour crowds, midday-closure
+conventions, local tipping norms):
+- **National-holiday closures** — many family restaurants close for
+  Ferragosto (mid-August) here. Worth surfacing as a yellow warning
+  tip. (Substitute your destination's equivalent — Golden Week, Diwali,
+  Bayram, etc.)
 - **Crowds & timing** — go early or late, avoid the noon golden hours.
-- **Riposo / siesta** — shops & kitchens closed midday in small
-  villages.
+- **Midday closure conventions** — shops & kitchens closed midday in
+  small Italian villages (`riposo` / `siesta`). Many destinations have
+  an equivalent rhythm; document it.
 - **Tipping etiquette** — Italians round up; service is included.
+  (Wildly destination-specific — research per trip.)
 
 ### Food & wine
 
@@ -1260,8 +1287,8 @@ screens. Feels native.
 
 ### Carousels: swipe on mobile, arrows on desktop
 
-Hero photo carousel, chapter detail carousel, and the Italian Word of
-the Day card all need horizontal swipe on phones — tapping a tiny
+Hero photo carousel, chapter detail carousel, and the destination
+word-of-the-day card all need horizontal swipe on phones — tapping a tiny
 arrow with your thumb feels broken when the rest of the OS is
 gesture-driven. Centralize the gesture in `src/lib/useCarouselSwipe.ts`
 so every carousel behaves the same way:
@@ -1460,20 +1487,25 @@ with no key in sight.**
 > `VITE_GEMINI_API_KEY` is set, that's why — set the unprefixed
 > version too. `.env.example` documents both.
 
-**Italian “word of the day” clips** (`npm run tts:italian-words`) default to
+**Destination-language word-of-the-day clips** — in this repo `npm run
+tts:italian-words` (rename per trip: `tts:japanese-words`, etc.) — default to
 **Gemini 3.1 Flash TTS** (`GEMINI_API_KEY` in `.env.local` or the shell — same
 key family as the in-app Gemini features). Model and prebuilt voice names are
-configurable (`GEMINI_TTS_MODEL`, `GEMINI_TTS_VOICE_NAME`, per-language
-`GEMINI_TTS_VOICE_IT` / `_EN` / `_HE`); see `scripts/fetch-italian-word-audio.mjs`.
-For **legacy Cloud Chirp 3 HD** instead, pass **`--google-chirp3`** and use
+configurable (`GEMINI_TTS_MODEL`, `GEMINI_TTS_VOICE_NAME`, plus per-language
+overrides — this repo defines `GEMINI_TTS_VOICE_IT` / `_EN` / `_HE` because
+those are the languages it ships; add or rename per trip). See
+`scripts/fetch-italian-word-audio.mjs` as the template. For **legacy Cloud
+Chirp 3 HD** instead, pass **`--google-chirp3`** and use
 `gcloud auth application-default login` or `GOOGLE_APPLICATION_CREDENTIALS`.
 **`--elevenlabs`** (with `ELEVEN_API_KEY`) switches to ElevenLabs.
 
-**Hebrew attraction narration** (`npm run tts:attractions-he`) also defaults to
-Gemini Flash TTS (`scripts/fetch-attraction-audio-he.mjs`); tune with
-`GEMINI_TTS_ATTRACTION_VOICE` or the shared `GEMINI_TTS_VOICE_HE` vars.
-**`--google-chirp3`** uses Cloud Chirp3 (`GOOGLE_TTS_ATTRACTION_HE_VOICE` /
-`GOOGLE_TTS_ATTRACTION_SPEAKING_RATE`). **`--elevenlabs`** uses ElevenLabs.
+**Attraction narration in the user's UI language** — in this repo `npm run
+tts:attractions-he` ships Hebrew clips because the audience is Hebrew-first;
+add a parallel script per UI language you support. Defaults to Gemini Flash TTS
+(`scripts/fetch-attraction-audio-he.mjs`); tune with
+`GEMINI_TTS_ATTRACTION_VOICE` or the shared per-language `GEMINI_TTS_VOICE_*`
+vars. **`--google-chirp3`** uses Cloud Chirp3 (`GOOGLE_TTS_ATTRACTION_HE_VOICE`
+/ `GOOGLE_TTS_ATTRACTION_SPEAKING_RATE`). **`--elevenlabs`** uses ElevenLabs.
 
 ### Voice settings that work for narration
 
