@@ -39,7 +39,8 @@ import type {
   Tip
 } from "../data/types";
 import NavigateLinks from "./NavigateLinks";
-import { getTripState } from "../lib/tripState";
+import Quiz from "./Quiz";
+import { getTripState, isQuizUnlocked } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import { tipsForDay } from "../lib/tipsForDay";
 import { navigateChapter, navigateHome, rememberChapter } from "../lib/route";
@@ -804,6 +805,24 @@ function ChapterDetailContent({ day }: { day: Day }) {
               </ul>
             </section>
           )}
+
+          {/* Quiz with Quizzo — kid-friendly recap (or pre-trip
+              preview) of the day. Mounted on every chapter, sandwiched
+              between "Good to know" and the adults-only drink callout
+              so the closing pair reads as Kids → Parents.
+              `isQuizUnlocked` lets the first N days (preview) and any
+              chapter whose date has arrived play; the rest render a
+              "Unlocks on …" notice card so the kid sees the slot but
+              can't burn API quota previewing tomorrow's surprises.
+              Key on (day, lang) so flipping the language wipes the
+              in-progress round + cached voice backend cleanly via a
+              full remount. */}
+          <Quiz
+            key={`${day.dayNumber}-${lang}`}
+            day={day.dayNumber}
+            locked={!isQuizUnlocked(day.dayNumber, day.date)}
+            unlockDate={day.date}
+          />
 
           {/* Drink of the day — closing flourish, the literal end of the
               chapter (after all the practical info). Adults-only nightcap

@@ -37,6 +37,7 @@ import {
 } from "../lib/gemininio/storage";
 import { logGemError } from "../lib/gemininio/logUserFacingError";
 import { completedTurnsForApi, type ChatTurn } from "../lib/gemininio/chatHistory";
+import { subscribeOpenGemininio } from "../lib/gemininio/openEvent";
 
 /**
  * Gemininio — the AI tour-guide chat. A floating button on every
@@ -238,6 +239,14 @@ export default function Gemininio() {
       micRef.current?.stop();
       playerRef.current?.stop();
     };
+  }, []);
+
+  // External "open me" event — used by the per-day quiz score screen
+  // (Ask Quizzo something) and any future CTA that wants to surface
+  // the chat without prop-drilling a ref. Wired through window so it
+  // also works from lazy-loaded components.
+  useEffect(() => {
+    return subscribeOpenGemininio(() => open());
   }, []);
 
   /* ---------------- helpers ---------------- */

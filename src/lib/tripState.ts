@@ -74,6 +74,55 @@ export function getCurrentOrUpcomingDayNumber(now: Date = new Date()): number {
   return 1;
 }
 
+/**
+ * Has the given chapter's date already started (today or earlier)?
+ * Used to gate per-chapter post-event UI like the kid quiz, so we
+ * don't surface a "what did we do today" recap before the day has
+ * actually happened. Always returns `true` once the trip is over.
+ *
+ * The chapter date is compared against local-day start so the gate
+ * unlocks at midnight rather than 24h after the chapter began —
+ * the family shouldn't have to wait until evening to play if they
+ * happened to do the day's plan in the morning.
+ */
+export function isChapterUnlockedForRecap(
+  chapterDate: string,
+  now: Date = new Date()
+): boolean {
+  const today = startOfDayLocal(now);
+  // Build the chapter date in local time so the comparison is
+  // strictly day-vs-day (not affected by hours / TZ offsets).
+  const [y, m, d] = chapterDate.split("-").map(Number);
+  if (!y || !m || !d) return false;
+  const chapter = new Date(y, m - 1, d);
+  return chapter.getTime() <= today.getTime();
+}
+
+/** How many day-chapters are always unlocked, regardless of date,
+ *  so the family can preview the experience before the trip. The
+ *  rest of the days unlock automatically once their chapter date
+ *  arrives (see `isQuizUnlocked`). Tuned to 2 — Day 1 alone reads
+ *  like a single-sample teaser; 2 is enough to let kids feel out
+ *  both the offline and live modes and to give parents confidence
+ *  the feature works without exposing the entire trip's surprises
+ *  early. */
+export const QUIZ_PREVIEW_UNLOCKED_DAYS = 2;
+
+/**
+ * Should the per-day Quizzo card be playable? `true` for the
+ * preview-unlocked first N days OR any chapter whose date is today
+ * or earlier. Locked days still render the card, but with a
+ * "unlocks on …" message instead of the Start button.
+ */
+export function isQuizUnlocked(
+  dayNumber: number,
+  chapterDate: string,
+  now: Date = new Date()
+): boolean {
+  if (dayNumber <= QUIZ_PREVIEW_UNLOCKED_DAYS) return true;
+  return isChapterUnlockedForRecap(chapterDate, now);
+}
+
 export function getTripState(now: Date = new Date()): TripState {
   const today = startOfDayLocal(now);
   const start = startOfDayLocal(TRIP_START);

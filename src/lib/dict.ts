@@ -588,6 +588,113 @@ export const DICT = {
     he: "הניסוח תלוי בגרסת Chrome"
   },
 
+  /* ---------- Quiz with Quizzo (kid-friendly per-day recap) ---------- */
+  quiz_eyebrow: { en: "Recap on the way back", he: "סיכום בדרך חזרה" },
+  quiz_title: { en: "Quizzo's trip quiz", he: "החידון של קוויצו" },
+  quiz_subtitle: {
+    en: "Five questions about today, hosted by Quizzo. Best played in the car on the way home.",
+    he: "חמש שאלות על היום, בהנחיית קוויצו. הכי כיף לשחק ברכב בדרך חזרה."
+  },
+  quiz_start: { en: "Start the quiz", he: "התחילו את החידון" },
+  quiz_loading: { en: "Quizzo is warming up…", he: "קוויצו מתחמם…" },
+  quiz_question_of: {
+    en: "Question {n} of {total}",
+    he: "שאלה {n} מתוך {total}"
+  },
+  quiz_correct: { en: "Correct!", he: "נכון!" },
+  quiz_wrong: { en: "Not quite — the answer was:", he: "לא בדיוק — התשובה היא:" },
+  quiz_score: {
+    en: "You scored {score} of {total}",
+    he: "הניקוד: {score} מתוך {total}"
+  },
+  quiz_score_perfect: {
+    en: "Bravissimo! Perfect score!",
+    he: "ברביסימו! ניקוד מושלם!"
+  },
+  quiz_score_great: { en: "Molto bene!", he: "מולטו בנה!" },
+  quiz_score_ok: {
+    en: "Not bad — try again to beat it.",
+    he: "לא רע — נסו שוב כדי לשפר."
+  },
+  quiz_score_low: {
+    en: "Allora, that's a tough one. Another round?",
+    he: "אללוֹרָה, שאלות קשות. עוד סיבוב?"
+  },
+  quiz_play_again: { en: "Play again", he: "שחקו שוב" },
+  quiz_new_questions: { en: "New questions", he: "שאלות חדשות" },
+  quiz_ask_quizzo: { en: "Ask Quizzo something", he: "לשאול את קוויצו משהו" },
+  quiz_offline: {
+    en: "Quizzo needs the internet to write new questions. Try again when you're back online.",
+    he: "קוויצו צריך אינטרנט כדי לכתוב שאלות חדשות. נסו שוב כשתחזרו לרשת."
+  },
+  quiz_unlocked_after: {
+    en: "Unlocks once today's adventures begin.",
+    he: "ייפתח כשההרפתקה של היום תתחיל."
+  },
+  quiz_voice_unavailable: {
+    en: "Quizzo's voice isn't available right now — read the question and tap your answer.",
+    he: "הקול של קוויצו לא זמין כרגע — קראו את השאלה ובחרו תשובה."
+  },
+  quiz_aria_option: { en: "Answer option {n}", he: "תשובה אפשרית {n}" },
+  quiz_error: {
+    en: "Quizzo got tongue-tied. Tap to try again.",
+    he: "קוויצו התבלבל. הקישו כדי לנסות שוב."
+  },
+  quiz_close: { en: "Close the quiz", he: "סגרו את החידון" },
+
+  /* ---------- Quiz mode toggle (offline / live) ---------- */
+  quiz_mode_label: { en: "Mode", he: "מצב" },
+  quiz_mode_offline: { en: "Offline", he: "ללא רשת" },
+  quiz_mode_offline_hint: {
+    en: "10 questions, saved on this device",
+    he: "10 שאלות, שמורות במכשיר הזה"
+  },
+  quiz_mode_live: { en: "Live", he: "בשידור חי" },
+  quiz_mode_live_hint: {
+    en: "Endless questions, needs the internet",
+    he: "שאלות בלי סוף, דורש אינטרנט"
+  },
+  quiz_offline_pack_unavailable: {
+    en: "Offline pack isn't ready yet — switch to Live (with wifi) to play, then offline mode will work next time.",
+    he: "החבילה לא זמינה עדיין — עברו ל\"בשידור חי\" עם אינטרנט, ובפעם הבאה גם המצב ללא רשת יעבוד."
+  },
+  quiz_offline_preparing: {
+    en: "Preparing your offline pack — hang on…",
+    he: "מכינים את החבילה לשמירה במכשיר…"
+  },
+
+  /* ---------- Endless live mode buttons ---------- */
+  quiz_end_round: { en: "End round", he: "סיים סיבוב" },
+  quiz_keep_going: { en: "Keep going", he: "ממשיכים" },
+  quiz_loading_more: { en: "Loading next questions…", he: "טוען עוד שאלות…" },
+  quiz_load_more_failed: {
+    en: "Couldn't load more questions. End the round?",
+    he: "לא הצלחנו לטעון עוד שאלות. לסיים את הסיבוב?"
+  },
+  quiz_question_n: { en: "Question {n}", he: "שאלה {n}" },
+
+  /* ---------- Lock card (chapter date hasn't arrived yet) ---------- */
+  quiz_locked_eyebrow: { en: "Locked for now", he: "נעול לעכשיו" },
+  quiz_locked_title: { en: "Quizzo is still warming up", he: "קוויצו עדיין מתחמם" },
+  quiz_locked_unlocks_on: {
+    en: "Unlocks on {date}",
+    he: "ייפתח ב{date}"
+  },
+  quiz_locked_hint_preview: {
+    en: "Days 1 and 2 are unlocked early so you can try the quiz before the trip — the rest open on the morning of each day.",
+    he: "ימים 1 ו-2 פתוחים מראש כדי שתוכלו להתנסות לפני הטיול — השאר נפתחים בבוקר היום עצמו."
+  },
+
+  /* ---------- Mute toggle ---------- */
+  quiz_mute: { en: "Mute Quizzo", he: "השתק את קוויצו" },
+  quiz_unmute: { en: "Unmute Quizzo", he: "בטלו את ההשתקה" },
+
+  /* ---------- Fallback banner (Gemini failed in offline mode) ---------- */
+  quiz_fallback_banner: {
+    en: "Quizzo's chef is on a break — these are the basic questions for now.",
+    he: "השף של קוויצו ביציאה קצרה — בינתיים אלו השאלות הבסיסיות."
+  },
+
   /* ---------- TripStrip ---------- */
   scroll_chapters_prev: {
     en: "Previous chapters",

@@ -35,6 +35,23 @@ export const attractions: POI[] = [
       "All ages welcome on the SUP; life vests provided for everyone",
       "Phones stay onshore — bring a small dry bag for keys & sun cream",
       "Quick-dry swimwear and water shoes; expect to be soaked"
+    ],
+    quizFacts: [
+      {
+        question: "What color is the water inside the canyon at Canyon Park?",
+        correctAnswer: "Bright turquoise",
+        distractors: ["Pitch black", "Milky white", "Brick red"]
+      },
+      {
+        question: "Which river carved the gorge that Canyon Park sits in?",
+        correctAnswer: "The Lima",
+        distractors: ["The Tiber", "The Arno", "The Po"]
+      },
+      {
+        question: "Bagni di Lucca, the town next to Canyon Park, has been famous since Roman times for what kind of natural water?",
+        correctAnswer: "Hot thermal springs",
+        distractors: ["Tasty fizzy lemonade", "Salty seawater", "Glow-in-the-dark rivers"]
+      }
     ]
   },
   {
@@ -56,6 +73,41 @@ export const attractions: POI[] = [
       "Free, open 24/7 — a 10-minute photo stop is plenty",
       "Tiny lay-by just north of the bridge; arrive early or late",
       "Best photo from the river bank, not the bridge itself"
+    ],
+    quizFacts: [
+      {
+        question: "In the Devil's Bridge legend, what did the villagers send across first to outsmart the devil?",
+        correctAnswer: "A dog",
+        distractors: ["A cat", "A goat", "A chicken"]
+      },
+      {
+        question: "What was the devil promised in exchange for finishing the bridge in one night?",
+        correctAnswer: "The soul of the first to cross it",
+        distractors: ["A bag of gold", "A goat every year", "The mayor's daughter"]
+      },
+      {
+        question: "Which river does the Devil's Bridge arch over?",
+        correctAnswer: "The Serchio",
+        distractors: ["The Tiber", "The Arno", "The Lima"]
+      },
+      {
+        question: "What is the bridge's proper, official name (after the chapel that once stood at its foot)?",
+        correctAnswer: "Ponte della Maddalena (Mary Magdalene's Bridge)",
+        distractors: [
+          "Ponte Vecchio (Old Bridge)",
+          "Ponte Romano (Roman Bridge)",
+          "Ponte di San Pietro (St Peter's Bridge)"
+        ]
+      },
+      {
+        question: "Local folklore says a ghostly white sheepdog still walks the Devil's Bridge — when?",
+        correctAnswer: "On evenings at the end of October",
+        distractors: [
+          "Every Sunday morning at sunrise",
+          "Only on the kid's birthday",
+          "On the last day of school every year"
+        ]
+      }
     ]
   },
   {
@@ -83,6 +135,27 @@ export const attractions: POI[] = [
       "Closed-toe shoes are mandatory — no sandals",
       "Helmet, harness and safety briefing included in the ticket",
       "Shaded chestnut forest — bring a long-sleeve top, can be cool"
+    ],
+    quizFacts: [
+      {
+        question: "What kind of trees fill the cool forest at Selva del Buffardello?",
+        correctAnswer: "Chestnut trees",
+        distractors: ["Olive trees", "Lemon trees", "Cypress trees"]
+      },
+      {
+        question: "What is a 'Buffardello' in Garfagnana folk tales — the very creature the forest is named after?",
+        correctAnswer: "A small, mischievous forest elf who tangles horses' manes",
+        distractors: [
+          "A giant white wolf that guards the chestnuts",
+          "A flying turtle that lives in the rivers",
+          "A real Tuscan dinosaur scientists found in 1972"
+        ]
+      },
+      {
+        question: "Garfagnana, the area around Selva del Buffardello, is famous across Italy for flour made from which fruit?",
+        correctAnswer: "Chestnuts",
+        distractors: ["Walnuts", "Bananas", "Olives"]
+      }
     ]
   },
   {
@@ -139,6 +212,41 @@ export const attractions: POI[] = [
       "30–45 min is enough for the photo + gelato",
       "Tower climb is timed-ticket only — book online before you go",
       "Best 'leaning hand' photo from the lawn opposite the cathedral"
+    ],
+    quizFacts: [
+      {
+        question: "Why does the Leaning Tower of Pisa actually lean?",
+        correctAnswer: "Its soft ground sank on one side while it was being built",
+        distractors: [
+          "An earthquake tilted it on purpose",
+          "The architect designed it that way for fun",
+          "Strong wind pushes it over a little bit each year"
+        ]
+      },
+      {
+        question: "What is the famous square in Pisa called, where the Leaning Tower stands?",
+        correctAnswer: "Piazza dei Miracoli",
+        distractors: ["Piazza della Signoria", "Piazza San Marco", "Piazza Navona"]
+      },
+      {
+        question: "Which three big buildings sit together on the lawn of Piazza dei Miracoli?",
+        correctAnswer: "The Leaning Tower, the cathedral, and the baptistery",
+        distractors: [
+          "Just the Leaning Tower on its own",
+          "Five different churches in a row",
+          "A castle, a fountain and a windmill"
+        ]
+      },
+      {
+        question: "Roughly how long did the Leaning Tower of Pisa take to finish?",
+        correctAnswer: "Almost 200 years",
+        distractors: ["Less than a year", "About 5 years", "Over a thousand years"]
+      },
+      {
+        question: "How many bells sit at the top of the Leaning Tower of Pisa — one for each note of the musical scale?",
+        correctAnswer: "Seven",
+        distractors: ["Just one giant bell", "Twelve", "There are no bells at all"]
+      }
     ]
   },
   {
@@ -167,6 +275,28 @@ export const attractions: POI[] = [
       "First gondola ~09:30, last descent ~17:00 — don't miss it",
       "Round-trip ticket ~€18 adult / cheaper for kids; cash works",
       "Pack a picnic — mountain restaurants close mid-afternoon"
+    ],
+    quizFacts: [
+      {
+        question: "What is Abetone famous for in winter, when it's covered in snow?",
+        correctAnswer: "Skiing",
+        distractors: ["Surfing big waves", "Beach volleyball tournaments", "Truffle hunting on the beach"]
+      },
+      {
+        question: "Roughly how high is the top of Monte Gomito above sea level?",
+        correctAnswer: "Almost 1,900 metres",
+        distractors: ["About 100 metres", "About 500 metres", "Over 4,000 metres"]
+      },
+      {
+        question: "Which mountain range does Abetone sit in?",
+        correctAnswer: "The Apennines",
+        distractors: ["The Alps", "The Dolomites", "The Pyrenees"]
+      },
+      {
+        question: "Two famous twin stone monuments at Abetone mark an old border between Tuscany and a neighbour. What shape are they?",
+        correctAnswer: "Twin pyramids",
+        distractors: ["Twin lighthouses", "Twin obelisks", "Twin castles"]
+      }
     ]
   },
   {
@@ -189,6 +319,32 @@ export const attractions: POI[] = [
       "Whole 4.2 km loop ~30–45 min easy pedalling, totally flat",
       "Child seats, tagalongs and trailers are standard at every shop",
       "Park outside the walls — the historic centre is full ZTL"
+    ],
+    quizFacts: [
+      {
+        question: "Roughly how long is the bike loop on top of Lucca's city walls?",
+        correctAnswer: "About 4 kilometres",
+        distractors: ["About 400 metres", "About 20 kilometres", "About 100 kilometres"]
+      },
+      {
+        question: "How many real battles were Lucca's huge city walls ever tested in?",
+        correctAnswer: "None — they were never attacked",
+        distractors: ["Three big wars", "The Roman conquest of Italy", "The First World War"]
+      },
+      {
+        question: "Lucca's walls were never attacked, but they DID hold back something else once, in 1812. What?",
+        correctAnswer: "A flood from the Serchio river — the gates were bolted with mattresses",
+        distractors: [
+          "A herd of escaped circus elephants",
+          "A swarm of bees that lived in town",
+          "A surprise snowstorm in summer"
+        ]
+      },
+      {
+        question: "How many big lookout points (called bastions) are built into Lucca's walls?",
+        correctAnswer: "Eleven",
+        distractors: ["Just one", "Two", "Fifty"]
+      }
     ]
   },
   {
@@ -211,6 +367,31 @@ export const attractions: POI[] = [
       "Free entry; no toilets at the trailhead — go in town first",
       "Cliff-jumping at Diborrato is for strong swimmers only",
       "Bring a dry bag for phones — there's no totally dry stretch"
+    ],
+    quizFacts: [
+      {
+        question: "What is the cliff-rimmed swimming hole at the end of the Sentierelsa walk called?",
+        correctAnswer: "Diborrato",
+        distractors: ["Cala Galera", "Saturnia", "Ponte Vecchio"]
+      },
+      {
+        question: "Why does the water of the Elsa river look so bright turquoise?",
+        correctAnswer: "Tiny bits of natural calcium in the water make it shine that colour",
+        distractors: [
+          "Someone pours blue dye in upstream",
+          "It's just the green trees reflecting in the water",
+          "Hidden glow-fish swim under the surface"
+        ]
+      },
+      {
+        question: "Roughly how tall is the Diborrato waterfall at the end of the Sentierelsa?",
+        correctAnswer: "About 15 metres — taller than a five-storey house",
+        distractors: [
+          "Half a metre — about a kid's knee",
+          "Over 200 metres — taller than the Empire State Building",
+          "Exactly 1,000 metres — the tallest waterfall in Europe"
+        ]
+      }
     ]
   },
 
@@ -236,6 +417,36 @@ export const attractions: POI[] = [
       "Marine fuel is pricey: budget €40–80 on top of the rental",
       "Bring snorkel masks, reef-safe sun cream, a cooler & lots of water",
       "Check the wind forecast — strong meltemi means rough water; reschedule if needed"
+    ],
+    quizFacts: [
+      {
+        question: "What kind of boat do families rent at Porto Santo Stefano?",
+        correctAnswer: "A small motorboat (Gozzo or gommone)",
+        distractors: ["A racing yacht", "A small submarine", "A wooden pirate ship"]
+      },
+      {
+        question: "Which mountain peninsula does Porto Santo Stefano sit on?",
+        correctAnswer: "Monte Argentario",
+        distractors: ["Mount Etna", "Monte Bianco", "Mount Vesuvius"]
+      },
+      {
+        question: "Why is the mountain at Porto Santo Stefano called 'Monte Argentario'? ('Argento' means silver in Italian.)",
+        correctAnswer: "It's named after Roman bankers, the 'Argentari', who once owned it",
+        distractors: [
+          "Real silver was mined inside the mountain",
+          "Silver fish jump out of the sea around it",
+          "The cliffs sparkle silver in the moonlight"
+        ]
+      },
+      {
+        question: "Long ago, Monte Argentario was actually NOT a peninsula. What was it?",
+        correctAnswer: "An island — sand washed in by a river later joined it to the mainland",
+        distractors: [
+          "An underwater volcano",
+          "A pirate's hidden treasure cave",
+          "A Roman-built artificial castle"
+        ]
+      }
     ]
   },
   {
@@ -262,6 +473,27 @@ export const attractions: POI[] = [
       "Land path is steep, ~30 min down and a sweaty 40 min back up",
       "White pebbles, no sand — water shoes save your feet",
       "No facilities of any kind: bring your own water and snacks"
+    ],
+    quizFacts: [
+      {
+        question: "What is the beach made of at Cala del Gesso?",
+        correctAnswer: "White pebbles",
+        distractors: ["Black volcanic sand", "Wooden planks", "Soft mud"]
+      },
+      {
+        question: "Who built the small old watchtower above Cala del Gesso, around the 1500s?",
+        correctAnswer: "The Spanish",
+        distractors: ["The Vikings", "The Egyptians", "The ancient Greeks"]
+      },
+      {
+        question: "Why is Cala del Gesso called 'Cala del Gesso'? ('Gesso' means gypsum, the rock used to make plaster.)",
+        correctAnswer: "Long ago, gypsum was mined and shipped out from this little bay",
+        distractors: [
+          "Famous artists once painted there with chalk",
+          "It was used as a school's giant chalkboard",
+          "It's always covered in white plaster bandages"
+        ]
+      }
     ]
   },
   {
@@ -311,6 +543,32 @@ export const attractions: POI[] = [
       "Min age usually 6 for trail rides; younger kids get a led pony",
       "Book the 09:00 slot — by 11 it's brutally hot in the open",
       "Helmets always provided; bring a wide-brim hat for after"
+    ],
+    quizFacts: [
+      {
+        question: "What are the cowboys of the Maremma traditionally called?",
+        correctAnswer: "Butteri",
+        distractors: ["Toreros", "Gauchos", "Vaqueros"]
+      },
+      {
+        question: "In 1890, the Maremma butteri took on a famous American cowboy showman in a riding contest in Rome. Who was he?",
+        correctAnswer: "Buffalo Bill",
+        distractors: ["Wild Bill Hickok", "John Wayne", "Buffalo Bob"]
+      },
+      {
+        question: "Who actually won that famous 1890 cowboy contest in Rome?",
+        correctAnswer: "The Italian butteri",
+        distractors: [
+          "Buffalo Bill's American cowboys",
+          "It was a tie",
+          "The horses, by running away"
+        ]
+      },
+      {
+        question: "What kind of trees fill the forests where the Maremma horses ride?",
+        correctAnswer: "Umbrella pine trees",
+        distractors: ["Olive trees", "Banana trees", "Christmas fir trees"]
+      }
     ]
   },
   {
@@ -333,6 +591,36 @@ export const attractions: POI[] = [
       "Synagogue + Jewish quarter combo ticket ~€6 — closes early Friday",
       "Don't leave without a slice of 'sfratto dei Goym' (local Jewish-Italian dessert)",
       "Cool, shaded alleys make this the ideal late-afternoon walk"
+    ],
+    quizFacts: [
+      {
+        question: "What is Pitigliano's famous nickname?",
+        correctAnswer: "The Little Jerusalem",
+        distractors: ["The Roman Ruin", "The Pearl of the Sea", "Little Athens"]
+      },
+      {
+        question: "What kind of rock is Pitigliano carved straight out of?",
+        correctAnswer: "Tufa, a soft volcanic rock",
+        distractors: [
+          "Solid white marble",
+          "Sandstone from the seabed",
+          "Crystal-clear ice"
+        ]
+      },
+      {
+        question: "Which two ancient peoples carved into the cliffs at Pitigliano over the centuries?",
+        correctAnswer: "First the Etruscans, then a Jewish community",
+        distractors: [
+          "Vikings and Romans",
+          "Ancient Greeks and Egyptians",
+          "Mongols and Spanish conquistadors"
+        ]
+      },
+      {
+        question: "What is the name of the famous Pitigliano sweet treat — a long stick-shaped pastry filled with walnuts and honey?",
+        correctAnswer: "Sfratto",
+        distractors: ["Cannolo", "Tiramisu", "Panettone"]
+      }
     ]
   },
   {
@@ -355,6 +643,31 @@ export const attractions: POI[] = [
       "Wear grippy shoes — the tufa is shaded but slick when damp",
       "1-hour comfortable loop; longer if you take the Sovana extension",
       "Surprisingly cool down inside — bring a light layer"
+    ],
+    quizFacts: [
+      {
+        question: "Who carved the deep stone corridors of the Vie Cave?",
+        correctAnswer: "The Etruscans",
+        distractors: [
+          "The Ancient Egyptians",
+          "The Vikings",
+          "Modern miners with bulldozers"
+        ]
+      },
+      {
+        question: "How deep can the Vie Cave corridors get?",
+        correctAnswer: "More than 20 metres deep",
+        distractors: ["Less than 1 metre", "About 200 metres", "Almost 2,000 metres"]
+      },
+      {
+        question: "Why is it cool inside the Vie Cave even on a hot August day?",
+        correctAnswer: "The tall walls of rock keep out the sun",
+        distractors: [
+          "There's hidden air conditioning",
+          "There's a secret ice cave at the end",
+          "Snow falls inside because of the altitude"
+        ]
+      }
     ]
   },
   {
@@ -377,6 +690,31 @@ export const attractions: POI[] = [
       "1.5–2 hr round trip on uneven, sometimes overgrown ground",
       "Wild, atmospheric, almost no signage — keep close to the trail",
       "Wear long pants & closed shoes; brambles & rough stone"
+    ],
+    quizFacts: [
+      {
+        question: "Roughly how many cave dwellings are there at Vitozza?",
+        correctAnswer: "Over 200",
+        distractors: ["Just 5", "Exactly 10", "More than 5,000"]
+      },
+      {
+        question: "Until roughly when did people actually still live inside the caves of Vitozza?",
+        correctAnswer: "Until the late 1700s",
+        distractors: [
+          "Only during the Stone Age",
+          "Only in ancient Roman times",
+          "All the way until last year"
+        ]
+      },
+      {
+        question: "Many of the caves at Vitozza have shapes carved into the rock walls inside. What were they used as?",
+        correctAnswer: "As wardrobes and shelves for everyday things",
+        distractors: [
+          "As secret slides for kids",
+          "As fish tanks for goldfish",
+          "As frozen-food drawers"
+        ]
+      }
     ]
   },
   {
@@ -400,6 +738,44 @@ export const attractions: POI[] = [
       "Sulphur stains light fabrics — wear darker swimwear and rinse after",
       "Bring sandals you don't mind smelling of eggs for a few days",
       "Arrive by 07:30; by 10 it's elbow-to-elbow and parking is gone"
+    ],
+    quizFacts: [
+      {
+        question: "Why does the water at Saturnia smell a bit like eggs?",
+        correctAnswer: "It's full of natural sulphur from underground",
+        distractors: [
+          "Because chickens swim upstream from a farm",
+          "Because of pizza ovens nearby",
+          "From soap that bathers leave behind"
+        ]
+      },
+      {
+        question: "What is special about the colour of Saturnia's waterfalls?",
+        correctAnswer: "They are a milky turquoise blue",
+        distractors: [
+          "They are bright orange",
+          "They are completely jet black",
+          "They glow green in the dark"
+        ]
+      },
+      {
+        question: "An old Roman legend says Saturnia's hot springs were created when an angry god threw lightning bolts at the earth. Which god?",
+        correctAnswer: "Saturn — the town and the springs are named after him",
+        distractors: [
+          "Mars, the god of war",
+          "Neptune, the god of the sea",
+          "Mercury, the messenger god"
+        ]
+      },
+      {
+        question: "Roughly how warm is the water that comes out of the springs at Saturnia?",
+        correctAnswer: "About 37 °C — like a warm bath",
+        distractors: [
+          "About 5 °C — almost freezing",
+          "About 100 °C — boiling hot",
+          "About 0 °C — covered in ice"
+        ]
+      }
     ]
   },
   {
@@ -422,6 +798,36 @@ export const attractions: POI[] = [
       "Lake water is cooler than the August coast — refreshing, not freezing",
       "Pedalo & SUP rental at the marina; ice-cream & snack bars right there",
       "Lake-fish 'coregone' is the local specialty — try at a marina trattoria"
+    ],
+    quizFacts: [
+      {
+        question: "What kind of crater formed Lake Bolsena a long time ago?",
+        correctAnswer: "An old volcano collapsing into itself",
+        distractors: [
+          "A meteor that landed yesterday",
+          "A giant whale's footprint",
+          "An abandoned diamond mine"
+        ]
+      },
+      {
+        question: "Lake Bolsena is the largest lake in Europe of which kind?",
+        correctAnswer: "The largest volcanic lake",
+        distractors: [
+          "The largest salt lake",
+          "The largest underground lake",
+          "The largest pink lake"
+        ]
+      },
+      {
+        question: "Which fish is the local specialty of Lake Bolsena?",
+        correctAnswer: "Coregone",
+        distractors: ["Salmon", "Tuna", "Shark"]
+      },
+      {
+        question: "How many islands sit in the southern part of Lake Bolsena?",
+        correctAnswer: "Two — Bisentina and Martana",
+        distractors: ["None at all", "About a dozen", "More than a hundred"]
+      }
     ]
   },
   {
@@ -444,6 +850,46 @@ export const attractions: POI[] = [
       "The walk back is properly steep — strollers will struggle",
       "Best light & cooler temps in late afternoon; village glows at golden hour",
       "Tiny grocery on the bridge side — BYO water for the climb"
+    ],
+    quizFacts: [
+      {
+        question: "What is Civita di Bagnoregio's famous nickname?",
+        correctAnswer: "The Dying City",
+        distractors: ["The Singing City", "The Sleeping Castle", "The Twin City"]
+      },
+      {
+        question: "How do visitors reach the village of Civita di Bagnoregio?",
+        correctAnswer: "Across a long pedestrian footbridge over a canyon",
+        distractors: [
+          "By cable car",
+          "By small submarine",
+          "Through a long underground tunnel"
+        ]
+      },
+      {
+        question: "Why is Civita called the 'Dying City'?",
+        correctAnswer: "The tufa pedestal it sits on is slowly crumbling away",
+        distractors: [
+          "All of its people are very, very old",
+          "It is haunted by a friendly ghost",
+          "The mayor wants a new, snappier name"
+        ]
+      },
+      {
+        question: "How many people actually live in Civita di Bagnoregio today?",
+        correctAnswer: "Only about a dozen",
+        distractors: ["Over a thousand", "About 50,000", "Half the country"]
+      },
+      {
+        question: "Civita di Bagnoregio also has a famous animal population. Roughly how many of these live in the village?",
+        correctAnswer: "About 20 cats",
+        distractors: ["Around 200 elephants", "About 1,000 pigeons", "Exactly 10 sharks"]
+      },
+      {
+        question: "Civita di Bagnoregio was first founded by which ancient Italian people, more than 2,500 years ago?",
+        correctAnswer: "The Etruscans",
+        distractors: ["The Vikings", "The Egyptians", "The Aztecs"]
+      }
     ]
   }
 ];

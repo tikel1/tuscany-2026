@@ -40,6 +40,7 @@ section.
 19. [Deployment (GitHub Pages)](#19-deployment-github-pages)
 20. [Common gotchas](#20-common-gotchas)
 21. [If you only do five things](#21-if-you-only-do-five-things)
+22. [Per-day quiz (kid recap with a host persona)](#22-per-day-quiz-kid-recap-with-a-host-persona)
 - [Appendix A: Few-shot reference — the Tuscany 2026 build](#appendix-a-few-shot-reference--the-tuscany-2026-build)
 
 ---
@@ -523,18 +524,27 @@ back arrow, and a content order designed for **the day of**:
    between stops (see "Activity rows" below)
 3. **Restaurants nearby** — curated by day, not just by region. A
    restaurant in northern Maremma is useless on a Lucca day.
-4. **Suggested end-of-day drink** — one drink local to the destination
-   (wine, aperitif, cocktail, beer, digestif) with a one-line "why
-   tonight" pairing to the day's vibe and an optional serving note.
-   Adults only.
-5. **Mini map** — the day's stops
-6. **What to bring** — gear list (with "for X" chips that link to the
+4. **Mini map** — the day's stops
+5. **What to bring** — gear list (with "for X" chips that link to the
    activity below)
-7. **Good to know** — a single merged section that renders the day's
+6. **Good to know** — a single merged section that renders the day's
    own `dayTips` first and then any global `tips.ts` entries mapped to
    this chapter via `src/lib/tipsForDay.ts` (see below). Use the same
    detailed card style for both kinds so the section reads as one
    thing, not two.
+7. **Quiz with the host persona** — a kid-friendly 5-question recap
+   of the day, hosted by a named persona that reads questions aloud
+   (Live API primary, browser TTS fallback). Questions are generated
+   on-the-fly from the day's data so they're always current. Only
+   appears for chapters whose date is today or earlier — no point
+   asking what happened before it happens. See **§22** for the full
+   pipeline, persona, and voice fallback ladder.
+8. **Suggested end-of-day drink** — one drink local to the destination
+   (wine, aperitif, cocktail, beer, digestif) with a one-line "why
+   tonight" pairing to the day's vibe and an optional serving note.
+   Adults only. The literal closing flourish of the chapter — the
+   pair quiz → drink reads as **kids → parents** as the family
+   wraps the day.
 
 Use `sessionStorage` to remember the last viewed chapter so the
 browser back-button feels natural.
@@ -1743,6 +1753,15 @@ In **tuscany-2026** almost all of that lives in one file:
 globe toggle) is [§16](#16-ai-tour-guide--implementation-gemini-live-no-backend);
 this section is **what to write** before you touch the socket code.
 
+> **AI features index.** The chat assistant covered in §§15–16 is
+> the headline AI feature, but it is not the only one. The per-day
+> **kid quiz** in **§22** uses the same Gemini key + REST plumbing
+> with its own host persona at `src/lib/quiz/quizPersona.ts` (and a
+> separate "narrator" persona for Live audio playback in
+> `src/lib/quiz/quizVoice.ts`). Same patterns — strict output shape,
+> trip-grounded digest, key from `gemininio/storage.ts`, never
+> bilingual replies — applied to a different audience.
+
 ### Stack the layers in this order
 
 `buildSystemPrompt(lang)` concatenates **fixed blocks** — order matters
@@ -2555,6 +2574,488 @@ adds love but won't decide whether the site gets used. Items 1–5 above will.
 
 ---
 
+## 22. Per-day quiz (kid recap with a host persona)
+
+Once a chapter's date is in the past, kids in the back seat want
+something to *do* on the way home. The per-day quiz is a small,
+playful recap of the day's activities, hosted by a named cartoon
+persona that reads questions aloud. Mounted on the chapter detail
+page directly above the end-of-day drink card so the closing pair
+reads as **kids → parents** as the family wraps the day.
+
+### Two modes — `offline` and `live`
+
+The card has a **mode toggle at the bottom** (segmented control,
+persisted per device, default `offline`). The kid picks how they
+want to play:
+
+| Mode | Question count | Network needed | When to use |
+|---|---|---|---|
+| **Offline** | 10, fixed pack | Once, on first generation | The car ride home with patchy signal. After the first successful generation the day plays from `localStorage` forever — no network. |
+| **Live** | Endless (5 per batch, prefetched) | Every batch | Wifi at home, kid wants to keep going. Round ends only when the kid taps "End round". |
+
+Both modes share the persona, the day digest, the validator, the
+voice ladder, and the SFX. They differ only in how they ask Gemini
+for questions and how the orchestrator chains them.
+
+### When to show the whole card — preview-then-progressive-unlock
+
+Mounted on **every chapter detail page**, sandwiched between the
+"Good to know" section and the adults-only end-of-day drink. The
+card itself is always rendered so the slot is visible, but its
+*playability* is gated by `isQuizUnlocked(dayNumber, chapterDate)`:
+
+| Day | When playable |
+|---|---|
+| Days 1 — `QUIZ_PREVIEW_UNLOCKED_DAYS` | **Always.** Lets the family preview both modes, build a Quizzo "first impression", and validate the tech without any waiting. |
+| Day N (N > preview) | The morning the chapter date arrives (local time, `>= startOfDay(today)`). |
+
+When `isQuizUnlocked` returns `false` the Quiz renders a `LockedView`
+inside the same card chrome — Lock icon, "Unlocks on Monday, August
+20" message (date is `Intl.DateTimeFormat`-localized), and a one-line
+hint explaining that the first couple of days are unlocked early. No
+mode toggle, no audio, no API cost — just a teaser for what's coming.
+
+Tunable in `src/lib/tripState.ts`: `QUIZ_PREVIEW_UNLOCKED_DAYS` (the
+preview window) and `isChapterUnlockedForRecap` (the date predicate
+that gates the rest of the trip).
+
+When unlocked, pre-trip the quiz reads as "pump the kids up about
+what's coming"; post-event it reads as "recap on the way home" — same
+UI, same data digest, the host phrases questions present-tense /
+general so they work either way (see the persona note below). API
+cost is negligible because nothing fires until the kid taps Start.
+
+### Pipeline (runtime generation, no static question bank)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  Kid taps Start (mode = offline)                                 │
+│   │                                                              │
+│   ▼                                                              │
+│  loadOfflinePack(day, lang)? ──yes──▶ Run quiz UI (10 questions) │
+│   │                                                              │
+│   no                                                             │
+│   ▼                                                              │
+│  ensureOfflinePack(...): generateQuiz({count: 10}) →             │
+│     save to localStorage forever  → Run quiz UI                  │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│  Kid taps Start (mode = live)                                    │
+│   │                                                              │
+│   ▼                                                              │
+│  generateQuiz({count: 5}) → Run quiz UI with batch 1             │
+│   │                                                              │
+│   ▼                                                              │
+│  Kid answers question (length − PREFETCH_AHEAD)                  │
+│   │                                                              │
+│   ▼                                                              │
+│  prefetchNextBatch() in the background:                          │
+│     generateQuiz({count: 5}) → append to questions array         │
+│   │                                                              │
+│   ▼                                                              │
+│  Kid keeps tapping Keep going / End round at any time            │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+Concretely, the modules under `src/lib/quiz/`:
+
+- **`quizPersona.ts`** — system prompt + day-data digest builder.
+  The persona is a kid-friendly game-show host (ages 8–14): warm,
+  silly, never condescending; one destination-flavored interjection
+  across the whole quiz. Output shape is locked — strict JSON, no
+  prose around it, no markdown fences. The **count is parameterized**
+  on every prompt build (5 for live batches, 10 for offline packs),
+  including the few-shot example placeholder in the JSON template
+  ("… N − 1 more …") so the model gets a clean expectation either way.
+  Difficulty mix is enforced in the prompt (~40% easy / 40% medium /
+  20% sneaky); variety across days/restaurants/words is enforced too
+  so the 10-question pack doesn't cluster on one stop. All questions
+  must be answerable from the day digest — never invent.
+- **`generateQuiz.ts`** — `generateQuiz({apiKey, dayNumber, lang, count?})`
+  for both modes; `ensureOfflinePack({apiKey, dayNumber, lang})`
+  wraps it for the offline 10-question pack with persisted storage.
+  Reuses the same Gemini key + REST endpoint the AI assistant uses,
+  with `responseMimeType: "application/json"` to suppress the
+  ```json fences Gemini sometimes emits. Validates strictly (count
+  matches the request, every option is non-empty, `correctIndex` in
+  range, both reactions present) and retries the next model in
+  `MODELS_TO_TRY` on any parse / validation failure. **Live batches
+  are not cached** — each round is fresh; only offline packs persist,
+  via the `offlinePack.v1` `localStorage` key.
+- **`quizModeStorage.ts`** — load/save the persisted toggle choice.
+  Default is `offline` (no quota burn on Start, plays without signal).
+- **`quizSfx.ts`** — three short non-voice SFX (correct chime,
+  wrong buzz, score-reveal whoosh). Default is to **synthesize**
+  via the Web Audio API (zero bytes shipped, works offline,
+  destination-agnostic). If a curator drops `correct.mp3`,
+  `wrong.mp3`, or `whoosh.mp3` into `public/audio/quiz/`, the
+  loader prefers them via a one-time HEAD check at first play.
+
+### Endless live mode — prefetch + End round
+
+Live mode never stops on its own. The orchestrator (`Quiz.tsx`)
+holds a single in-flight latch (`fetchingMoreRef`) so a single
+batch fetch is queued at a time, and an `AbortController` so a
+mid-flight prefetch is canceled when the kid ends the round, hits
+Close, or navigates between chapters. The trigger fires inside
+`handleSelect` — once the answered index crosses
+`length − PREFETCH_AHEAD` (default 2), `prefetchNextBatch` kicks
+off via `queueMicrotask`. Each successful batch appends to
+`questions` and grows `selections` with `null` slots so the next
+question slides in without remounting.
+
+Three tail states for live mode at the last loaded question:
+
+- **Prefetch already landed** — Next button shows `quiz_keep_going`,
+  taps advance normally.
+- **Prefetch still in flight** — Next button is replaced by an
+  inline loading chip (`quiz_loading_more`).
+- **Prefetch failed** — chip flips to `quiz_load_more_failed`
+  ("Couldn't load more questions. End the round?"). End round is
+  the obvious next tap.
+
+The **End round** button is visible alongside Next / loading from
+the moment the first answer is locked, so the kid can stop after
+3 questions or after 30. `finishRound` only counts answered
+questions for both score and persisted last-score (so bailing
+immediately doesn't overwrite a real earlier 5/5 with 0/0).
+
+### Voice fallback ladder
+
+```
+LiveQuizVoice (Gemini Live, "narrator" persona)
+   │
+   │  fails / 3 s timeout / no API key (skipped in fallback mode)
+   ▼
+BrowserTtsQuizVoice (Web Speech API, picks best local voice)
+   │
+   │  no speechSynthesis at all
+   ▼
+NoVoice (silent — UI shows "voice unavailable" hint)
+```
+
+`createQuizVoice({apiKey, lang})` opens **Live first**, racing
+against a 3 s connect timeout so a slow / blocked network doesn't
+strand the kid staring at "warming up…" forever. The Live persona
+is a **narrator** (`NARRATOR_PERSONA_*` in `quizVoice.ts`) — its
+sole instruction is to speak the line it receives, exactly, in the
+host's playful Italian-flavored cartoon voice. We ship one persona
+per language; the spoken accent stays the same regardless. On Live
+failure the factory falls back to `BrowserTtsQuizVoice`, which
+picks the best available `SpeechSynthesisVoice` for the active
+language. As a last resort `NoVoice` is a silent no-op and the UI
+displays a "Quizzo's voice isn't available" notice so the kid still
+knows to read + tap.
+
+The factory **never throws** — the UI always gets *something* and
+checks `voice.backend` (`"live" | "tts" | "none"`) to decide what
+hint to show. The voice-unavailable hint is suppressed when the
+user has explicitly muted Quizzo (silence is a feature there, not
+a bug).
+
+When the orchestrator is running with a fallback question pack
+(see "Question fallback chain" below), it passes `apiKey: null`
+into `createQuizVoice`, which short-circuits the Live attempt
+entirely — no point wasting 3 s on a Gemini handshake we already
+know is failing. We get straight to TTS.
+
+### Question fallback chain (offline mode only)
+
+Offline mode promises *something* to play, even on a quota-blocked,
+no-key, completely-offline first install. The orchestrator runs
+this exact ladder inside `startQuiz` when `mode === "offline"`:
+
+```
+1. loadOfflinePack(day, lang)                    → cache hit, instant
+2. apiKey present?
+   2a. generateQuiz({count: 10})  → success      → saveOfflinePack, play
+   2b. generateQuiz failure (429 quota, network) ↓
+3. buildFallbackQuiz(day, lang) (template-based) → saveOfflinePack, play
+                                                   + show fallback banner
+4. fallback returned 0 questions (data too thin) → ErrorView
+```
+
+`buildFallbackQuiz` lives in `src/lib/quiz/fallbackQuiz.ts` and
+generates up to 10 deterministic questions from structured
+itinerary + attraction fields — no AI, no network. Templates are
+intentionally **substantive** (about real places / attractions /
+Italian words / towns / hand-curated story trivia); meta-questions
+about the data structure ("how many stops on day N?", "what day
+of the week is this?", "what is day 2 called?") are forbidden —
+kids tune out instantly on questions about their own holiday's
+bookkeeping.
+
+The deck is **end-of-day** content — Quizzo is hosting the
+recap on the drive back to the apartment, so questions assume
+the kid has already seen / walked / climbed / swum / eaten the
+thing being asked about. We deliberately also ban two adjacent
+buckets that read like the brochure rather than the visit:
+
+- **Equipment / kit.** "What do you need to bring?", "from what
+  minimum height can you do the kids' course?", "what kind of
+  shoes are mandatory?", "how much does the ticket cost?". The
+  kid already knows because they brought it / wore it / paid it.
+- **Good-to-know logistics.** "When does it open?", "do you
+  need a reservation?", "is it cash or card?", parking notes,
+  ZTL boundaries. Useful for parents planning, useless as a
+  quiz prompt.
+
+The first round of `quizFacts` author work shipped a few of
+these and they bombed in user testing — the rule is now both in
+the persona (forbidden list) and reflected in the curated
+trivia (anything equipment-shaped was removed). When you author
+new `quizFacts` for a destination, audit your draft against
+this rule before merging.
+
+#### Hand-curated story trivia (`POI.quizFacts`)
+
+The most engaging quiz questions aren't the auto-generated "which
+town is X in?" facts — they're the **legends**, **signature
+details**, and **fun history** that live inside an attraction's
+description (e.g. "in the Devil's Bridge legend, the villagers
+sent a dog across first"). Auto-extracting those from prose is
+brittle, so the data model lets you **author them by hand**:
+
+```ts
+// src/data/types.ts
+export interface AttractionQuizFact {
+  question: string;            // ready-to-read aloud
+  correctAnswer: string;
+  distractors: string[];       // ≥3, plausibly-but-clearly wrong
+}
+
+export interface POI {
+  // …
+  quizFacts?: AttractionQuizFact[];
+}
+```
+
+Author 2–4 facts per story-rich attraction directly in
+`attractions.ts` (alongside `description`/`tips`), and add the
+HE translation in `i18n/attractions.he.ts` under the same
+`quizFacts` key — the Pick on `attractionsHE` already includes
+it. Skip practical-stop POIs with no story worth the effort
+(rest stops, supermarkets); the other templates pick up the slack.
+
+These facts feed both halves of the quiz pipeline:
+
+1. **Offline fallback** — the `tplAttractionStory` template
+   drains today's curated catalog FIRST (greedy first pass, up
+   to ~80% of the pack) before any other template fires. On a
+   story-rich day this means almost the entire pack is curated
+   trivia; on a day with one practical stop the other templates
+   fill in.
+2. **AI generation** — `buildDayDigest` injects each attraction's
+   facts into the system prompt as a `TRIVIA YOU CAN ASK ABOUT …`
+   block (Q + A + plausible wrong answers), and the persona is
+   instructed to use those as its highest-priority question
+   fodder (≥ half of the pack). Gemini can lift them verbatim,
+   paraphrase them, or invent new ones in the same style — but
+   the curated set anchors the question quality even when the
+   AI is online.
+
+#### Templates that ship today
+
+- **Curated story trivia** (uses `POI.quizFacts`):
+  - `tplAttractionStory`: lifts a hand-authored
+    `{ question, correctAnswer, distractors }` triple from one
+    of today's attractions and randomizes which slot the correct
+    answer lands in. Always tried first.
+- **General Italian-culture wildcards** (uses
+  `ITALIAN_CULTURE_FACTS` bank inside `fallbackQuiz.ts`):
+  - `tplItalianCulture`: kid-friendly facts about the Italian
+    flag, pizza Margherita, the Vespa, Ferrari/Lamborghini,
+    Italy-shaped-like-a-boot, gelato, Mt Etna, etc. Capped at
+    `CULTURE_BUDGET = 2` per pack so the deck stays primarily
+    about today's actual stops; the cap protects against the
+    deck drifting into "fun general Italy quiz" instead of
+    "what do you remember about today?".
+- **Italian language** (uses `day.italianWords[]`):
+  - `tplWordMeaning`: "What does the Italian word 'X' mean?"
+  - `tplWordReverse`: "How do you say 'Y' in Italian?"
+  - `tplPhraseExample`: "Which Italian phrase means 'Z'?" (uses
+    `example` + `exampleMeaning` pair).
+- **Places & attractions** (uses each activity's `attractionId`
+  → `getAttraction()`, then reads `name`, `shortDescription`,
+  `address`, `tags`, `region`):
+  - `tplBaseTonight`: "Which town are we staying in tonight?"
+  - `tplVisitToday`: "Which of these places do we visit today?"
+    (correct = real attraction name; distractors = attractions
+    we visit on OTHER days, never random words).
+  - `tplAttractionDescription`: "Which place is described as:
+    '<shortDescription>'?"
+  - `tplAttractionTown`: "Which town is <attraction> in?" (uses
+    a regex extractor on the address; skips attractions whose
+    address resolves to a street-level locality like "Piazzale
+    Verdi").
+  - `tplAttractionByTag`: "Which of these places is the best one
+    for <tag-flavored activity>?" (e.g. "splashy water adventures",
+    "exploring caves"). Distractors are attractions WITHOUT that
+    tag, so the answer is uniquely correct.
+  - `tplAttractionRegion`: "Which of these places is in the same
+    area as <today's attraction>?" Distractors come from a
+    different POI region, so it's a real geography question, not
+    a meta day-region one.
+
+Each template returns `null` when the day lacks the data it needs.
+The selector runs three ordered passes:
+
+1. **Greedy curated trivia** — `tplAttractionStory` called
+   repeatedly until the day's `quizFacts` catalog is drained or
+   it has filled `count - CULTURE_BUDGET` slots (so on a
+   10-question pack with `CULTURE_BUDGET = 2`, story trivia
+   gets first crack at 8 slots). On a story-rich day this is
+   almost the entire pack.
+2. **Italian-culture wildcards** — `tplItalianCulture` called
+   up to `CULTURE_BUDGET` times for one or two general "Italy"
+   facts (flag, Margherita, Vespa…). Stops early when the bank
+   is exhausted via the question-text dedup set.
+3. **Diverse fallback mix** — multiple shuffled passes of all
+   other templates (places, towns, italian words, regions, …)
+   so a single template can fire more than once when it has
+   multiple source items to pick from. This is the catch-all
+   that fills the deck when the day's `quizFacts` are thin or
+   missing.
+
+All three passes share the same `seen` dedup set keyed on
+question text, so RNG repeats can't double-print a fact.
+Deterministic per `(day, lang)` via mulberry32. The result is
+cached to the same `offlinePack.v1` slot as a real Gemini pack —
+`New questions` on the score screen wipes it and re-tries Gemini,
+which is the recovery path once the kid's quota resets.
+
+Why cache the fallback? Otherwise every Start tap would re-try
+Gemini and burn another quota call before the kid gets to play.
+Caching means *one* failed Gemini attempt per kid per day; the
+fallback banner is the only ongoing UX cost.
+
+The fallback flow is **offline-mode-only** on purpose: live mode
+without an API key surfaces the real error so the user knows to
+switch modes (or fix their key), rather than silently demoting the
+"endless" experience to a 10-question template pack.
+
+### Mute toggle
+
+A persistent `Volume2 / VolumeX` button in the card chrome
+(top-right, beside the Close X when present) silences both voice
+and SFX. State is held in `quizMute.ts` (`localStorage` key
+`tuscany2026.quiz.mute.v1`, default off) and mirrored into a
+ref so the speak/play guards always read the latest value
+without re-binding callbacks. Toggling on cancels any in-flight
+utterance via `voice.cancel()` so the current line cuts off
+immediately rather than playing out — anything else feels broken.
+
+### Caching, "New questions", and cost
+
+- **Offline pack: indefinite `localStorage` cache** keyed
+  `…quiz.offlinePack.v1.day{N}.{lang}`. No TTL — questions about a
+  past trip don't go stale. Generated once per `(day, lang)`,
+  replayed forever, including with no network.
+- **Live mode: no cache.** Every round and every batch is fresh
+  questions; the orchestrator never reads from storage in this mode.
+- **"New questions" button on the score screen** calls
+  `clearOfflinePack(day, lang)` (offline mode) and then re-runs
+  `startQuiz({ forceRefresh: true })`. In live mode it just kicks
+  off a fresh first batch.
+- **Last score memory** lives in a tiny separate
+  `quizScoreStorage.ts` (per `(day, lang)`) so the idle card can
+  show "Last score: 4/5" without keeping the full quiz around. Only
+  recorded when the kid answered ≥ 1 question — bailing instantly
+  in live mode never overwrites a real earlier score.
+- **Cost.** One 5-question batch ≈ 2–3 K in / ~1 K out tokens; the
+  10-question offline pack ≈ ~2 K out. Free-tier safe for casual
+  family use even across a 10-day trip. Live mode's bigger cost
+  line is **the Live voice session**, not generation, so the TTS
+  fallback is mandatory. Defaulting the toggle to **`offline`**
+  (and lazy-opening the voice only on Start tap) keeps the bill
+  small unless the kid explicitly opts into Live.
+
+### What fails gracefully when offline
+
+- **Offline mode + no cached pack + no API key.** The orchestrator
+  jumps straight to `buildFallbackQuiz`; the kid plays a 10-question
+  template-based pack and sees the gold "Quizzo's chef is on a
+  break — these are the basic questions for now." banner. Cached so
+  subsequent plays are instant.
+- **Offline mode + Gemini quota / network failure.** Same path as
+  above — the failed Gemini call is caught, fallback runs, banner
+  shows. "New questions" on the score screen wipes the cache and
+  retries Gemini once the user thinks quota has refreshed.
+- **Live mode + offline.** Surfaces the real error so the user
+  knows to switch to offline (which has the fallback safety net).
+  The toggle stays interactive in the error state so it's a
+  one-tap recovery.
+- **Cached pack exists, voice fails to open.** Quiz still runs; the
+  "voice unavailable" hint sits at the top of the question card
+  (suppressed when the kid has muted Quizzo on purpose). SFX still
+  play (they're synthesized on-device, also gated by mute).
+- **Live opens but stalls mid-quiz.** Each `speak()` resolves on its
+  own timeout; failures are caught silently inside the orchestrator
+  so a single missed utterance never blocks tap → next.
+- **Live prefetch fails partway through a round.** Tail-question UI
+  flips to "Couldn't load more — end the round?"; the End round
+  button is right there, so the kid still gets a clean score
+  screen.
+- **Itinerary data is too thin for the fallback templates** (zero
+  activities, no italian words, no base). Surfaces the real error
+  rather than open an empty quiz — almost never happens in
+  practice but the path is covered.
+
+### Hand-off to the AI assistant
+
+The score screen's "Ask Quizzo something" button dispatches a tiny
+custom event (`requestOpenGemininio` from
+`src/lib/gemininio/openEvent.ts`) that the chat component listens
+for on mount. Lets the kid bounce from the quiz into a free-form
+chat with the same Italian friend without needing to find the FAB.
+A single shared event channel is enough — no portals, no refs
+threaded through the component tree.
+
+### Files at a glance
+
+```
+src/lib/quiz/
+  quizPersona.ts          system prompt + per-day digest builder
+                          (count is parameterized: 5 batch / 10 pack)
+  generateQuiz.ts         REST call, JSON validation, offlinePack
+                          load/save/clear, ensureOfflinePack helper
+  fallbackQuiz.ts         template-based offline-mode rescue when
+                          Gemini fails (no AI, no network)
+  quizModeStorage.ts      persisted offline/live toggle choice
+  quizMute.ts             persisted mute flag (voice + SFX)
+  quizVoice.ts            Live → TTS → silent ladder
+  quizSfx.ts              Web Audio synth + optional MP3 override
+  quizScoreStorage.ts     last-score memory per (day, lang)
+src/components/
+  Quiz.tsx                idle/loading/playing/done state machine
+                          + LockedView (preview-then-progressive
+                          unlock) + bottom segmented mode toggle
+                          + endless live with background prefetch
+                          + mute icon + fallback banner
+  QuizQuestion.tsx        4-option chip layout + immediate feedback
+public/audio/quiz/
+  README.md               drop optional MP3s here for custom SFX
+src/lib/gemininio/
+  openEvent.ts            tiny event channel for "open the chat now"
+src/lib/tripState.ts
+  QUIZ_PREVIEW_UNLOCKED_DAYS    how many days are unlocked early
+  isQuizUnlocked(day#, date)    OR-of preview window + date-arrived
+  isChapterUnlockedForRecap     date-only predicate, used by the above
+src/data/
+  types.ts                  AttractionQuizFact + POI.quizFacts
+  attractions.ts            EN curated story trivia per attraction
+  i18n/attractions.he.ts    HE translations of those quizFacts
+                            (same Pick + same array order so the
+                             template indices line up)
+```
+
+Worked persona name + a sample EN/HE question pair lives in
+**Appendix A13**.
+
+---
+
 ## Appendix A: Few-shot reference — the Tuscany 2026 build
 
 The instructions above are destination-agnostic on purpose. The slots
@@ -2760,6 +3261,127 @@ timezones in this trip's audience were **Tel Aviv (UTC+3 in summer)**
 and **Rome (UTC+2 in summer)** — both far enough east of UTC that
 midnight-to-2am local on the trip's start day rendered "yesterday's"
 chapter. Keep the local-date helper from §20.
+
+### A13. Quiz with Quizzo (§22)
+
+The per-day kid quiz (§22) is hosted by **Quizzo** — a warm,
+slightly silly cartoon game-show host with a cartoon-exaggerated
+Italian accent. Same vibe as Gemininio (Italian wink, kid-safe,
+never condescending) but bent for an 8–14 year-old audience playing
+in the back seat on the way home.
+
+#### SFX file list
+
+Three short non-voice cues, all generated on-the-fly by
+`src/lib/quiz/quizSfx.ts` so the bundle stays byte-free:
+
+| Name | When | Synth recipe |
+|---|---|---|
+| `correct` | Kid taps the right answer | Two-note triangle ding C6 → E6, ~280 ms |
+| `wrong` | Kid taps a wrong answer | Square-wave glide 220 Hz → 130 Hz, ~250 ms |
+| `whoosh` | Score-screen reveal | Filtered white-noise sweep, 600 Hz → 4 kHz lowpass, ~420 ms |
+
+If a curator wants real audio assets, drop `correct.mp3`,
+`wrong.mp3`, and `whoosh.mp3` into `public/audio/quiz/`. The loader
+prefers the MP3 once a one-time HEAD check confirms it exists; no
+code change needed.
+
+#### Sample EN question (returned by `generateQuiz`)
+
+```json
+{
+  "question": "Where did we hike to see the cliff-top village?",
+  "options": ["Civita di Bagnoregio", "Pitigliano", "Lucca", "Saturnia"],
+  "correctIndex": 0,
+  "reactionCorrect": "Bravissimo! That's the bridge village!",
+  "reactionWrong": "Close one! It was Civita —"
+}
+```
+
+#### Sample HE question
+
+```json
+{
+  "question": "איפה טיילנו על הסלעים מעל הים?",
+  "options": ["קלה דל ג׳סו", "סטורניה", "פיטיליאנו", "סן ג׳ימיניאנו"],
+  "correctIndex": 0,
+  "reactionCorrect": "ברביסימו! בדיוק שם!",
+  "reactionWrong": "אופ, קרוב מאוד! התשובה היא —"
+}
+```
+
+(Note the Hebrew uses transliterations of the Italian place names —
+"קלה דל ג׳סו", "פיטיליאנו" — same language-purity rule as A10.)
+
+#### Generation prompt template
+
+The per-day system prompt is built by
+`buildQuizSystemPrompt(dayNumber, lang, count)` and concatenates two
+blocks:
+
+1. **Persona + output contract** — `quizzoPersonaEn(count)` /
+   `quizzoPersonaHe(count)`. The persona pins the voice, the
+   difficulty mix (~40% easy / ~40% medium / ~20% sneaky), the
+   variety rule (every question on a different aspect of the day),
+   the kid-vocabulary rule, the no-alcohol rule, and the strict
+   JSON output shape (no markdown, no fences, **exactly `count`**
+   questions). The Hebrew variant adds the transliteration rule
+   from A10.
+2. **Day data digest** — `buildDayDigest(dayNumber, lang)`: title,
+   subtitle, every activity (with time + description), each
+   attraction's short description and tags, drive notes, the
+   day's Italian words, and any `dayTips`. Capped at ~240 chars
+   per attraction so a content-rich day still fits inside ~3 K
+   input tokens.
+
+The user message is a one-line nudge that mirrors the count
+("Write the 5 quiz questions now, in the JSON format above." for
+live batches, "Write the 10 quiz questions now…" for the offline
+pack). With `responseMimeType: "application/json"` and the persona's
+"no prose around it" rule, Gemini reliably returns parseable JSON;
+the loader defends against the rare ```json fence wrapper anyway
+(`extractJsonBlock`).
+
+`generationConfig` is nudged per count: live batches use
+`temperature: 0.75` / `maxOutputTokens: 1500`; the 10-question
+offline pack uses `temperature: 0.85` / `maxOutputTokens: 2800` so
+the bigger set has room to spread across the day's surface area
+without the 5th–10th questions clustering on the same place.
+
+#### Two-mode UX (Tuscany fill-in)
+
+| Slot | Offline mode | Live mode |
+|---|---|---|
+| Question count | 10 | 5 per batch, endless |
+| Storage | `tuscany2026.quiz.offlinePack.v1.day{N}.{lang}` (no expiry) | none — every batch fresh |
+| Start tap → first questions | Cached pack instantly, OR one Gemini call (~2 s) on first ever play | One Gemini call (~1 s) for the first 5 |
+| Mid-round network use | None | Background prefetch of next 5 once kid crosses `length − 2` |
+| End-of-round trigger | Auto, after Q10 | Kid taps **End round** (or prefetch fails irrecoverably) |
+| Default toggle position | ✅ active | inactive |
+| "New questions" on score screen | Clears `offlinePack.v1`, regenerates 10 | Just kicks off a fresh first batch |
+
+#### Persona name + handoff slug
+
+| Slot | Tuscany 2026 fill-in |
+|---|---|
+| Persona name | **Quizzo** — Italian-flavored cartoon game-show host |
+| Live API persona | "Narrator" — speak the line you receive, exactly, in Quizzo's voice |
+| Live API prebuilt voice | reuses `Charon` from §15 for consistency with Gemininio |
+| Mode storage key | `tuscany2026.quiz.mode.v1` (single value, default `offline`) |
+| Mute storage key | `tuscany2026.quiz.mute.v1` (single value, default off) |
+| Offline pack storage key | `tuscany2026.quiz.offlinePack.v1.day{N}.{lang}` (no TTL — used for both real Gemini packs and template fallbacks) |
+| Last-score key prefix | `tuscany2026.quiz.lastScore.v1` (per `(day, lang)`) |
+| Live-mode prefetch lead | `PREFETCH_AHEAD = 2` questions (kicks off batch fetch when kid is on the second-to-last loaded question) |
+| Preview-unlocked days | `QUIZ_PREVIEW_UNLOCKED_DAYS = 2` — Days 1 & 2 always playable; Days 3-10 unlock on the morning of their chapter date |
+| Fallback `generatedAt` marker | `0` — distinguishes a template-built pack from a real Gemini one when reading the cache |
+| "Ask Quizzo" handoff event | `gemininio:open` (handled by `subscribeOpenGemininio` in `src/components/Gemininio.tsx`) |
+| Hand-curated story facts | ~14 attractions in `attractions.ts` carry 2–4 `quizFacts` each (Devil's Bridge → "villagers sent a dog"; Pisa → "ground sank on one side"; Pitigliano → "Little Jerusalem"; …). HE translations live in `i18n/attractions.he.ts` under the same `quizFacts` key. Drives both `tplAttractionStory` (offline) and the `TRIVIA YOU CAN ASK ABOUT …` digest blocks (Gemini). |
+
+For another destination, swap "Quizzo" for whatever name fits the
+host's flavor (a French quiz host might be "Quizzou", a Japanese
+one "Kuizu-kun") and re-tune the persona's example interjections.
+Everything else — the digest builder, the JSON contract, the cache
+keys, the voice ladder — is destination-agnostic and ports cleanly.
 
 ---
 
