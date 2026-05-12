@@ -2741,7 +2741,7 @@ against a 3 s connect timeout so a slow / blocked network doesn't
 strand the kid staring at "warming up…" forever. The Live persona
 is a **narrator** (`NARRATOR_PERSONA_*` in `quizVoice.ts`) — its
 sole instruction is to speak the line it receives, exactly, in the
-host's playful Italian-flavored cartoon voice. We ship one persona
+host's playful, destination-flavored cartoon voice (e.g., an Italian accent for an Italy trip). We ship one persona
 per language; the spoken accent stays the same regardless. On Live
 failure the factory falls back to `BrowserTtsQuizVoice`, which
 picks the best available `SpeechSynthesisVoice` for the active
@@ -3364,8 +3364,8 @@ without the 5th–10th questions clustering on the same place.
 
 | Slot | Tuscany 2026 fill-in |
 |---|---|
-| Persona name | **Quizzo** — Italian-flavored cartoon game-show host |
-| Live API persona | "Narrator" — speak the line you receive, exactly, in Quizzo's voice |
+| Persona name | **Quizzo** — Local-flavored cartoon game-show host (e.g., Italian) |
+| Live API persona | "Narrator" — speak the line you receive, exactly, in Quizzo's voice with the destination's local accent |
 | Live API prebuilt voice | reuses `Charon` from §15 for consistency with Gemininio |
 | Mode storage key | `tuscany2026.quiz.mode.v1` (single value, default `offline`) |
 | Mute storage key | `tuscany2026.quiz.mute.v1` (single value, default off) |
@@ -3380,6 +3380,7 @@ without the 5th–10th questions clustering on the same place.
 For another destination, swap "Quizzo" for whatever name fits the
 host's flavor (a French quiz host might be "Quizzou", a Japanese
 one "Kuizu-kun") and re-tune the persona's example interjections.
+You must also explicitly update the AI persona instructions in `quizVoice.ts` to use the destination's local accent (e.g. "thick French accent").
 Everything else — the digest builder, the JSON contract, the cache
 keys, the voice ladder — is destination-agnostic and ports cleanly.
 
