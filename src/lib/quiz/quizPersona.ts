@@ -167,9 +167,11 @@ QUESTION DESIGN RULES (these matter — read carefully):
     - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
       flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
       cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys, ancient Romans, or countries bordering Italy).
+      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
+      Eurovision winners like Måneskin, or famous soccer players like Cristiano
+      Ronaldo playing for Juventus).
       You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
-      "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
       "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
@@ -306,9 +308,11 @@ QUESTION DESIGN RULES (read carefully):
     - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
       flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
       cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys, ancient Romans, or countries bordering Italy).
+      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
+      Eurovision winners like Måneskin, or famous soccer players like Cristiano
+      Ronaldo playing for Juventus).
       You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
-      "Who painted the Mona Lisa?", "What are the TMNT named after?",
+      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
       "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
       Keep them kid-friendly.
     - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.

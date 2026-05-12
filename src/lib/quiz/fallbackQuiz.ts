@@ -351,6 +351,21 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       correctAnswer: "Salt (it's completely unsalted!)",
       distractors: ["Flour", "Water", "Yeast"]
     }
+    {
+      question: "Which famous Portuguese soccer player, CR7, played for the Italian team Juventus?",
+      correctAnswer: "Cristiano Ronaldo",
+      distractors: ["Lionel Messi", "Neymar", "Kylian Mbappé"]
+    },
+    {
+      question: "Which Italian rock band won the Eurovision Song Contest in 2021?",
+      correctAnswer: "Måneskin",
+      distractors: ["ABBA", "The Beatles", "Coldplay"]
+    },
+    {
+      question: "Italy has won the World Cup four times! Which of these is a famous Italian soccer team?",
+      correctAnswer: "Juventus",
+      distractors: ["Real Madrid", "Manchester United", "Bayern Munich"]
+    }
   ],
   he: [
     {
@@ -488,6 +503,21 @@ const ITALIAN_CULTURE_FACTS: Record<Lang, AttractionQuizFact[]> = {
       question: "הלחם הטוסקני מפורסם בגלל שחסר בו מרכיב אחד חשוב. מהו?",
       correctAnswer: "מלח (הוא לגמרי ללא מלח!)",
       distractors: ["קמח", "מים", "שמרים"]
+    },
+    {
+      question: "איזה שחקן כדורגל פורטוגלי מפורסם, הידוע כ-CR7, שיחק בקבוצה האיטלקית יובנטוס?",
+      correctAnswer: "כריסטיאנו רונאלדו",
+      distractors: ["ליונל מסי", "ניימאר", "קיליאן אמבפה"]
+    },
+    {
+      question: "איזו להקת רוק איטלקית זכתה באירוויזיון בשנת 2021?",
+      correctAnswer: "מונסקין",
+      distractors: ["אבבא", "הביטלס", "קולדפליי"]
+    },
+    {
+      question: "איטליה זכתה במונדיאל ארבע פעמים! איזו מבין אלו היא קבוצת כדורגל איטלקית מפורסמת?",
+      correctAnswer: "יובנטוס",
+      distractors: ["ריאל מדריד", "מנצ'סטר יונייטד", "באיירן מינכן"]
     }
   ]
 };
