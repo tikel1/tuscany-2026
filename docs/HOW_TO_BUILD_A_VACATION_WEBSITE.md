@@ -40,6 +40,7 @@ section.
 19. [Deployment (GitHub Pages)](#19-deployment-github-pages)
 20. [Common gotchas](#20-common-gotchas)
 21. [If you only do five things](#21-if-you-only-do-five-things)
+- [Appendix A: Few-shot reference — the Tuscany 2026 build](#appendix-a-few-shot-reference--the-tuscany-2026-build)
 
 ---
 
@@ -132,7 +133,7 @@ Work top to bottom; each row depends on the ones above.
 | 5 | **UI strings** | `src/lib/dict.ts` — brand, nav, sections, install copy, Gemininio strings. Grep `brand_`, `nav_`, `gem_`, `install_` in the previous trip repo as a template list. |
 | 6 | **Page composition** | `src/App.tsx` (and section components) — reorder sections to match the new trip's rhythm (§4). |
 | 7 | **Map** | Defaults: centre, zoom, bounding behaviour, country filter for "you are here" (§6, §11). |
-| 8 | **Install / PWA metadata** | `public/manifest.webmanifest` (`name`, `short_name`), `index.html` meta (`apple-mobile-web-app-title`, OG/Twitter). Short install label ≠ long `<title>` (e.g. **"Tuscany '26"** on the home-screen icon vs a longer browser-tab title). |
+| 8 | **Install / PWA metadata** | `public/manifest.webmanifest` (`name`, `short_name`), `index.html` meta (`apple-mobile-web-app-title`, OG/Twitter). Short install label ≠ long `<title>` — pick a tight nickname for the home-screen icon vs a longer marketing-style browser-tab title (Appendix A1 has the worked example). |
 | 9 | **Gemininio** | **Persona & party:** §15 (`persona.ts`). **Keys, Live, REST:** §16. `.env.local` `VITE_GEMINI_API_KEY` + GitHub Actions secret; restrict key by **HTTP referrer** in AI Studio. |
 | 10 | **Optional audio** | Pre-generated MP3s + scripts (§14) — run locally, never commit TTS secrets. Scripts read **`GEMINI_API_KEY`** (no `VITE_` prefix), separate from the in-app key. |
 | 11 | **Deploy** | `.github/workflows/deploy.yml`; Pages **Source = GitHub Actions** (§19). |
@@ -189,8 +190,8 @@ Set these out loud before you write a line of code. They will quietly
 end every "should we do X?" debate later.
 
 - **Mobile first, always.** The site is read on a phone in the back
-  of a car, on Wi-Fi in a villa, in bright Italian sun outside a
-  trattoria. Desktop is a courtesy, not the default.
+  of a car, on patchy Wi-Fi in a rental, in bright sun outside a
+  restaurant. Desktop is a courtesy, not the default.
 - **Real, verified data — no placeholders.** Lorem ipsum survives
   exactly until the trip starts. Spend the time to verify every
   address, opening hour, and phone number.
@@ -264,9 +265,10 @@ classes like `text-terracotta-600` and `bg-cream-50` Just Work:
 }
 ```
 
-Pick colors **from the destination**: Tuscany is terracotta + olive +
-cream; Greece would be Aegean blue + whitewash + bougainvillea pink.
-Three or four families with 2–3 shades each is plenty.
+Pick colors **from the destination** — three or four families with
+2–3 shades each is plenty. (Worked example: Appendix A2 — Tuscany
+2026 went terracotta + olive + cream; a Greek-island trip would
+naturally land on Aegean blue + whitewash + bougainvillea pink.)
 
 ### Typography
 
@@ -394,7 +396,7 @@ Footer
 
 Two principles:
 - **The plan comes first.** It's what the user came for. Don't bury it
-  under "10 reasons to visit Tuscany".
+  under a "10 reasons to visit \<destination\>" landing-page hero.
 - **Emergency goes near the end** — you only look for it when something's
   wrong, and it should still be one scroll-tap away on mobile.
 
@@ -461,7 +463,8 @@ type TripState =
 ```
 
 - **Before** — show the live countdown, the iconic destination photos,
-  and "Until Tuscany …" (or your equivalent kicker).
+  and a "Until \<destination\> …" kicker (Appendix A3 has the exact
+  string used here).
 - **During** — drop the countdown entirely. Replace the carousel with
   photos pulled from **the featured day's** attractions. Show the
   day's title + base + activities preview.
@@ -508,8 +511,8 @@ router library needed). The detail page has its own image carousel,
 back arrow, and a content order designed for **the day of**:
 
 1. **Word of the day in the destination's language** — fun, sets the
-   mood (Italian for this trip; pick whatever language travellers will
-   actually hear at the destination).
+   mood. Pick whatever language travellers will actually hear at the
+   destination.
 2. **The plan** — activities, drive notes, and inline ride times
    between stops (see "Activity rows" below)
 3. **Restaurants nearby** — curated by day, not just by region. A
@@ -605,24 +608,25 @@ hops or when the next activity is at the same place.
 ### Word of the day (destination language)
 
 A magazine-style flashcard at the top, picking up a word in whatever
-language travellers will actually hear at the destination — Italian
-on this trip, but call yours `JapaneseWord`, `FrenchWord`, etc.:
+language travellers will actually hear at the destination — name the
+type after the destination's language (`JapaneseWord`, `FrenchWord`,
+…):
 
 ```ts
-// In this example app the type is `ItalianWord`; rename per trip.
-interface ItalianWord {
-  word: string;          // "Acqua"
-  pronounce: string;     // "AH-kwah"
-  meaning: string;       // "Water"
-  example?: string;      // "L'acqua è fresca!"
-  exampleMeaning?: string;
+interface DestinationWord {
+  word: string;          // source word in the destination's language
+  pronounce: string;     // pronunciation key in the UI language(s)
+  meaning: string;       // translation in the active UI language
+  example?: string;      // sample sentence, kept in the source language
+  exampleMeaning?: string; // translation of the sample sentence
 }
 ```
 
 Pick words that fit the day (water words on water days, the local
 equivalent of "goodbye" on departure day). Translate `meaning` and
-`exampleMeaning` per UI language; the source word + example stay in
-the destination language across all UI languages.
+`exampleMeaning` per UI language; the source `word` + `example` stay
+in the destination language across all UI languages. (Worked example
+with the actual `ItalianWord` type and sample data: Appendix A4.)
 
 ---
 
@@ -770,7 +774,7 @@ export interface Day {
   leadImageCredit?: ImageCredit;
   gear?: GearItem[];
   dayTips?: string[];
-  wordOfTheDay?: ItalianWord;
+  wordOfTheDay?: DestinationWord;  // see §5 — rename per trip
   restaurants?: string[];   // service ids — curated for THIS day
   drinkOfTheDay?: DayDrink;
 }
@@ -866,13 +870,14 @@ Split responsibilities so **Vite Fast Refresh** and ESLint stay happy:
 ### The dictionary
 
 ```ts
-// src/lib/dict.ts
+// src/lib/dict.ts — keys are abstract; values are filled per trip
 export const DICT = {
-  brand_short:       { en: "Tuscany",    he: "טוסקנה" },
-  hero_before_lead:  { en: "Until …",    he: "עד …" },
-  nav_plan:          { en: "Plan",       he: "תוכנית" },
+  brand_short:       { en: "<destination>",   he: "<יעד>" },
+  hero_before_lead:  { en: "Until …",         he: "עד …" },
+  nav_plan:          { en: "Plan",            he: "תוכנית" },
   /* ~200 entries by the end */
 } as const;
+// Tuscany 2026 fill-ins for the trip-specific keys: Appendix A1.
 
 export type DictKey = keyof typeof DICT;
 
@@ -987,7 +992,9 @@ big stat cards); body-size numerals don't need the correction.
 ### Persist the choice
 
 ```ts
-localStorage.setItem("tuscany.lang", lang);
+// Namespace the key with your trip slug so multiple trip apps on
+// the same domain don't stomp each other in localStorage.
+localStorage.setItem("<trip-slug>.lang", lang);
 ```
 
 Read it on mount, default to `en`. Never auto-detect from
@@ -1100,12 +1107,11 @@ Define a single `TRIP_COUNTRY` constant somewhere central
 (`src/data/trip.ts` or wherever your trip-wide config lives) — both
 URL builders below append it as a fallback when a POI has no street
 address, so the search disambiguates instead of landing on a
-same-named place in another country. (Example app pins this to
-`"Italy"`; for a Japan trip you'd write `"Japan"`, for France
-`"France"`, etc.)
+same-named place in another country. (Worked example with the actual
+literal: Appendix A6.)
 
 ```ts
-const TRIP_COUNTRY = "Italy"; // change per trip
+const TRIP_COUNTRY = "<destination country>"; // change per trip
 
 // Google Maps — search URL opens the top hit's place card directly.
 // Address sharpens the search; the country fallback is usually
@@ -1163,8 +1169,8 @@ useEffect(() => {
       // Only fly to the dot the first time we see it inside the
       // destination's bounding box — don't snap the map away from
       // the trip area when the user is still tapping pre-trip from
-      // home. (In this example app the helper is `isInItaly`; for a
-      // different trip name it after your destination.)
+      // home. (Name the helper after your destination — Appendix A7
+      // shows the bounding box used in the example build.)
       if (!hasAutoCentered.current && isInDestination(c[0], c[1])) {
         hasAutoCentered.current = true;
         flyRef.current?.flyToCoords(c, 11);
@@ -1236,20 +1242,21 @@ For every attraction:
 ### Global tips
 
 Don't forget the cultural ones that make or break a trip. The
-specifics will differ by destination — the bullets below are this
-trip's Italy examples; substitute your destination's equivalents
-(public-holiday closures, peak-hour crowds, midday-closure
-conventions, local tipping norms):
-- **National-holiday closures** — many family restaurants close for
-  Ferragosto (mid-August) here. Worth surfacing as a yellow warning
-  tip. (Substitute your destination's equivalent — Golden Week, Diwali,
-  Bayram, etc.)
+*categories* are universal; the specifics differ by destination, so
+research each per trip. (Worked Italy examples in Appendix A8.)
+- **National-holiday closures** — every country has one or two weeks
+  a year when family-run businesses close en masse. Surface them as
+  yellow-warning tips against the affected dates.
 - **Crowds & timing** — go early or late, avoid the noon golden hours.
-- **Midday closure conventions** — shops & kitchens closed midday in
-  small Italian villages (`riposo` / `siesta`). Many destinations have
-  an equivalent rhythm; document it.
-- **Tipping etiquette** — Italians round up; service is included.
-  (Wildly destination-specific — research per trip.)
+- **Midday closure conventions** — many cultures pause shops and
+  kitchens for a few hours in the afternoon. Document the local
+  rhythm so the family doesn't show up to a closed restaurant at 14:30.
+- **Tipping etiquette** — wildly destination-specific. Document the
+  norm (round up, % expected, "service included" conventions, taxi
+  vs. restaurant differences).
+- **Driving / parking restrictions** — many cities ban non-resident
+  cars from old-town zones, with cameras and fines that arrive months
+  later via the rental company. Surface this loudly if you're driving.
 
 ### Food & wine
 
@@ -1341,8 +1348,9 @@ screen. Don't make them hunt through Safari's share menu — surface
 the prompt yourself:
 
 1. **`public/manifest.webmanifest`** — `name` + **`short_name`** (these
-   are the **installed app label** on Android/desktop—pick something
-   short like **"Tuscany '26"**, not the full marketing title), theme
+   are the **installed app label** on Android/desktop — pick a tight
+   nickname for the home-screen icon, not the full marketing title;
+   Appendix A1 has the worked example), theme
    color, background color, `display: "standalone"`, `start_url: "./"`,
    `scope: "./"`, plus **PNG** icons (`192` + `512`, `purpose: "any
    maskable"` helps Android circular masks).
@@ -1395,8 +1403,8 @@ state into a React Context (which would force every consumer to wrap
 with a provider for one button).
 
 ```ts
-// install.ts
-const FORCE_OPEN_EVENT = "tuscany:a2hs:force-open";
+// install.ts — namespace the event with your trip slug
+const FORCE_OPEN_EVENT = "<trip-slug>:a2hs:force-open";
 
 export function triggerInstallPrompt(): void {
   window.dispatchEvent(new Event(FORCE_OPEN_EVENT));
@@ -1463,9 +1471,11 @@ with no key in sight.**
 ### Pipeline
 
 1. **Pick a voice.** ElevenLabs has a `shared-voices` library
-   filterable by language. For an "Italian tour guide who speaks
-   English", search `language=it&category=professional` and pick a
-   warm, broadcast-tone male/female voice. Keep the `voice_id`.
+   filterable by language. For a "destination-flavored tour guide who
+   speaks the UI language", search
+   `language=<destination-iso>&category=professional` and pick a warm,
+   broadcast-tone voice. Keep the `voice_id`. (Worked example:
+   Appendix A9 — Italian tour guide search.)
 2. **Author a generator script** that:
    - Reads your data files (here: regex over `attractions.ts` —
      fragile but fine for a controlled schema; for arbitrary code
@@ -1565,7 +1575,7 @@ Two clicks, one voice — always.
 
 ### Asset URL (Vite + GitHub Pages)
 
-The deployed base is `/tuscany-2026/`, not `/`. Compose the audio
+The deployed base is `/<repo-slug>/`, not `/`. Compose the audio
 URL with `import.meta.env.BASE_URL` so the same code works in dev
 and on Pages:
 
@@ -1629,7 +1639,8 @@ this section is **what to write** before you touch the socket code.
 because models obey constraints better when related rules sit together:
 
 1. **Public persona** — `PERSONA_EN` or `PERSONA_FOR_HEBREW_RESPONSES`:
-   who the assistant is (e.g. Italian tour guide for *these* families),
+   who the assistant is (a destination-flavored tour guide for
+   *these* families — Appendix A9 has the worked example),
    **ABSOLUTE RULES** (1–3 sentences, no markdown, no preamble,
    reply language follows the user's message), plus **good vs bad**
    example replies. Keep it short; the model imitates examples more
@@ -1640,8 +1651,9 @@ because models obey constraints better when related rules sit together:
    modules as the website (`digestItinerary`, `digestAttractions`,
    `digestStays`, …) so the AI never drifts from the itinerary JSON.
 4. **Live audio delivery** — `LIVE_SPOKEN_DELIVERY` steers native-audio
-   tone (e.g. playful Italian-accented *delivery* while words stay in
-   the user's language).
+   tone (a destination-flavored *delivery* layer while the words
+   themselves stay in the user's UI language — Appendix A9 has the
+   exact phrasing used here).
 5. **Reply-language closing** — explicit "same language in / same out",
    UI-language default if ambiguous, and "not on our plan" behaviour.
 
@@ -1693,9 +1705,9 @@ for itinerary digests inside the same context window.
 - [ ] Confirm **digests** still import from your new `itinerary.ts` /
   `attractions.ts` / etc. — if a section of the site is hidden, decide
   whether the AI should still know it.
-- [ ] Tune **`LIVE_SPOKEN_DELIVERY`** if "thick Italian cartoon energy"
-  is wrong for the destination (or keep delivery flavour but change
-  the metaphor).
+- [ ] Tune **`LIVE_SPOKEN_DELIVERY`** if the previous trip's delivery
+  metaphor (Appendix A9 has it verbatim) is wrong for the destination
+  — or keep the delivery-flavor *concept* and just swap the metaphor.
 - [ ] Re-read **search discipline** (`TYPED_SEARCH_DISCIPLINE`) for
   your tolerance of web vs plan conflicts.
 - [ ] Add UI strings in `dict.ts` for anything user-visible (Gemininio
@@ -1905,12 +1917,16 @@ Append the **recent chat transcript** into the Live system text when
 opening a new socket (see §0 / globe toggle) so reconnects stay aligned
 with the on-screen history.
 
-For an Italian-tour-guide voice:
-- Pick a warm prebuilt voice (`Charon` worked best for our taste).
-- Set `language_code: "en-US"` (or `"he-IL"`) on the speech config.
+For a destination-flavored tour-guide voice:
+- Pick a warm prebuilt voice (try a few — Appendix A9 names the one
+  that worked best for the example build).
+- Set `language_code` to your UI language(s) on the speech config
+  (`"en-US"`, `"he-IL"`, `"ja-JP"`, etc.).
 - In the system prompt, instruct the model to "speak with a warm
-  Italian accent" and to "drop occasional Italian interjections".
-  Prompt-driven accent is imperfect but the model leans into it.
+  \<destination\> accent" and to "drop occasional \<destination-language\>
+  interjections". Prompt-driven accent is imperfect but the model
+  leans into it. (Verbatim phrasing from the example build:
+  Appendix A9.)
 
 ### Lifecycle: lazy connect, eager disconnect
 
@@ -2046,7 +2062,7 @@ Three layers of defense (mix and match by channel):
 below is what we learned from iteration once the plumbing existed.*
 
 The first version of Gemininio's persona was 12 paragraphs of
-"warm, knowledgeable, slightly poetic Italian guide" prose. The
+warm-knowledgeable-slightly-poetic-destination-guide prose. The
 model dutifully wrote five-paragraph answers full of preamble.
 
 What actually worked:
@@ -2084,22 +2100,12 @@ fun" unless you defaults-flip it.
 
 ### Language purity in non-Latin scripts
 
-Italian persona + Hebrew user = a model that happily mixes
-"Allora!" (Latin) with "סָטוּרְנְיָה פתוח 24/7" (Hebrew) inside
-one sentence. Looks broken. The fix is a hard rule, with explicit
-transliteration examples for the categories the model actually
-slips on:
-
-```
-שפה אחידה — חוק קשיח. כשהתשובה בעברית, כל המילים בעברית. זה כולל:
-  • קריאות איטלקיות → "אללוֹרָה", "ממה מיה", "דאי", "אקו"
-    (לא "Allora", לא "Mamma mia").
-  • שמות אנשים → "ג׳ני", "מייק", "מרינה", "נועם" (לא "Jenny").
-  • שמות מקומות → "סָטוּרְנְיָה", "פִּיֶנְצָה", "פירנצה",
-    "לוּקה" (לא "Saturnia", לא "Florence").
-חריג יחיד: ראשי תיבות בינלאומיים סטנדרטיים כמו FCO. אסור
-לערבב כתבים באותו משפט מעבר לכך.
-```
+A persona authored in one script + a user typing in another = a
+model that happily mixes scripts inside a single sentence. Looks
+broken. The fix is a hard rule, with explicit transliteration
+examples for the categories the model actually slips on (Latin
+interjections, person names, place names). Appendix A10 shows the
+verbatim Hebrew block from this build's `PERSONA_FOR_HEBREW_RESPONSES`.
 
 Three pieces are doing the work:
 
@@ -2250,11 +2256,11 @@ The site is personal but you'll share the link in a family WhatsApp,
 maybe a status update. A nice link preview is worth 5 minutes:
 
 ```html
-<!-- index.html -->
-<meta property="og:title"       content="Tuscany 2026 — Horowitz × Racz × Kaplan" />
-<meta property="og:description" content="A summer guide for our 10 days in Tuscany — plan, places, food, map." />
-<meta property="og:image"       content="https://tikel1.github.io/tuscany-2026/og-cover.jpg" />
-<meta property="og:url"         content="https://tikel1.github.io/tuscany-2026/" />
+<!-- index.html — fill the placeholders per trip; Appendix A1 has worked example -->
+<meta property="og:title"       content="<trip name>" />
+<meta property="og:description" content="<one-sentence trip strapline>" />
+<meta property="og:image"       content="https://<your-user>.github.io/<repo>/og-cover.jpg" />
+<meta property="og:url"         content="https://<your-user>.github.io/<repo>/" />
 <meta name="twitter:card"       content="summary_large_image" />
 ```
 
@@ -2387,11 +2393,11 @@ Default to keyless tiles unless you're sure you want the dependency.
 ### `toISOString().slice(0, 10)` lies in non-UTC timezones
 
 Classic trap when picking "today's day" out of an itinerary keyed by
-date. `new Date().toISOString()` is **always UTC**, so for users east
-of UTC (Israel, Italy in summer, anywhere east of London after
-midnight), `toISOString().slice(0, 10)` returns *yesterday's* date
+date. `new Date().toISOString()` is **always UTC**, so for any user
+east of UTC, `toISOString().slice(0, 10)` returns *yesterday's* date
 for the first hours of the local day, and the hero shows the wrong
-chapter.
+chapter. (Worked example with the actual timezones that bit this
+build: Appendix A12.)
 
 Build the local-day string from the local components instead:
 
@@ -2436,6 +2442,176 @@ Compressed, in priority order:
 Everything else — i18n, deep navigation links, food & wine,
 checklists, geolocation pulses, sharing previews, Gemininio ([§15](#15-ai-assistant--persona--traveling-party) + [§16](#16-ai-tour-guide--implementation-gemini-live-no-backend)) —
 adds love but won't decide whether the site gets used. Items 1–5 above will.
+
+---
+
+## Appendix A: Few-shot reference — the Tuscany 2026 build
+
+The instructions above are destination-agnostic on purpose. The slots
+they leave open (`<destination>`, `TRIP_COUNTRY`, `DestinationWord`,
+"destination-flavored persona", etc.) are filled in below for the
+trip the playbook was born on — 10 days in Tuscany, August 2026, four
+households, Hebrew + English UI. Use this section as a worked example
+when an abstract instruction feels under-specified, or feed it into
+an LLM as in-context examples when generating the next trip's
+content.
+
+### A1. Trip identity (§§1, 8)
+
+| Slot | Tuscany 2026 fill-in |
+|---|---|
+| Destination noun | "Tuscany" / "טוסקנה" |
+| Destination country | "Italy" |
+| Trip dates | 2026-08-XX → 2026-08-XX (10 days) |
+| `name` | `"Tuscany 2026 — Horowitz × Racz × Kaplan"` |
+| `short_name` (PWA install label) | `"Tuscany '26"` |
+| Marketing strapline | `"A summer guide for our 10 days in Tuscany — plan, places, food, map."` |
+| Browser tab `<title>` | `"Tuscany 2026 — Horowitz × Racz × Kaplan"` |
+| Repo slug / Vite `base` | `tuscany-2026` → `/tuscany-2026/` |
+
+```html
+<title>Tuscany 2026 — Horowitz × Racz × Kaplan</title>
+<meta property="og:title"       content="Tuscany 2026 — Horowitz × Racz × Kaplan" />
+<meta property="og:description" content="A summer guide for our 10 days in Tuscany — plan, places, food, map." />
+```
+
+```ts
+// src/lib/dict.ts — brand names per UI language
+brand_short: { en: "Tuscany", he: "טוסקנה" },
+```
+
+### A2. Brand palette (§3)
+
+Pulled from the destination itself:
+- **Terracotta** — sunburnt clay rooftops.
+- **Olive** — olive groves; secondary action color.
+- **Cream** — limestone and cream-colored stone in hilltop villages.
+- **Ink-700** — body copy.
+- **Cormorant Garamond** (serif headlines) + **Inter** (body).
+
+Substitute the equivalent triple for any destination — three or four
+colors pulled from photos of the place, plus one warm neutral.
+
+### A3. Countdown kicker (§4)
+
+Pattern: `"Until <destination> …"` → in this build, **"Until Tuscany …"**.
+
+### A4. Word of the day in the destination's language (§§5, 14)
+
+| Slot | Tuscany 2026 fill-in |
+|---|---|
+| Destination language | Italian |
+| Type name in repo | `ItalianWord` (the abstract slot name in this doc is `DestinationWord`) |
+| Example word | `"Acqua"` |
+| Pronunciation key | `"AH-kwah"` |
+| Meaning (per UI language) | EN `"Water"`, HE `"מים"` |
+| Example sentence (kept in Italian across all UI languages) | `"L'acqua è fresca!"` |
+| TTS script | `npm run tts:italian-words` |
+| Per-language voice env vars | `GEMINI_TTS_VOICE_IT`, `GEMINI_TTS_VOICE_EN`, `GEMINI_TTS_VOICE_HE` |
+
+```ts
+interface ItalianWord {
+  word: string;          // "Acqua"
+  pronounce: string;     // "AH-kwah"
+  meaning: string;       // "Water"
+  example?: string;      // "L'acqua è fresca!"
+  exampleMeaning?: string;
+}
+```
+
+### A5. Drink of the day (§§5, 12)
+
+Drawn from Italy's drinking culture — wine, aperitivo, digestivo. A
+typical entry: **Aperol Spritz** with a one-line "why tonight" pairing
+to a beach day's sunset vibe. Adults only; kids see a juice / gelato
+suggestion instead.
+
+### A6. Country fallback for nav URLs (§10)
+
+```ts
+const TRIP_COUNTRY = "Italy";
+```
+
+### A7. Geolocation bounding box (§11)
+
+| Slot | Tuscany 2026 fill-in |
+|---|---|
+| Helper name in repo | `isInItaly` (abstract slot name: `isInDestination`) |
+| Bounding box | roughly **Lat 36–47, Lon 6.5–18.5** — generous, covers the whole country (not just Tuscany), so the dot still snaps when a friend lands in Rome before driving north. |
+
+### A8. Global culture tips (§12)
+
+Italy-specific bullets the doc tells you to substitute per
+destination:
+- **Ferragosto (mid-August)** — many family-run restaurants and
+  small shops close for a week or more. Surface as a yellow
+  warning tip.
+- **`Riposo`** — small-village shops and kitchens close midday
+  (~13:00 → 16:00). Plan lunches accordingly.
+- **Tipping** — Italians round up; service is included in the bill.
+  Don't tip 18% American-style.
+- **ZTL (Zona a Traffico Limitato)** — old-town driving bans for
+  non-residents, with camera fines that arrive months later via
+  the rental company.
+
+For other destinations, keep the *categories* (national-holiday
+closures, midday-closure rhythm, tipping convention, urban driving
+restrictions) and replace the specifics.
+
+### A9. AI persona — voice, accent, language purity (§§15, 17)
+
+| Slot | Tuscany 2026 fill-in |
+|---|---|
+| Persona name | **Gemininio** — a warm, slightly poetic Italian tour guide |
+| ElevenLabs voice search | `language=it&category=professional` (warm broadcast tone) |
+| Live API prebuilt voice | `Charon` |
+| `language_code` | `"en-US"` and `"he-IL"` |
+| Accent instruction in system prompt | `"speak with a warm Italian accent"` + `"drop occasional Italian interjections"` |
+| Spoken-delivery tag (`LIVE_SPOKEN_DELIVERY`) | "thick Italian cartoon energy" |
+| Per-turn nudge appended to typed user messages | EN: `"(say it in a heavy italian accent)"` · HE: `"(תגיד במבטא איטלקי כבד)"` |
+
+### A10. Language-purity rule (§17)
+
+Italian persona + Hebrew user UI = the model happily mixes scripts:
+"Allora! סָטוּרְנְיָה פתוח 24/7" inside a single sentence reads as
+broken. The fix is a hard rule with explicit transliteration examples
+for the categories the model actually slips on:
+
+```
+שפה אחידה — חוק קשיח. כשהתשובה בעברית, כל המילים בעברית. זה כולל:
+  • קריאות איטלקיות → "אללוֹרָה", "ממה מיה", "דאי", "אקו"
+    (לא "Allora", לא "Mamma mia").
+  • שמות אנשים → "ג׳ני", "מייק", "מרינה", "נועם" (לא "Jenny").
+  • שמות מקומות → "סָטוּרְנְיָה", "פִּיֶנְצָה", "פירנצה",
+    "לוּקה" (לא "Saturnia", לא "Florence").
+חריג יחיד: ראשי תיבות בינלאומיים סטנדרטיים כמו FCO. אסור
+לערבב כתבים באותו משפט מעבר לכך.
+```
+
+Apply the same shape for any non-Latin destination + non-Latin UI
+pairing: pick the categories the model slips on (interjections,
+people names, place names) and give it transliteration examples in
+the UI script.
+
+### A11. Helper scripts in this repo (§14)
+
+Renaming guide for the next trip:
+
+| This repo | Generic / what to call yours |
+|---|---|
+| `fetch-italian-word-audio.mjs` | `fetch-<destination-lang>-word-audio.mjs` |
+| `npm run tts:italian-words` | `npm run tts:<destination-lang>-words` |
+| `fetch-attraction-audio-he.mjs` | `fetch-attraction-audio-<ui-lang>.mjs` (one per UI language you ship) |
+| `npm run tts:attractions-he` | `npm run tts:attractions-<ui-lang>` |
+| `GEMINI_TTS_VOICE_IT` / `_EN` / `_HE` | one var per language combination you ship |
+
+### A12. Timezone gotcha example (§20)
+
+When debugging the `toISOString().slice(0, 10)` bug, the failing
+timezones in this trip's audience were **Tel Aviv (UTC+3 in summer)**
+and **Rome (UTC+2 in summer)** — both far enough east of UTC that
+midnight-to-2am local on the trip's start day rendered "yesterday's"
+chapter. Keep the local-date helper from §20.
 
 ---
 
