@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { takeDeferredInstallPrompt } from "./installBootstrap";
+
 /* =====================================================================
  * Add-to-Home-Screen (A2HS) plumbing
  * ---------------------------------------------------------------------
@@ -134,7 +136,8 @@ export function isLikelyMobile(): boolean {
 
 /* ---------- Persistence ---------- */
 
-const STORAGE_KEY = "tuscany:a2hs-prefs:v1";
+/** Bump (`v2`) resets soft-snooze / "don't show again" once after install UX fixes. */
+const STORAGE_KEY = "tuscany:a2hs-prefs:v2";
 /** How long a "Maybe later" tap suppresses the popup. Long enough that the
  *  user isn't pestered, short enough that they'll see it again on a future
  *  visit (e.g. a week before the trip). */
@@ -258,6 +261,13 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Event may have fired before React mounted (`installBootstrap.ts`).
+    const queued = takeDeferredInstallPrompt();
+    if (queued) {
+      bipRef.current = queued;
+      queueMicrotask(() => setCanNativeInstall(true));
+    }
+
     const onBip = (e: Event) => {
       e.preventDefault(); // suppress Chrome's mini-infobar
       bipRef.current = e as BeforeInstallPromptEvent;
@@ -301,10 +311,11 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
     // pocket. Desktop Chromium *can* receive `beforeinstallprompt`, but
     // we deliberately don't surface the install offer there.
     if (platform === "desktop-chromium") return;
-    // Belt-and-suspenders: even if UA detection put us in a mobile
-    // bucket, require an actual touch-driven device (catches devtools
-    // emulation that doesn't simulate touch, exotic Chromium forks, etc.).
-    if (!isLikelyMobile()) return;
+    const uaTrustedMobilePhone =
+      platform === "android" || platform === "ios-safari" || platform === "ios-other";
+    // Mainstream phone/tablet OS from UA gets the popup on narrow viewports even
+    // when `(pointer: coarse)` lies (Samsung DeX, some in-app browsers, emulators).
+    if (!uaTrustedMobilePhone && !isLikelyMobile()) return;
     if (isStandalone()) return;
     if (isSnoozed(readPrefs())) return;
 
@@ -313,6 +324,7 @@ export function useInstallPrompt(opts: Options = {}): InstallPromptApi {
       if (!isMobileViewport()) return;
       if (isStandalone()) return;
       if (isSnoozed(readPrefs())) return;
+      if (!uaTrustedMobilePhone && !isLikelyMobile()) return;
       setOpen(true);
     }, openDelayMs);
 
