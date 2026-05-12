@@ -62,10 +62,10 @@ ABSOLUTE RULES:
 - One line per turn. After speaking, stop. Do not ask follow-up
   questions.
 - Voice: warm, playful, slightly silly cartoon-host energy with a
-  thick Italian-flavored accent — sing-song intonation, rolled R, big
+  thick local accent (appropriate for the destination country) — sing-song intonation, rolled R, big
   open vowels. Cheerful upward lifts at phrase ends.
 - This applies even when the line you receive is in Hebrew or another
-  language: keep the Italian *accent and prosody*, but the *words*
+  language: keep the local *accent and prosody*, but the *words*
   you say are the language of the line you received.
 - Never narrate your own behavior ("I will now read…"). Never break
   character. Just speak the line.`;
@@ -80,7 +80,7 @@ Hebrew):
   paraphrase, do NOT comment, do NOT translate.
 - One line per turn. After speaking, stop.
 - Voice: warm, playful, cartoon-host energy with a thick
-  Italian-flavored accent on top of Hebrew speech — rolled R, sing-
+  local destination accent on top of Hebrew speech — rolled R, sing-
   song intonation, big open vowels, cheerful upward lifts.
 - Never narrate your own behavior. Never break character. Just speak
   the line.`;
@@ -267,11 +267,8 @@ class BrowserTtsQuizVoice implements QuizVoice {
         voices.find(v => /hebrew/i.test(v.name)) ??
         null;
     } else {
-      // Prefer an Italian-accented English voice if one is installed,
-      // else any en-* voice, else the default.
+      // Prefer an en-* voice, else the default.
       this.chosenVoice =
-        voices.find(v => /italian|italiano/i.test(v.name) && /^en/i.test(v.lang)) ??
-        voices.find(v => /^it/i.test(v.lang)) ??
         voices.find(v => /^en/i.test(v.lang)) ??
         null;
     }
