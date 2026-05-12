@@ -680,7 +680,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
                         </div>
                       )}
                       <div className="mt-1.5">
-                        <NavigateLinks coords={p.coords} size={11} />
+                        <NavigateLinks name={p.name} coords={p.coords} address={p.address} size={11} />
                       </div>
                     </div>
                   </li>
@@ -1067,7 +1067,7 @@ function ActivityRow({
                         <ExternalLink size={12} /> {t("website")}
                       </a>
                     )}
-                    <NavigateLinks coords={att.coords} />
+                    <NavigateLinks name={att.name} coords={att.coords} address={att.address} />
                   </div>
                 </div>
               </div>
@@ -1158,7 +1158,7 @@ function RestaurantsForDay({ restaurants }: { restaurants: Service[] }) {
                 </div>
               )}
               <div className="mt-2">
-                <NavigateLinks coords={r.coords} size={11} />
+                <NavigateLinks name={r.name} coords={r.coords} address={r.address} size={11} />
               </div>
             </div>
           </li>

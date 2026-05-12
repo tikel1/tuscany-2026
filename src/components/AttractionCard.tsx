@@ -256,7 +256,7 @@ export default function AttractionCard({ poi: rawPoi }: { poi: POI }) {
                   <ExternalLink size={13} /> {t("website")}
                 </a>
               )}
-              <NavigateLinks coords={poi.coords} size={13} />
+              <NavigateLinks name={poi.name} coords={poi.coords} address={poi.address} size={13} />
               <button onClick={() => focusOn(poi.id)} className="icon-link">
                 <MapPin size={13} /> {t("on_the_map_short")}
               </button>

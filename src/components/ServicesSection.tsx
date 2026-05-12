@@ -110,7 +110,7 @@ export default function ServicesSection() {
                         </div>
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <NavigateLinks coords={it.coords} size={11} />
+                        <NavigateLinks name={it.name} coords={it.coords} address={it.address} size={11} />
                         <button onClick={() => focusOn(it.id)} className="icon-link">
                           <MapPin size={11} /> {t("on_the_map_short")}
                         </button>

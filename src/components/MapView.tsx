@@ -609,7 +609,7 @@ export default function MapView({ registerFocus }: Props) {
                         </p>
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <NavigateLinks coords={poi.coords} size={11} />
+                        <NavigateLinks name={poi.name} coords={poi.coords} address={poi.address} size={11} />
                         {poi.website && (
                           <a
                             href={poi.website}

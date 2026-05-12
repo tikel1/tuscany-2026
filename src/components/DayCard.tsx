@@ -376,7 +376,7 @@ function ActivityRow({
                         <ExternalLink size={12} /> Website
                       </a>
                     )}
-                    <NavigateLinks coords={att.coords} />
+                    <NavigateLinks name={att.name} coords={att.coords} address={att.address} />
                     <button onClick={() => focusOn(att.id)} className="icon-link">
                       <MapPin size={12} /> Show on the map
                     </button>

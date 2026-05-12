@@ -112,7 +112,7 @@ export default function MiniMap({ pois }: { pois: POI[] }) {
                     </p>
                   )}
                   <div className="mt-1.5">
-                    <NavigateLinks coords={poi.coords} size={11} />
+                    <NavigateLinks name={poi.name} coords={poi.coords} address={poi.address} size={11} />
                   </div>
                 </div>
               </Popup>

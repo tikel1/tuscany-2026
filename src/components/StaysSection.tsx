@@ -212,7 +212,7 @@ export default function StaysSection() {
                     <ExternalLink size={13} /> {t("stay_open_booking")}
                   </a>
                 )}
-                <NavigateLinks coords={s.coords} size={13} />
+                <NavigateLinks name={s.name} coords={s.coords} address={s.address} size={13} />
                 <button onClick={() => focusOn(s.id)} className="icon-link">
                   <MapPin size={13} /> {t("show_on_map")}
                 </button>

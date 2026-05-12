@@ -240,7 +240,7 @@ export default function FoodAndWineSection() {
                             <ExternalLink size={12} /> {t("website")}
                           </a>
                         )}
-                        {w.coords && <NavigateLinks coords={w.coords} />}
+                        {w.coords && <NavigateLinks name={w.name} coords={w.coords} address={w.address} />}
                       </div>
                     </div>
                   </li>

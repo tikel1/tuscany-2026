@@ -1082,32 +1082,49 @@ type check or a quick `rg '"/images'` before you commit.
 
 ## 10. Navigation deep links (Maps + Waze)
 
-Drivers have a strong default app preference. Offer both, and make
-each open in **active turn-by-turn mode** (not the preview screen):
+Drivers have a strong default app preference. Offer both. **Open the
+place's listing in each app** rather than launching straight into
+turn-by-turn — the user gets to see hours, photos, the actual address,
+then taps Directions / Go themselves. Auto-navigating from a quick tap
+felt aggressive in practice (especially when "is this place even open
+right now?" was the real question).
 
 ```ts
-// Google Maps — universal cross-platform URL, dir_action=navigate
-// skips the preview and starts driving immediately.
-export function googleMapsNavUrl([lat, lon]: [number, number]): string {
-  return "https://www.google.com/maps/dir/?api=1"
-       + `&destination=${lat},${lon}`
-       + "&travelmode=driving"
-       + "&dir_action=navigate";
+// Google Maps — search URL opens the top hit's place card directly.
+// Address sharpens the search; falling back to "<name>, Italy" is
+// usually disambiguating enough on its own.
+export function googleMapsPlaceUrl(t: NavTarget): string {
+  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, Italy`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
-// Waze — navigate=yes starts nav immediately
-export function wazeNavUrl([lat, lon]: [number, number]): string {
-  return `https://waze.com/ul?ll=${lat},${lon}&navigate=yes`;
+// Waze — q= runs a search inside Waze; navigate=no keeps the user
+// in control instead of auto-starting nav on tap.
+export function wazePlaceUrl(t: NavTarget): string {
+  const query = t.address ? `${t.name}, ${t.address}` : `${t.name}, Italy`;
+  return `https://waze.com/ul?q=${encodeURIComponent(query)}&navigate=no`;
 }
 ```
 
+Coords-only fallback (rare — only when no name is available) drops a
+plain pin: `https://www.google.com/maps/?q=LAT,LON` and
+`https://waze.com/ul?ll=LAT,LON&navigate=no`.
+
 Render them as a tight `Maps · Waze` pair in a small `<NavigateLinks
-coords={...} />` component. Use it everywhere — POI cards, map popups,
-chapter detail pages. Different tints for the two (terracotta for
-Maps, cyan `#33CCFF` for Waze) help your eye pick one.
+name={...} coords={...} address={...} />` component. Use it everywhere
+— POI cards, map popups, chapter detail pages. Different tints for the
+two (terracotta for Maps, cyan `#33CCFF` for Waze) help your eye pick
+one.
 
 Lucide doesn't ship a Waze icon — draw one inline as a tiny SVG of
 the speech-bubble silhouette.
+
+> **If you genuinely want auto-navigation** (e.g. a "go now" button on
+> a current-day chapter), keep a separate `googleMapsNavUrl` /
+> `wazeNavUrl` helper that uses `dir_action=navigate` (Maps) and
+> `navigate=yes` (Waze). The repo keeps these as deprecated aliases
+> for backward compatibility. Don't make it the default — most taps
+> are exploratory, not committed.
 
 ---
 
