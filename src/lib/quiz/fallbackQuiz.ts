@@ -916,10 +916,11 @@ export function buildFallbackQuiz(
     }
   }
 
-  // PASS 2 — Italian-culture wildcards (Target 4 questions).
+  // PASS 2 — Italian-culture wildcards (Target 4 questions, or more if few attractions).
   // The user explicitly requested 3-5 questions about general Italy
-  // (flag, pizza Margherita, artists, geography).
-  const MAX_CULTURE = 4;
+  // (flag, pizza Margherita, artists, geography). If there are very few
+  // attractions today, fill the rest of the quiz with culture questions.
+  const MAX_CULTURE = todaysAttractions.length < 2 ? (count - wordsAdded) : 4;
   let cultureAdded = 0;
   for (
     let i = 0;

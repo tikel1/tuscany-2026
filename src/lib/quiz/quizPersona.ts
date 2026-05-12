@@ -98,7 +98,25 @@ function buildDayDigest(dayNumber: number, lang: Lang): string {
 /* The persona itself — Quizzo, the warm cartoon host                  */
 /* ------------------------------------------------------------------ */
 
-function quizzoPersonaEn(count: number): string {
+function quizzoPersonaEn(count: number, attractionCount: number): string {
+  const distributionText = attractionCount < 2
+    ? `    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Since today has very few or no actual attractions, fill ALL remaining questions with GENERAL ITALIAN OR TUSCAN CULTURE (like the flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan cities like Florence and Siena, what Tuscany is famous for like vineyards or hills, the Maremma cowboys, ancient Romans, countries bordering Italy, Eurovision winners like Måneskin, or famous soccer players like Cristiano Ronaldo playing for Juventus).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?", "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?", "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?"). Keep them kid-friendly.`
+    : `    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
+      cities like Florence and Siena, what Tuscany is famous for like vineyards
+      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
+      Eurovision winners like Måneskin, or famous soccer players like Cristiano
+      Ronaldo playing for Juventus).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
+      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
+      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
+      Keep them kid-friendly.
+    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
+      Do NOT ask about attractions they haven't visited yet.`;
+
   return `You are QUIZZO — a warm, slightly silly, cartoon-style game-show host
 who quizzes kids (ages 8–14) about a day on a family trip. By the time
 this quiz runs, the family has ALREADY BEEN to today's stops; this is
@@ -166,19 +184,7 @@ QUESTION DESIGN RULES (these matter — read carefully):
       sweet stick called?")
 
 (D) REQUIRED QUESTION DISTRIBUTION:
-    - Include EXACTLY 1-2 questions about the Italian words learned today.
-    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
-      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
-      cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
-      Eurovision winners like Måneskin, or famous soccer players like Cristiano
-      Ronaldo playing for Juventus).
-      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
-      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
-      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
-      Keep them kid-friendly.
-    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
-      Do NOT ask about attractions they haven't visited yet.
+${distributionText}
 
 (E) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
     blocks for the day's attractions — these are HAND-CURATED,
@@ -232,7 +238,25 @@ A single JSON object, no prose around it, no code fences, no markdown:
 - Every string field is plain text (no markdown, no emoji).`;
 }
 
-function quizzoPersonaHe(count: number): string {
+function quizzoPersonaHe(count: number, attractionCount: number): string {
+  const distributionText = attractionCount < 2
+    ? `    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Since today has very few or no actual attractions, fill ALL remaining questions with GENERAL ITALIAN OR TUSCAN CULTURE (like the flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan cities like Florence and Siena, what Tuscany is famous for like vineyards or hills, the Maremma cowboys, ancient Romans, countries bordering Italy, Eurovision winners like Måneskin, or famous soccer players like Cristiano Ronaldo playing for Juventus).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?", "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?", "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?"). Keep them kid-friendly.`
+    : `    - Include EXACTLY 1-2 questions about the Italian words learned today.
+    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
+      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
+      cities like Florence and Siena, what Tuscany is famous for like vineyards
+      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
+      Eurovision winners like Måneskin, or famous soccer players like Cristiano
+      Ronaldo playing for Juventus).
+      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
+      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
+      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
+      Keep them kid-friendly.
+    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
+      Do NOT ask about attractions they haven't visited yet.`;
+
   return `You are QUIZZO — a warm, cartoon-style game-show host who
 quizzes Hebrew-speaking kids (ages 8–14) about a day on a family trip.
 By the time this quiz runs, the family has ALREADY BEEN to today's
@@ -309,19 +333,7 @@ QUESTION DESIGN RULES (read carefully):
       sweet stick called?")
 
 (D) REQUIRED QUESTION DISTRIBUTION:
-    - Include EXACTLY 1-2 questions about the Italian words learned today.
-    - Include EXACTLY 3-4 questions about GENERAL ITALIAN OR TUSCAN CULTURE (like the
-      flag, pizza Margherita, artists, geography, Mt Etna, the Vespa, big Tuscan
-      cities like Florence and Siena, what Tuscany is famous for like vineyards
-      or hills, the Maremma cowboys, ancient Romans, countries bordering Italy,
-      Eurovision winners like Måneskin, or famous soccer players like Cristiano
-      Ronaldo playing for Juventus).
-      You can invent these! (e.g. "Which of these foods is NOT originally Italian?",
-      "Who painted the Mona Lisa?", "Which band won Eurovision for Italy in 2021?",
-      "Which famous leaning tower is in Tuscany?", "Who ruled Italy 2000 years ago?").
-      Keep them kid-friendly.
-    - Include EXACTLY 3-5 questions about the actual attractions visited TODAY.
-      Do NOT ask about attractions they haven't visited yet.
+${distributionText}
 
 (E) The day digest below may include "TRIVIA YOU CAN ASK ABOUT …"
     blocks for the day's attractions — these are HAND-CURATED,
@@ -393,7 +405,10 @@ export function buildQuizSystemPrompt(
   lang: Lang,
   count: number
 ): string {
-  const persona = lang === "he" ? quizzoPersonaHe(count) : quizzoPersonaEn(count);
+  const rawDay = itinerary.find(d => d.dayNumber === dayNumber);
+  const attractionCount = rawDay?.activities?.filter(a => !!a.attractionId).length || 0;
+
+  const persona = lang === "he" ? quizzoPersonaHe(count, attractionCount) : quizzoPersonaEn(count, attractionCount);
   const digest = buildDayDigest(dayNumber, lang);
   return [
     persona,
