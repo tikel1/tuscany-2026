@@ -1956,7 +1956,7 @@ grounding for most accounts, so the UI exposes a **globe toggle**
   (`gemini-3.1-flash-live-preview`, fallback `gemini-2.5-flash-native-audio-latest`).
   Trip context only; no `google_search` tool on the wire.
 - **Globe ON** — typed sends use REST `generateContent` on
-  `gemini-2.5-flash` (fallback `gemini-2.0-flash`) with optional
+  `gemini-2.5-flash-lite` (fallback `gemini-2.5-flash` → `gemini-2.0-flash`, to maximize free-tier limits) with optional
   `tools: [{ google_search: {} }]`. The **model** decides whether a
   search actually runs; the system prompt says to search only when
   fresh external facts would materially help, and that **our plan wins**
@@ -2701,7 +2701,7 @@ batch fetch is queued at a time, and an `AbortController` so a
 mid-flight prefetch is canceled when the kid ends the round, hits
 Close, or navigates between chapters. The trigger fires inside
 `handleSelect` — once the answered index crosses
-`length − PREFETCH_AHEAD` (default 2), `prefetchNextBatch` kicks
+`length − PREFETCH_AHEAD` (default 0, disabled to conserve free-tier quota), `prefetchNextBatch` kicks
 off via `queueMicrotask`. Each successful batch appends to
 `questions` and grows `selections` with `null` slots so the next
 question slides in without remounting.
@@ -3371,7 +3371,7 @@ without the 5th–10th questions clustering on the same place.
 | Mute storage key | `tuscany2026.quiz.mute.v1` (single value, default off) |
 | Offline pack storage key | `tuscany2026.quiz.offlinePack.v1.day{N}.{lang}` (no TTL — used for both real Gemini packs and template fallbacks) |
 | Last-score key prefix | `tuscany2026.quiz.lastScore.v1` (per `(day, lang)`) |
-| Live-mode prefetch lead | `PREFETCH_AHEAD = 2` questions (kicks off batch fetch when kid is on the second-to-last loaded question) |
+| Live-mode prefetch lead | `PREFETCH_AHEAD = 0` questions (kicks off batch fetch only when kid finishes the current batch, saving quota) |
 | Preview-unlocked days | `QUIZ_PREVIEW_UNLOCKED_DAYS = 2` — Days 1 & 2 always playable; Days 3-10 unlock on the morning of their chapter date |
 | Fallback `generatedAt` marker | `0` — distinguishes a template-built pack from a real Gemini one when reading the cache |
 | "Ask Quizzo" handoff event | `gemininio:open` (handled by `subscribeOpenGemininio` in `src/components/Gemininio.tsx`) |
