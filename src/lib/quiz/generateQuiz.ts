@@ -84,6 +84,9 @@ function isValidQuestion(q: unknown): q is QuizQuestion {
   if (typeof o.question !== "string" || !o.question.trim()) return false;
   if (!Array.isArray(o.options) || o.options.length !== OPTIONS_PER_QUESTION) return false;
   if (!o.options.every(opt => typeof opt === "string" && opt.trim().length > 0)) return false;
+  // Ensure options are distinct (Gemini sometimes hallucinates 4 identical options)
+  const uniqueOptions = new Set(o.options.map(opt => opt.trim().toLowerCase()));
+  if (uniqueOptions.size < OPTIONS_PER_QUESTION) return false;
   if (typeof o.correctIndex !== "number") return false;
   if (!Number.isInteger(o.correctIndex)) return false;
   if (o.correctIndex < 0 || o.correctIndex >= OPTIONS_PER_QUESTION) return false;
@@ -250,6 +253,17 @@ export async function generateQuiz(params: GenerateQuizParams): Promise<Quiz> {
     if (questions.length !== count) {
       lastErr = `Quizzo wrote ${questions.length} valid questions, needed ${count}.`;
       continue;
+    }
+
+    // Force a client-side shuffle of the options to ensure correctIndex is truly random,
+    // because Gemini often anchors to `0` from the prompt example.
+    for (const q of questions) {
+      const correctText = q.options[q.correctIndex];
+      for (let i = q.options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+      }
+      q.correctIndex = q.options.indexOf(correctText);
     }
 
     return {

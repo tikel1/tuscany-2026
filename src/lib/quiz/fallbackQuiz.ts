@@ -949,6 +949,10 @@ export function buildFallbackQuiz(
     }
   }
 
+  // Finally, shuffle the collected questions so the different types
+  // (words, culture, stories) are randomly mixed instead of clustered.
+  shuffleInPlace(collected, rng);
+
   return {
     day: dayNumber,
     lang,
