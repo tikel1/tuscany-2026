@@ -151,6 +151,8 @@ export interface GenerateQuizParams {
    *  the offline-pack generator uses 10. Default is 5. */
   count?: number;
   signal?: AbortSignal;
+  /** Previous questions to avoid repeating. */
+  avoidQuestions?: string[];
 }
 
 /**
@@ -167,7 +169,7 @@ export async function generateQuiz(params: GenerateQuizParams): Promise<Quiz> {
   const count = params.count ?? DEFAULT_QUESTIONS_PER_BATCH;
 
   const systemInstruction = buildQuizSystemPrompt(params.dayNumber, params.lang, count);
-  const userMessage = buildQuizUserMessage(params.lang, count);
+  const userMessage = buildQuizUserMessage(params.lang, count, params.avoidQuestions);
 
   let lastErr = "No model accepted the quiz request.";
 

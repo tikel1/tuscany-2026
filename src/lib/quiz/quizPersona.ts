@@ -401,11 +401,17 @@ export function buildQuizSystemPrompt(
 /** Short user message that goes alongside the system prompt. The
  *  persona already contains the full task description; this just
  *  triggers the model turn. */
-export function buildQuizUserMessage(lang: Lang, count: number): string {
-  if (lang === "he") {
-    return `כתוב את ${count} שאלות החידון בפורמט JSON כפי שצוין למעלה.`;
+export function buildQuizUserMessage(lang: Lang, count: number, avoidQuestions?: string[]): string {
+  let avoidInstruction = "";
+  if (avoidQuestions && avoidQuestions.length > 0) {
+    // Keep it short. Gemini can handle long contexts.
+    avoidInstruction = `\n\nDO NOT ask these questions again (we already asked them):\n${avoidQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n")}`;
   }
-  return `Write the ${count} quiz questions now, in the JSON format above.`;
+
+  if (lang === "he") {
+    return `כתוב את ${count} שאלות החידון בפורמט JSON כפי שצוין למעלה.${avoidInstruction}`;
+  }
+  return `Write the ${count} quiz questions now, in the JSON format above.${avoidInstruction}`;
 }
 
 /** A short spoken intro Quizzo says when the kid taps Start. Used by

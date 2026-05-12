@@ -88,7 +88,7 @@ import QuizQuestion from "./QuizQuestion";
  *  start fetching the next live-mode batch. Two-question lead time
  *  is a nice balance between "it's ready before the kid catches up"
  *  and "we don't burn API on questions they'll never see". */
-const PREFETCH_AHEAD = 0;
+const PREFETCH_AHEAD = 1;
 
 type Phase =
   | { kind: "idle" }
@@ -296,12 +296,24 @@ export default function Quiz({
       }
       const ctrl = new AbortController();
       fetchAbortRef.current = ctrl;
+
+      // If we are starting Live mode, let's avoid asking the same questions
+      // the user might have seen if they played the offline pack first.
+      let avoidQuestions: string[] = [];
+      try {
+        const cached = loadOfflinePack(day, lang);
+        if (cached) avoidQuestions = cached.questions.map(q => q.question);
+      } catch {
+        // ignore
+      }
+
       const quiz = await generateQuiz({
         apiKey,
         dayNumber: day,
         lang,
         count: DEFAULT_QUESTIONS_PER_BATCH,
-        signal: ctrl.signal
+        signal: ctrl.signal,
+        avoidQuestions
       });
       if (ctrl.signal.aborted) return;
       startPlayingWith(quiz, false);
@@ -377,7 +389,8 @@ export default function Quiz({
         dayNumber: day,
         lang,
         count: DEFAULT_QUESTIONS_PER_BATCH,
-        signal: ctrl.signal
+        signal: ctrl.signal,
+        avoidQuestions: phase.questions.map(q => q.question)
       });
       if (ctrl.signal.aborted) return;
       setPhase(p => {
