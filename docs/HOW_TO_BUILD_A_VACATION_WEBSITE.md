@@ -63,6 +63,9 @@ Use this as the short runbook before diving into the detailed sections:
 2. **Rename the project shell** — package name, repo slug,
    `vite.config.ts` `base`, GitHub Pages workflow, install label,
    manifest, `<title>`, OG/Twitter metadata, and favicon/cover assets.
+   For the install label + browser-tab title, follow the **App name
+   pattern** in §13 (and Appendix A1 for the worked example) — three
+   contexts, two different pattern lengths.
 3. **Replace trip identity** — destination, dates, traveler group,
    languages, countdown labels, hero copy, and every old destination /
    family reference found by grep.
@@ -75,7 +78,10 @@ Use this as the short runbook before diving into the detailed sections:
    if Hebrew or another RTL language is enabled.
 6. **Refresh media** — replace photos under `public/images`, keep image
    paths relative (`./images/...`), update credits, generate `og-cover`,
-   and optionally regenerate pre-built audio clips.
+   and optionally regenerate pre-built audio clips. Don't ship the
+   previous trip's home-screen icon — generate a new one following
+   the **App icon** spec in §13 (minimalistic destination art, or
+   country-flag fallback). Bump the icon `?v=` cache-buster too.
 7. **Rewrite the AI guide** — replace `src/lib/gemininio/persona.ts`
    with the new destination persona, traveling party, trip facts, and
    tone rules; set `.env.local` / GitHub secrets if Gemini is enabled.
@@ -1390,6 +1396,110 @@ the prompt yourself:
 The prompt mounts at the root so it shows whether you're on the home
 page or a chapter detail page.
 
+#### App name pattern
+
+Three different "name" fields show the trip in three different
+contexts. Pick a tight nickname for the *home-screen* contexts and a
+longer title for the *link-preview / browser-tab* contexts — they
+have very different attention budgets:
+
+| Field | Where it shows | Pattern | Notes |
+|---|---|---|---|
+| `manifest.name` | Install dialog title, app drawer search | `<destination> '<YY>` *or* the full marketing title | Some platforms also fall back to this when `short_name` is missing — keep it short-ish too. |
+| `manifest.short_name` | Home-screen launcher label (Android, desktop PWA) | `<destination> '<YY>` | Hard limit ≈ 12 chars before truncation. Use an apostrophe-year, not a 4-digit year — saves 2 chars. |
+| `<meta name="apple-mobile-web-app-title">` (in `index.html`) | Home-screen label on iOS | **Must mirror `short_name` exactly** | iOS Safari ignores the manifest for the home-screen name; this meta tag is the only way. |
+| `<title>` (browser tab) | Browser tab, search results | `<destination> <YYYY> — <traveling-party shorthand>` | Full attention, plenty of room — give context to someone who arrives via search. |
+| `og:title`, `twitter:title` | WhatsApp / iMessage / FB / X link previews | Same as `<title>` | This is what the family sees when you paste the link into a group chat — make it warm. |
+| `og:site_name` | WhatsApp / FB caption above the title | `<destination> <YYYY>` | Shorter than `og:title`; just the trip identity. |
+
+Two layers, one rule: **home-screen contexts read at a glance** (so
+short, instantly recognisable), **link-preview / tab contexts read
+with attention** (so longer with the traveling party, the year, the
+strapline). Worked example for the Tuscany 2026 build is in
+Appendix A1.
+
+#### App icon: minimalistic destination art (with flag fallback)
+
+The home-screen icon is the moment of truth — at 48–72 px on a
+phone's home screen, surrounded by other apps, it has to read
+instantly as "the \<destination\> trip" without text. Photos look
+muddy at that size; a generic globe / airplane / suitcase says
+nothing about the destination. The pattern that works:
+
+**Primary — minimalistic illustrative art of the destination.**
+A flat, vector-feeling illustration of one iconic feature of the
+place: rolling hills with cypresses for Tuscany, Mt. Fuji for Japan,
+a Cycladic dome for Greece, the Sydney Opera House silhouette for
+Australia, etc. Use 2–4 colours pulled from your brand palette
+(§3) so the icon and the in-app theme feel like one product.
+Worked example: Appendix A1.
+
+**Fallback — the destination country's flag.** When you can't get a
+clean illustrative concept in time, a redrawn (vector, not
+photographed) country flag still reads instantly as "this is the
+\<country\> trip". Pull the flag SVG from Wikipedia, render to
+512×512, round the corners slightly so it doesn't fight the iOS /
+Android icon shape language, and use it. It's better than a stock
+luggage emoji.
+
+**Don't ship:**
+- The destination's photograph — turns to mush at 48 px and clashes
+  with whatever wallpaper is behind it on the home screen.
+- A generic travel emoji (✈️ / 🌍 / 🧳) — it could be any trip;
+  there's no recognition value.
+- Text-only ("Tuscany") — unreadable at home-screen size, looks like
+  a placeholder.
+
+**How to make one in 10 minutes:**
+1. **AI generator** (Midjourney, DALL·E, Sora, Imagen — whatever you
+   have) with a prompt like:
+
+   ```
+   minimalistic flat vector illustration of <iconic landmark of
+   destination>, <2–3 brand colours>, square 1:1, full-bleed
+   composition, no text, soft warm lighting, app icon style
+   ```
+
+   Iterate 3–5 generations, keep the one that's most readable when
+   shrunk to 48 px (zoom out in your image viewer to test).
+2. **Hand-drawn vector** in Figma / Illustrator if you want full
+   control — keep to 3–4 large flat shapes, no fine line work
+   (it disappears at small sizes).
+3. **Country flag fallback** — Wikipedia → flag SVG → export at
+   512×512 PNG, slight corner rounding (~12 % radius).
+
+**File requirements:**
+- **Two PNGs**: `icon-<slug>-192.png` (192 × 192, Android home-screen)
+  and `icon-<slug>.png` (512 × 512, everything else: iOS, install
+  prompts, Android splash). Both go in `public/`.
+- **Full-bleed**: the art touches all four edges. Android's
+  *maskable* mode crops to a circle/squircle and adds its own
+  letterbox — leave a ~10 % visual safe zone in the centre so the
+  important pixels survive the crop.
+- **`"purpose": "any maskable"`** on each manifest icon so Android
+  uses your full-bleed art instead of letterboxing it on a white
+  rectangle.
+- **Cache-bust with `?v=N`** in *both* the manifest and in
+  `index.html`'s `<link rel="icon">` / `<link rel="apple-touch-icon">`
+  whenever you replace the icon. Phones and Chrome cache home-screen
+  icons aggressively; without the version bump, families on the old
+  icon will never see the new one.
+
+```json
+// public/manifest.webmanifest — bump ?v= when the file changes
+"icons": [
+  { "src": "icon-<slug>-192.png?v=1", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+  { "src": "icon-<slug>.png?v=1",      "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+]
+```
+
+```html
+<!-- index.html — same ?v= as the manifest -->
+<link rel="icon"             type="image/png" sizes="192x192" href="./icon-<slug>-192.png?v=1" />
+<link rel="icon"             type="image/png" sizes="512x512" href="./icon-<slug>.png?v=1" />
+<link rel="apple-touch-icon"                                  href="./icon-<slug>.png?v=1" />
+```
+
 #### Manual re-trigger from a menu
 
 The auto-open path respects "Don't show again" and a 14-day soft
@@ -2456,29 +2566,67 @@ when an abstract instruction feels under-specified, or feed it into
 an LLM as in-context examples when generating the next trip's
 content.
 
-### A1. Trip identity (§§1, 8)
+### A1. Trip identity, name pattern, and icon (§§1, 8, 13, 18)
 
-| Slot | Tuscany 2026 fill-in |
+#### Name pattern (worked example for §13 *App name pattern*)
+
+| Field | Value used in this build |
 |---|---|
 | Destination noun | "Tuscany" / "טוסקנה" |
 | Destination country | "Italy" |
-| Trip dates | 2026-08-XX → 2026-08-XX (10 days) |
-| `name` | `"Tuscany 2026 — Horowitz × Racz × Kaplan"` |
-| `short_name` (PWA install label) | `"Tuscany '26"` |
-| Marketing strapline | `"A summer guide for our 10 days in Tuscany — plan, places, food, map."` |
-| Browser tab `<title>` | `"Tuscany 2026 — Horowitz × Racz × Kaplan"` |
+| Trip dates | 17–26 August 2026 (10 days) |
+| `manifest.name` | `"Tuscany '26"` |
+| `manifest.short_name` (home-screen launcher) | `"Tuscany '26"` |
+| `<meta name="apple-mobile-web-app-title">` (iOS home-screen) | `"Tuscany '26"` |
+| `<title>` (browser tab) | `"Tuscany 2026 — The Horowitz × Racz × Kaplan Families"` |
+| `og:title` / `twitter:title` | `"Tuscany 2026 — The Horowitz × Racz × Kaplan Families"` |
+| `og:site_name` | `"Tuscany 2026"` |
+| Marketing strapline (`og:description`) | `"Ten days in Tuscany, north to south, 17–26 August 2026. Itinerary, map, stays and tips for our family adventure."` |
 | Repo slug / Vite `base` | `tuscany-2026` → `/tuscany-2026/` |
 
 ```html
-<title>Tuscany 2026 — Horowitz × Racz × Kaplan</title>
-<meta property="og:title"       content="Tuscany 2026 — Horowitz × Racz × Kaplan" />
-<meta property="og:description" content="A summer guide for our 10 days in Tuscany — plan, places, food, map." />
+<title>Tuscany 2026 — The Horowitz × Racz × Kaplan Families</title>
+<meta property="og:title"       content="Tuscany 2026 — The Horowitz × Racz × Kaplan Families" />
+<meta property="og:description" content="Ten days in Tuscany, north to south, 17–26 August 2026. Itinerary, map, stays and tips for our family adventure." />
+<meta name="apple-mobile-web-app-title" content="Tuscany '26" />
 ```
 
 ```ts
 // src/lib/dict.ts — brand names per UI language
 brand_short: { en: "Tuscany", he: "טוסקנה" },
 ```
+
+#### Icon (worked example for §13 *App icon*)
+
+This build went with the **primary path**: minimalistic illustrative
+art of the destination. The icon is a flat illustration of a Tuscan
+landscape — three rolling hills in olive and ochre, two cypress
+trees in silhouette, a low warm sun in the upper third — drawn full-
+bleed on the brand palette (terracotta + olive + cream from §3 / A2).
+No text. Generated once with an AI image tool against a prompt like:
+
+```
+minimalistic flat vector illustration of rolling Tuscan hills with
+cypress trees and a low warm sun, terracotta and olive palette,
+square 1:1, full-bleed composition, no text, app icon style
+```
+
+Files in `public/`:
+
+| File | Use |
+|---|---|
+| `icon-tuscany-192.png` | Android home-screen icon (manifest, 192 × 192) |
+| `icon-tuscany.png` | 512 × 512 master — manifest, iOS `apple-touch-icon`, `index.html` favicon link |
+
+Cache-bust query string in use: `?v=7` (bump on every replacement).
+Both manifest entries declare `"purpose": "any maskable"` so Android
+keeps the full-bleed art instead of letterboxing on white.
+
+**Fallback path note:** if a future trip can't get a clean
+illustrative concept in time, drop the destination's flag in at the
+same dimensions instead — Wikipedia SVG → 512 × 512 PNG → ~12 %
+corner rounding. Document the swap in this same A1 sub-section so
+future readers know why this build's icon style differs.
 
 ### A2. Brand palette (§3)
 
