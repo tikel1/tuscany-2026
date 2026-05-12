@@ -105,8 +105,9 @@ export const itinerary: Day[] = [
     activities: [
       {
         time: "Morning",
-        title: "Canyon Park — Big SUP",
-        description: "Family stand-up paddleboard through the turquoise Lima canyon. Big SUP only (the high zip line needs 140 cm).",
+        title: "Canyon Park — river SUP",
+        description:
+          "Stand-up paddleboarding on the Lima inside the canyon — book your water slot ahead (summer fills fast). Separate adventure courses (zip lines, aerial routes) usually need kids to be taller; check what you reserved.",
         attractionId: "canyon-park",
         tag: "water",
         rideToNext: { duration: "10 min", note: "Bagni di Lucca → Borgo a Mozzano" }
@@ -148,7 +149,7 @@ export const itinerary: Day[] = [
       { item: "Reef-safe sunscreen & a wide-brim hat" }
     ],
     dayTips: [
-      "Big SUP slot fills up fast — book by phone the night before",
+      "Canyon Park SUP / water slots fill fast — book by phone the night before",
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"

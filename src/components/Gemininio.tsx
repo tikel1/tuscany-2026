@@ -579,7 +579,7 @@ export default function Gemininio() {
             transition={{ type: "spring", damping: 18, stiffness: 280 }}
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.92 }}
-            className="fixed z-30 right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 w-12 h-12 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-cream-50 flex items-center justify-center shadow-lg shadow-terracotta-700/30"
+            className="fixed z-[8010] right-4 sm:right-6 md:right-8 bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-8 w-12 h-12 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-cream-50 flex items-center justify-center shadow-lg shadow-terracotta-700/30"
           >
             {/* Breathing pulse ring — pure CSS, sits behind the
                 FAB and never intercepts pointer events. */}
@@ -603,7 +603,7 @@ export default function Gemininio() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={close}
-              className="fixed inset-0 z-40 bg-ink-900/55 backdrop-blur-sm touch-none"
+              className="fixed inset-0 z-[8020] bg-ink-900/55 backdrop-blur-sm touch-none"
             />
 
             {/* Panel — bottom-sheet on mobile, anchored to the
@@ -615,7 +615,7 @@ export default function Gemininio() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 280 }}
-              className="fixed z-50 inset-x-0 bottom-0 h-[70dvh] max-h-[70dvh] sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:w-[420px] sm:max-h-[70dvh] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col min-h-0 overflow-hidden"
+              className="fixed z-[8030] inset-x-0 bottom-0 h-[70dvh] max-h-[70dvh] sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-6 sm:w-[420px] sm:max-h-[70dvh] bg-cream-50 sm:rounded-3xl rounded-t-3xl shadow-2xl shadow-ink-900/40 flex flex-col min-h-0 overflow-hidden"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
               data-compact-ui
             >

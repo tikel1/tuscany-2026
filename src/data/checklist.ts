@@ -3,8 +3,8 @@ import type { ChecklistItem } from "./types";
 export const bookingChecklist: ChecklistItem[] = [
   {
     id: "book-canyon-park",
-    text: "Reserve Canyon Park — Big SUP / XL SUP",
-    detail: "Very few of these family-size boards per day. Book the moment August 2026 opens.",
+    text: "Reserve Canyon Park — river SUP / water activity",
+    detail: "River SUP and other water slots vanish fast in August — book as soon as the park publishes your dates.",
     link: "https://www.canyonpark.it/",
     urgent: true
   },

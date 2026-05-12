@@ -89,7 +89,7 @@ export default function MobileBottomNav() {
     <>
       {moreOpen && (
         <div
-          className="fixed inset-0 z-40 bg-ink-900/30 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-[8000] bg-ink-900/30 backdrop-blur-sm md:hidden"
           onClick={() => setMoreOpen(false)}
         >
           <div
@@ -125,7 +125,7 @@ export default function MobileBottomNav() {
       )}
 
       <nav
-        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-cream-50/95 backdrop-blur-md border-t border-cream-300/70 shadow-[0_-4px_24px_rgba(42,31,26,0.08)]"
+        className="fixed bottom-0 inset-x-0 z-[8001] md:hidden bg-cream-50/95 backdrop-blur-md border-t border-cream-300/70 shadow-[0_-4px_24px_rgba(42,31,26,0.08)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="grid grid-cols-5 h-16">

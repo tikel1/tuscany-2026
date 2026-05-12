@@ -37,7 +37,7 @@ export const QUESTIONS_PER_OFFLINE_PACK = 10;
 /* Offline pack storage (one entry per (day, lang), no expiry)         */
 /* ------------------------------------------------------------------ */
 
-const OFFLINE_PACK_PREFIX = "tuscany2026.quiz.offlinePack.v5";
+const OFFLINE_PACK_PREFIX = "tuscany2026.quiz.offlinePack.v6";
 
 function offlinePackKey(dayNumber: number, lang: Lang): string {
   return `${OFFLINE_PACK_PREFIX}.day${dayNumber}.${lang}`;

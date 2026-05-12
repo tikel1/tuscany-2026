@@ -3,8 +3,8 @@ import type { ChecklistItem } from "../types";
 export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "detail">>> = {
   // Booking
   "book-canyon-park": {
-    text: "להזמין מקום בקניון פארק — Big SUP / XL SUP",
-    detail: "מעט מאוד גלשנים בגודל משפחתי ליום. להזמין ברגע שאוגוסט 2026 נפתח."
+    text: "להזמין בקניון פארק — סאפ בנהר / פעילות מים",
+    detail: "חלונות פעילות מים בקיץ נגמרים מהר. להזמין ברגע שהפארק מאשר תאריכים לאוגוסט 2026."
   },
   "book-argentario-boat": {
     text: "להזמין סירה ללא רישיון בפורטו סנטו סטפנו (22.8)",

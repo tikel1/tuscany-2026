@@ -26,6 +26,8 @@ const SPOTS = [
   { key: "south", label: "Saturnia", lat: 42.6483, lon: 11.5089 }
 ] as const;
 
+type SpotKey = (typeof SPOTS)[number]["key"];
+
 const CACHE_KEY = "tuscany-weather-v2";
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
@@ -56,6 +58,7 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
   const [data, setData] = useState<Record<string, RegionWeather> | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [mobileRegion, setMobileRegion] = useState<SpotKey>("north");
 
   const isGlass = variant === "glass";
 
@@ -139,69 +142,146 @@ export default function WeatherStrip({ variant = "paper" }: Props = {}) {
   const dayTempStrong = isGlass ? "text-cream-50" : "text-ink-900";
   const dayTempMuted = isGlass ? "text-cream-50/65" : "text-ink-700/55";
 
-  return (
-    <div className={wrapperClasses} data-compact-ui>
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left"
-        aria-expanded={open}
-      >
-        <div className="flex items-center gap-3 sm:gap-5 min-w-0 overflow-x-auto scrollbar-hide">
-          {SPOTS.map(spot => {
-            const w = data[spot.key];
-            if (!w) return null;
-            return (
-              <div key={spot.key} className="flex items-center gap-1.5 shrink-0">
-                {iconFor(w.days[0]?.code ?? 0, 14)}
-                <span className={`text-[10px] uppercase tracking-[0.16em] font-medium ${labelText}`}>
-                  {SPOT_LABEL[spot.key][lang]}
-                </span>
-                <span className={`text-sm font-semibold tabular-nums ${tempStrong}`}>
-                  {w.current !== null ? `${Math.round(w.current)}°` : "—"}
-                </span>
-                <span className={`text-[11px] tabular-nums ${tempMuted}`}>
-                  {w.days[0]?.tMax}°/{w.days[0]?.tMin}°
-                </span>
-              </div>
-            );
-          })}
-        </div>
-        <span className={`text-[10px] uppercase tracking-[0.18em] font-medium shrink-0 hidden sm:inline ${triggerHint}`}>
-          {open ? (lang === "he" ? "סגור" : "Hide") : (lang === "he" ? "תחזית" : "Forecast")}
-        </span>
-        <span
-          className={`transition-transform shrink-0 text-[12px] leading-none ${open ? "rotate-180" : ""} ${
-            isGlass ? "text-cream-50/70" : "text-ink-700/50"
-          }`}
-          aria-hidden
-        >
-          ▾
-        </span>
-      </button>
+  const tabActive = isGlass
+    ? "bg-cream-50/25 text-cream-50 shadow-sm"
+    : "bg-terracotta-500/15 text-ink-900 ring-1 ring-terracotta-500/25";
+  const tabIdle = isGlass
+    ? "text-cream-50/65 hover:bg-cream-50/10"
+    : "text-ink-700/70 hover:bg-cream-100/80";
 
-      {open && (
-        <div className={`border-t px-3 py-3 grid grid-cols-2 gap-x-4 sm:gap-x-6 ${dividerClass}`}>
-          {SPOTS.map(spot => {
-            const w = data[spot.key];
-            if (!w) return null;
-            return (
-              <div key={spot.key} className="flex justify-between gap-1.5">
-                {w.days.slice(0, 4).map((d, i) => (
-                  <div key={d.date} className="flex flex-col items-center gap-1 text-[11px]">
-                    <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i, lang, t("today"))}</span>
-                    {iconFor(d.code, 13)}
-                    <span className={`font-medium tabular-nums ${dayTempStrong}`}>
-                      {d.tMax}°
-                      <span className={dayTempMuted}>/{d.tMin}°</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            );
-          })}
+  function renderRegionSummary(weather: Record<string, RegionWeather>, spotKey: SpotKey) {
+    const w = weather[spotKey];
+    if (!w) return null;
+    return (
+      <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+        {iconFor(w.days[0]?.code ?? 0, 16)}
+        <span className={`text-[10px] uppercase tracking-[0.14em] font-medium ${labelText}`}>
+          {SPOT_LABEL[spotKey][lang]}
+        </span>
+        <span className={`text-base sm:text-sm font-semibold tabular-nums ${tempStrong}`}>
+          {w.current !== null ? `${Math.round(w.current)}°` : "—"}
+        </span>
+        <span className={`text-xs sm:text-[11px] tabular-nums ${tempMuted}`}>
+          {t("weather_high_low", { high: String(w.days[0]?.tMax ?? "—"), low: String(w.days[0]?.tMin ?? "—") })}
+        </span>
+      </div>
+    );
+  }
+
+  function renderForecastGrid(weather: Record<string, RegionWeather>, spotKey: SpotKey, showTopBorder?: boolean) {
+    const w = weather[spotKey];
+    if (!w) return null;
+    return (
+      <div
+        className={`flex justify-between gap-1 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 sm:overflow-visible scrollbar-hide ${
+          showTopBorder ? `border-t pt-3 ${dividerClass}` : ""
+        }`}
+      >
+        {w.days.slice(0, 4).map((d, i) => (
+          <div key={d.date} className="flex flex-col items-center gap-1 text-[11px] min-w-[3.25rem] shrink-0">
+            <span className={`font-medium ${dayLabelClass}`}>{dayLabel(d.date, i, lang, t("today"))}</span>
+            {iconFor(d.code, 14)}
+            <span className={`font-medium tabular-nums ${dayTempStrong}`}>
+              {d.tMax}°
+              <span className={dayTempMuted}>/{d.tMin}°</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${wrapperClasses} max-w-full`} data-compact-ui>
+      {/* Mobile: region tabs + one row per tap; expandable multi-day */}
+      <div className="sm:hidden">
+        <div className="flex rounded-xl p-1 gap-1 bg-black/[0.06] mx-3 mt-3 mb-1">
+          {SPOTS.map(spot => (
+            <button
+              key={spot.key}
+              type="button"
+              onClick={() => setMobileRegion(spot.key)}
+              className={`flex-1 rounded-lg px-2 py-2 text-[11px] font-semibold transition-colors min-h-[44px] ${
+                mobileRegion === spot.key ? tabActive : tabIdle
+              }`}
+            >
+              <span className="block truncate">{lang === "he" ? SPOT_LABEL[spot.key].he : SPOT_LABEL[spot.key].en}</span>
+            </button>
+          ))}
         </div>
-      )}
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className="w-full flex flex-col items-stretch gap-2 px-3 py-3 text-left"
+          aria-expanded={open}
+        >
+          {renderRegionSummary(data, mobileRegion)}
+          <div className="flex items-center justify-center gap-2">
+            <span className={`text-[10px] uppercase tracking-[0.18em] font-medium ${triggerHint}`}>
+              {open ? (lang === "he" ? "הסתר תחזית" : "Hide forecast") : (lang === "he" ? "תחזית 4 ימים" : "4-day outlook")}
+            </span>
+            <span
+              className={`transition-transform text-[11px] leading-none ${open ? "rotate-180" : ""} ${
+                isGlass ? "text-cream-50/70" : "text-ink-700/50"
+              }`}
+              aria-hidden
+            >
+              ▾
+            </span>
+          </div>
+        </button>
+        {open && <div className="px-3 pb-3">{renderForecastGrid(data, mobileRegion, true)}</div>}
+      </div>
+
+      {/* Desktop / sm+: original combined header + two-column grid */}
+      <div className="hidden sm:block">
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left"
+          aria-expanded={open}
+        >
+          <div className="flex items-center gap-4 lg:gap-6 min-w-0 flex-wrap">
+            {SPOTS.map(spot => {
+              const w = data[spot.key];
+              if (!w) return null;
+              return (
+                <div key={spot.key} className="flex items-center gap-1.5 shrink-0">
+                  {iconFor(w.days[0]?.code ?? 0, 14)}
+                  <span className={`text-[10px] uppercase tracking-[0.16em] font-medium ${labelText}`}>
+                    {SPOT_LABEL[spot.key][lang]}
+                  </span>
+                  <span className={`text-sm font-semibold tabular-nums ${tempStrong}`}>
+                    {w.current !== null ? `${Math.round(w.current)}°` : "—"}
+                  </span>
+                  <span className={`text-[11px] tabular-nums ${tempMuted}`}>
+                    {w.days[0]?.tMax}°/{w.days[0]?.tMin}°
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <span className={`text-[10px] uppercase tracking-[0.18em] font-medium shrink-0 ${triggerHint}`}>
+            {open ? (lang === "he" ? "סגור" : "Hide") : (lang === "he" ? "תחזית" : "Forecast")}
+          </span>
+          <span
+            className={`transition-transform shrink-0 text-[12px] leading-none ${open ? "rotate-180" : ""} ${
+              isGlass ? "text-cream-50/70" : "text-ink-700/50"
+            }`}
+            aria-hidden
+          >
+            ▾
+          </span>
+        </button>
+
+        {open && (
+          <div className={`border-t px-3 py-3 grid grid-cols-2 gap-x-4 sm:gap-x-6 ${dividerClass}`}>
+            {SPOTS.map(spot => (
+              <div key={spot.key}>{renderForecastGrid(data, spot.key)}</div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

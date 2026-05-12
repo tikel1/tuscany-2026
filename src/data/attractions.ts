@@ -11,12 +11,12 @@ export const attractions: POI[] = [
   // ---------- NORTH ----------
   {
     id: "canyon-park",
-    name: "Canyon Park — Big SUP",
+    name: "Canyon Park",
     category: "attraction",
     region: "north",
-    shortDescription: "Family stand-up paddleboarding through a turquoise canyon",
+    shortDescription: "River paddleboarding and adventures in a Lima canyon",
     description:
-      "An adventure park tucked into the Lima river gorge near Bagni di Lucca. The signature Big SUP experience puts the whole family on one giant paddleboard to glide through a narrow canyon of glowing turquoise water — calm enough for kids and unforgettable for adults. Book the XL/Big SUP slot ahead of time; spots are very limited per day.",
+      "Italy's first adventure park built inside a river canyon (Visit Tuscany) — slacklines, suspended bridges, canyon courses, and calmer options like a stony beach beside the turquoise Lima. Visitors can hire stand-up paddleboards to paddle the gorge, join soft rafting or water trekking, or try SUP yoga. Our plan focuses on a relaxed family paddle along the river inside the canyon — book your slot ahead in summer because daily capacity is tight. Note: the aerial zip/cable courses typically require kids to be about 10+ and 140 cm tall; double-check the rules for whichever activity you reserve.",
     image: "./images/canyon-park.jpg",
     imageCredit: {
       author: "Luo Jin Hong (Unsplash)",
@@ -28,13 +28,14 @@ export const attractions: POI[] = [
     address: "Località il Pianello, Bagni di Lucca (LU)",
     coords: [44.0167, 10.5833],
     tags: ["water", "extreme", "family"],
-    bookingNote: "Reserve Big SUP / XL SUP slot in advance — limited daily availability.",
+    bookingNote:
+      "Reserve river SUP / water activities in advance — summer days sell out.",
     difficulty: "easy",
     tips: [
-      "Book the Big SUP slot the night before — only a handful per day",
-      "All ages welcome on the SUP; life vests provided for everyone",
-      "Phones stay onshore — bring a small dry bag for keys & sun cream",
-      "Quick-dry swimwear and water shoes; expect to be soaked"
+      "Book your chosen water slot (especially SUP) the day before — availability is limited",
+      "Life jackets are provided on the water — ask staff if you want extra kid sizes",
+      "Phones stay on shore for most water activities — pack a small dry bag",
+      "Quick-dry swimwear and closed-toe water shoes; expect splashy fun"
     ],
     quizFacts: [
       {
@@ -48,9 +49,9 @@ export const attractions: POI[] = [
         distractors: ["By helicopter", "On a trained dog", "On a boat"]
       },
       {
-        question: "What do you paddle on during the 'Big SUP'?",
-        correctAnswer: "A giant family surfboard",
-        distractors: ["A rubber duck", "A wooden log", "A plastic pirate ship"]
+        question: "What do people use to paddle on the Lima River here?",
+        correctAnswer: "Stand-up paddleboards (SUP)",
+        distractors: ["Wooden gondolas", "Inflatable unicorns", "Motorboats only"]
       }
     ]
   },

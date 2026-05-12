@@ -135,7 +135,7 @@ export default function InstallPrompt() {
           {/* Backdrop — click anywhere off the sheet to soft-dismiss. */}
           <motion.div
             key="a2hs-backdrop"
-            className="fixed inset-0 z-[60] bg-ink-900/40 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[8100] bg-ink-900/40 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -152,7 +152,7 @@ export default function InstallPrompt() {
             aria-modal="true"
             aria-labelledby={`${checkboxId}-title`}
             dir={dir}
-            className="fixed z-[61] inset-x-0 bottom-0 md:inset-0 md:m-auto md:h-fit md:max-w-md
+            className="fixed z-[8101] inset-x-0 bottom-0 md:inset-0 md:m-auto md:h-fit md:max-w-md
                        bg-cream-50 text-ink-900
                        rounded-t-3xl md:rounded-3xl
                        border border-cream-300/70 shadow-[0_-12px_40px_-8px_rgba(42,31,26,0.25)] md:shadow-[0_24px_60px_-12px_rgba(42,31,26,0.35)]

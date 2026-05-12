@@ -38,9 +38,9 @@ export const tips: Tip[] = [
   },
   {
     id: "canyon-park-booking",
-    title: "Book Canyon Park's Big SUP early",
+    title: "Book Canyon Park water time early",
     body:
-      "The Big / XL SUP is the only Canyon Park activity that fits all four of you. There are very few of these boards per day and they sell out in summer — book online as soon as the August calendar opens.",
+      "River SUP and other water slots are limited in August. Book your slot as soon as the park confirms dates — same-day walk-ins often miss out.",
     severity: "warning"
   },
   {

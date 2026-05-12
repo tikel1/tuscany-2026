@@ -2683,7 +2683,7 @@ Concretely, the modules under `src/lib/quiz/`:
   range, both reactions present) and retries the next model in
   `MODELS_TO_TRY` on any parse / validation failure. **Live batches
   are not cached** — each round is fresh; only offline packs persist,
-  via the `offlinePack.v5` `localStorage` key.
+  via the `offlinePack.v6` `localStorage` key.
 - **`quizModeStorage.ts`** — load/save the persisted toggle choice.
   Default is `offline` (no quota burn on Start, plays without signal).
 - **`quizSfx.ts`** — three short non-voice SFX (correct chime,
@@ -2922,7 +2922,7 @@ The selector runs three ordered passes:
 All three passes share the same `seen` dedup set keyed on
 question text, so RNG repeats can't double-print a fact.
 Deterministic per `(day, lang)` via mulberry32. The result is
-cached to the same `offlinePack.v5` slot as a real Gemini pack —
+cached to the same `offlinePack.v6` slot as a real Gemini pack —
 `New questions` on the score screen wipes it and re-tries Gemini,
 which is the recovery path once the kid's quota resets.
 
@@ -2950,7 +2950,7 @@ immediately rather than playing out — anything else feels broken.
 ### Caching, "New questions", and cost
 
 - **Offline pack: indefinite `localStorage` cache** keyed
-  `…quiz.offlinePack.v5.day{N}.{lang}`. No TTL — questions about a
+  `…quiz.offlinePack.v6.day{N}.{lang}`. No TTL — questions about a
   past trip don't go stale. Generated once per `(day, lang)`,
   replayed forever, including with no network.
 - **Live mode: no cache.** Every round and every batch is fresh
@@ -3353,12 +3353,12 @@ without the 5th–10th questions clustering on the same place.
 | Slot | Offline mode | Live mode |
 |---|---|---|
 | Question count | 10 | 5 per batch, endless |
-| Storage | `tuscany2026.quiz.offlinePack.v5.day{N}.{lang}` (no expiry) | none — every batch fresh |
+| Storage | `tuscany2026.quiz.offlinePack.v6.day{N}.{lang}` (no expiry) | none — every batch fresh |
 | Start tap → first questions | Cached pack instantly, OR one Gemini call (~2 s) on first ever play | One Gemini call (~1 s) for the first 5 |
 | Mid-round network use | None | Background prefetch of next 5 once kid crosses `length − 2` |
 | End-of-round trigger | Auto, after Q10 | Kid taps **End round** (or prefetch fails irrecoverably) |
 | Default toggle position | ✅ active | inactive |
-| "New questions" on score screen | Clears `offlinePack.v5`, regenerates 10 | Just kicks off a fresh first batch |
+| "New questions" on score screen | Clears `offlinePack.v6`, regenerates 10 | Just kicks off a fresh first batch |
 
 #### Persona name + handoff slug
 
@@ -3369,7 +3369,7 @@ without the 5th–10th questions clustering on the same place.
 | Live API prebuilt voice | reuses `Charon` from §15 for consistency with Gemininio |
 | Mode storage key | `tuscany2026.quiz.mode.v1` (single value, default `offline`) |
 | Mute storage key | `tuscany2026.quiz.mute.v1` (single value, default off) |
-| Offline pack storage key | `tuscany2026.quiz.offlinePack.v5.day{N}.{lang}` (no TTL — used for both real Gemini packs and template fallbacks) |
+| Offline pack storage key | `tuscany2026.quiz.offlinePack.v6.day{N}.{lang}` (no TTL — used for both real Gemini packs and template fallbacks) |
 | Last-score key prefix | `tuscany2026.quiz.lastScore.v1` (per `(day, lang)`) |
 | Live-mode prefetch lead | `PREFETCH_AHEAD = 0` questions (kicks off batch fetch only when kid finishes the current batch, saving quota) |
 | Preview-unlocked days | `QUIZ_PREVIEW_UNLOCKED_DAYS = 2` — Days 1 & 2 always playable; Days 3-10 unlock on the morning of their chapter date |

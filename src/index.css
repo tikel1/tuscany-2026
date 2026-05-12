@@ -1,6 +1,15 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/* Leaflet uses internal z-index values up to ~1000. Without a dedicated
+   stacking context the map can visually cover fixed UI (mobile nav, FAB).
+   Isolate the map subtree so it cannot outrank app chrome. */
+.leaflet-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
 @theme {
   --color-cream-50: #FBF7EC;
   --color-cream-100: #F5EFE0;

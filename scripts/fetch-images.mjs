@@ -54,10 +54,8 @@ const unsplash = (photoId, w = 1600) =>
 
 const TARGETS = [
   // ---------- North attractions ----------
-  // Big SUP — small boats threading a narrow turquoise gorge between sheer
-  // ridges (Takachiho Gorge, Japan, by Luo Jin Hong on Unsplash). Visually
-  // matches the Lima river canyon at Bagni di Lucca better than a flat-lake
-  // SUP shot — the whole point of Canyon Park is the canyon walls.
+  // Canyon Park Lima gorge — turquoise water between rock walls (Takachiho-style
+  // gorge ref; Luo Jin Hong on Unsplash). Visually suggests the Lima canyon.
   ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
   // Forest ropes course — rope bridges between tall trees (Unsplash, free)
