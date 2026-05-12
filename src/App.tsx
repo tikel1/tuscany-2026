@@ -39,6 +39,7 @@ export default function App() {
         {/* The Add-to-Home-Screen coachmark lives at the app root so it
             shows regardless of which page the user landed on. */}
         <InstallPrompt />
+        <Gemininio />
       </>
     );
   }

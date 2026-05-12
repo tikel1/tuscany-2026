@@ -348,7 +348,9 @@ export default function Quiz({
       setVoiceBackend(voice.backend);
 
       speak(getQuizzoIntro(lang, day));
-      speak(quiz.questions[0].question);
+      const q = quiz.questions[0];
+      const optsText = q.options.map((opt, i) => `${i + 1}. ${opt}`).join(". ");
+      speak(`${q.question} ${optsText}`);
     } catch {
       setVoiceBackend("none");
     }
@@ -410,6 +412,9 @@ export default function Quiz({
 
       playSfx(isCorrect ? "correct" : "wrong");
 
+      // Cancel any ongoing question/options reading before speaking the reaction
+      voiceRef.current?.cancel();
+
       const reaction = isCorrect
         ? p.questions[p.current].reactionCorrect
         : `${p.questions[p.current].reactionWrong} ${p.questions[p.current].options[p.questions[p.current].correctIndex]}`;
@@ -448,7 +453,8 @@ export default function Quiz({
       }
 
       const next = p.questions[nextIndex];
-      speak(next.question);
+      const optsText = next.options.map((opt, i) => `${i + 1}. ${opt}`).join(". ");
+      speak(`${next.question} ${optsText}`);
 
       return { ...p, current: nextIndex };
     });
