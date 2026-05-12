@@ -165,6 +165,9 @@ QUESTION DESIGN RULES (these matter — read carefully):
     × Travel time or driving logistics ("how long is the drive?", "do
       we need an international driver license?", "how many hours in the
       car?")
+    × "What country is [Italian Brand/Food] from?" ("Where is Fiat from?",
+      "Where is pizza from?") — the kids know they are in Italy, so the
+      answer is too obvious. Ask about the brand/food itself instead!
     These bore an 8-year-old instantly. Ask about the STORY of the
     place, not the rules of visiting it.
 
@@ -314,6 +317,9 @@ QUESTION DESIGN RULES (read carefully):
       או דרום?")
     × Travel time or driving logistics ("כמה זמן הנסיעה?", "האם
       צריך רישיון נהיגה בינלאומי?", "כמה שעות נהיגה?")
+    × "What country is [Italian Brand/Food] from?" ("מאיזו מדינה חברת פיאט?",
+      "מאיפה הגיעה הפיצה?") — the kids know they are in Italy, so the
+      answer is too obvious. Ask about the brand/food itself instead!
     These bore an 8-year-old instantly. Ask about the STORY of the
     place, not the rules of visiting it.
 
