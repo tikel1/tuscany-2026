@@ -488,79 +488,35 @@ export default function Gemininio() {
   }
 
   /**
-   * One-shot voice capture using MediaRecorder. Tap once to start,
-   * tap again (or call from a stop button) to finalise. The audio
-   * blob is sent to Gemini for verbatim transcription, then the
-   * transcribed text is submitted exactly like a typed message —
-   * appearing in a normal user bubble and getting a normal reply
-   * via either Live (globe off) or REST + Search (globe on).
+   * One-shot voice capture using MediaRecorder. Tap to start, then
+   * either tap again to finalise or just stop talking — the recorder's
+   * built-in voice-activity detection (see `voiceRecorder.ts`) calls
+   * `finalizeRecording` automatically after a short stretch of silence.
+   * The captured blob is sent to Gemini for verbatim transcription,
+   * then the transcribed text is submitted exactly like a typed
+   * message — appearing in a normal user bubble and getting a normal
+   * reply via either Live (globe off) or REST + Search (globe on).
    *
    * This replaces the older Gemini Live bidi audio path, which was
    * fragile and prone to the model never returning `turnComplete`,
    * leaving the chat stuck on a "thinking…" bubble forever.
    */
-  async function toggleRecording() {
+  async function startRecording() {
     const apiKey = getApiKey();
     if (!apiKey) {
       setStatus("needs-key");
       return;
     }
+    if (recorderRef.current?.isRecording()) return;
 
-    // Currently recording — stop, transcribe, and send.
-    if (recorderRef.current?.isRecording()) {
-      const recorder = recorderRef.current;
-      setStatus("transcribing");
-      let blob: Blob;
-      try {
-        blob = await recorder.stop();
-      } catch (e) {
-        const code = logGemError("voice:stop", e);
-        setError(t("gem_error_occurred", { code }));
-        setStatus("error");
-        return;
-      } finally {
-        recorderRef.current = null;
-      }
-
-      // Empty / silent recording → just bail back to ready.
-      if (!blob.size) {
-        setStatus("ready");
-        return;
-      }
-
-      // Unlock the audio context on this user-gesture path so any
-      // subsequent Live reply audio can play without a second tap.
-      if (!playerRef.current) playerRef.current = new PcmPlayer();
-      try {
-        await playerRef.current.ensureAudioUnlocked();
-      } catch {
-        /* non-fatal */
-      }
-
-      let transcript: string;
-      try {
-        transcript = await transcribeAudio({ apiKey, audio: blob, language: lang });
-      } catch (e) {
-        const code = logGemError("voice:transcribe", e);
-        setError(t("gem_error_occurred", { code }));
-        setStatus("error");
-        return;
-      }
-
-      const cleaned = transcript.trim();
-      if (!cleaned) {
-        setError(t("gem_transcribe_failed"));
-        setStatus("ready");
-        return;
-      }
-
-      await submitUserMessage(cleaned);
-      return;
-    }
-
-    // Not recording — start a fresh capture.
     setError(null);
-    const recorder = new VoiceRecorder();
+    const recorder = new VoiceRecorder({
+      onAutoStop: () => {
+        // VAD says the user has been silent for a beat — process the
+        // recording exactly as if they tapped the mic to stop.
+        void finalizeRecording();
+      }
+    });
     recorderRef.current = recorder;
     try {
       await recorder.start();
@@ -570,6 +526,73 @@ export default function Gemininio() {
       const code = logGemError("voice:start", e);
       setError(t("gem_error_occurred", { code }));
       setStatus("error");
+    }
+  }
+
+  async function finalizeRecording() {
+    const recorder = recorderRef.current;
+    if (!recorder) return;
+    // Guard against the VAD callback and a manual tap firing nearly
+    // simultaneously — only the first one should run the pipeline.
+    recorderRef.current = null;
+
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      recorder.cancel();
+      setStatus("needs-key");
+      return;
+    }
+
+    setStatus("transcribing");
+    let blob: Blob;
+    try {
+      blob = await recorder.stop();
+    } catch (e) {
+      const code = logGemError("voice:stop", e);
+      setError(t("gem_error_occurred", { code }));
+      setStatus("error");
+      return;
+    }
+
+    if (!blob.size) {
+      setStatus("ready");
+      return;
+    }
+
+    // Unlock the audio context on this user-gesture path so any
+    // subsequent Live reply audio can play without a second tap.
+    if (!playerRef.current) playerRef.current = new PcmPlayer();
+    try {
+      await playerRef.current.ensureAudioUnlocked();
+    } catch {
+      /* non-fatal */
+    }
+
+    let transcript: string;
+    try {
+      transcript = await transcribeAudio({ apiKey, audio: blob, language: lang });
+    } catch (e) {
+      const code = logGemError("voice:transcribe", e);
+      setError(t("gem_error_occurred", { code }));
+      setStatus("error");
+      return;
+    }
+
+    const cleaned = transcript.trim();
+    if (!cleaned) {
+      setError(t("gem_transcribe_failed"));
+      setStatus("ready");
+      return;
+    }
+
+    await submitUserMessage(cleaned);
+  }
+
+  async function toggleRecording() {
+    if (recorderRef.current?.isRecording()) {
+      await finalizeRecording();
+    } else {
+      await startRecording();
     }
   }
 

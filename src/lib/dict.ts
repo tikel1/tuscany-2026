@@ -242,8 +242,8 @@ export const DICT = {
   gem_mic_hold: { en: "Hold to talk", he: "החזיקו כדי לדבר" },
   gem_mic_release: { en: "Release to send", he: "שחררו כדי לשלוח" },
   gem_mic_start: { en: "Tap to record", he: "הקישו להקלטה" },
-  gem_mic_stop: { en: "Tap to stop & send", he: "הקישו לעצירה ושליחה" },
-  gem_recording: { en: "Recording…", he: "מקליט…" },
+  gem_mic_stop: { en: "Tap to stop now", he: "הקישו לעצירה" },
+  gem_recording: { en: "Recording — pauses to send…", he: "מקליט — עוצר לשליחה אוטומטית…" },
   gem_transcribing: { en: "Transcribing…", he: "מתמלל…" },
   gem_transcribe_failed: {
     en: "Could not understand the recording. Please try again.",

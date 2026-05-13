@@ -1,14 +1,28 @@
 /**
- * Thin wrapper around MediaRecorder for one-shot voice capture.
+ * Thin wrapper around MediaRecorder for one-shot voice capture, with
+ * built-in voice-activity detection so the recording auto-stops a
+ * short moment after the user stops speaking.
  *
- * Pattern: `start()` → user speaks → `stop()` → returns a Blob ready
- * to ship to Gemini's REST transcription endpoint. We pick the best
- * MIME type the current browser supports (webm/opus on Chromium,
- * mp4/aac on Safari, ogg/opus on Firefox); Gemini's audio understanding
- * accepts any of those.
+ * Pattern: `start()` → user speaks → silence triggers `onAutoStop`
+ * (or the caller can `stop()` manually) → `stop()` resolves with a
+ * Blob ready to ship to Gemini's REST transcription endpoint. We
+ * pick the best MIME type the current browser supports
+ * (webm/opus on Chromium, mp4/aac on Safari, ogg/opus on Firefox).
  *
- * Why a class? So Gemininio can hold a single ref and `start()` /
- * `stop()` between renders without re-wiring listeners.
+ * VAD design:
+ *   - A parallel AnalyserNode (time-domain) is fed the same MediaStream
+ *     we record. Every animation frame we compute the RMS level.
+ *   - The first ~300 ms is treated as a noise-floor calibration window.
+ *     The active speech threshold is set to max(BASE_FLOOR,
+ *     baseline * 3.5), so a quiet living room and a busy kitchen both
+ *     resolve to a sensible level.
+ *   - We only start counting silence once the user has actually
+ *     spoken (level crossed the threshold at least once). That way we
+ *     don't auto-stop a recording that hasn't begun.
+ *   - After speech started, if the level stays below the threshold
+ *     for SILENCE_HOLD_MS, `onAutoStop` fires.
+ *   - A hard MAX_DURATION_MS safety cap exists so a stuck mic in a
+ *     noisy environment can't record forever.
  */
 
 const PREFERRED_MIME_TYPES = [
@@ -19,6 +33,14 @@ const PREFERRED_MIME_TYPES = [
   "audio/mp4",
   "audio/aac"
 ];
+
+/* Tunables. */
+const CALIBRATION_MS = 300;        // window used to learn ambient noise floor
+const BASE_FLOOR = 0.012;          // RMS level treated as "definitely silence"
+const FLOOR_MULTIPLIER = 3.5;      // speech threshold = floor * this
+const SILENCE_HOLD_MS = 1400;      // sustained silence required to auto-stop
+const MIN_RECORDING_MS = 500;      // VAD never triggers in this initial grace
+const MAX_DURATION_MS = 30_000;    // hard safety cap
 
 function pickMimeType(): string | undefined {
   if (typeof MediaRecorder === "undefined") return undefined;
@@ -32,6 +54,15 @@ function pickMimeType(): string | undefined {
   return undefined;
 }
 
+export interface VoiceRecorderOptions {
+  /** Fired exactly once when the recorder decides the user has gone
+   *  quiet (or the safety cap fires). The caller is expected to call
+   *  `stop()` to drain the audio blob — we don't auto-stop the
+   *  MediaRecorder ourselves so the caller stays in full control of
+   *  the UI state machine. */
+  onAutoStop?: (reason: "silence" | "max-duration") => void;
+}
+
 export class VoiceRecorder {
   private stream: MediaStream | null = null;
   private recorder: MediaRecorder | null = null;
@@ -40,6 +71,23 @@ export class VoiceRecorder {
   private resolveStop: ((b: Blob) => void) | null = null;
   private rejectStop: ((e: Error) => void) | null = null;
   private mimeType: string = "audio/webm";
+
+  /* VAD state. */
+  private vadCtx: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+  private vadBuffer: Float32Array<ArrayBuffer> | null = null;
+  private vadRaf = 0;
+  private startedAt = 0;
+  private speechStarted = false;
+  private silenceSince = 0;
+  private noiseFloorSamples: number[] = [];
+  private speechThreshold = BASE_FLOOR * FLOOR_MULTIPLIER;
+  private autoStopFired = false;
+  private onAutoStop?: (reason: "silence" | "max-duration") => void;
+
+  constructor(options: VoiceRecorderOptions = {}) {
+    this.onAutoStop = options.onAutoStop;
+  }
 
   /** Open the mic and begin capturing. Resolves once the recorder is
    *  actually in the `recording` state (so the caller can flip UI). */
@@ -86,6 +134,7 @@ export class VoiceRecorder {
       const type = this.recorder?.mimeType || this.mimeType;
       const blob = new Blob(this.chunks, { type });
       this.chunks = [];
+      this.cleanupVad();
       this.cleanupStream();
       this.resolveStop?.(blob);
     };
@@ -94,11 +143,13 @@ export class VoiceRecorder {
       const err =
         (ev as unknown as { error?: Error }).error ??
         new Error("Recording failed.");
+      this.cleanupVad();
       this.cleanupStream();
       this.rejectStop?.(err);
     };
 
     this.recorder.start();
+    this.startVad();
   }
 
   /** Stop recording and resolve with the captured audio blob. Safe to
@@ -111,6 +162,7 @@ export class VoiceRecorder {
       try {
         this.recorder.stop();
       } catch (e) {
+        this.cleanupVad();
         this.cleanupStream();
         this.rejectStop?.(e instanceof Error ? e : new Error(String(e)));
       }
@@ -129,12 +181,124 @@ export class VoiceRecorder {
       }
     }
     this.chunks = [];
+    this.cleanupVad();
     this.cleanupStream();
     this.resolveStop?.(new Blob([], { type: this.mimeType }));
     this.recorder = null;
     this.stopPromise = null;
     this.resolveStop = null;
     this.rejectStop = null;
+  }
+
+  /* ------------------------- VAD internals ------------------------- */
+
+  private startVad(): void {
+    if (!this.stream || !this.onAutoStop) return;
+    try {
+      this.vadCtx = new AudioContext();
+      const source = this.vadCtx.createMediaStreamSource(this.stream);
+      this.analyser = this.vadCtx.createAnalyser();
+      this.analyser.fftSize = 1024;
+      this.analyser.smoothingTimeConstant = 0.6;
+      // Allocate an explicit ArrayBuffer so the generic resolves to
+      // Float32Array<ArrayBuffer> (what `getFloatTimeDomainData` wants
+      // under TS strict mode — the default `new Float32Array(n)`
+      // constructor returns Float32Array<ArrayBufferLike>).
+      this.vadBuffer = new Float32Array(new ArrayBuffer(this.analyser.fftSize * 4));
+      source.connect(this.analyser);
+    } catch {
+      // VAD is best-effort — if Web Audio is unavailable we just keep
+      // recording until the caller stops manually or the panel closes.
+      this.cleanupVad();
+      return;
+    }
+
+    this.startedAt = performance.now();
+    this.speechStarted = false;
+    this.silenceSince = 0;
+    this.noiseFloorSamples = [];
+    this.speechThreshold = BASE_FLOOR * FLOOR_MULTIPLIER;
+    this.autoStopFired = false;
+
+    const tick = () => {
+      if (!this.analyser || !this.vadBuffer) return;
+      this.analyser.getFloatTimeDomainData(this.vadBuffer);
+
+      let sumSq = 0;
+      for (let i = 0; i < this.vadBuffer.length; i++) {
+        const v = this.vadBuffer[i];
+        sumSq += v * v;
+      }
+      const rms = Math.sqrt(sumSq / this.vadBuffer.length);
+
+      const now = performance.now();
+      const elapsed = now - this.startedAt;
+
+      // Calibrate the noise floor over the first window. We pick the
+      // 80th-percentile sample to ignore the occasional click while
+      // still adapting to a noisy environment.
+      if (elapsed < CALIBRATION_MS) {
+        this.noiseFloorSamples.push(rms);
+        this.vadRaf = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (this.noiseFloorSamples.length > 0) {
+        const sorted = [...this.noiseFloorSamples].sort((a, b) => a - b);
+        const idx = Math.floor(sorted.length * 0.8);
+        const baseline = sorted[Math.min(idx, sorted.length - 1)] ?? BASE_FLOOR;
+        this.speechThreshold = Math.max(BASE_FLOOR, baseline * FLOOR_MULTIPLIER);
+        this.noiseFloorSamples = [];
+      }
+
+      // Hard safety cap.
+      if (elapsed > MAX_DURATION_MS && !this.autoStopFired) {
+        this.autoStopFired = true;
+        this.onAutoStop?.("max-duration");
+        this.vadRaf = requestAnimationFrame(tick);
+        return;
+      }
+
+      // Don't auto-stop in the very first moment — the user may have
+      // tapped the mic a beat before they actually start talking.
+      if (elapsed < MIN_RECORDING_MS) {
+        this.vadRaf = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (rms >= this.speechThreshold) {
+        this.speechStarted = true;
+        this.silenceSince = 0;
+      } else if (this.speechStarted) {
+        if (this.silenceSince === 0) {
+          this.silenceSince = now;
+        } else if (now - this.silenceSince >= SILENCE_HOLD_MS && !this.autoStopFired) {
+          this.autoStopFired = true;
+          this.onAutoStop?.("silence");
+        }
+      }
+
+      this.vadRaf = requestAnimationFrame(tick);
+    };
+    this.vadRaf = requestAnimationFrame(tick);
+  }
+
+  private cleanupVad(): void {
+    if (this.vadRaf) {
+      cancelAnimationFrame(this.vadRaf);
+      this.vadRaf = 0;
+    }
+    try {
+      this.analyser?.disconnect();
+    } catch {
+      /* ignore */
+    }
+    if (this.vadCtx) {
+      void this.vadCtx.close().catch(() => {});
+    }
+    this.analyser = null;
+    this.vadBuffer = null;
+    this.vadCtx = null;
   }
 
   private cleanupStream(): void {
