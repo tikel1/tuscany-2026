@@ -9,7 +9,8 @@ import {
   Trash2,
   ExternalLink,
   Loader2,
-  SquarePen,
+  FilePenLine,
+  Menu,
   Volume2,
   VolumeX,
   AudioLines
@@ -791,7 +792,16 @@ export default function Gemininio() {
                     {(status === "speaking" || status === "recording") && (
                       <span aria-hidden className={`absolute inset-0 rounded-full bg-terracotta-500/40 ${status === "speaking" ? "animate-pulse" : "animate-gem-breathe"}`} />
                     )}
-                    <Sparkles size={16} className="relative z-10" />
+                    {status === "speaking" ? (
+                      <div className="flex items-center justify-center gap-[3px] h-4 w-5 relative z-10">
+                        <motion.div className="w-[3px] bg-cream-50 rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }} />
+                        <motion.div className="w-[3px] bg-cream-50 rounded-full" animate={{ height: ["70%", "30%", "100%", "70%"] }} transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }} />
+                        <motion.div className="w-[3px] bg-cream-50 rounded-full" animate={{ height: ["30%", "100%", "30%"] }} transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }} />
+                        <motion.div className="w-[3px] bg-cream-50 rounded-full" animate={{ height: ["100%", "40%", "100%"] }} transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }} />
+                      </div>
+                    ) : (
+                      <Sparkles size={16} className="relative z-10" />
+                    )}
                   </div>
                   {/* Status indicator dot. */}
                   <span
@@ -838,7 +848,7 @@ export default function Gemininio() {
                   title={lang === "he" ? "שיחה חדשה" : "New Chat"}
                   className="p-2 rounded-full hover:bg-cream-200 transition"
                 >
-                  <SquarePen size={16} />
+                  <FilePenLine size={16} />
                 </button>
                 <button
                   onClick={() => {
@@ -850,7 +860,7 @@ export default function Gemininio() {
                   title={lang === "he" ? "כל השיחות" : "All conversations"}
                   className={`p-2 rounded-full transition ${showHistory ? "bg-cream-200" : "hover:bg-cream-200"}`}
                 >
-                  <MessageSquare size={16} />
+                  <Menu size={16} />
                 </button>
                 <button
                   onClick={close}
