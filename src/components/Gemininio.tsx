@@ -127,6 +127,7 @@ export default function Gemininio() {
   });
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [micVolume, setMicVolume] = useState(0);
   // Audio is OFF by default — most use is read-and-tap. Live always
   // streams PCM; we drop it client-side when muted. Preference is
   // persisted so users who want Italian voice on typed sends get it
@@ -515,9 +516,11 @@ export default function Gemininio() {
         // VAD says the user has been silent for a beat — process the
         // recording exactly as if they tapped the mic to stop.
         void finalizeRecording();
-      }
+      },
+      onVolumeChange: setMicVolume
     });
     recorderRef.current = recorder;
+    setMicVolume(0);
     try {
       await recorder.start();
       setStatus("recording");
@@ -544,6 +547,7 @@ export default function Gemininio() {
     }
 
     setStatus("transcribing");
+    setMicVolume(0);
     let blob: Blob;
     try {
       blob = await recorder.stop();
@@ -707,8 +711,11 @@ export default function Gemininio() {
                   / listening / thinking. */}
               <div className="px-5 pt-4 pb-3 border-b border-cream-300/70 flex items-center gap-3 bg-gradient-to-b from-cream-100 to-cream-50">
                 <div className="relative shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-terracotta-500 text-cream-50 flex items-center justify-center shadow-md shadow-terracotta-700/20">
-                    <Sparkles size={16} />
+                  <div className={`relative w-10 h-10 rounded-full bg-terracotta-500 text-cream-50 flex items-center justify-center shadow-md shadow-terracotta-700/20 transition-transform ${status === "speaking" || status === "recording" ? "scale-105" : ""}`}>
+                    {(status === "speaking" || status === "recording") && (
+                      <span aria-hidden className="absolute inset-0 rounded-full bg-terracotta-500/40 animate-gem-breathe" />
+                    )}
+                    <Sparkles size={16} className="relative z-10" />
                   </div>
                   {/* Status indicator dot. */}
                   <span
@@ -796,6 +803,7 @@ export default function Gemininio() {
                     onToggleWebSearch={toggleWebSearch}
                     onSend={sendText}
                     onMicToggle={toggleRecording}
+                    micVolume={micVolume}
                   />
                 )}
               </div>
@@ -930,7 +938,8 @@ function ChatView({
   webSearchEnabled,
   onToggleWebSearch,
   onSend,
-  onMicToggle
+  onMicToggle,
+  micVolume
 }: {
   messages: Message[];
   status: ChatStatus;
@@ -943,6 +952,7 @@ function ChatView({
   onToggleWebSearch: () => void;
   onSend: () => void;
   onMicToggle: () => void;
+  micVolume: number;
 }) {
   const t = useT();
   const isRecording = status === "recording";
@@ -1016,9 +1026,16 @@ function ChatView({
                 onSend();
               }
             }}
-            placeholder={t("gem_input_placeholder")}
+            placeholder={
+              isRecording
+                ? t("gem_recording")
+                : status === "transcribing"
+                  ? t("gem_transcribing")
+                  : t("gem_input_placeholder")
+            }
+            disabled={isRecording || status === "transcribing"}
             dir="auto"
-            className="flex-1 min-w-0 px-3 py-2.5 rounded-full border border-cream-300 bg-cream-100 text-[14px] focus:outline-none focus:ring-2 focus:ring-terracotta-500/40"
+            className="flex-1 min-w-0 px-3 py-2.5 rounded-full border border-cream-300 bg-cream-100 text-[14px] focus:outline-none focus:ring-2 focus:ring-terracotta-500/40 disabled:opacity-60 disabled:cursor-not-allowed placeholder:text-ink-700/50"
             inputMode="text"
           />
           <button
@@ -1037,13 +1054,20 @@ function ChatView({
             aria-label={isRecording ? t("gem_mic_stop") : t("gem_mic_start")}
             aria-pressed={isRecording}
             title={isRecording ? t("gem_mic_stop") : t("gem_mic_start")}
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none disabled:opacity-40 disabled:cursor-not-allowed ${
+            className={`relative shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none disabled:opacity-40 disabled:cursor-not-allowed ${
               isRecording
-                ? "bg-terracotta-500 text-cream-50 animate-gem-breathe shadow-lg shadow-terracotta-700/30"
+                ? "bg-terracotta-500 text-cream-50 shadow-lg shadow-terracotta-700/30"
                 : "bg-olive-600 text-cream-50 hover:bg-olive-700"
             }`}
           >
-            <Mic size={16} />
+            {isRecording && (
+              <span
+                aria-hidden
+                className="absolute inset-0 rounded-full bg-terracotta-500/40 pointer-events-none transition-transform duration-75"
+                style={{ transform: `scale(${1 + Math.min(1, micVolume * 5) * 0.6})` }}
+              />
+            )}
+            <Mic size={16} className="relative z-10" />
           </button>
         </div>
       </div>

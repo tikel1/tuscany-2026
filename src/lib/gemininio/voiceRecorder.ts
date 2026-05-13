@@ -61,6 +61,8 @@ export interface VoiceRecorderOptions {
    *  MediaRecorder ourselves so the caller stays in full control of
    *  the UI state machine. */
   onAutoStop?: (reason: "silence" | "max-duration") => void;
+  /** Fires on animation frame with the current RMS volume level. */
+  onVolumeChange?: (volume: number) => void;
 }
 
 export class VoiceRecorder {
@@ -84,9 +86,11 @@ export class VoiceRecorder {
   private speechThreshold = BASE_FLOOR * FLOOR_MULTIPLIER;
   private autoStopFired = false;
   private onAutoStop?: (reason: "silence" | "max-duration") => void;
+  private onVolumeChange?: (volume: number) => void;
 
   constructor(options: VoiceRecorderOptions = {}) {
     this.onAutoStop = options.onAutoStop;
+    this.onVolumeChange = options.onVolumeChange;
   }
 
   /** Open the mic and begin capturing. Resolves once the recorder is
@@ -230,6 +234,7 @@ export class VoiceRecorder {
         sumSq += v * v;
       }
       const rms = Math.sqrt(sumSq / this.vadBuffer.length);
+      this.onVolumeChange?.(rms);
 
       const now = performance.now();
       const elapsed = now - this.startedAt;
