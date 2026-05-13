@@ -10,7 +10,6 @@ import {
   ExternalLink,
   Loader2,
   SquarePen,
-  Menu,
   Volume2,
   VolumeX,
   AudioLines
@@ -790,7 +789,7 @@ export default function Gemininio() {
                 <div className="relative shrink-0">
                   <div className={`relative w-10 h-10 rounded-full bg-terracotta-500 text-cream-50 flex items-center justify-center shadow-md shadow-terracotta-700/20 transition-transform ${status === "speaking" || status === "recording" ? "scale-105" : ""}`}>
                     {(status === "speaking" || status === "recording") && (
-                      <span aria-hidden className="absolute inset-0 rounded-full bg-terracotta-500/40 animate-gem-breathe" />
+                      <span aria-hidden className={`absolute inset-0 rounded-full bg-terracotta-500/40 ${status === "speaking" ? "animate-pulse" : "animate-gem-breathe"}`} />
                     )}
                     <Sparkles size={16} className="relative z-10" />
                   </div>
@@ -798,8 +797,10 @@ export default function Gemininio() {
                   <span
                     aria-hidden
                     className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-cream-50 ${
-                      status === "recording" || status === "speaking"
+                      status === "recording"
                         ? "bg-terracotta-500 animate-gem-breathe"
+                        : status === "speaking"
+                        ? "bg-terracotta-500 animate-pulse"
                         : status === "thinking" ||
                             status === "connecting" ||
                             status === "transcribing"
@@ -849,7 +850,7 @@ export default function Gemininio() {
                   title={lang === "he" ? "כל השיחות" : "All conversations"}
                   className={`p-2 rounded-full transition ${showHistory ? "bg-cream-200" : "hover:bg-cream-200"}`}
                 >
-                  <Menu size={16} />
+                  <MessageSquare size={16} />
                 </button>
                 <button
                   onClick={close}
