@@ -235,12 +235,20 @@ export const DICT = {
   gem_clear_key: { en: "Forget my key", he: "שכח את המפתח שלי" },
   gem_reset_history: { en: "Clear chat", he: "נקה היסטוריית שיחה" },
   gem_input_placeholder: {
-    en: "Type a question — or hold the mic to talk",
-    he: "כתבו שאלה — או החזיקו את המיקרופון כדי לדבר"
+    en: "Type a question — or tap the mic to talk",
+    he: "כתבו שאלה — או הקישו על המיקרופון כדי לדבר"
   },
   gem_send: { en: "Send", he: "שלח" },
   gem_mic_hold: { en: "Hold to talk", he: "החזיקו כדי לדבר" },
   gem_mic_release: { en: "Release to send", he: "שחררו כדי לשלוח" },
+  gem_mic_start: { en: "Tap to record", he: "הקישו להקלטה" },
+  gem_mic_stop: { en: "Tap to stop & send", he: "הקישו לעצירה ושליחה" },
+  gem_recording: { en: "Recording…", he: "מקליט…" },
+  gem_transcribing: { en: "Transcribing…", he: "מתמלל…" },
+  gem_transcribe_failed: {
+    en: "Could not understand the recording. Please try again.",
+    he: "לא הצלחתי להבין את ההקלטה. נסו שוב."
+  },
   gem_listening: { en: "Listening…", he: "מקשיב…" },
   gem_thinking: { en: "Thinking…", he: "חושב…" },
   gem_speaking: { en: "Speaking…", he: "מדבר…" },

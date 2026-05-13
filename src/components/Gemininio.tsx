@@ -17,7 +17,9 @@ import {
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
 import { LiveSession } from "../lib/gemininio/live";
-import { MicCapture, PcmPlayer } from "../lib/gemininio/audio";
+import { PcmPlayer } from "../lib/gemininio/audio";
+import { VoiceRecorder } from "../lib/gemininio/voiceRecorder";
+import { transcribeAudio } from "../lib/gemininio/transcribe";
 import {
   buildLiveSessionSystemPrompt,
   buildSystemPrompt,
@@ -64,7 +66,8 @@ type ChatStatus =
   | "needs-key"        // panel open, no API key yet
   | "ready"            // key present, no live session
   | "connecting"
-  | "listening"        // mic is open, capturing user's voice
+  | "recording"        // mic is open, capturing user's voice
+  | "transcribing"     // user finished, audio uploading + being transcribed
   | "thinking"         // user finished, waiting for / receiving model reply
   | "speaking"         // model is currently producing audio
   | "error";
@@ -151,7 +154,7 @@ export default function Gemininio() {
 
   const sessionRef = useRef<LiveSession | null>(null);
   const playerRef = useRef<PcmPlayer | null>(null);
-  const micRef = useRef<MicCapture | null>(null);
+  const recorderRef = useRef<VoiceRecorder | null>(null);
   const transcriptRef = useRef<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -201,8 +204,8 @@ export default function Gemininio() {
     if (status !== "closed") return;
     sessionRef.current?.close();
     sessionRef.current = null;
-    micRef.current?.stop();
-    micRef.current = null;
+    recorderRef.current?.cancel();
+    recorderRef.current = null;
     playerRef.current?.stop();
     playerRef.current = null;
   }, [status]);
@@ -236,7 +239,7 @@ export default function Gemininio() {
   useEffect(() => {
     return () => {
       sessionRef.current?.close();
-      micRef.current?.stop();
+      recorderRef.current?.cancel();
       playerRef.current?.stop();
     };
   }, []);
@@ -386,16 +389,21 @@ export default function Gemininio() {
    * Globe = data source only: ON → REST + Google Search. OFF → trip only
    * on Gemini Live (`sendText`). Speaker / mute only gates whether `onAudio`
    * PCM is played in the browser — routing does not switch to REST when muted.
+   *
+   * If `explicitText` is passed (e.g. from a voice transcription), we
+   * use that as the user message instead of the input box; otherwise
+   * we read from `text` and clear the input.
    */
-  async function submitTypedUserMessage() {
-    const trimmed = text.trim();
+  async function submitUserMessage(explicitText?: string) {
+    const raw = explicitText ?? text;
+    const trimmed = raw.trim();
     if (!trimmed) return;
     // What the chat bubble + persisted history shows.
     // What we send on the wire — same text plus a hidden accent nudge
     // in the user's language. Bubble/persistence stays untouched.
     const wireMessage = withHiddenAccentNudge(trimmed);
     const priorForApi = completedTurnsForApi(messages);
-    setText("");
+    if (explicitText === undefined) setText("");
     setMessages(ms => [
       ...ms,
       { role: "user", text: trimmed, ts: Date.now() },
@@ -468,7 +476,7 @@ export default function Gemininio() {
   }
 
   async function sendText() {
-    await submitTypedUserMessage();
+    await submitUserMessage();
   }
 
   function toggleWebSearch() {
@@ -479,40 +487,90 @@ export default function Gemininio() {
     setWebSearchEnabled(v => !v);
   }
 
-  async function startMic() {
-    const s = await ensureSession();
-    if (!s) return;
-    if (!micRef.current) {
-      micRef.current = new MicCapture(pcm => s.sendAudioChunk(pcm));
+  /**
+   * One-shot voice capture using MediaRecorder. Tap once to start,
+   * tap again (or call from a stop button) to finalise. The audio
+   * blob is sent to Gemini for verbatim transcription, then the
+   * transcribed text is submitted exactly like a typed message —
+   * appearing in a normal user bubble and getting a normal reply
+   * via either Live (globe off) or REST + Search (globe on).
+   *
+   * This replaces the older Gemini Live bidi audio path, which was
+   * fragile and prone to the model never returning `turnComplete`,
+   * leaving the chat stuck on a "thinking…" bubble forever.
+   */
+  async function toggleRecording() {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      setStatus("needs-key");
+      return;
     }
+
+    // Currently recording — stop, transcribe, and send.
+    if (recorderRef.current?.isRecording()) {
+      const recorder = recorderRef.current;
+      setStatus("transcribing");
+      let blob: Blob;
+      try {
+        blob = await recorder.stop();
+      } catch (e) {
+        const code = logGemError("voice:stop", e);
+        setError(t("gem_error_occurred", { code }));
+        setStatus("error");
+        return;
+      } finally {
+        recorderRef.current = null;
+      }
+
+      // Empty / silent recording → just bail back to ready.
+      if (!blob.size) {
+        setStatus("ready");
+        return;
+      }
+
+      // Unlock the audio context on this user-gesture path so any
+      // subsequent Live reply audio can play without a second tap.
+      if (!playerRef.current) playerRef.current = new PcmPlayer();
+      try {
+        await playerRef.current.ensureAudioUnlocked();
+      } catch {
+        /* non-fatal */
+      }
+
+      let transcript: string;
+      try {
+        transcript = await transcribeAudio({ apiKey, audio: blob, language: lang });
+      } catch (e) {
+        const code = logGemError("voice:transcribe", e);
+        setError(t("gem_error_occurred", { code }));
+        setStatus("error");
+        return;
+      }
+
+      const cleaned = transcript.trim();
+      if (!cleaned) {
+        setError(t("gem_transcribe_failed"));
+        setStatus("ready");
+        return;
+      }
+
+      await submitUserMessage(cleaned);
+      return;
+    }
+
+    // Not recording — start a fresh capture.
+    setError(null);
+    const recorder = new VoiceRecorder();
+    recorderRef.current = recorder;
     try {
-      await micRef.current.start();
-      transcriptRef.current = "";
-      setStatus("listening");
+      await recorder.start();
+      setStatus("recording");
     } catch (e) {
-      const code = logGemError("mic:start", e);
+      recorderRef.current = null;
+      const code = logGemError("voice:start", e);
       setError(t("gem_error_occurred", { code }));
       setStatus("error");
     }
-  }
-
-  async function stopMic() {
-    await micRef.current?.stop();
-    // Unlock output AudioContext on this user gesture (finger up) so
-    // Live PCM is not silent on iOS — mic capture uses another context.
-    if (!playerRef.current) playerRef.current = new PcmPlayer();
-    await playerRef.current.ensureAudioUnlocked();
-    sessionRef.current?.endTurn();
-    setStatus("thinking");
-    // Same trick as sendText — drop a placeholder streaming bubble
-    // so the typing dots appear immediately while we wait for the
-    // model's reply. The user transcript will be inserted just
-    // BEFORE this bubble in onTurnComplete, and the model's reply
-    // text (from outputTranscription) flows INTO this bubble.
-    setMessages(ms => [
-      ...ms,
-      { role: "model", text: "", ts: Date.now(), streaming: true }
-    ]);
   }
 
   function handleSaveKey() {
@@ -633,9 +691,11 @@ export default function Gemininio() {
                   <span
                     aria-hidden
                     className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-cream-50 ${
-                      status === "listening" || status === "speaking"
+                      status === "recording" || status === "speaking"
                         ? "bg-terracotta-500 animate-gem-breathe"
-                        : status === "thinking" || status === "connecting"
+                        : status === "thinking" ||
+                            status === "connecting" ||
+                            status === "transcribing"
                           ? "bg-gold-400 animate-gem-breathe"
                           : status === "error"
                             ? "bg-terracotta-700"
@@ -712,8 +772,7 @@ export default function Gemininio() {
                     webSearchEnabled={webSearchEnabled}
                     onToggleWebSearch={toggleWebSearch}
                     onSend={sendText}
-                    onMicDown={startMic}
-                    onMicUp={stopMic}
+                    onMicToggle={toggleRecording}
                   />
                 )}
               </div>
@@ -848,8 +907,7 @@ function ChatView({
   webSearchEnabled,
   onToggleWebSearch,
   onSend,
-  onMicDown,
-  onMicUp
+  onMicToggle
 }: {
   messages: Message[];
   status: ChatStatus;
@@ -861,13 +919,20 @@ function ChatView({
   webSearchEnabled: boolean;
   onToggleWebSearch: () => void;
   onSend: () => void;
-  onMicDown: () => void;
-  onMicUp: () => void;
+  onMicToggle: () => void;
 }) {
   const t = useT();
+  const isRecording = status === "recording";
   const inputBusy =
-    status === "thinking" || status === "connecting" || status === "listening";
+    status === "thinking" ||
+    status === "connecting" ||
+    status === "transcribing" ||
+    status === "recording";
   const sendDisabled = !text.trim() || inputBusy;
+  const micDisabled =
+    status === "thinking" ||
+    status === "transcribing" ||
+    status === "connecting";
 
   return (
     <div className="flex flex-1 min-h-0 flex-col">
@@ -944,17 +1009,14 @@ function ChatView({
           </button>
           <button
             type="button"
-            onPointerDown={onMicDown}
-            onPointerUp={onMicUp}
-            onPointerCancel={onMicUp}
-            onPointerLeave={status === "listening" ? onMicUp : undefined}
-            aria-label={
-              status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")
-            }
-            title={status === "listening" ? t("gem_mic_release") : t("gem_mic_hold")}
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none ${
-              status === "listening"
-                ? "bg-terracotta-500 text-cream-50 scale-110 shadow-lg shadow-terracotta-700/30"
+            onClick={onMicToggle}
+            disabled={micDisabled}
+            aria-label={isRecording ? t("gem_mic_stop") : t("gem_mic_start")}
+            aria-pressed={isRecording}
+            title={isRecording ? t("gem_mic_stop") : t("gem_mic_start")}
+            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition select-none disabled:opacity-40 disabled:cursor-not-allowed ${
+              isRecording
+                ? "bg-terracotta-500 text-cream-50 animate-gem-breathe shadow-lg shadow-terracotta-700/30"
                 : "bg-olive-600 text-cream-50 hover:bg-olive-700"
             }`}
           >
@@ -1044,10 +1106,15 @@ function StatusBar({
           label: t("gem_connecting"),
           icon: <Loader2 size={12} className="animate-spin" />
         };
-      case "listening":
+      case "recording":
         return {
-          label: t("gem_listening"),
+          label: t("gem_recording"),
           icon: <Mic size={12} className="text-terracotta-600" />
+        };
+      case "transcribing":
+        return {
+          label: t("gem_transcribing"),
+          icon: <Loader2 size={12} className="animate-spin" />
         };
       case "thinking":
         return {
