@@ -204,6 +204,8 @@ export interface Day {
   dayNumber: number;
   date: string;
   weekday: string;
+  /** Recommended time to leave the base/hotel in the morning (e.g. "08:30", "09:00"). */
+  departureTime?: string;
   region: Region;
   title: string;
   subtitle?: string;

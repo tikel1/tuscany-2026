@@ -99,6 +99,7 @@ export const itinerary: Day[] = [
     dayNumber: 2,
     date: "2026-08-18",
     weekday: "Tuesday",
+    departureTime: "09:30",
     region: "north",
     base: "Larciano",
     title: "Turquoise canyon, Devil's Bridge & forest ropes",
@@ -115,7 +116,7 @@ export const itinerary: Day[] = [
       {
         time: "Lunch",
         title: "Ponte del Diavolo photo stop",
-        description: "Climb the medieval humpback bridge, tell the kids the devil legend, grab a quick lunch in Borgo a Mozzano.",
+        description: "Climb the medieval humpback bridge, tell the kids the devil legend. Pack some snacks for the morning, then grab a quick, early lunch in Borgo a Mozzano with the 3 families.",
         attractionId: "ponte-del-diavolo",
         tag: "culture",
         rideToNext: { duration: "30 min", note: "winding climb to 850 m" }
@@ -203,6 +204,7 @@ export const itinerary: Day[] = [
     dayNumber: 3,
     date: "2026-08-19",
     weekday: "Wednesday",
+    departureTime: "09:30",
     region: "north",
     base: "Larciano",
     title: "Soft rafting + a quick wave at Pisa",
@@ -210,7 +212,7 @@ export const itinerary: Day[] = [
       {
         time: "Morning",
         title: "Soft Rafting on the Serchio",
-        description: "Family-friendly raft float — wet, splashy, plenty of jump-in stops.",
+        description: "Family-friendly raft float — wet, splashy, plenty of jump-in stops. Pack water and easy snacks for the kids.",
         attractionId: "soft-rafting-serchio",
         tag: "water",
         rideToNext: { duration: "45 min", note: "Garfagnana → Pisa" }
@@ -218,7 +220,7 @@ export const itinerary: Day[] = [
       {
         time: "Afternoon",
         title: "Pisa — Leaning Tower & gelato",
-        description: "Park outside the walls (ZTL!), walk into Piazza dei Miracoli, take the silly photos, eat gelato, leave.",
+        description: "Park outside the walls (ZTL!), walk into Piazza dei Miracoli, take the silly photos. Grab lunch slices or gelato for the kids to keep them going.",
         attractionId: "pisa",
         tag: "culture",
         rideToNext: { duration: "30 min", note: "Pisa → Lucca, mostly motorway" }
@@ -301,6 +303,7 @@ export const itinerary: Day[] = [
     dayNumber: 4,
     date: "2026-08-20",
     weekday: "Thursday",
+    departureTime: "09:30",
     region: "north",
     base: "Larciano",
     title: "Above the clouds — Abetone gondola",
@@ -308,7 +311,7 @@ export const itinerary: Day[] = [
       {
         time: "Morning",
         title: "Drive to Abetone, ride to Monte Gomito",
-        description: "Modern gondola to nearly 1,900 m — cool air, wide views.",
+        description: "Modern gondola to nearly 1,900 m — cool air, wide views. Stop at a supermarket in the morning before the climb to pack a big group picnic.",
         attractionId: "abetone-monte-gomito",
         tag: "view"
       },
@@ -394,6 +397,7 @@ export const itinerary: Day[] = [
     dayNumber: 5,
     date: "2026-08-21",
     weekday: "Friday",
+    departureTime: "10:00",
     region: "transit",
     base: "Larciano → Cortevecchia",
     title: "River walk south, settle into the villa",
@@ -402,18 +406,26 @@ export const itinerary: Day[] = [
       {
         time: "Morning",
         title: "Drive south, stop at Sentierelsa",
-        description: "Wade the turquoise Elsa river to the Diborrato waterfall — closed-toe water shoes mandatory.",
+        description: "Wade the turquoise Elsa river to the Diborrato waterfall — closed-toe water shoes mandatory. Pack the car with snacks to survive the transition.",
         attractionId: "sentierelsa",
         tag: "water",
-        rideToNext: { duration: "2 h 30", note: "Sentierelsa → Cortevecchia, via SS223 + SS74" }
+        rideToNext: { duration: "30 min", note: "Sentierelsa → Siena" }
+      },
+      {
+        time: "Late Lunch",
+        title: "Late lunch & wandering in Siena",
+        description: "Drive 30 minutes to Siena. Have a late lunch, stretch the kids' legs around Piazza del Campo, and stock up at a supermarket for the villa's first morning.",
+        attractionId: "siena",
+        tag: "culture",
+        rideToNext: { duration: "2 h", note: "Siena → Cortevecchia" }
       },
       {
         time: "Late afternoon",
         title: "Arrive at Tenuta Cortevecchia",
-        description: "Settle into the villa, swim in the private pool, decompress."
+        description: "Settle into the villa, unpack, swim in the private pool, decompress."
       }
     ],
-    driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Cortevecchia ≈ 2 h 30 min",
+    driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Siena ≈ 30 min · Siena → Cortevecchia ≈ 2 h",
     restaurants: ["rest-s-trattoria-verdi"],
     drinkOfTheDay: {
       name: "Vernaccia di San Gimignano DOCG",
@@ -483,6 +495,7 @@ export const itinerary: Day[] = [
     dayNumber: 6,
     date: "2026-08-22",
     weekday: "Saturday",
+    departureTime: "09:30",
     region: "south",
     base: "Cortevecchia",
     title: "Captain for a day — boat & snorkel at Argentario",
@@ -490,12 +503,12 @@ export const itinerary: Day[] = [
       {
         time: "Morning",
         title: "Drive to Porto Santo Stefano",
-        description: "Pick up the rental boat. No licence needed for the smaller engines — quick safety briefing and you're off."
+        description: "Pick up the rental boat. No licence needed for the smaller engines. Send one family to grab sandwiches and drinks for the cooler while the other handles the safety briefing."
       },
       {
         time: "Day on the water",
         title: "Cala del Gesso & coves of Argentario",
-        description: "Cruise the peninsula, anchor in glassy coves, snorkel, lunch on board.",
+        description: "Cruise the peninsula, anchor in glassy coves, snorkel, lunch on board. Bring plenty of water and snacks for the kids.",
         attractionId: "porto-santo-stefano",
         tag: "water"
       }
@@ -571,6 +584,7 @@ export const itinerary: Day[] = [
     dayNumber: 7,
     date: "2026-08-23",
     weekday: "Sunday",
+    departureTime: "09:30",
     region: "south",
     base: "Cortevecchia",
     title: "Pure adrenaline — Acqua Village Follonica",
@@ -578,7 +592,7 @@ export const itinerary: Day[] = [
       {
         time: "Morning to evening",
         title: "Acqua Village Follonica",
-        description: "Full day of slides, wave pool, lazy river, Polynesian shows.",
+        description: "Full day of slides, wave pool, lazy river, Polynesian shows. Pack lunch in a cooler to save money and avoid lines at the park.",
         attractionId: "acqua-village-follonica",
         tag: "extreme"
       }
@@ -654,22 +668,23 @@ export const itinerary: Day[] = [
     dayNumber: 8,
     date: "2026-08-24",
     weekday: "Monday",
+    departureTime: "09:30",
     region: "south",
     base: "Cortevecchia",
     title: "Maremma horses & the Etruscan rock maze",
     activities: [
       {
-        time: "Early morning",
+        time: "Morning",
         title: "Horseback ride in the Maremma",
-        description: "1-hour family pony / horse trail through pine forest and dunes. Cool morning slot.",
+        description: "1-hour family pony / horse trail through pine forest and dunes. Feed the kids a solid breakfast at the villa before heading out.",
         attractionId: "maremma-horseback",
         tag: "nature",
         rideToNext: { duration: "1 h", note: "Maremma coast → Pitigliano hills" }
       },
       {
-        time: "Afternoon",
+        time: "Lunch",
         title: "Pitigliano + Via Cava di San Giuseppe",
-        description: "Photograph Pitigliano from the viewpoint, walk the old Jewish quarter, then dive into the cool Etruscan rock corridors.",
+        description: "Photograph Pitigliano from the viewpoint, walk the old Jewish quarter. Sit down for a proper lunch in town with the 3 families, then dive into the cool Etruscan rock corridors.",
         attractionId: "pitigliano",
         tag: "culture",
         rideToNext: { duration: "20 min", note: "Pitigliano → Vitozza, scenic tufa road" }
@@ -751,6 +766,7 @@ export const itinerary: Day[] = [
     dayNumber: 9,
     date: "2026-08-25",
     weekday: "Tuesday",
+    departureTime: "06:45",
     region: "south",
     base: "Cortevecchia",
     title: "Hot springs at dawn, lake swim, the floating city",
@@ -759,7 +775,7 @@ export const itinerary: Day[] = [
       {
         time: "07:30 (critical)",
         title: "Saturnia — Cascate del Mulino",
-        description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
+        description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone. Pack a quick breakfast to eat later.",
         attractionId: "saturnia",
         tag: "water",
         rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes" }
@@ -767,7 +783,7 @@ export const itinerary: Day[] = [
       {
         time: "Midday",
         title: "Swim in Lago di Bolsena",
-        description: "Cool, clean volcanic lake — gentler than the August coast.",
+        description: "Cool, clean volcanic lake — gentler than the August coast. Eat your packed breakfast or grab an early lunch by the water.",
         attractionId: "lago-di-bolsena",
         tag: "water",
         rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio" }
@@ -854,6 +870,7 @@ export const itinerary: Day[] = [
     dayNumber: 10,
     date: "2026-08-26",
     weekday: "Wednesday",
+    departureTime: "03:30",
     region: "transit",
     base: "Fiumicino",
     title: "Fly home",
@@ -868,7 +885,7 @@ export const itinerary: Day[] = [
       {
         time: "03:30",
         title: "At FCO check-in",
-        description: "Bag-drop opens 2 hours before departure. Aim to be in line by 03:30 — even at 5am, FCO has queues."
+        description: "Bag-drop opens 2 hours before departure. Aim to be in line by 03:30 — even at 5am, FCO has queues. Grab a coffee and pastries near the gate."
       },
       {
         time: "05:00",

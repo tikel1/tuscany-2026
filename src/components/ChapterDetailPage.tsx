@@ -23,7 +23,8 @@ import {
   Beer,
   Martini,
   Coffee,
-  GlassWater
+  GlassWater,
+  Clock
 } from "lucide-react";
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
@@ -560,6 +561,14 @@ function ChapterDetailContent({ day }: { day: Day }) {
                 <span>{localizeWeekday(day.weekday, lang)}</span>
                 <span aria-hidden>·</span>
                 <span>{localizeShortDate(day.date, lang)}</span>
+                {day.departureTime && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span className="inline-flex items-center gap-1 normal-case tracking-normal text-cream-50/85">
+                      <Clock size={11} className="opacity-70" /> {lang === "he" ? `מומלץ לצאת ב־${day.departureTime}` : `Suggested depart: ${day.departureTime}`}
+                    </span>
+                  </>
+                )}
                 <span aria-hidden>·</span>
                 <span>{t(REGION_KEY[day.region])}</span>
                 {localDay.base && (

@@ -6,7 +6,8 @@ import {
   ChevronDown,
   ExternalLink,
   Plus,
-  X
+  X,
+  Clock
 } from "lucide-react";
 import { createElement, useState } from "react";
 import type { Day, ImageCredit, POI } from "../data/types";
@@ -16,6 +17,7 @@ import { formatDate } from "../lib/nav";
 import NavigateLinks from "./NavigateLinks";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
+import { useLang } from "../lib/i18n";
 import PoiImage from "./PoiImage";
 import PhotoCredit from "./PhotoCredit";
 
@@ -80,6 +82,7 @@ function resolveLead(day: Day): ResolvedLead {
 }
 
 export default function DayCard({ day }: { day: Day }) {
+  const { lang } = useLang();
   const { focusOn } = useMapFocus();
   const tripState = getTripState();
   const isToday =
@@ -157,6 +160,14 @@ export default function DayCard({ day }: { day: Day }) {
             <span>{day.weekday}</span>
             <span aria-hidden>·</span>
             <span>{formatDate(day.date)}</span>
+            {day.departureTime && (
+              <>
+                <span aria-hidden className="hidden sm:inline">·</span>
+                <span className="hidden sm:inline-flex items-center gap-1 normal-case tracking-normal text-cream-50/85">
+                  <Clock size={11} className="opacity-70" /> {lang === "he" ? `מומלץ לצאת ב־${day.departureTime}` : `Suggested depart: ${day.departureTime}`}
+                </span>
+              </>
+            )}
             <span aria-hidden className="hidden sm:inline">·</span>
             <span className="hidden sm:inline">{regionLabel[day.region]}</span>
             {day.base && (
