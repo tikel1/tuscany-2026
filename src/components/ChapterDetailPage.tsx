@@ -476,7 +476,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
       <article>
         {/* Hero — crossfading carousel of every photo from the day */}
         <header
-          className="relative aspect-[16/10] sm:aspect-[21/9] max-h-[70vh] overflow-hidden bg-ink-900"
+          className="relative w-full aspect-[16/10] sm:aspect-[21/9] max-h-[70vh] overflow-hidden bg-ink-900"
           style={heroSwipeTouchAction ? { touchAction: heroSwipeTouchAction } : undefined}
           {...heroSwipeHandlers}
         >
