@@ -9,10 +9,11 @@ import {
   Trash2,
   ExternalLink,
   Loader2,
-  MessageCircle,
-  MessageSquarePlus,
+  SquarePen,
+  Menu,
   Volume2,
-  VolumeX
+  VolumeX,
+  AudioLines
 } from "lucide-react";
 import { useT } from "../lib/dict";
 import { useLang } from "../lib/i18n";
@@ -826,9 +827,9 @@ export default function Gemininio() {
                     audioEnabled
                       ? "bg-terracotta-500/15 text-terracotta-700 hover:bg-terracotta-500/25"
                       : "text-ink-700/70 hover:bg-cream-200"
-                  }`}
+                  } ${status === "speaking" ? "animate-pulse" : ""}`}
                 >
-                  {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                  {audioEnabled ? (status === "speaking" ? <AudioLines size={16} /> : <Volume2 size={16} />) : <VolumeX size={16} />}
                 </button>
                 <button
                   onClick={startNewChat}
@@ -836,7 +837,7 @@ export default function Gemininio() {
                   title={lang === "he" ? "שיחה חדשה" : "New Chat"}
                   className="p-2 rounded-full hover:bg-cream-200 transition"
                 >
-                  <MessageSquarePlus size={16} />
+                  <SquarePen size={16} />
                 </button>
                 <button
                   onClick={() => {
@@ -848,7 +849,7 @@ export default function Gemininio() {
                   title={lang === "he" ? "כל השיחות" : "All conversations"}
                   className={`p-2 rounded-full transition ${showHistory ? "bg-cream-200" : "hover:bg-cream-200"}`}
                 >
-                  <MessageCircle size={16} />
+                  <Menu size={16} />
                 </button>
                 <button
                   onClick={close}
@@ -951,7 +952,7 @@ function SetupView({
     <div className="px-5 py-5 overflow-y-auto overscroll-contain flex-1 flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="shrink-0 w-9 h-9 rounded-full bg-cream-200 text-ink-700 flex items-center justify-center">
-          <MessageCircle size={16} />
+          <Sparkles size={16} />
         </div>
         <div className="flex-1">
           <div className="font-serif text-lg text-ink-900">{t("gem_setup_title")}</div>
