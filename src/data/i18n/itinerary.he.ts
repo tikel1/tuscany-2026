@@ -7,7 +7,7 @@ interface DayHEActivity {
   /** Translatable bits of the inter-activity drive connector. The duration
    *  text ("45 min" → "45 דק׳") and the helper note both get overridden
    *  per-language. */
-  rideToNext?: { duration?: string; note?: string };
+  rideToNext?: { duration?: string; note?: string; departAt?: string };
 }
 
 /** Translatable parts of the per-day end-of-day drink card. The drink's
@@ -25,7 +25,7 @@ type WordOfTheDayHE = Partial<
 
 export interface DayHE
   extends Partial<
-    Pick<Day, "title" | "subtitle" | "base" | "driveNotes" | "dayTips" | "departureTime">
+    Pick<Day, "title" | "subtitle" | "base" | "driveNotes" | "dayTips" | "departureTime" | "rideToFirst">
   > {
   /** Translated activities, in the same order as the English data. */
   activities?: DayHEActivity[];
@@ -117,6 +117,7 @@ export const itineraryHE: Record<number, DayHE> = {
   2: {
     title: "קניון טורקיז, גשר השטן ומסלולי חבלים ביער",
     departureTime: "09:30",
+    rideToFirst: { duration: "1 שעה", note: "לרצ׳אנו → באני די לוקה" },
     base: "לרצ'יאנו",
     activities: [
       {
@@ -124,13 +125,13 @@ export const itineraryHE: Record<number, DayHE> = {
         title: "קניון פארק",
         description:
           "חתירה משפחתית בסאפ עומד בנקיק על נהר הלימה — לוודא הזמנה לפני ההגעה. מסלולי קניון/אוויר בכרטיס נפרד ולרוב לילד גבוה יותר; לבדוק את שם הפעילות במייל האישור.",
-        rideToNext: { duration: "10 דק׳", note: "באני די לוקה → בורגו א מוצאנו" }
+        rideToNext: { duration: "10 דק׳", note: "באני די לוקה → בורגו א מוצאנו", departAt: "13:00" }
       },
       {
         time: "צהריים",
         title: "עצירת צילום בפונטה דל דיאבולו",
         description:
-          "טיפוס על גשר מימי הביניים, מספרים לילדים את אגדת השטן. לארוז נשנושים לבוקר, ואז לאכול צהריים מוקדמים יחד בבורגו א מוצאנו עם 3 המשפחות.",
+          "טיפוס על גשר מימי הביניים, מספרים לילדים את אגדת השטן. לאכול צהריים מוקדמים יחד בבורגו א מוצאנו עם 3 המשפחות.",
         rideToNext: { duration: "30 דק׳", note: "טיפוס מתפתל ל־850 מ׳" }
       },
       {
@@ -196,6 +197,7 @@ export const itineraryHE: Record<number, DayHE> = {
   3: {
     title: "סופט ראפטינג + עצירה קצרה בפיזה",
     departureTime: "09:30",
+    rideToFirst: { duration: "1 שעה 10 דק׳", note: "לרצ׳אנו → גרפניאנה" },
     base: "לרצ'יאנו",
     activities: [
       {
@@ -273,6 +275,7 @@ export const itineraryHE: Record<number, DayHE> = {
   4: {
     title: "מעל העננים — רכבל אבטונה",
     departureTime: "09:30",
+    rideToFirst: { duration: "1 שעה", note: "לרצ׳אנו → אבטונה" },
     base: "לרצ'יאנו",
     activities: [
       {
@@ -349,6 +352,7 @@ export const itineraryHE: Record<number, DayHE> = {
     title: "טיול נחל דרומה, מתמקמים בווילה",
     subtitle: "יום מעבר — טיול הנחל בסנטיירלסה בדרך",
     departureTime: "10:00",
+    rideToFirst: { duration: "1 שעה 15 דק׳", note: "לרצ׳אנו → סנטיירלזה" },
     base: "לרצ'יאנו → קורטווקיה",
     activities: [
       {
@@ -426,6 +430,7 @@ export const itineraryHE: Record<number, DayHE> = {
   6: {
     title: "קברניטים ליום — סירה ושנורקלינג בארג'נטריו",
     departureTime: "09:30",
+    rideToFirst: { duration: "1 שעה 15 דק׳", note: "קורטווקיה → פורטו סנטו סטפנו" },
     base: "קורטווקיה",
     activities: [
       {
@@ -497,6 +502,7 @@ export const itineraryHE: Record<number, DayHE> = {
   7: {
     title: "אדרנלין טהור — אקווה וילג׳ פולוניקה",
     departureTime: "09:00",
+    rideToFirst: { duration: "1 שעה 20 דק׳", note: "קורטווקיה → פולוניקה" },
     base: "קורטווקיה",
     activities: [
       {
@@ -561,6 +567,7 @@ export const itineraryHE: Record<number, DayHE> = {
   8: {
     title: "סוסי המרמה ומבוך הסלעים האטרוסקי",
     departureTime: "08:30",
+    rideToFirst: { duration: "40 דק׳", note: "קורטווקיה → מרינה די אלברזה" },
     base: "קורטווקיה",
     activities: [
       {
@@ -639,6 +646,7 @@ export const itineraryHE: Record<number, DayHE> = {
     title: "מעיינות חמים בזריחה, שחייה באגם, העיר הצפה",
     subtitle: "סיבוב מלא במרמה הדרומית",
     departureTime: "06:45",
+    rideToFirst: { duration: "1 שעה 10 דק׳", note: "קורטווקיה → סטורניה" },
     base: "קורטווקיה",
     activities: [
       {
@@ -715,6 +723,7 @@ export const itineraryHE: Record<number, DayHE> = {
   10: {
     title: "טסים הביתה",
     departureTime: "03:30",
+    rideToFirst: { duration: "1 שעה 40 דק׳", note: "קורטווקיה → פיומיצ׳ינו" },
     base: "פיומיצ'ינו",
     activities: [
       {

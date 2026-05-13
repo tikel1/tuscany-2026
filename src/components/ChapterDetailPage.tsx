@@ -628,19 +628,15 @@ function ChapterDetailContent({ day }: { day: Day }) {
           <section>
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
             <ol className="mt-6 sm:mt-8 space-y-5 sm:space-y-8">
-              {[
-                ...(localDay.departureTime
-                  ? [
-                      {
-                        time: localDay.departureTime,
-                        title: lang === "he" ? "יציאה מומלצת" : "Suggested departure",
-                        description: lang === "he" ? "מתחילים את המסלול היומי ויוצאים לדרך." : "Time to hit the road."
-                      } as DayActivity
-                    ]
-                  : []),
-                ...localDay.activities
-              ].map((a, i, arr) => (
+              {localDay.activities.map((a, i, arr) => (
                 <Fragment key={i}>
+                  {i === 0 && localDay.rideToFirst && localDay.departureTime && (
+                    <RideConnector 
+                      departAt={localDay.departureTime}
+                      duration={localDay.rideToFirst.duration}
+                      note={localDay.rideToFirst.note}
+                    />
+                  )}
                   <ActivityRow
                     activity={a}
                     index={i}
@@ -651,7 +647,11 @@ function ChapterDetailContent({ day }: { day: Day }) {
                       has a meaningful drive to the next one. Slips into
                       the ordered list between two activity rows. */}
                   {a.rideToNext && i < arr.length - 1 && (
-                    <RideConnector ride={a.rideToNext} />
+                    <RideConnector 
+                      duration={a.rideToNext.duration ?? ""}
+                      note={a.rideToNext.note}
+                      departAt={a.rideToNext.departAt}
+                    />
                   )}
                 </Fragment>
               ))}
@@ -1124,7 +1124,15 @@ function ActivityRow({
  * activity rows. Visually it sits in the timeline column (left, where
  * the activity icons live) and threads a soft dashed line into the next
  * row, so the eye reads it as a connector rather than a separate item. */
-function RideConnector({ ride }: { ride: NonNullable<DayActivity["rideToNext"]> }) {
+function RideConnector({ 
+  duration, 
+  note, 
+  departAt 
+}: { 
+  duration?: string; 
+  note?: string; 
+  departAt?: string;
+}) {
   const t = useT();
   return (
     <li
@@ -1142,14 +1150,16 @@ function RideConnector({ ride }: { ride: NonNullable<DayActivity["rideToNext"]> 
       <div className="min-w-0 ps-1 pt-0.5">
         <div className="inline-flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
           <span className="text-[10px] uppercase tracking-[0.22em] text-olive-700/85 font-medium">
-            {t("ride_to_next")}
+            {departAt ? `${t("depart_at")} ${departAt} ${duration ? "· " + t("ride_to_next") : ""}` : t("ride_to_next")}
           </span>
-          <span className="font-serif text-[14px] sm:text-[15px] text-ink-900">
-            {ride.duration}
-          </span>
-          {ride.note && (
+          {duration && (
+            <span className="font-serif text-[14px] sm:text-[15px] text-ink-900">
+              {duration}
+            </span>
+          )}
+          {note && (
             <span className="text-[12px] sm:text-[13px] text-ink-700/65 italic">
-              · {ride.note}
+              {duration ? "· " : ""}{note}
             </span>
           )}
         </div>
