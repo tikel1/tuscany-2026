@@ -476,7 +476,11 @@ export default function Gemininio() {
       return;
     }
 
-    if (priorForApi.length === 0) {
+    const activeId = loadActiveConversationId();
+    const currentConv = conversations.find(c => c.id === activeId);
+    const needsTitle = !currentConv || currentConv.title === "New Chat" || currentConv.title === "שיחה חדשה" || currentConv.title === "Original Chat";
+
+    if (needsTitle) {
       generateChatTitle(apiKey, trimmed, lang).then(title => {
         setConversations(convs => {
           let updated = false;
