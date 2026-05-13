@@ -464,7 +464,7 @@ export const DICT = {
 
   /* ---------- Ride times (inline connector between activities) ---------- */
   ride_to_next: { en: "Drive", he: "נסיעה" },
-  depart_at: { en: "Suggested departure", he: "יציאה מומלצת" },
+  depart_at: { en: "Departure", he: "יציאה" },
 
   /* ---------- Restaurants for the day ---------- */
   restaurants_eyebrow: { en: "Where to eat", he: "איפה לאכול" },

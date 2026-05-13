@@ -21,7 +21,7 @@ export const itinerary: Day[] = [
         time: "14:00",
         title: "Land at Rome Fiumicino (FCO)",
         description: "Pick up the rental car. International driving permit required. Confirm a credit card on the driver's name.",
-        rideToNext: { duration: "3 h 30", note: "via A1 + A11 · ≈ 280 km" }
+        rideToNext: { duration: "3 h 30", note: "via A1 + A11 · ≈ 280 km", departAt: "15:30" }
       },
       {
         time: "Evening",
@@ -120,7 +120,7 @@ export const itinerary: Day[] = [
         description: "Climb the medieval humpback bridge, tell the kids the devil legend. Grab a quick, early lunch in Borgo a Mozzano with the 3 families.",
         attractionId: "ponte-del-diavolo",
         tag: "culture",
-        rideToNext: { duration: "30 min", note: "winding climb to 850 m" }
+        rideToNext: { duration: "30 min", note: "winding climb to 850 m", departAt: "14:30" }
       },
       {
         time: "Afternoon",
@@ -217,7 +217,7 @@ export const itinerary: Day[] = [
         description: "Family-friendly raft float — wet, splashy, plenty of jump-in stops.",
         attractionId: "soft-rafting-serchio",
         tag: "water",
-        rideToNext: { duration: "45 min", note: "Garfagnana → Pisa" }
+        rideToNext: { duration: "45 min", note: "Garfagnana → Pisa", departAt: "13:00" }
       },
       {
         time: "Afternoon",
@@ -225,7 +225,7 @@ export const itinerary: Day[] = [
         description: "Park outside the walls (ZTL!), walk into Piazza dei Miracoli, take the silly photos.",
         attractionId: "pisa",
         tag: "culture",
-        rideToNext: { duration: "30 min", note: "Pisa → Lucca, mostly motorway" }
+        rideToNext: { duration: "30 min", note: "Pisa → Lucca, mostly motorway", departAt: "16:00" }
       },
       {
         time: "Late afternoon",
@@ -327,7 +327,7 @@ export const itinerary: Day[] = [
         time: "Afternoon",
         title: "Pine forest picnic, then home to pack",
         description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south.",
-        rideToNext: { duration: "1 h", note: "Abetone → Larciano, the long descent" }
+        rideToNext: { duration: "1 h", note: "Abetone → Larciano, the long descent", departAt: "16:00" }
       }
     ],
     driveNotes: "Larciano ↔ Abetone ≈ 1 h",
@@ -686,7 +686,7 @@ export const itinerary: Day[] = [
         description: "1-hour family pony / horse trail through pine forest and dunes.",
         attractionId: "maremma-horseback",
         tag: "nature",
-        rideToNext: { duration: "1 h", note: "Maremma coast → Pitigliano hills" }
+        rideToNext: { duration: "1 h", note: "Maremma coast → Pitigliano hills", departAt: "11:30" }
       },
       {
         time: "Lunch",
@@ -694,7 +694,7 @@ export const itinerary: Day[] = [
         description: "Photograph Pitigliano from the viewpoint, walk the old Jewish quarter. Then dive into the cool Etruscan rock corridors.",
         attractionId: "pitigliano",
         tag: "culture",
-        rideToNext: { duration: "20 min", note: "Pitigliano → Vitozza, scenic tufa road" }
+        rideToNext: { duration: "20 min", note: "Pitigliano → Vitozza, scenic tufa road", departAt: "16:00" }
       },
       {
         time: "Late afternoon",
@@ -786,7 +786,7 @@ export const itinerary: Day[] = [
         description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
         attractionId: "saturnia",
         tag: "water",
-        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes" }
+        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes", departAt: "11:00" }
       },
       {
         time: "Midday",
@@ -794,7 +794,7 @@ export const itinerary: Day[] = [
         description: "Cool, clean volcanic lake — gentler than the August coast.",
         attractionId: "lago-di-bolsena",
         tag: "water",
-        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio" }
+        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio", departAt: "15:00" }
       },
       {
         time: "Afternoon",

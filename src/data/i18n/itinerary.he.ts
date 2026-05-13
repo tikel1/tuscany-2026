@@ -132,7 +132,7 @@ export const itineraryHE: Record<number, DayHE> = {
         title: "עצירת צילום בפונטה דל דיאבולו",
         description:
           "טיפוס על גשר מימי הביניים, מספרים לילדים את אגדת השטן. לאכול צהריים מוקדמים יחד בבורגו א מוצאנו עם 3 המשפחות.",
-        rideToNext: { duration: "30 דק׳", note: "טיפוס מתפתל ל־850 מ׳" }
+        rideToNext: { duration: "30 דק׳", note: "טיפוס מתפתל ל־850 מ׳", departAt: "14:30" }
       },
       {
         time: "אחה״צ",
@@ -211,7 +211,7 @@ export const itineraryHE: Record<number, DayHE> = {
         title: "פיזה — המגדל הנטוי וגלידה",
         description:
           "חונים מחוץ לחומות (ZTL!), הולכים לפיאצה דיי מירקולי, מצלמים את תמונות החובה המטופשות. לחטוף משולשי פיצה או גלידה כדי לשמור על האנרגיה של הילדים.",
-        rideToNext: { duration: "30 דק׳", note: "פיזה → לוקה, רובו אוטוסטרדה" }
+        rideToNext: { duration: "30 דק׳", note: "פיזה → לוקה, רובו אוטוסטרדה", departAt: "16:00" }
       },
       {
         time: "אחה״צ מאוחר",
