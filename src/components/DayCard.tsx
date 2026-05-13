@@ -91,8 +91,19 @@ export default function DayCard({ day }: { day: Day }) {
   const lead = resolveLead(day);
 
   const [showAll, setShowAll] = useState(false);
-  const previewActivities = day.activities.slice(0, 2);
-  const restActivities = day.activities.slice(2);
+  const timelineActivities = day.departureTime
+    ? [
+        {
+          time: day.departureTime,
+          title: lang === "he" ? "יציאה מומלצת" : "Suggested departure",
+          description: lang === "he" ? "מתחילים את המסלול היומי ויוצאים לדרך." : "Time to hit the road."
+        } as Day["activities"][number],
+        ...day.activities
+      ]
+    : day.activities;
+
+  const previewActivities = timelineActivities.slice(0, 2);
+  const restActivities = timelineActivities.slice(2);
   const hasMore = restActivities.length > 0;
 
   const accentText =

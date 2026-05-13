@@ -628,7 +628,18 @@ function ChapterDetailContent({ day }: { day: Day }) {
           <section>
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
             <ol className="mt-6 sm:mt-8 space-y-5 sm:space-y-8">
-              {localDay.activities.map((a, i) => (
+              {[
+                ...(localDay.departureTime
+                  ? [
+                      {
+                        time: localDay.departureTime,
+                        title: lang === "he" ? "יציאה מומלצת" : "Suggested departure",
+                        description: lang === "he" ? "מתחילים את המסלול היומי ויוצאים לדרך." : "Time to hit the road."
+                      } as DayActivity
+                    ]
+                  : []),
+                ...localDay.activities
+              ].map((a, i, arr) => (
                 <Fragment key={i}>
                   <ActivityRow
                     activity={a}
@@ -639,7 +650,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
                   {/* Inline ride connector — rendered only when this stop
                       has a meaningful drive to the next one. Slips into
                       the ordered list between two activity rows. */}
-                  {a.rideToNext && i < localDay.activities.length - 1 && (
+                  {a.rideToNext && i < arr.length - 1 && (
                     <RideConnector ride={a.rideToNext} />
                   )}
                 </Fragment>
