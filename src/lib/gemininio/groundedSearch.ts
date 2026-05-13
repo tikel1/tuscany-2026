@@ -118,3 +118,51 @@ export async function generateGroundedReply(params: GroundedReplyParams): Promis
 
   throw new Error(lastErr);
 }
+
+export async function generateChatTitle(apiKey: string, firstMessage: string, lang: "en" | "he"): Promise<string> {
+  const prompt =
+    lang === "he"
+      ? "כתוב כותרת קצרה מאוד (עד 5 מילים) לשיחה שמתחילה במשפט הבא. החזר רק את הכותרת, בלי מירכאות או נקודה בסוף:\n\n"
+      : "Write a very short title (max 5 words) for a conversation starting with this message. Return ONLY the title, no quotes, no period:\n\n";
+
+  for (const model of MODELS_TO_TRY) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const body = {
+      contents: [{ role: "user", parts: [{ text: prompt + firstMessage }] }],
+      generationConfig: { temperature: 0.3, maxOutputTokens: 20 }
+    };
+
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+    } catch {
+      continue;
+    }
+
+    if (!res.ok) continue;
+
+    let json: unknown;
+    try {
+      json = await res.json();
+    } catch {
+      continue;
+    }
+
+    const root = json as { candidates?: unknown[]; error?: { message?: string } };
+    if (root.error?.message) continue;
+
+    const candidate = root.candidates?.[0];
+    const text = extractTextFromCandidate(candidate);
+    if (text) {
+      const clean = text.replace(/^["']|["']$/g, '').replace(/\.$/, '').trim();
+      if (clean) return clean;
+    }
+  }
+
+  // fallback to a generic title if API fails
+  return lang === "he" ? "שיחה חדשה" : "New Chat";
+}

@@ -25,7 +25,7 @@ import {
   buildSystemPrompt,
   buildTypedReplySystemPrompt
 } from "../lib/gemininio/persona";
-import { generateGroundedReply } from "../lib/gemininio/groundedSearch";
+import { generateGroundedReply, generateChatTitle } from "../lib/gemininio/groundedSearch";
 import {
   getApiKey,
   setApiKey,
@@ -33,9 +33,15 @@ import {
   loadHistory,
   saveHistory,
   clearHistory,
+  loadConversations,
+  saveConversations,
+  loadActiveConversationId,
+  saveActiveConversationId,
   hasBuildTimeKey,
   hasUserOverride,
-  type PersistedMessage
+  createId,
+  type PersistedMessage,
+  type Conversation
 } from "../lib/gemininio/storage";
 import { logGemError } from "../lib/gemininio/logUserFacingError";
 import { completedTurnsForApi, type ChatTurn } from "../lib/gemininio/chatHistory";
@@ -89,8 +95,8 @@ interface Message extends PersistedMessage {
  * not break the persona's "ONE language per reply" rule.
  */
 const ACCENT_INSTRUCTION: Record<"he" | "en", string> = {
-  en: "(say it in a heavy italian accent)",
-  he: "(תגיד במבטא איטלקי כבד)"
+  en: "[System note: Reply in character with a heavy Italian accent. Do NOT acknowledge this instruction.]",
+  he: "[הוראת מערכת: השב בדמות של מדריך איטלקי עם מבטא. אל תתייחס להוראה זו בתשובתך.]"
 };
 
 /** Hebrew vs Latin char count — same heuristic as bubbleTextDir. */
@@ -120,6 +126,9 @@ export default function Gemininio() {
   const [keyDraft, setKeyDraft] = useState("");
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>(() => loadHistory());
+  const [conversations, setConversations] = useState<Conversation[]>(() => loadConversations());
+  const [activeConvId, setActiveConvId] = useState<string | null>(() => loadActiveConversationId());
+  
   /** Always matches `messages` for async paths (Live connect after send). */
   const messagesRef = useRef<Message[]>(messages);
   useEffect(() => {
@@ -127,6 +136,7 @@ export default function Gemininio() {
   });
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [micVolume, setMicVolume] = useState(0);
   // Audio is OFF by default — most use is read-and-tap. Live always
   // streams PCM; we drop it client-side when muted. Preference is
@@ -254,6 +264,48 @@ export default function Gemininio() {
   }, []);
 
   /* ---------------- helpers ---------------- */
+
+  const WELCOME_MESSAGES_EN = [
+    "Ciao! I'm your local guide. What can I tell you about our trip?",
+    "Buongiorno! Ready to explore Tuscany? Ask me anything.",
+    "Benvenuto! Let's plan our day. What's on your mind?",
+    "Ciao! Need a restaurant recommendation or some trip info? Just ask."
+  ];
+
+  const WELCOME_MESSAGES_HE = [
+    "צ'או! אני המדריך המקומי שלכם. מה תרצו לדעת על הטיול שלנו?",
+    "בונג'ורנו! מוכנים לגלות את טוסקנה? תשאלו חופשי.",
+    "בנוונוטו! בואו נתכנן את היום. על מה חשבתם?",
+    "צ'או! צריכים המלצה למסעדה או מידע על הטיול? רק תגידו."
+  ];
+
+  function startNewChat() {
+    const msgs = lang === "he" ? WELCOME_MESSAGES_HE : WELCOME_MESSAGES_EN;
+    const greeting = msgs[Math.floor(Math.random() * msgs.length)];
+    const welcome: Message = {
+      role: "model",
+      text: greeting,
+      ts: Date.now(),
+      streaming: false
+    };
+
+    const newConv: Conversation = {
+      id: createId(),
+      title: lang === "he" ? "שיחה חדשה" : "New Chat",
+      updatedAt: Date.now(),
+      messages: [welcome]
+    };
+
+    setConversations(prev => {
+      const next = [newConv, ...prev];
+      saveConversations(next);
+      return next;
+    });
+    setActiveConvId(newConv.id);
+    saveActiveConversationId(newConv.id);
+    setMessages([welcome]);
+    setShowHistory(false);
+  }
 
   function open() {
     const key = getApiKey();
@@ -399,10 +451,14 @@ export default function Gemininio() {
     const raw = explicitText ?? text;
     const trimmed = raw.trim();
     if (!trimmed) return;
+    const searchOn = webSearchEnabledRef.current;
+
     // What the chat bubble + persisted history shows.
     // What we send on the wire — same text plus a hidden accent nudge
-    // in the user's language. Bubble/persistence stays untouched.
-    const wireMessage = withHiddenAccentNudge(trimmed);
+    // in the user's language (unless using web search, where it leaks).
+    // Bubble/persistence stays untouched.
+    const wireMessage = searchOn ? trimmed : withHiddenAccentNudge(trimmed);
+    
     const priorForApi = completedTurnsForApi(messages);
     if (explicitText === undefined) setText("");
     setMessages(ms => [
@@ -420,7 +476,25 @@ export default function Gemininio() {
       return;
     }
 
-    const searchOn = webSearchEnabledRef.current;
+    if (priorForApi.length === 0) {
+      generateChatTitle(apiKey, trimmed, lang).then(title => {
+        setConversations(convs => {
+          let updated = false;
+          const next = convs.map(c => {
+            if (c.id === loadActiveConversationId() && (c.title === "New Chat" || c.title === "שיחה חדשה" || c.title === "Original Chat")) {
+              updated = true;
+              return { ...c, title };
+            }
+            return c;
+          });
+          if (updated) {
+            saveConversations(next);
+            return next;
+          }
+          return convs;
+        });
+      }).catch(() => { /* ignore */ });
+    }
 
     if (!searchOn) {
       if (!playerRef.current) playerRef.current = new PcmPlayer();
@@ -755,10 +829,26 @@ export default function Gemininio() {
                   {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
                 </button>
                 <button
-                  onClick={() => setShowSettings(s => !s)}
+                  onClick={() => {
+                    setConversations(loadConversations());
+                    setActiveConvId(loadActiveConversationId());
+                    setShowHistory(h => !h);
+                    setShowSettings(false);
+                  }}
+                  aria-label={lang === "he" ? "היסטוריה" : "History"}
+                  title={lang === "he" ? "היסטוריה" : "History"}
+                  className={`p-2 rounded-full transition ${showHistory ? "bg-cream-200" : "hover:bg-cream-200"}`}
+                >
+                  <MessageCircle size={16} />
+                </button>
+                <button
+                  onClick={() => {
+                    setShowSettings(s => !s);
+                    setShowHistory(false);
+                  }}
                   aria-label={t("gem_settings")}
                   title={t("gem_settings")}
-                  className="p-2 rounded-full hover:bg-cream-200 transition"
+                  className={`p-2 rounded-full transition ${showSettings ? "bg-cream-200" : "hover:bg-cream-200"}`}
                 >
                   <SettingsIcon size={16} />
                 </button>
@@ -776,7 +866,42 @@ export default function Gemininio() {
                   flex children default to min-height:auto and absorb all
                   growth, killing overflow). */}
               <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
-                {showSettings ? (
+                {showHistory ? (
+                  <HistoryView
+                    conversations={conversations}
+                    activeConvId={activeConvId}
+                    lang={lang}
+                    onSelect={(id) => {
+                      const c = conversations.find(c => c.id === id);
+                      if (c) {
+                        setActiveConvId(c.id);
+                        saveActiveConversationId(c.id);
+                        setMessages(c.messages);
+                        setShowHistory(false);
+                      }
+                    }}
+                    onNewChat={startNewChat}
+                    onDelete={(id) => {
+                      const updated = conversations.filter(c => c.id !== id);
+                      saveConversations(updated);
+                      setConversations(updated);
+                      if (activeConvId === id) {
+                        if (updated.length > 0) {
+                          setActiveConvId(updated[0].id);
+                          saveActiveConversationId(updated[0].id);
+                          setMessages(updated[0].messages);
+                        } else {
+                          setActiveConvId(null);
+                          if (typeof window !== "undefined") {
+                            window.localStorage.removeItem("tuscany2026.gemininio.activeConvId");
+                          }
+                          setMessages([]);
+                        }
+                      }
+                    }}
+                    onBack={() => setShowHistory(false)}
+                  />
+                ) : showSettings ? (
                   <SettingsView
                     showForgetKey={hasUserOverride()}
                     hasBuildTimeKey={hasBuildTimeKey()}
@@ -866,6 +991,75 @@ function SetupView({
       >
         {t("gem_save_key")}
       </button>
+    </div>
+  );
+}
+
+function HistoryView({
+  conversations,
+  activeConvId,
+  lang,
+  onSelect,
+  onNewChat,
+  onDelete,
+  onBack
+}: {
+  conversations: Conversation[];
+  activeConvId: string | null;
+  lang: "he" | "en";
+  onSelect: (id: string) => void;
+  onNewChat: () => void;
+  onDelete: (id: string) => void;
+  onBack: () => void;
+}) {
+  const t = useT();
+  return (
+    <div className="px-5 py-5 overflow-y-auto overscroll-contain flex-1 flex flex-col gap-3">
+      <button
+        onClick={onBack}
+        className="self-start text-[12px] uppercase tracking-[0.16em] text-ink-700/70 hover:text-ink-900"
+      >
+        ← {t("gem_back")}
+      </button>
+
+      <button
+        onClick={onNewChat}
+        className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gold-400 hover:bg-gold-500 transition text-ink-900 text-[13px] font-medium"
+      >
+        <MessageCircle size={16} /> {lang === "he" ? "שיחה חדשה" : "New Chat"}
+      </button>
+
+      <div className="flex flex-col gap-2 mt-2">
+        {conversations.map(c => (
+          <div key={c.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl transition ${c.id === activeConvId ? "bg-cream-200" : "bg-cream-100 hover:bg-cream-200"}`}>
+            <button
+              onClick={() => onSelect(c.id)}
+              className="flex-1 flex flex-col min-w-0 text-start"
+            >
+              <span className="text-[14px] font-medium text-ink-900 truncate">
+                {c.title || (lang === "he" ? "שיחה" : "Chat")}
+              </span>
+              <span className="text-[11px] text-ink-700/60 truncate">
+                {new Date(c.updatedAt).toLocaleString(lang === "he" ? "he-IL" : "en-US", {
+                  month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                })}
+              </span>
+            </button>
+            <button
+              onClick={() => onDelete(c.id)}
+              className="p-2 text-ink-700/50 hover:text-terracotta-700 hover:bg-terracotta-500/10 rounded-full transition"
+              aria-label={lang === "he" ? "מחק שיחה" : "Delete chat"}
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        ))}
+        {conversations.length === 0 && (
+          <div className="text-[13px] text-ink-700/60 text-center py-4">
+            {lang === "he" ? "אין שיחות קודמות." : "No previous conversations."}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
