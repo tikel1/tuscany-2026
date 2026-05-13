@@ -6,11 +6,11 @@ import {
   Send,
   Mic,
   Globe,
-  Settings as SettingsIcon,
   Trash2,
   ExternalLink,
   Loader2,
   MessageCircle,
+  MessageSquarePlus,
   Volume2,
   VolumeX
 } from "lucide-react";
@@ -135,7 +135,6 @@ export default function Gemininio() {
     messagesRef.current = messages;
   });
   const [error, setError] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [micVolume, setMicVolume] = useState(0);
   // Audio is OFF by default — most use is read-and-tap. Live always
@@ -319,7 +318,6 @@ export default function Gemininio() {
 
   function close() {
     setStatus("closed");
-    setShowSettings(false);
   }
 
   /** Open or reuse a Live session. We connect lazily on first send so
@@ -689,7 +687,7 @@ export default function Gemininio() {
 
   function handleForgetKey() {
     clearApiKey();
-    setShowSettings(false);
+    setShowHistory(false);
     // Re-evaluate: if a build-time env key still exists, we just
     // fall back to it and keep the chat alive. Otherwise, show
     // the setup screen so the user can paste a new key.
@@ -833,28 +831,24 @@ export default function Gemininio() {
                   {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
                 </button>
                 <button
+                  onClick={startNewChat}
+                  aria-label={lang === "he" ? "שיחה חדשה" : "New Chat"}
+                  title={lang === "he" ? "שיחה חדשה" : "New Chat"}
+                  className="p-2 rounded-full hover:bg-cream-200 transition"
+                >
+                  <MessageSquarePlus size={16} />
+                </button>
+                <button
                   onClick={() => {
                     setConversations(loadConversations());
                     setActiveConvId(loadActiveConversationId());
                     setShowHistory(h => !h);
-                    setShowSettings(false);
                   }}
-                  aria-label={lang === "he" ? "היסטוריה" : "History"}
-                  title={lang === "he" ? "היסטוריה" : "History"}
+                  aria-label={lang === "he" ? "כל השיחות" : "All conversations"}
+                  title={lang === "he" ? "כל השיחות" : "All conversations"}
                   className={`p-2 rounded-full transition ${showHistory ? "bg-cream-200" : "hover:bg-cream-200"}`}
                 >
                   <MessageCircle size={16} />
-                </button>
-                <button
-                  onClick={() => {
-                    setShowSettings(s => !s);
-                    setShowHistory(false);
-                  }}
-                  aria-label={t("gem_settings")}
-                  title={t("gem_settings")}
-                  className={`p-2 rounded-full transition ${showSettings ? "bg-cream-200" : "hover:bg-cream-200"}`}
-                >
-                  <SettingsIcon size={16} />
                 </button>
                 <button
                   onClick={close}
@@ -875,6 +869,8 @@ export default function Gemininio() {
                     conversations={conversations}
                     activeConvId={activeConvId}
                     lang={lang}
+                    showForgetKey={hasUserOverride()}
+                    hasBuildTimeKey={hasBuildTimeKey()}
                     onSelect={(id) => {
                       const c = conversations.find(c => c.id === id);
                       if (c) {
@@ -884,7 +880,6 @@ export default function Gemininio() {
                         setShowHistory(false);
                       }
                     }}
-                    onNewChat={startNewChat}
                     onDelete={(id) => {
                       const updated = conversations.filter(c => c.id !== id);
                       saveConversations(updated);
@@ -903,15 +898,9 @@ export default function Gemininio() {
                         }
                       }
                     }}
-                    onBack={() => setShowHistory(false)}
-                  />
-                ) : showSettings ? (
-                  <SettingsView
-                    showForgetKey={hasUserOverride()}
-                    hasBuildTimeKey={hasBuildTimeKey()}
-                    onForgetKey={handleForgetKey}
                     onClearHistory={handleClearHistory}
-                    onBack={() => setShowSettings(false)}
+                    onForgetKey={handleForgetKey}
+                    onBack={() => setShowHistory(false)}
                   />
                 ) : status === "needs-key" ? (
                   <SetupView
@@ -1003,17 +992,23 @@ function HistoryView({
   conversations,
   activeConvId,
   lang,
+  showForgetKey,
+  hasBuildTimeKey: builtIn,
   onSelect,
-  onNewChat,
   onDelete,
+  onClearHistory,
+  onForgetKey,
   onBack
 }: {
   conversations: Conversation[];
   activeConvId: string | null;
   lang: "he" | "en";
+  showForgetKey: boolean;
+  hasBuildTimeKey: boolean;
   onSelect: (id: string) => void;
-  onNewChat: () => void;
   onDelete: (id: string) => void;
+  onClearHistory: () => void;
+  onForgetKey: () => void;
   onBack: () => void;
 }) {
   const t = useT();
@@ -1024,13 +1019,6 @@ function HistoryView({
         className="self-start text-[12px] uppercase tracking-[0.16em] text-ink-700/70 hover:text-ink-900"
       >
         ← {t("gem_back")}
-      </button>
-
-      <button
-        onClick={onNewChat}
-        className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gold-400 hover:bg-gold-500 transition text-ink-900 text-[13px] font-medium"
-      >
-        <MessageCircle size={16} /> {lang === "he" ? "שיחה חדשה" : "New Chat"}
       </button>
 
       <div className="flex flex-col gap-2 mt-2">
@@ -1064,51 +1052,28 @@ function HistoryView({
           </div>
         )}
       </div>
-    </div>
-  );
-}
 
-function SettingsView({
-  showForgetKey,
-  hasBuildTimeKey: builtIn,
-  onForgetKey,
-  onClearHistory,
-  onBack
-}: {
-  showForgetKey: boolean;
-  hasBuildTimeKey: boolean;
-  onForgetKey: () => void;
-  onClearHistory: () => void;
-  onBack: () => void;
-}) {
-  const t = useT();
-  return (
-    <div className="px-5 py-5 overflow-y-auto overscroll-contain flex-1 flex flex-col gap-3">
-      <button
-        onClick={onBack}
-        className="self-start text-[12px] uppercase tracking-[0.16em] text-ink-700/70 hover:text-ink-900"
-      >
-        ← {t("gem_back")}
-      </button>
-      <button
-        onClick={onClearHistory}
-        className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cream-100 hover:bg-cream-200 transition text-ink-800 text-[13px]"
-      >
-        <Trash2 size={14} /> {t("gem_reset_history")}
-      </button>
-      {showForgetKey && (
+      <div className="mt-4 pt-4 border-t border-cream-300/70 flex flex-col gap-3">
         <button
-          onClick={onForgetKey}
-          className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cream-100 hover:bg-terracotta-500/10 hover:text-terracotta-700 transition text-ink-800 text-[13px]"
+          onClick={onClearHistory}
+          className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cream-100 hover:bg-cream-200 transition text-ink-800 text-[13px]"
         >
-          <Trash2 size={14} /> {t("gem_clear_key")}
+          <Trash2 size={14} /> {t("gem_reset_history")}
         </button>
-      )}
-      {builtIn && (
-        <div className="text-[11px] text-ink-700/60 leading-relaxed mt-2 px-1">
-          {t("gem_builtin_key_note")}
-        </div>
-      )}
+        {showForgetKey && (
+          <button
+            onClick={onForgetKey}
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cream-100 hover:bg-terracotta-500/10 hover:text-terracotta-700 transition text-ink-800 text-[13px]"
+          >
+            <Trash2 size={14} /> {t("gem_clear_key")}
+          </button>
+        )}
+        {builtIn && (
+          <div className="text-[11px] text-ink-700/60 leading-relaxed px-1">
+            {t("gem_builtin_key_note")}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
