@@ -910,7 +910,14 @@ export default function Gemininio() {
                         }
                       }
                     }}
-                    onClearHistory={handleClearHistory}
+                    onClearHistory={() => {
+                      handleClearHistory();
+                      if (typeof window !== "undefined") {
+                        window.localStorage.removeItem("tuscany2026.gemininio.activeConvId");
+                      }
+                      setActiveConvId(null);
+                      setConversations([]);
+                    }}
                     onForgetKey={handleForgetKey}
                     onBack={() => setShowHistory(false)}
                   />
