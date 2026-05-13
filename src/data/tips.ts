@@ -38,9 +38,9 @@ export const tips: Tip[] = [
   },
   {
     id: "canyon-park-booking",
-    title: "Book Canyon Park water time early",
+    title: "Canyon Park — reserve water slots early",
     body:
-      "River SUP and other water slots are limited in August. Book your slot as soon as the park confirms dates — same-day walk-ins often miss out.",
+      "River SUP and the gentler rafting lines share finite daily quotas. Busy weeks often sell through online before lunchtime — don't bank on rocking up without an email confirmation in August.",
     severity: "warning"
   },
   {

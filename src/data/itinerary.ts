@@ -105,9 +105,9 @@ export const itinerary: Day[] = [
     activities: [
       {
         time: "Morning",
-        title: "Canyon Park — river SUP",
+        title: "Canyon Park",
         description:
-          "Stand-up paddleboarding on the Lima inside the canyon — book your water slot ahead (summer fills fast). Separate adventure courses (zip lines, aerial routes) usually need kids to be taller; check what you reserved.",
+          "Family stand-up paddle through the gorge on the emerald Lima — confirm your booking before you arrive; busy weeks disappear fast. Aerial canyon routes live on separate tickets and usually require a taller child; skim the activity name on your confirmation.",
         attractionId: "canyon-park",
         tag: "water",
         rideToNext: { duration: "10 min", note: "Bagni di Lucca → Borgo a Mozzano" }
@@ -141,15 +141,15 @@ export const itinerary: Day[] = [
       servingNote: "Served well-chilled (8–10 °C), in a tall white-wine glass"
     },
     gear: [
-      { item: "Quick-dry swimwear under your clothes — saves a wet changing room", for: "canyon-park" },
-      { item: "Closed-toe water shoes for the SUP & rocks", for: "canyon-park" },
+      { item: "Quick-dry swimwear under clothes — skips a cramped changing hut", for: "canyon-park" },
+      { item: "Closed-toe water shoes for SUP and slippery rocks", for: "canyon-park" },
       { item: "Dry bag for phone, keys & wallet", for: "canyon-park" },
       { item: "Closed-toe trainers for the ropes course (no sandals!)", for: "selva-buffardello" },
       { item: "A change of dry clothes for the drive home" },
       { item: "Reef-safe sunscreen & a wide-brim hat" }
     ],
     dayTips: [
-      "Canyon Park SUP / water slots fill fast — book by phone the night before",
+      "Water slots at Canyon Park go fast — call or finish online booking the evening before when it's peak season",
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"

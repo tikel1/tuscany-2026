@@ -14,9 +14,9 @@ export const attractions: POI[] = [
     name: "Canyon Park",
     category: "attraction",
     region: "north",
-    shortDescription: "River paddleboarding and adventures in a Lima canyon",
+    shortDescription: "SUP and gorge-side adventure on the Lima",
     description:
-      "Italy's first adventure park built inside a river canyon (Visit Tuscany) — slacklines, suspended bridges, canyon courses, and calmer options like a stony beach beside the turquoise Lima. Visitors can hire stand-up paddleboards to paddle the gorge, join soft rafting or water trekking, or try SUP yoga. Our plan focuses on a relaxed family paddle along the river inside the canyon — book your slot ahead in summer because daily capacity is tight. Note: the aerial zip/cable courses typically require kids to be about 10+ and 140 cm tall; double-check the rules for whichever activity you reserve.",
+      "An adventure park built into a gorge on the river Lima outside Bagni di Lucca — Italy's best-known canyon playground. Between the wooded cliffs you've got mellow options (paddleboard hire drifting through turquoise narrows, a pebble beach, soft rafting or water trekking) and full-throttle canyon routes with aerial bridges and zip lines overhead. Today's plan calls for an easy family stand-up paddle through the gorge; in peak summer slots go fast, so pin down your booking early. Separate canyon / zip experiences usually enforce their own minimum age and height — often about ten years old and roughly 140 cm — so double-check what's on your confirmation before you arrive.",
     image: "./images/canyon-park.jpg",
     imageCredit: {
       author: "Luo Jin Hong (Unsplash)",
@@ -29,27 +29,27 @@ export const attractions: POI[] = [
     coords: [44.0167, 10.5833],
     tags: ["water", "extreme", "family"],
     bookingNote:
-      "Reserve river SUP / water activities in advance — summer days sell out.",
+      "Book your Lima water slot ahead — SUP and rafting fill first in summer.",
     difficulty: "easy",
     tips: [
-      "Book your chosen water slot (especially SUP) the day before — availability is limited",
-      "Life jackets are provided on the water — ask staff if you want extra kid sizes",
-      "Phones stay on shore for most water activities — pack a small dry bag",
-      "Quick-dry swimwear and closed-toe water shoes; expect splashy fun"
+      "The night before a busy week, call or complete the online booking — walk-ins often lose out",
+      "Life jackets are provided; ask the crew to snug them up for smaller kids",
+      "Keep phone and cash in a dry bag — most water lines are splash zones",
+      "Quick-dry layers and closed-toe water shoes; expect to get properly wet"
     ],
     quizFacts: [
       {
-        question: "Canyon Park is built entirely inside what?",
+        question: "What kind of place is Canyon Park built into?",
         correctAnswer: "A deep river canyon",
         distractors: ["A volcano crater", "An old castle", "A giant cave"]
       },
       {
-        question: "How is lunch sometimes delivered to the beach at Canyon Park?",
+        question: "How does lunch sometimes reach the pebble beach at Canyon Park?",
         correctAnswer: "Down a zip-line!",
         distractors: ["By helicopter", "On a trained dog", "On a boat"]
       },
       {
-        question: "What do people use to paddle on the Lima River here?",
+        question: "What do most visitors stand on to paddle the Lima through the gorge?",
         correctAnswer: "Stand-up paddleboards (SUP)",
         distractors: ["Wooden gondolas", "Inflatable unicorns", "Motorboats only"]
       }

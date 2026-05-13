@@ -3,8 +3,9 @@ import type { ChecklistItem } from "./types";
 export const bookingChecklist: ChecklistItem[] = [
   {
     id: "book-canyon-park",
-    text: "Reserve Canyon Park — river SUP / water activity",
-    detail: "River SUP and other water slots vanish fast in August — book as soon as the park publishes your dates.",
+    text: "Book Canyon Park (SUP / water slot)",
+    detail:
+      "Lima gorge slots tighten in August. Lock in canyonpark.it the moment your date opens rather than risking a blank screen at the kiosk.",
     link: "https://www.canyonpark.it/",
     urgent: true
   },
