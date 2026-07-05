@@ -674,6 +674,111 @@ export const itinerary: Day[] = [
     dayNumber: 8,
     date: "2026-08-24",
     weekday: "Monday",
+    departureTime: "06:45",
+    rideToFirst: { duration: "1 h 10 min", note: "Cortevecchia → Saturnia" },
+    region: "south",
+    base: "Cortevecchia",
+    title: "Hot springs at dawn, lake swim, the floating city",
+    subtitle: "A full circuit of the southern Maremma",
+    activities: [
+      {
+        time: "07:30 (critical)",
+        title: "Saturnia — Cascate del Mulino",
+        description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
+        attractionId: "saturnia",
+        tag: "water",
+        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes", departAt: "11:00" }
+      },
+      {
+        time: "Midday",
+        title: "Swim in Lago di Bolsena",
+        description: "Cool, clean volcanic lake — gentler than the August coast.",
+        attractionId: "lago-di-bolsena",
+        tag: "water",
+        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio", departAt: "15:00" }
+      },
+      {
+        time: "Afternoon",
+        title: "Civita di Bagnoregio",
+        description: "Walk the long footbridge into the 'dying city' on its tufa pedestal.",
+        attractionId: "civita-di-bagnoregio",
+        tag: "culture",
+        // Day 8's title literally calls out "the floating city" — Civita is
+        // the headline finale, not a "skip if tired" extra. Opt it out of
+        // the auto-rule that would otherwise mark the 3rd attraction optional.
+        optional: false
+      }
+    ],
+    gear: [
+      { item: "Swimwear under your clothes for Saturnia (skip the queue)", for: "saturnia" },
+      { item: "Microfibre towel — quick to dry between stops" },
+      { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
+      { item: "Beach mat for Bolsena's pebble shore", for: "lago-di-bolsena" },
+      { item: "Comfortable walking shoes for the steep Civita climb", for: "civita-di-bagnoregio" },
+      { item: "Sun hats, sunscreen, refilled water bottles" }
+    ],
+    dayTips: [
+      "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
+      "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
+      "Civita footbridge ticket ~€5/adult, cash only",
+      "Eat lunch by 13:30 — village kitchens close hard at 14:30"
+    ],
+    italianWords: [
+      {
+        word: "Terme",
+        pronounce: "TAIR-meh",
+        meaning: "Thermal baths, hot springs",
+        example: "Le terme di Saturnia all'alba.",
+        exampleMeaning: "The Saturnia hot springs at dawn."
+      },
+      {
+        word: "Lago",
+        pronounce: "LAH-goh",
+        meaning: "Lake",
+        example: "Un tuffo nel lago.",
+        exampleMeaning: "A dip in the lake."
+      },
+      {
+        word: "Panorama",
+        pronounce: "pah-noh-RAH-mah",
+        meaning: "View, panorama",
+        example: "Che panorama!",
+        exampleMeaning: "What a view!"
+      },
+      {
+        word: "Vapore",
+        pronounce: "vah-POH-reh",
+        meaning: "Steam (hot-springs mist)",
+        example: "Si vede il vapore sull'acqua calda.",
+        exampleMeaning: "You can see the steam on the hot water."
+      },
+      {
+        word: "Cannuccia",
+        pronounce: "kahn-NOOT-chah",
+        meaning: "Drinking straw (not 'can-ooch')",
+        example: "Una cannuccia per la granita.",
+        exampleMeaning: "A straw for the slush ice."
+      },
+      {
+        word: "Tuffo",
+        pronounce: "TOOF-foh",
+        meaning: "Dive, splash jump",
+        example: "Faccio un tuffo nel lago!",
+        exampleMeaning: "I'm doing a cannonball into the lake!"
+      }
+    ],
+    restaurants: ["rest-s-i-due-cippi", "rest-s-trattoria-verdi"],
+    drinkOfTheDay: {
+      name: "Bianco di Pitigliano DOC",
+      type: "wine",
+      pairing: "A local southern white from the tufa hills you've been driving through. Light, mineral, faintly almond — the right last-night pour after a sunrise in sulphur springs and an afternoon in a floating city.",
+      servingNote: "Served well-chilled (8 °C), in the everyday white-wine glass"
+    }
+  },
+  {
+    dayNumber: 9,
+    date: "2026-08-25",
+    weekday: "Tuesday",
     departureTime: "09:30",
     rideToFirst: { duration: "40 min", note: "Cortevecchia → Marina di Alberese" },
     region: "south",
@@ -767,111 +872,6 @@ export const itinerary: Day[] = [
       type: "wine",
       pairing: "The flagship red of the southern Maremma, made just up the road. Plush dark fruit, soft tannins — the right glass to finish a day of horses, tufa villages and rock-cut corridors.",
       servingNote: "Served at 16–18 °C, in a wide Burgundy-style bowl"
-    }
-  },
-  {
-    dayNumber: 9,
-    date: "2026-08-25",
-    weekday: "Tuesday",
-    departureTime: "06:45",
-    rideToFirst: { duration: "1 h 10 min", note: "Cortevecchia → Saturnia" },
-    region: "south",
-    base: "Cortevecchia",
-    title: "Hot springs at dawn, lake swim, the floating city",
-    subtitle: "A full circuit of the southern Maremma",
-    activities: [
-      {
-        time: "07:30 (critical)",
-        title: "Saturnia — Cascate del Mulino",
-        description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
-        attractionId: "saturnia",
-        tag: "water",
-        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes", departAt: "11:00" }
-      },
-      {
-        time: "Midday",
-        title: "Swim in Lago di Bolsena",
-        description: "Cool, clean volcanic lake — gentler than the August coast.",
-        attractionId: "lago-di-bolsena",
-        tag: "water",
-        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio", departAt: "15:00" }
-      },
-      {
-        time: "Afternoon",
-        title: "Civita di Bagnoregio",
-        description: "Walk the long footbridge into the 'dying city' on its tufa pedestal.",
-        attractionId: "civita-di-bagnoregio",
-        tag: "culture",
-        // Day 9's title literally calls out "the floating city" — Civita is
-        // the headline finale, not a "skip if tired" extra. Opt it out of
-        // the auto-rule that would otherwise mark the 3rd attraction optional.
-        optional: false
-      }
-    ],
-    gear: [
-      { item: "Swimwear under your clothes for Saturnia (skip the queue)", for: "saturnia" },
-      { item: "Microfibre towel — quick to dry between stops" },
-      { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
-      { item: "Beach mat for Bolsena's pebble shore", for: "lago-di-bolsena" },
-      { item: "Comfortable walking shoes for the steep Civita climb", for: "civita-di-bagnoregio" },
-      { item: "Sun hats, sunscreen, refilled water bottles" }
-    ],
-    dayTips: [
-      "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
-      "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
-      "Civita footbridge ticket ~€5/adult, cash only",
-      "Eat lunch by 13:30 — village kitchens close hard at 14:30"
-    ],
-    italianWords: [
-      {
-        word: "Terme",
-        pronounce: "TAIR-meh",
-        meaning: "Thermal baths, hot springs",
-        example: "Le terme di Saturnia all'alba.",
-        exampleMeaning: "The Saturnia hot springs at dawn."
-      },
-      {
-        word: "Lago",
-        pronounce: "LAH-goh",
-        meaning: "Lake",
-        example: "Un tuffo nel lago.",
-        exampleMeaning: "A dip in the lake."
-      },
-      {
-        word: "Panorama",
-        pronounce: "pah-noh-RAH-mah",
-        meaning: "View, panorama",
-        example: "Che panorama!",
-        exampleMeaning: "What a view!"
-      },
-      {
-        word: "Vapore",
-        pronounce: "vah-POH-reh",
-        meaning: "Steam (hot-springs mist)",
-        example: "Si vede il vapore sull'acqua calda.",
-        exampleMeaning: "You can see the steam on the hot water."
-      },
-      {
-        word: "Cannuccia",
-        pronounce: "kahn-NOOT-chah",
-        meaning: "Drinking straw (not 'can-ooch')",
-        example: "Una cannuccia per la granita.",
-        exampleMeaning: "A straw for the slush ice."
-      },
-      {
-        word: "Tuffo",
-        pronounce: "TOOF-foh",
-        meaning: "Dive, splash jump",
-        example: "Faccio un tuffo nel lago!",
-        exampleMeaning: "I'm doing a cannonball into the lake!"
-      }
-    ],
-    restaurants: ["rest-s-i-due-cippi", "rest-s-trattoria-verdi"],
-    drinkOfTheDay: {
-      name: "Bianco di Pitigliano DOC",
-      type: "wine",
-      pairing: "A local southern white from the tufa hills you've been driving through. Light, mineral, faintly almond — the right last-night pour after a sunrise in sulphur springs and an afternoon in a floating city.",
-      servingNote: "Served well-chilled (8 °C), in the everyday white-wine glass"
     }
   },
   {

@@ -43,7 +43,7 @@ const HERO_PHOTOS: HeroPhoto[] = [
     credit: "Raimond Spekking · CC BY-SA",
     source:
       "https://commons.wikimedia.org/wiki/File:Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg",
-    dayNumber: 9
+    dayNumber: 8
   },
   {
     src: "./images/hero/pitigliano-panorama.jpg",
@@ -51,7 +51,7 @@ const HERO_PHOTOS: HeroPhoto[] = [
     credit: "Wikimedia · Featured Picture · CC BY-SA",
     source:
       "https://commons.wikimedia.org/wiki/File:01665_ITA_Tuscany_Pitigliano_S_from_viewpoint_V-P.jpg",
-    dayNumber: 8
+    dayNumber: 9
   },
   {
     src: "./images/hero/val-dorcia-hills.jpg",
@@ -66,7 +66,7 @@ const HERO_PHOTOS: HeroPhoto[] = [
     credit: "Wikimedia Commons · CC BY-SA",
     source:
       "https://commons.wikimedia.org/wiki/File:Toscana_-_Maremma_Regional_Park_-_aerial_photo_with_Torre_di_Collelungo.jpg",
-    dayNumber: 8
+    dayNumber: 9
   },
   {
     src: "./images/cala-del-gesso.jpg",
@@ -101,7 +101,7 @@ const HERO_PHOTOS: HeroPhoto[] = [
     place: "Civita di Bagnoregio · the dying city",
     credit: "Wikimedia Commons · CC BY-SA",
     source: "https://en.wikipedia.org/wiki/Civita_di_Bagnoregio",
-    dayNumber: 9
+    dayNumber: 8
   },
   {
     src: "./images/hero/coast-sunset.jpg",
