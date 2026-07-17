@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowLeft, MapPin, Sun, Car } from "lucide-react";
+import { ArrowRight, ArrowLeft, MapPin, Sun, Car, Ticket } from "lucide-react";
 import type { Day, POI } from "../data/types";
 import { getAttraction } from "../data/attractions";
+import { BOOKED_DAY_NUMBERS } from "../lib/bookingsStore";
 import { getTripState } from "../lib/tripState";
 import { activityIcon } from "../lib/activityIcon";
 import { navigateChapter } from "../lib/route";
@@ -84,6 +85,7 @@ export default function ChapterCard({ day }: { day: Day }) {
     tripState.phase === "during" && tripState.today.dayNumber === day.dayNumber;
 
   const lead = resolveLead(localDay, localizePoi);
+  const hasTicket = BOOKED_DAY_NUMBERS.has(day.dayNumber);
   const previewActivities = localDay.activities.slice(0, 3);
   const remaining = Math.max(0, localDay.activities.length - previewActivities.length);
 
@@ -184,8 +186,13 @@ export default function ChapterCard({ day }: { day: Day }) {
           })}
         </ul>
 
-        {(remaining > 0 || localDay.driveNotes) && (
+        {(remaining > 0 || localDay.driveNotes || hasTicket) && (
           <div className="mt-3 flex items-center gap-3 text-[11px] text-ink-700/65 flex-wrap">
+            {hasTicket && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-terracotta-500/12 text-terracotta-700 font-medium">
+                <Ticket size={12} /> {t("nav_bookings")}
+              </span>
+            )}
             {remaining > 0 && (
               <span className="inline-flex items-center gap-1">
                 <span className="font-semibold text-ink-900">+{remaining}</span>{" "}

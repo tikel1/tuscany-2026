@@ -380,6 +380,11 @@ export const DICT = {
   },
 
   /* ---------- Bookings & logistics ---------- */
+  nav_bookings: { en: "Tickets", he: "כרטיסים" },
+  daytickets_kicker: {
+    en: "Your booking for this day",
+    he: "ההזמנה שלכם ליום הזה"
+  },
   bookings_eyebrow: { en: "Booked & ready", he: "הוזמן ומוכן" },
   bookings_title: { en: "Tickets & logistics", he: "כרטיסים ולוגיסטיקה" },
   bookings_kicker: {

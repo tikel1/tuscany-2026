@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { bootstrapInstallPromptCapture } from './lib/installBootstrap'
 import { LangProvider } from './lib/i18n'
+import { BookingsProvider } from './lib/bookingsStore'
 
 // Capture Chromium's one-shot install event before React hydrates (`install.ts`).
 bootstrapInstallPromptCapture()
@@ -26,7 +27,9 @@ registerMinimalServiceWorker()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LangProvider>
-      <App />
+      <BookingsProvider>
+        <App />
+      </BookingsProvider>
     </LangProvider>
   </StrictMode>,
 )

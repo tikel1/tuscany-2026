@@ -29,6 +29,9 @@ import {
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
 import { getService } from "../data/services";
+import BookingCard from "./BookingCard";
+import TicketUnlock from "./TicketUnlock";
+import { useBookingsForDay, BOOKED_DAY_NUMBERS } from "../lib/bookingsStore";
 import type {
   Day,
   DayActivity,
@@ -351,6 +354,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
   const t = useT();
   const { lang } = useLang();
   const isRTL = lang === "he";
+  const dayBookings = useBookingsForDay(day.dayNumber);
   const localizeDay = useLocalizeDay();
   const localizePoi = useLocalizePoi();
   const localizeService = useLocalizeService();
@@ -673,6 +677,29 @@ function ChapterDetailContent({ day }: { day: Day }) {
               </div>
             )}
           </section>
+
+          {/* Tickets — booked activities for this day, gated by the shared PIN.
+              Locked shows the inline unlock; unlocking here reveals it app-wide. */}
+          {BOOKED_DAY_NUMBERS.has(day.dayNumber) && (
+            <section>
+              <SectionLabel
+                eyebrow={t("bookings_eyebrow")}
+                title={t("bookings_title")}
+              />
+              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
+                {t("daytickets_kicker")}
+              </p>
+              {dayBookings.length > 0 ? (
+                <div className="grid gap-4 sm:gap-5">
+                  {dayBookings.map(b => (
+                    <BookingCard key={b.id} booking={b} showDay={false} />
+                  ))}
+                </div>
+              ) : (
+                <TicketUnlock compact />
+              )}
+            </section>
+          )}
 
           {/* Mini map */}
           {dayPois.length > 0 && (

@@ -16,6 +16,7 @@ const TABS: { id: string; key: DictKey; Icon: typeof CalendarDays }[] = [
 ];
 
 const MORE_LINKS: { id: string; key: DictKey }[] = [
+  { id: "bookings",  key: "nav_bookings" },
   { id: "stays",     key: "nav_stays" },
   { id: "tips",      key: "nav_tips" },
   { id: "checklist", key: "nav_checklist" },
@@ -29,6 +30,7 @@ const MORE_LABEL: Record<"en" | "he", string> = { en: "More", he: "עוד" };
 // highlight detection).
 const SECTION_IDS = [
   "trip",
+  "bookings",
   "map",
   "attractions",
   "services",
@@ -42,6 +44,7 @@ const SECTION_IDS = [
 // Anything that isn't a primary tab collapses to the "More" tab when
 // it's the active section while scrolling.
 const MORE_SECTION_IDS = new Set([
+  "bookings",
   "stays",
   "services",
   "tips",

@@ -12,6 +12,8 @@ export interface BookingListLoc {
 
 export interface Booking {
   id: string;
+  /** Itinerary day this booking belongs to (matches Day.dayNumber). */
+  dayNumber: number;
   title: BookingLoc;
   day: BookingLoc;
   time: string;
