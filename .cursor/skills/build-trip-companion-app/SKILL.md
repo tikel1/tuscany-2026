@@ -132,6 +132,27 @@ share out-of-band. For anything whose exposure is genuinely harmful (a
 credential that can *cancel* a booking), prefer leaving it out, or use a longer
 PIN. Never publish booking reference + PIN pairs as plaintext on a public site.
 
+**Surfacing it well (what makes it useful on the day):**
+
+- **One shared unlock state.** Put the decrypted packet in a `BookingsProvider`
+  context (`src/lib/bookingsStore.tsx`), not local component state — so the
+  Tickets section, the day views, and any chips all read the same unlock, and a
+  PIN entered anywhere reveals it everywhere (remembered per device).
+- **Reach it from everywhere it's relevant:** a nav entry (desktop + mobile
+  "More"), a per-day Tickets block on the day-detail view filtered by a
+  `dayNumber` on each booking, and a small ticket chip on the itinerary day
+  cards. Drive which days show a ticket with a tiny UNencrypted
+  `BOOKED_DAY_NUMBERS` set (leaks only *that* a day has a booking, never detail).
+- **Make the confirmation number a first-class thing:** store it as its own
+  `bookingRef` field (separate from prose) and render it large, monospace, with
+  a copy-to-clipboard button — that's what people scramble for at a counter. Keep
+  a secondary `bookingPin` beside it.
+- **Link each ticket to the attraction it's for** (`attractionId` → the POI's
+  `website`/name) and show the **drive time + a directions link** to the meeting
+  point, so the ticket answers "where, when, how do I get there, what's my
+  number" in one card. Keep the itinerary day's `driveNotes` leading with the
+  *first* drive to that meetup, since the day card shows the first segment.
+
 ## Build workflow (dependency order)
 
 Work top to bottom — each step depends on the ones above. Track progress with a

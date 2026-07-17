@@ -14,11 +14,15 @@ export interface Booking {
   id: string;
   /** Itinerary day this booking belongs to (matches Day.dayNumber). */
   dayNumber: number;
+  /** The attraction this ticket is for — links the booking to its POI. */
+  attractionId?: string;
   title: BookingLoc;
   day: BookingLoc;
   time: string;
   arriveBy?: string;
   duration?: BookingLoc;
+  /** Drive to the meeting point (from the day's base). */
+  drive?: BookingLoc;
   party?: BookingLoc;
   meetup: BookingLoc;
   address?: string;
@@ -27,8 +31,10 @@ export interface Booking {
   phones?: string[];
   email?: string;
   provider?: string;
-  /** Order numbers / booking references — the "handle it" info. */
-  booking?: BookingLoc;
+  /** The primary confirmation / order number — highlighted + copyable. */
+  bookingRef?: string;
+  /** Secondary access code (e.g. a GetYourGuide PIN). */
+  bookingPin?: string;
   price?: string;
   included?: BookingListLoc;
   bring?: BookingListLoc;

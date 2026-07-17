@@ -235,7 +235,7 @@ export const itinerary: Day[] = [
         tag: "family"
       }
     ],
-    driveNotes: "Chifenti → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
+    driveNotes: "Larciano → Chifenti ≈ 1 h · Chifenti → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
     restaurants: ["rest-n-pisa", "rest-n-osteria-larciano"],
     drinkOfTheDay: {
       name: "Chianti Classico DOCG",

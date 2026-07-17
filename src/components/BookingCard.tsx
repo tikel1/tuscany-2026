@@ -1,7 +1,9 @@
+import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import {
   MapPin,
   Clock,
+  Car,
   Phone,
   Mail,
   Ticket,
@@ -11,9 +13,14 @@ import {
   Backpack,
   Info,
   CalendarX,
-  Navigation
+  Navigation,
+  ExternalLink,
+  Copy,
+  Check
 } from "lucide-react";
 import type { Booking, BookingLoc, BookingListLoc } from "../lib/bookingsTypes";
+import { getAttraction } from "../data/attractions";
+import { useLocalizePoi } from "../data/i18n";
 import { useLang } from "../lib/i18n";
 import { useT } from "../lib/dict";
 
@@ -54,8 +61,24 @@ export default function BookingCard({
 }) {
   const { lang } = useLang();
   const t = useT();
+  const localizePoi = useLocalizePoi();
   const loc = (v: BookingLoc) => v[lang];
   const list = (v: BookingListLoc) => v[lang];
+
+  const [copied, setCopied] = useState(false);
+  const rawAttraction = b.attractionId ? getAttraction(b.attractionId) : undefined;
+  const venue = rawAttraction ? localizePoi(rawAttraction) : undefined;
+
+  const copyRef = useCallback(() => {
+    if (!b.bookingRef) return;
+    navigator.clipboard
+      ?.writeText(b.bookingRef)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      })
+      .catch(() => {});
+  }, [b.bookingRef]);
 
   return (
     <article className="card-paper p-5 sm:p-6">
@@ -101,6 +124,12 @@ export default function BookingCard({
           )}
         </Field>
 
+        {b.drive && (
+          <Field icon={<Car size={16} />} label={t("bookings_drive")}>
+            {loc(b.drive)}
+          </Field>
+        )}
+
         {b.party && (
           <Field icon={<Users size={16} />} label={t("bookings_party")}>
             {loc(b.party)}
@@ -140,10 +169,51 @@ export default function BookingCard({
           </Field>
         )}
 
-        {b.booking && (
-          <Field icon={<Ticket size={16} />} label={t("bookings_ref")}>
-            <span className="font-mono text-[13px]">{loc(b.booking)}</span>
+        {venue?.website && (
+          <Field icon={<ExternalLink size={16} />} label={t("bookings_venue")}>
+            <a
+              href={venue.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-terracotta-700 hover:underline"
+            >
+              {venue.name} <ExternalLink size={12} />
+            </a>
           </Field>
+        )}
+
+        {b.bookingRef && (
+          <div className="rounded-xl bg-terracotta-500/8 ring-1 ring-terracotta-500/25 p-3">
+            <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.15em] text-terracotta-700/80">
+              <Ticket size={13} /> {t("bookings_ref")}
+            </div>
+            <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+              <code className="font-mono text-lg sm:text-xl font-semibold text-ink-900 tracking-wide break-all">
+                {b.bookingRef}
+              </code>
+              <button
+                type="button"
+                onClick={copyRef}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white/70 ring-1 ring-ink-900/10 text-xs text-ink-700 hover:bg-white transition-colors"
+                aria-label={t("bookings_copy")}
+              >
+                {copied ? (
+                  <Check size={13} className="text-olive-700" />
+                ) : (
+                  <Copy size={13} />
+                )}
+                {copied ? t("bookings_copied") : t("bookings_copy")}
+              </button>
+            </div>
+            {b.bookingPin && (
+              <div className="mt-1.5 text-sm text-ink-700/80">
+                {t("bookings_pin")}:{" "}
+                <code className="font-mono font-medium text-ink-900">
+                  {b.bookingPin}
+                </code>
+              </div>
+            )}
+          </div>
         )}
 
         {b.price && (
