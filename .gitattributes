@@ -1,0 +1,15 @@
+# Normalize line endings. This repo has been edited on both Windows and macOS,
+# which kept churning the whole tree between CRLF and LF. Store text as LF in
+# the repo; git checks out native per platform. Binaries are auto-detected and
+# left untouched (explicit rules below as belt-and-suspenders).
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.mp3  binary
+*.woff  binary
+*.woff2 binary
