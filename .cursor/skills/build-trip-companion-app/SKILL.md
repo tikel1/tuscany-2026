@@ -61,6 +61,12 @@ offer them rather than blocking.
 - **Ground transport** — rental car or trains; pickup/dropoff, company, caveats
 - **Stays** — property names, towns, check-in/out
 - **Hard bookings** — museums, cable cars, boats, guided tours with fixed times
+- **Booking confirmations** — order numbers, references/PINs, provider phones,
+  addresses, meetup points + arrival times, what's included / to bring. These
+  can be surfaced in-app as a **Tickets & Logistics** section, optionally behind
+  a shared PIN (see *Sensitive info behind a shared PIN* below). Confirmations
+  usually live in the traveller's email — read them there, don't retype from
+  memory.
 
 ### Tech / branding
 - **GitHub repo slug** for Pages (e.g. `<place>-<year>`) — sets Vite `base`
@@ -97,6 +103,35 @@ research and fill each one well.
 | **AI persona** | Name, accent instruction, spoken-delivery tag, per-turn voice nudge, and a language-purity rule if UI + persona scripts differ. |
 | **Photos** | Replace everything under `public/images/` with the new destination's POIs, keeping relative `./images/...` paths. |
 
+## Sensitive info behind a shared PIN (optional)
+
+Trips accumulate real booking data — order numbers, GetYourGuide-style
+reference + PIN pairs, prices, provider phones. Families want it handy in the
+app, but this site is a **static app in a public GitHub repo**: everything it
+renders also ships in the public source and JS bundle. A plain "enter PIN to
+view" screen is therefore cosmetic — the data is still readable via View Source.
+
+**The honest pattern (implemented in the reference repo):**
+
+1. Author the sensitive packet as plaintext JSON **outside the repo** (a
+   scratch dir), bilingual where the app is bilingual.
+2. Encrypt it with the shared PIN — AES-256-GCM, key via PBKDF2-SHA256 — using a
+   small offline Node step. Commit **only** the ciphertext
+   (`src/data/bookings.enc.ts`). The plaintext and the PIN are never committed.
+3. Decrypt client-side with the Web Crypto API when the PIN is entered
+   (`src/lib/bookingsCrypto.ts`). Wrong PIN = GCM auth-tag failure = no data.
+4. Gate **only the sensitive section**, not the whole site
+   (`BookingsSection.tsx` renders an inline PIN prompt until unlocked; remember
+   the unlock per device in `localStorage`). The rest of the trip stays open.
+
+**State the security honestly to the user.** A short PIN (e.g. 4 digits) is
+brute-forceable by anyone who grabs the ciphertext — this is casual privacy for
+a family trip, not a vault. Its real value: the data is **not plaintext** in the
+public repo/bundle (can't be grepped or indexed), and it's gated by a code you
+share out-of-band. For anything whose exposure is genuinely harmful (a
+credential that can *cancel* a booking), prefer leaving it out, or use a longer
+PIN. Never publish booking reference + PIN pairs as plaintext on a public site.
+
 ## Build workflow (dependency order)
 
 Work top to bottom — each step depends on the ones above. Track progress with a
@@ -113,6 +148,8 @@ Trip Companion build:
          services, tips, emergency, checklist (+ optional food/drink modules)
 - [ ] 5. Add i18n overlays (src/data/i18n/*) + UI strings (src/lib/dict.ts)
 - [ ] 6. Recompose sections in App.tsx to the trip's rhythm
+- [ ] 6b. (Optional) Add the PIN-gated Tickets & Logistics section from real
+         booking confirmations — encrypt the packet, commit ciphertext only
 - [ ] 7. Set map defaults (center, zoom, country filter, route, spokes)
 - [ ] 8. Apply visual skin (palette tokens, fonts, icon, install metadata)
 - [ ] 9. Rewrite the AI guide persona (src/lib/gemininio/persona.ts) + keys
@@ -136,6 +173,11 @@ Trip Companion build:
 - **Two API keys, different prefixes.** In-app chat uses `VITE_GEMINI_API_KEY`
   (baked at build, restrict by HTTP referrer). Local TTS scripts use
   `GEMINI_API_KEY` (no `VITE_` prefix). Never commit either.
+- **A password on a public static site is not real security.** Everything the
+  app renders is in the public source + bundle. If you surface booking
+  credentials, encrypt the packet and commit ciphertext only (never plaintext,
+  never the PIN) — and tell the user plainly what a short PIN does and doesn't
+  protect. See *Sensitive info behind a shared PIN*.
 
 ### Files to read first (in the cloned repo)
 
@@ -146,6 +188,7 @@ Trip Companion build:
 | 3 | `src/App.tsx` | Section order and composition |
 | 4 | `src/lib/gemininio/persona.ts` | AI persona, party, trip facts |
 | 5 | `src/components/Gemininio.tsx` | Live vs REST chat, history |
+| 6 | `src/components/BookingsSection.tsx` + `src/lib/bookingsCrypto.ts` | PIN-gated, encrypted Tickets & Logistics section |
 
 ## First message the user can paste
 

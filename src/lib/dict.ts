@@ -365,12 +365,10 @@ export const DICT = {
   },
   checklist_urgent: { en: "Urgent", he: "דחוף" },
 
-  /* ---------- Lock gate ---------- */
-  lock_eyebrow: { en: "Private", he: "פרטי" },
-  lock_title: { en: "Family trip binder", he: "קלסר הטיול המשפחתי" },
+  /* ---------- Lock gate (bookings section) ---------- */
   lock_prompt: {
-    en: "Enter the group PIN to open the trip",
-    he: "הזינו את קוד הקבוצה כדי לפתוח את הטיול"
+    en: "Enter the group PIN to see tickets & logistics",
+    he: "הזינו את קוד הקבוצה כדי לראות כרטיסים ולוגיסטיקה"
   },
   lock_placeholder: { en: "PIN", he: "קוד" },
   lock_button: { en: "Unlock", he: "פתחו" },

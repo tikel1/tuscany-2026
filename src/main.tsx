@@ -2,7 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import LockGate from './components/LockGate'
 import { bootstrapInstallPromptCapture } from './lib/installBootstrap'
 import { LangProvider } from './lib/i18n'
 
@@ -27,9 +26,7 @@ registerMinimalServiceWorker()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LangProvider>
-      <LockGate>
-        <App />
-      </LockGate>
+      <App />
     </LangProvider>
   </StrictMode>,
 )

@@ -1,5 +1,3 @@
-import { createContext, useContext } from "react";
-
 /** A localized string pair for booking prose. */
 export interface BookingLoc {
   en: string;
@@ -39,11 +37,4 @@ export interface Booking {
 export interface BookingsData {
   version: number;
   activities: Booking[];
-}
-
-/** Null until the PIN gate decrypts the packet. */
-export const BookingsContext = createContext<BookingsData | null>(null);
-
-export function useBookings(): BookingsData | null {
-  return useContext(BookingsContext);
 }
