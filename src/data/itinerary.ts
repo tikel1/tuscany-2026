@@ -500,6 +500,91 @@ export const itinerary: Day[] = [
     date: "2026-08-22",
     weekday: "Saturday",
     departureTime: "09:30",
+    rideToFirst: { duration: "1 h 20 min", note: "Cortevecchia → Follonica" },
+    region: "south",
+    base: "Cortevecchia",
+    title: "Pure adrenaline — Acqua Village Follonica",
+    activities: [
+      {
+        time: "Morning to evening",
+        title: "Acqua Village Follonica",
+        description: "Full day of slides, wave pool, lazy river, Polynesian shows.",
+        attractionId: "acqua-village-follonica",
+        tag: "extreme"
+      }
+    ],
+    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
+    restaurants: ["rest-s-trattoria-verdi", "rest-s-i-due-cippi"],
+    drinkOfTheDay: {
+      name: "Spritz al Limone",
+      type: "aperitif",
+      pairing: "Same Spritz family as the Aperol, but built on Limoncello — sharper, brighter, exactly the recovery drink after a long day of slides and chlorine.",
+      servingNote: "Tall glass · ice · 3 parts Prosecco · 2 parts Limoncello · soda · lemon wheel"
+    },
+    gear: [
+      { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
+      { item: "Waterproof phone case", for: "acqua-village-follonica" },
+      { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
+      { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
+      { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
+      { item: "A €1 coin for the locker", for: "acqua-village-follonica" }
+    ],
+    dayTips: [
+      "Online tickets meaningfully cheaper — buy them the night before",
+      "Outside food allowed in the picnic zone; cooler bag = saves €€€",
+      "Arrive at opening (10:00) — slide queues triple after 13:00",
+      "Polynesian show times are posted at the gate; don't miss the evening one"
+    ],
+    italianWords: [
+      {
+        word: "Scivolo",
+        pronounce: "SHEE-voh-loh",
+        meaning: "Slide",
+        example: "Lo scivolo più alto, per favore!",
+        exampleMeaning: "The tallest slide, please!"
+      },
+      {
+        word: "Divertimento",
+        pronounce: "dee-vehr-tee-MEN-toh",
+        meaning: "Fun",
+        example: "Che divertimento!",
+        exampleMeaning: "What fun!"
+      },
+      {
+        word: "Piscina",
+        pronounce: "pee-SHEE-nah",
+        meaning: "Swimming pool",
+        example: "Andiamo in piscina.",
+        exampleMeaning: "Let's go to the pool."
+      },
+      {
+        word: "Schizzo",
+        pronounce: "SKEET-tzoh",
+        meaning: "Splash, squirt, splotch",
+        example: "Che schizzo dalla piscina!",
+        exampleMeaning: "What a splash from the pool!"
+      },
+      {
+        word: "Tubo",
+        pronounce: "TOO-boh",
+        meaning: "Tube (slide tube — not 'tube-oh')",
+        example: "Scendo nel tubo blu!",
+        exampleMeaning: "I'm going down the blue tube!"
+      },
+      {
+        word: "Gridare",
+        pronounce: "gree-DAH-reh",
+        meaning: "To shout (not 'grid')",
+        example: "Non serve gridare, ti sento!",
+        exampleMeaning: "No need to shout — I can hear you!"
+      }
+    ]
+  },
+  {
+    dayNumber: 7,
+    date: "2026-08-23",
+    weekday: "Sunday",
+    departureTime: "09:30",
     rideToFirst: { duration: "1 h 15 min", note: "Cortevecchia → Porto Santo Stefano" },
     region: "south",
     base: "Cortevecchia",
@@ -582,91 +667,6 @@ export const itinerary: Day[] = [
         meaning: "Seashell (long musical word)",
         example: "Ho trovato una conchiglia enorme!",
         exampleMeaning: "I found a huge seashell!"
-      }
-    ]
-  },
-  {
-    dayNumber: 7,
-    date: "2026-08-23",
-    weekday: "Sunday",
-    departureTime: "09:30",
-    rideToFirst: { duration: "1 h 20 min", note: "Cortevecchia → Follonica" },
-    region: "south",
-    base: "Cortevecchia",
-    title: "Pure adrenaline — Acqua Village Follonica",
-    activities: [
-      {
-        time: "Morning to evening",
-        title: "Acqua Village Follonica",
-        description: "Full day of slides, wave pool, lazy river, Polynesian shows.",
-        attractionId: "acqua-village-follonica",
-        tag: "extreme"
-      }
-    ],
-    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
-    restaurants: ["rest-s-trattoria-verdi", "rest-s-i-due-cippi"],
-    drinkOfTheDay: {
-      name: "Spritz al Limone",
-      type: "aperitif",
-      pairing: "Same Spritz family as the Aperol, but built on Limoncello — sharper, brighter, exactly the recovery drink after a long day of slides and chlorine.",
-      servingNote: "Tall glass · ice · 3 parts Prosecco · 2 parts Limoncello · soda · lemon wheel"
-    },
-    gear: [
-      { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
-      { item: "Waterproof phone case", for: "acqua-village-follonica" },
-      { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
-      { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
-      { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
-      { item: "A €1 coin for the locker", for: "acqua-village-follonica" }
-    ],
-    dayTips: [
-      "Online tickets meaningfully cheaper — buy them the night before",
-      "Outside food allowed in the picnic zone; cooler bag = saves €€€",
-      "Arrive at opening (10:00) — slide queues triple after 13:00",
-      "Polynesian show times are posted at the gate; don't miss the evening one"
-    ],
-    italianWords: [
-      {
-        word: "Scivolo",
-        pronounce: "SHEE-voh-loh",
-        meaning: "Slide",
-        example: "Lo scivolo più alto, per favore!",
-        exampleMeaning: "The tallest slide, please!"
-      },
-      {
-        word: "Divertimento",
-        pronounce: "dee-vehr-tee-MEN-toh",
-        meaning: "Fun",
-        example: "Che divertimento!",
-        exampleMeaning: "What fun!"
-      },
-      {
-        word: "Piscina",
-        pronounce: "pee-SHEE-nah",
-        meaning: "Swimming pool",
-        example: "Andiamo in piscina.",
-        exampleMeaning: "Let's go to the pool."
-      },
-      {
-        word: "Schizzo",
-        pronounce: "SKEET-tzoh",
-        meaning: "Splash, squirt, splotch",
-        example: "Che schizzo dalla piscina!",
-        exampleMeaning: "What a splash from the pool!"
-      },
-      {
-        word: "Tubo",
-        pronounce: "TOO-boh",
-        meaning: "Tube (slide tube — not 'tube-oh')",
-        example: "Scendo nel tubo blu!",
-        exampleMeaning: "I'm going down the blue tube!"
-      },
-      {
-        word: "Gridare",
-        pronounce: "gree-DAH-reh",
-        meaning: "To shout (not 'grid')",
-        example: "Non serve gridare, ti sento!",
-        exampleMeaning: "No need to shout — I can hear you!"
       }
     ]
   },

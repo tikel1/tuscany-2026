@@ -73,7 +73,7 @@ const HERO_PHOTOS: HeroPhoto[] = [
     place: "Cala del Gesso · Argentario",
     credit: "Cristina Gottardi (Unsplash) · CC0",
     source: "https://unsplash.com/photos/7_APbY7Afsg",
-    dayNumber: 6
+    dayNumber: 7
   },
   {
     src: "./images/hero/sorano-blue-hour.jpg",
