@@ -365,6 +365,43 @@ export const DICT = {
   },
   checklist_urgent: { en: "Urgent", he: "דחוף" },
 
+  /* ---------- Lock gate ---------- */
+  lock_eyebrow: { en: "Private", he: "פרטי" },
+  lock_title: { en: "Family trip binder", he: "קלסר הטיול המשפחתי" },
+  lock_prompt: {
+    en: "Enter the group PIN to open the trip",
+    he: "הזינו את קוד הקבוצה כדי לפתוח את הטיול"
+  },
+  lock_placeholder: { en: "PIN", he: "קוד" },
+  lock_button: { en: "Unlock", he: "פתחו" },
+  lock_working: { en: "Checking…", he: "בודק…" },
+  lock_error: { en: "Wrong PIN — try again", he: "קוד שגוי — נסו שוב" },
+  lock_hint: {
+    en: "Shared with the group · ask Itay for the PIN",
+    he: "משותף עם הקבוצה · בקשו את הקוד מאיתי"
+  },
+
+  /* ---------- Bookings & logistics ---------- */
+  bookings_eyebrow: { en: "Booked & ready", he: "הוזמן ומוכן" },
+  bookings_title: { en: "Tickets & logistics", he: "כרטיסים ולוגיסטיקה" },
+  bookings_kicker: {
+    en: "Everything you need on the day",
+    he: "כל מה שצריך ביום עצמו"
+  },
+  bookings_time: { en: "Time", he: "שעה" },
+  bookings_arrive: { en: "arrive by", he: "להגיע עד" },
+  bookings_meetup: { en: "Meeting point", he: "נקודת מפגש" },
+  bookings_directions: { en: "Directions", he: "הוראות הגעה" },
+  bookings_party: { en: "Party", he: "משתתפים" },
+  bookings_phone: { en: "Phone", he: "טלפון" },
+  bookings_provider: { en: "Operator", he: "מפעיל" },
+  bookings_ref: { en: "Booking / order", he: "הזמנה / אישור" },
+  bookings_price: { en: "Price", he: "מחיר" },
+  bookings_included: { en: "Included", he: "כלול" },
+  bookings_bring: { en: "Bring", he: "להביא" },
+  bookings_notes: { en: "Good to know", he: "כדאי לדעת" },
+  bookings_cancel: { en: "Cancellation", he: "ביטול" },
+
   /* ---------- Emergency ---------- */
   emergency_eyebrow: { en: "When things go sideways", he: "כשמשהו משתבש" },
   emergency_title: { en: "Emergency & medical", he: "חירום ורפואה" },
