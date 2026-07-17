@@ -106,10 +106,10 @@ export const itinerary: Day[] = [
     title: "Turquoise canyon, Devil's Bridge & forest ropes",
     activities: [
       {
-        time: "Morning",
-        title: "Canyon Park",
+        time: "10:45",
+        title: "Canyon Park — SUP inside the canyon (booked)",
         description:
-          "Family stand-up paddle through the gorge on the emerald Lima — confirm your booking before you arrive; busy weeks disappear fast. Aerial canyon routes live on separate tickets and usually require a taller child; skim the activity name on your confirmation.",
+          "Booked: 6 stand-up paddleboards for the 10:45 slot, gliding the emerald Lima through the gorge. Get there by 10:30 to sort boards and life vests — payment is cash on site. Aerial canyon routes are a separate ticket and usually need a taller child.",
         attractionId: "canyon-park",
         tag: "water",
         rideToNext: { duration: "10 min", note: "Bagni di Lucca → Borgo a Mozzano", departAt: "13:00" }
@@ -151,7 +151,7 @@ export const itinerary: Day[] = [
       { item: "Reef-safe sunscreen & a wide-brim hat" }
     ],
     dayTips: [
-      "Water slots at Canyon Park go fast — call or finish online booking the evening before when it's peak season",
+      "Canyon Park SUP is booked for 10:45 (6 boards) — bring €168 cash to pay on site, and arrive by 10:30",
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"
@@ -205,19 +205,19 @@ export const itinerary: Day[] = [
     dayNumber: 3,
     date: "2026-08-19",
     weekday: "Wednesday",
-    departureTime: "09:30",
-    rideToFirst: { duration: "1 h 10 min", note: "Larciano → Garfagnana" },
+    departureTime: "08:00",
+    rideToFirst: { duration: "1 h", note: "Larciano → Chifenti (Lucca Rafting)" },
     region: "north",
     base: "Larciano",
     title: "Soft rafting + a quick wave at Pisa",
     activities: [
       {
-        time: "Morning",
-        title: "Soft Rafting on the Serchio",
-        description: "Family-friendly raft float — wet, splashy, plenty of jump-in stops.",
+        time: "09:30 (check-in 09:25)",
+        title: "Soft Rafting with Lucca Rafting (booked)",
+        description: "Booked: family soft-rafting float on the Serchio, ~1.5 h, for the whole group (6 adults + 6 kids). Check in at Lucca Rafting in Chifenti. Guide, gear and wetsuits are provided, plus free souvenir photos — with dives, slides and a group photo under the Devil's Bridge. Just wear swimwear under your clothes.",
         attractionId: "soft-rafting-serchio",
         tag: "water",
-        rideToNext: { duration: "45 min", note: "Garfagnana → Pisa", departAt: "13:00" }
+        rideToNext: { duration: "45 min", note: "Chifenti → Pisa", departAt: "13:00" }
       },
       {
         time: "Afternoon",
@@ -235,7 +235,7 @@ export const itinerary: Day[] = [
         tag: "family"
       }
     ],
-    driveNotes: "Garfagnana → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
+    driveNotes: "Chifenti → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
     restaurants: ["rest-n-pisa", "rest-n-osteria-larciano"],
     drinkOfTheDay: {
       name: "Chianti Classico DOCG",
@@ -251,6 +251,7 @@ export const itinerary: Day[] = [
       { item: "Cash for parking, bike rental & gelato" }
     ],
     dayTips: [
+      "Rafting is booked for 09:30 — leave Larciano by 08:00 and check in at Lucca Rafting (Chifenti) by 09:25; wetsuits & gear are provided",
       "Park Pisa at 'Via Pietrasantina' (€2/hr) — free shuttle to the square",
       "Lucca walls bike rentals from €4/hr; bring an ID for the deposit",
       "Tower climb at Pisa is timed — only book if you actually want the climb",
@@ -584,21 +585,21 @@ export const itinerary: Day[] = [
     dayNumber: 7,
     date: "2026-08-23",
     weekday: "Sunday",
-    departureTime: "09:30",
-    rideToFirst: { duration: "1 h 15 min", note: "Cortevecchia → Porto Santo Stefano" },
+    departureTime: "07:00",
+    rideToFirst: { duration: "1 h 15 min", note: "Cortevecchia → Porto Santo Stefano (pier)" },
     region: "south",
     base: "Cortevecchia",
-    title: "Captain for a day — boat & snorkel at Argentario",
+    title: "Argentario catamaran cruise — snorkel & lunch (booked)",
     activities: [
       {
-        time: "Morning",
-        title: "Drive to Porto Santo Stefano",
-        description: "Pick up the rental boat. No licence needed for the smaller engines. Send one family to grab sandwiches and drinks for the cooler while the other handles the safety briefing."
+        time: "08:30",
+        title: "Check in at the Porto Santo Stefano pier",
+        description: "Meeting point at the Porto Santo Stefano pier — be there by 08:30, 30 minutes before the 09:00 departure, to check in with DONNINI. Bring the confirmation from your GetYourGuide app. No pets on board."
       },
       {
-        time: "Day on the water",
-        title: "Cala del Gesso & coves of Argentario",
-        description: "Cruise the peninsula, anchor in glassy coves, snorkel, lunch on board.",
+        time: "09:00–17:30 (8.5 h)",
+        title: "Catamaran along Monte Argentario",
+        description: "Booked catamaran cruise: sail the Argentario coastline, dropping anchor in quiet coves to swim and snorkel — snorkel gear is provided on board. Lunch is served on deck (captain's bruschetta, seafood risotto, a fish main and a sweet snack), with an open bar of water, soft drinks and wine.",
         attractionId: "porto-santo-stefano",
         tag: "water"
       }
@@ -612,18 +613,18 @@ export const itinerary: Day[] = [
       servingNote: "Served straight from the freezer in tiny chilled glasses · sip, never shoot"
     },
     gear: [
-      { item: "Swimwear (a dry second set for the drive home)", for: "porto-santo-stefano" },
-      { item: "Snorkel masks — bring your own; rentals are pricey at the marina", for: "porto-santo-stefano" },
-      { item: "Reef-safe sunscreen, rash guards & sun-shirts (shade on the boat is minimal)", for: "porto-santo-stefano" },
+      { item: "Swimwear under your clothes + a dry set for the drive home", for: "porto-santo-stefano" },
+      { item: "A towel per person", for: "porto-santo-stefano" },
+      { item: "Reef-safe sunscreen, rash guards & sun-shirts (little shade on deck)", for: "porto-santo-stefano" },
+      { item: "Flip-flops + closed-toe water shoes for the swim stops", for: "porto-santo-stefano" },
       { item: "Floating phone case + waterproof dry bag", for: "porto-santo-stefano" },
-      { item: "A cooler with sandwiches, fruit, lots of water — no shops at the coves", for: "porto-santo-stefano" },
-      { item: "Cash for the harbour parking & marine fuel top-up", for: "porto-santo-stefano" }
+      { item: "A light layer — mornings on the water can be breezy", for: "porto-santo-stefano" }
     ],
     dayTips: [
-      "No license needed for engines under 40 hp (your rental qualifies)",
-      "Marine fuel runs €40–80 extra — keep cash for the dock pump",
-      "Anchor at Cala del Gesso early — by midday it fills with day boats",
-      "Strong meltemi wind = waves: check forecast the night before, reschedule if rough"
+      "Leave Cortevecchia by 07:00 — pier check-in is 08:30, 30 min before the 09:00 sail",
+      "Snorkel gear and lunch are included on board — no need to pack either",
+      "Not recommended if pregnant; no pets allowed on board",
+      "Free cancellation up to 09:00 on Aug 22 if the forecast turns rough"
     ],
     italianWords: [
       {

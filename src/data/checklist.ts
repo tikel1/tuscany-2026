@@ -3,18 +3,14 @@ import type { ChecklistItem } from "./types";
 export const bookingChecklist: ChecklistItem[] = [
   {
     id: "book-canyon-park",
-    text: "Book Canyon Park (SUP / water slot)",
+    text: "Booked ✓ — Canyon Park SUP (18 Aug, 10:45)",
     detail:
-      "Lima gorge slots tighten in August. Lock in canyonpark.it the moment your date opens rather than risking a blank screen at the kiosk.",
-    link: "https://www.canyonpark.it/",
-    urgent: true
+      "6 boards reserved for the 10:45 slot. Payment is cash on site (€168). Confirmation is in Itay's email."
   },
   {
     id: "book-argentario-boat",
-    text: "Reserve a no-licence boat at Porto Santo Stefano (22 Aug)",
-    detail: "Argentario Boat Rental, Yes Boat or similar. Confirm 'senza patente' and a Gozzo / gommone for the day.",
-    link: "https://www.argentarioboat.com/",
-    urgent: true
+    text: "Booked ✓ — Argentario catamaran cruise (23 Aug)",
+    detail: "GetYourGuide / DONNINI, 5 adults + 5 kids. Snorkel gear & lunch included on board. Check in at the Porto Santo Stefano pier by 08:30. Confirmation is in Itay's email."
   },
   {
     id: "book-private-chef",
@@ -25,8 +21,8 @@ export const bookingChecklist: ChecklistItem[] = [
   },
   {
     id: "book-rafting",
-    text: "Reserve Soft Rafting on the Serchio",
-    detail: "Family-friendly trip with one of the Garfagnana operators (Canyon Park, Rafting Garfagnana)."
+    text: "Booked ✓ — Soft rafting, Serchio (19 Aug, 09:30)",
+    detail: "GetYourGuide / Lucca Rafting, whole group. Guide, gear & wetsuits included. Check in at Chifenti by 09:25. Confirmation is in Itay's email."
   },
   {
     id: "book-horses",
@@ -63,8 +59,8 @@ export const packingChecklist: ChecklistItem[] = [
   },
   {
     id: "snorkels",
-    text: "Snorkel & mask per person",
-    detail: "The boat day at Argentario — clear water, fish in the rocks."
+    text: "Snorkel & mask per person (optional now)",
+    detail: "The Argentario catamaran provides snorkel gear on board — only pack your own if the kids prefer their own mask."
   },
   {
     id: "uv-shirts",

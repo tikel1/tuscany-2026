@@ -332,25 +332,25 @@ export const attractions: POI[] = [
   // ---------- SOUTH ----------
   {
     id: "porto-santo-stefano",
-    name: "Porto Santo Stefano — Boat Day",
+    name: "Porto Santo Stefano — Catamaran Cruise",
     category: "attraction",
     region: "south",
-    shortDescription: "Rent a small motorboat — no licence needed — and play captain",
+    shortDescription: "Guided catamaran cruise around Monte Argentario, with snorkelling & lunch",
     description:
-      "The harbour town on Monte Argentario where you rent a Gozzo or gommone for the day (no licence needed for the smaller engines). Cruise the peninsula, drop anchor in glassy coves, and snorkel right off the boat. Stop for lunch on board or at one of the tiny waterside trattorie at Cala Galera.",
+      "The harbour town on Monte Argentario, and the departure pier for the booked catamaran cruise. Sail the peninsula with the crew, drop anchor in glassy coves to swim and snorkel right off the boat (gear provided), and enjoy a full lunch served on deck as you go.",
     image: "./images/porto-santo-stefano.jpg",
     imageCredit: wmCredit("Porto_Santo_Stefano"),
-    website: "https://www.argentarioboat.com/",
+    website: "https://www.getyourguide.com/",
     address: "Porto Santo Stefano, Monte Argentario (GR)",
     coords: [42.4361, 11.1167],
     tags: ["water", "family", "view"],
-    bookingNote: "Book a Gozzo / gommone for 22 Aug well in advance.",
+    bookingNote: "Booked via GetYourGuide (operator DONNINI) for 23 Aug — check in at the pier by 08:30.",
     difficulty: "easy",
     tips: [
-      "No license needed for engines under 40 hp — quick safety briefing only",
-      "Marine fuel is pricey: budget €40–80 on top of the rental",
-      "Bring snorkel masks, reef-safe sun cream, a cooler & lots of water",
-      "Check the wind forecast — strong meltemi means rough water; reschedule if needed"
+      "Meeting point is the Porto Santo Stefano pier — arrive 08:30, 30 min before the 09:00 departure",
+      "Snorkel gear, lunch and an open bar (water, soft drinks, wine) are all included on board",
+      "No pets on board; not recommended if pregnant",
+      "Free cancellation up to 09:00 on 22 Aug — worth a forecast check the night before"
     ],
     quizFacts: [
       {

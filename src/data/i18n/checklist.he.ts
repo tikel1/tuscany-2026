@@ -3,14 +3,14 @@ import type { ChecklistItem } from "../types";
 export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "detail">>> = {
   // Booking
   "book-canyon-park": {
-    text: "להזמין בקניון פארק — סאפ בנהר / פעילות מים",
+    text: "הוזמן ✓ — סאפ בקניון פארק (18.8, 10:45)",
     detail:
-      "באוגוסט חלונות פעילות המים בנקיק הלימה נסגרים מהר. להזמין ב־canyonpark.it ברגע שהתאריך נפתח — עדיף מלהסתכן בשטח עם ״אין מקום״."
+      "6 סאפים לחלון של 10:45. התשלום במזומן במקום (€168). האישור במייל של איתי."
   },
   "book-argentario-boat": {
-    text: "להזמין סירה ללא רישיון בפורטו סנטו סטפנו (22.8)",
+    text: "הוזמן ✓ — שייט קטמרן בארג'נטריו (23.8)",
     detail:
-      "Argentario Boat Rental, Yes Boat או דומה. לוודא ׳senza patente׳ וגוזו/גומונה ליום."
+      "GetYourGuide / DONNINI, 5 מבוגרים + 5 ילדים. ציוד שנורקל וארוחה כלולים על הסיפון. צ׳ק־אין במזח בפורטו סנטו סטפנו עד 08:30. האישור במייל של איתי."
   },
   "book-private-chef": {
     text: "להזמין שף פרטי לווילה (21.8)",
@@ -18,9 +18,9 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
       "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. סדנת פיצ'י + ארוחת ערב למשפחה."
   },
   "book-rafting": {
-    text: "להזמין סופט ראפטינג בסרקיו",
+    text: "הוזמן ✓ — סופט ראפטינג בסרקיו (19.8, 09:30)",
     detail:
-      "טיול ידידותי למשפחות עם אחד המפעילים בגרפניאנה (Canyon Park, Rafting Garfagnana)."
+      "GetYourGuide / לוקה ראפטינג, כל הקבוצה. מדריך, ציוד וחליפות צלילה כלולים. צ׳ק־אין בקיפנטי עד 09:25. האישור במייל של איתי."
   },
   "book-horses": {
     text: "להזמין שעת רכיבה במרמה",
@@ -49,8 +49,8 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
     detail: "טלפונים, ארנקים, מפתחות הרכב על הסאפ ועל הסירה בארג'נטריו."
   },
   snorkels: {
-    text: "שנורקל ומסכה לכל אחד",
-    detail: "יום הסירה בארג'נטריו — מים צלולים, דגים בין הסלעים."
+    text: "שנורקל ומסכה לכל אחד (אופציונלי עכשיו)",
+    detail: "הקטמרן בארג'נטריו מספק ציוד שנורקל על הסיפון — לארוז משלכם רק אם הילדים מעדיפים מסכה משלהם."
   },
   "uv-shirts": {
     text: "חולצות UV / לייקרה",
