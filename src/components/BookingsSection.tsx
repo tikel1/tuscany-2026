@@ -70,7 +70,7 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
         {/* Coverflow viewport — clips the side peeks so the page never scrolls */}
         <div className="overflow-hidden py-2">
           <motion.div
-            className="relative mx-auto w-[72%] max-w-[340px] aspect-[1.7/1] touch-pan-y"
+            className="relative mx-auto w-[74%] max-w-[350px] aspect-[1.6/1] touch-pan-y"
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.25}

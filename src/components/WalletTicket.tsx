@@ -96,35 +96,35 @@ export function TicketCardFace({
         />
       </div>
       <div className="absolute inset-0" style={{ backgroundImage: themeFor(b, index) }} />
-      <div className="absolute inset-0 p-5 flex flex-col justify-between text-cream-50">
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-cream-50">
         {/* chip + brand */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-2">
           <span
-            className="h-6 w-8 rounded-[5px] ring-1 ring-white/30 shrink-0"
+            className="h-5 w-7 rounded-[4px] ring-1 ring-white/30 shrink-0"
             style={{ backgroundImage: "linear-gradient(135deg, #f4d58d 0%, #d9a441 100%)" }}
             aria-hidden
           />
-          <span className="text-[10px] uppercase tracking-[0.2em] opacity-85 truncate max-w-[58%] text-end">
+          <span className="text-[9px] uppercase tracking-[0.16em] opacity-80 truncate max-w-[58%] text-end">
             {venue?.name ?? b.provider}
           </span>
         </div>
         {/* activity + when */}
         <div>
-          <h3 className="font-serif text-xl sm:text-2xl leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+          <h3 className="font-serif text-base sm:text-lg leading-snug line-clamp-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
             {b.title[lang]}
           </h3>
-          <div className="text-[12px] opacity-90 mt-0.5">
+          <div className="text-[10.5px] opacity-90 mt-0.5">
             {dayShort} · {b.time}
           </div>
         </div>
         {/* card number + holder */}
         <div>
           {b.bookingRef && (
-            <div className="font-mono text-[13px] sm:text-sm tracking-[0.14em] opacity-95 drop-shadow whitespace-nowrap overflow-hidden text-ellipsis">
+            <div className="font-mono text-[11px] tracking-[0.1em] opacity-95 drop-shadow truncate">
               {b.bookingRef}
             </div>
           )}
-          <div className="text-[10px] uppercase tracking-[0.24em] opacity-85 mt-1">
+          <div className="text-[9px] uppercase tracking-[0.2em] opacity-80 mt-0.5">
             {CARDHOLDER}
           </div>
         </div>
@@ -322,7 +322,7 @@ export default function WalletTicket({
 
   return (
     <div className="w-full">
-      <div className="aspect-[1.7/1]">
+      <div className="aspect-[1.6/1]">
         <TicketCardFace
           booking={booking}
           index={index}
