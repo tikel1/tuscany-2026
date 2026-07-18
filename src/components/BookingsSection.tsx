@@ -22,20 +22,15 @@ function upcomingFirst(activities: Booking[]): Booking[] {
   });
 }
 
-/** Where a card sits in the stack, given its distance from the active card. */
-function stackStyle(delta: number) {
-  if (delta === 0) return { y: 0, scale: 1, opacity: 1, zIndex: 40 };
-  if (delta > 0) {
-    // Upcoming cards peek behind, above the active one.
-    return {
-      y: -delta * 12,
-      scale: 1 - delta * 0.05,
-      opacity: delta > 2 ? 0 : 0.55 - (delta - 1) * 0.2,
-      zIndex: 40 - delta
-    };
+/** Where a card sits, given its distance from the active card. Neighbours
+ *  peek on the sides (coverflow); direction flips for RTL. */
+function sideStyle(delta: number, rtl: boolean) {
+  if (delta === 0) return { x: "0%", scale: 1, opacity: 1, zIndex: 40 };
+  const dir = rtl ? -1 : 1;
+  if (Math.abs(delta) === 1) {
+    return { x: `${dir * delta * 58}%`, scale: 0.84, opacity: 0.45, zIndex: 30 };
   }
-  // Already-viewed cards drop away behind.
-  return { y: 24, scale: 0.92, opacity: 0, zIndex: 0 };
+  return { x: `${dir * delta * 82}%`, scale: 0.72, opacity: 0, zIndex: 20 };
 }
 
 function TicketDeck({ tickets }: { tickets: Booking[] }) {
@@ -50,15 +45,15 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
   const next = () => go(active + 1);
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="relative pt-6">
-        {/* Desktop arrows */}
+    <div className="mx-auto max-w-xl">
+      <div className="relative">
+        {/* Desktop arrows (outside the clipped viewport) */}
         <button
           type="button"
           onClick={prev}
           disabled={active === 0}
           aria-label={t("ticket_prev")}
-          className="hidden sm:flex absolute start-0 top-1/2 -translate-x-[140%] z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
+          className="hidden sm:flex absolute start-0 top-1/2 -translate-y-1/2 z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
         >
           {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -67,34 +62,36 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
           onClick={next}
           disabled={active === tickets.length - 1}
           aria-label={t("ticket_next")}
-          className="hidden sm:flex absolute end-0 top-1/2 translate-x-[140%] z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
+          className="hidden sm:flex absolute end-0 top-1/2 -translate-y-1/2 z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
         >
           {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
 
-        {/* The stacked deck */}
-        <div className="relative aspect-[1.7/1]">
-          {tickets.map((b, i) => {
-            const delta = i - active;
-            const isActive = delta === 0;
-            return (
-              <motion.div
-                key={b.id}
-                className="absolute inset-0"
-                initial={false}
-                animate={stackStyle(delta)}
-                transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
-                style={{ pointerEvents: delta < 0 || delta > 2 ? "none" : "auto" }}
-              >
-                <TicketCardFace
-                  booking={b}
-                  index={i}
-                  className="cursor-pointer"
-                  onClick={() => (isActive ? setDetailsOpen(o => !o) : go(i))}
-                />
-              </motion.div>
-            );
-          })}
+        {/* Coverflow viewport — clips the side peeks so the page never scrolls */}
+        <div className="overflow-hidden py-2">
+          <div className="relative mx-auto w-[72%] max-w-[340px] aspect-[1.7/1]">
+            {tickets.map((b, i) => {
+              const delta = i - active;
+              const isActive = delta === 0;
+              return (
+                <motion.div
+                  key={b.id}
+                  className="absolute inset-0"
+                  initial={false}
+                  animate={sideStyle(delta, isRTL)}
+                  transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
+                  style={{ pointerEvents: Math.abs(delta) > 1 ? "none" : "auto" }}
+                >
+                  <TicketCardFace
+                    booking={b}
+                    index={i}
+                    className="cursor-pointer"
+                    onClick={() => (isActive ? setDetailsOpen(o => !o) : go(i))}
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
