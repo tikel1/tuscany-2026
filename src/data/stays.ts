@@ -41,7 +41,7 @@ export const stays: Stay[] = [
     region: "south",
     shortDescription: "Restored farm estate near Saturnia — your southern base",
     description:
-      "A 2,000-hectare organic estate in the rolling Maremma hills, just 12 km from the Saturnia hot springs. Apartment-style stays with private pool, perfect for an evening with a private chef. Remote setting — bring everything you need from Manciano.",
+      "A 2,000-hectare organic estate in the rolling Maremma hills, just 17 km from the Saturnia hot springs. Apartment-style stays with private pool, perfect for an evening with a private chef. Remote setting — bring everything you need from Manciano.",
     image: "./images/stay-cortevecchia-poolview.png",
     gallery: [
       "./images/stay-cortevecchia-villa.png",
@@ -62,7 +62,7 @@ export const stays: Stay[] = [
     checkOut: "2026-08-26",
     nights: 5,
     highlights: [
-      "10–15 min from Saturnia hot springs (early morning win)",
+      "~25 min from Saturnia hot springs (early morning win)",
       "~30 min from Pitigliano and the Vie Cave",
       "Big private pool, kitchen built for a chef-at-home night",
       "Total privacy — historic restored buildings"

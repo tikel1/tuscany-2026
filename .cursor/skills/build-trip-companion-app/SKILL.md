@@ -187,7 +187,18 @@ end-to-end flow that produced the encrypted packet:
    "you should book X" or DIY text — sweep the itinerary/attractions/tips/
    checklist (EN + HE) and fix it (see the contradiction audit in *Done means*),
    and flip the matching "to book" checklist items to a pre-checked `done: true`.
-5. **Share the PIN out-of-band** (e.g. a memorable number like the departure
+   Verify any supplier/venue links resolve (open them) — prefer the public
+   activity page over the email's private "manage booking" deep link, which
+   carries a token that could expose the reservation.
+5. **Keep the AI guide in sync (do this on EVERY plan change, not just
+   bookings).** The Gemininio persona (`src/lib/gemininio/persona.ts`) is built
+   from the data files, so itinerary / attraction / stay / food edits propagate
+   to it automatically — nothing to do for those. What it CANNOT derive is
+   per-person plan facts (who skips an activity, a changed headcount or
+   pairing); keep those in `TRIP_FACTS.planNotes` and update them by hand
+   whenever the plan changes. Rule of thumb: if a fact lives only in your head
+   or an email — not in a data file — it must be added to the persona too.
+6. **Share the PIN out-of-band** (e.g. a memorable number like the departure
    date) and tell the group. To change it, just re-run the encrypt step with the
    new PIN and redeploy.
 

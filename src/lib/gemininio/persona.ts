@@ -25,7 +25,12 @@ const TRIP_FACTS = {
   endDate: "2026-08-26",
   travellers: "Three families travelling together: Horowitz, Racz, Kaplan",
   cars: "1 rental car picked up at Rome Fiumicino (FCO)",
-  bases: ["Larciano (north)", "Tenuta Cortevecchia, Maremma (south)"]
+  bases: ["Larciano (north)", "Tenuta Cortevecchia, Maremma (south)"],
+  // Per-person plan facts that AREN'T derivable from the itinerary data —
+  // keep them here and update when the plan changes.
+  planNotes: [
+    "The Argentario catamaran cruise (Day 7, 23 Aug) is the whole group EXCEPT Marina and Shalev, who are sitting that one out. Everything else is the full group."
+  ]
 } as const;
 
 /* ------------------------------------------------------------------ */
@@ -366,6 +371,7 @@ export function buildSystemPrompt(lang: Lang): string {
     `  - Travellers: ${TRIP_FACTS.travellers}`,
     `  - Wheels: ${TRIP_FACTS.cars}`,
     `  - Bases: ${TRIP_FACTS.bases.join(" + ")}`,
+    ...TRIP_FACTS.planNotes.map(n => `  - ${n}`),
     "",
     digestItinerary(lang),
     "",
