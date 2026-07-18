@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import Section from "./Section";
-import WalletTicket from "./WalletTicket";
+import { TicketCardFace, TicketDetails } from "./WalletTicket";
 import TicketUnlock from "./TicketUnlock";
 import { useBookings } from "../lib/bookingsStore";
 import { useT } from "../lib/dict";
@@ -21,61 +22,43 @@ function upcomingFirst(activities: Booking[]): Booking[] {
   });
 }
 
-/** A Google-Wallet-style ticket carousel: swipe on touch, arrows + dots on
- *  desktop. Works in both LTR and RTL (navigation is index-based). */
-function TicketCarousel({ tickets }: { tickets: Booking[] }) {
+/** Where a card sits in the stack, given its distance from the active card. */
+function stackStyle(delta: number) {
+  if (delta === 0) return { y: 0, scale: 1, opacity: 1, zIndex: 40 };
+  if (delta > 0) {
+    // Upcoming cards peek behind, above the active one.
+    return {
+      y: -delta * 12,
+      scale: 1 - delta * 0.05,
+      opacity: delta > 2 ? 0 : 0.55 - (delta - 1) * 0.2,
+      zIndex: 40 - delta
+    };
+  }
+  // Already-viewed cards drop away behind.
+  return { y: 24, scale: 0.92, opacity: 0, zIndex: 0 };
+}
+
+function TicketDeck({ tickets }: { tickets: Booking[] }) {
   const { lang } = useLang();
   const t = useT();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
   const isRTL = lang === "he";
+  const [active, setActive] = useState(0);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const goTo = useCallback((i: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const clamped = Math.max(0, Math.min(i, track.children.length - 1));
-    const el = track.children[clamped] as HTMLElement | undefined;
-    el?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-  }, []);
-
-  // Track the active card by whichever one's leading edge sits nearest the
-  // track's start. Reading the on-screen rects keeps this correct in LTR and
-  // RTL and at both ends (where a centered detection would be off-by-one).
-  const onScroll = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const rtl = getComputedStyle(track).direction === "rtl";
-    const contRect = track.getBoundingClientRect();
-    const anchor = rtl ? contRect.right : contRect.left;
-    let best = 0;
-    let bestDist = Infinity;
-    Array.from(track.children).forEach((child, i) => {
-      const r = (child as HTMLElement).getBoundingClientRect();
-      const edge = rtl ? r.right : r.left;
-      const d = Math.abs(edge - anchor);
-      if (d < bestDist) {
-        bestDist = d;
-        best = i;
-      }
-    });
-    setActive(best);
-  }, []);
-
-  // Previous/next in reading order (index-based, so RTL just works).
-  const prev = () => goTo(active - 1);
-  const next = () => goTo(active + 1);
+  const go = (i: number) => setActive(Math.max(0, Math.min(i, tickets.length - 1)));
+  const prev = () => go(active - 1);
+  const next = () => go(active + 1);
 
   return (
     <div className="mx-auto max-w-md">
-      <div className="relative">
-        {/* Desktop arrows, just outside the card. Position auto-flips via
-            start/end; only the glyph flips for RTL. */}
+      <div className="relative pt-6">
+        {/* Desktop arrows */}
         <button
           type="button"
           onClick={prev}
           disabled={active === 0}
           aria-label={t("ticket_prev")}
-          className="hidden sm:flex absolute start-0 top-[130px] -translate-x-[140%] z-10 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
+          className="hidden sm:flex absolute start-0 top-1/2 -translate-x-[140%] z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
         >
           {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -84,21 +67,34 @@ function TicketCarousel({ tickets }: { tickets: Booking[] }) {
           onClick={next}
           disabled={active === tickets.length - 1}
           aria-label={t("ticket_next")}
-          className="hidden sm:flex absolute end-0 top-[130px] translate-x-[140%] z-10 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
+          className="hidden sm:flex absolute end-0 top-1/2 translate-x-[140%] z-50 w-10 h-10 items-center justify-center rounded-full bg-cream-50 ring-1 ring-cream-300 shadow-md text-ink-800 hover:bg-cream-100 disabled:opacity-0 transition-opacity"
         >
           {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
 
-        <div
-          ref={trackRef}
-          onScroll={onScroll}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1"
-        >
-          {tickets.map((b, i) => (
-            <div key={b.id} className="snap-start shrink-0 w-full self-start">
-              <WalletTicket booking={b} index={i} />
-            </div>
-          ))}
+        {/* The stacked deck */}
+        <div className="relative aspect-[1.7/1]">
+          {tickets.map((b, i) => {
+            const delta = i - active;
+            const isActive = delta === 0;
+            return (
+              <motion.div
+                key={b.id}
+                className="absolute inset-0"
+                initial={false}
+                animate={stackStyle(delta)}
+                transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
+                style={{ pointerEvents: delta < 0 || delta > 2 ? "none" : "auto" }}
+              >
+                <TicketCardFace
+                  booking={b}
+                  index={i}
+                  className="cursor-pointer"
+                  onClick={() => (isActive ? setDetailsOpen(o => !o) : go(i))}
+                />
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
@@ -109,18 +105,47 @@ function TicketCarousel({ tickets }: { tickets: Booking[] }) {
             <button
               key={b.id}
               type="button"
-              onClick={() => goTo(i)}
+              onClick={() => go(i)}
               aria-label={t("ticket_go_to", { n: i + 1 })}
               aria-current={active === i}
               className={`h-2 rounded-full transition-all ${
-                active === i
-                  ? "w-6 bg-terracotta-500"
-                  : "w-2 bg-ink-900/20 hover:bg-ink-900/40"
+                active === i ? "w-6 bg-terracotta-500" : "w-2 bg-ink-900/20 hover:bg-ink-900/40"
               }`}
             />
           ))}
         </div>
       )}
+
+      {/* One central Details toggle, for the active card */}
+      <div className="mt-3 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setDetailsOpen(o => !o)}
+          aria-expanded={detailsOpen}
+          className="inline-flex items-center gap-1 text-sm font-medium text-terracotta-700 hover:text-terracotta-800"
+        >
+          {t(detailsOpen ? "ticket_less" : "ticket_more")}
+          <ChevronDown
+            size={15}
+            className={`transition-transform ${detailsOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+      </div>
+
+      <AnimatePresence initial={false} mode="wait">
+        {detailsOpen && (
+          <motion.div
+            key={tickets[active].id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}
+            className="mt-3"
+          >
+            <TicketDetails booking={tickets[active]} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -140,7 +165,7 @@ export default function BookingsSection() {
       {!data ? (
         <TicketUnlock />
       ) : (
-        <TicketCarousel tickets={upcomingFirst(data.activities)} />
+        <TicketDeck tickets={upcomingFirst(data.activities)} />
       )}
     </Section>
   );
