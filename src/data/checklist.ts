@@ -33,8 +33,8 @@ export const bookingChecklist: ChecklistItem[] = [
   },
   {
     id: "book-private-chef",
-    text: "Private chef for the villa (optional, 21 Aug)",
-    detail: "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. Pici workshop + dinner for the family.",
+    text: "Private chef dinner at the villa (optional)",
+    detail: "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. Pici workshop + dinner. Pick a settled villa evening (22–25 Aug) — not the 21st, that's the hotel-switch day.",
     link: "https://www.eatwith.com/"
   },
   {

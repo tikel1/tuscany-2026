@@ -26,9 +26,9 @@ export const checklistHE: Record<string, Partial<Pick<ChecklistItem, "text" | "d
     detail: "רכבל מונטה גומיטו בהרים — לבדוק את שעות הפעילות של אותו יום לפני שנוסעים למעלה."
   },
   "book-private-chef": {
-    text: "שף פרטי לווילה (אופציונלי, 21.8)",
+    text: "ארוחת שף פרטי בווילה (אופציונלי)",
     detail:
-      "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. סדנת פיצ'י + ארוחת ערב למשפחה."
+      "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. סדנת פיצ'י + ארוחת ערב. לבחור ערב רגוע בווילה (22–25.8) — לא ה־21, זה יום המעבר בין המלונות."
   },
   "book-horses": {
     text: "להזמין שעת רכיבה במרמה",
