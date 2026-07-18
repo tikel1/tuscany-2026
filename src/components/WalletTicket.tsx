@@ -97,11 +97,18 @@ export function TicketCardFace({
       </div>
       <div className="absolute inset-0" style={{ backgroundImage: themeFor(b, index) }} />
       <div className="absolute inset-0 p-5 flex flex-col justify-between text-cream-50">
-        <span
-          className="h-6 w-8 rounded-[5px] ring-1 ring-white/30"
-          style={{ backgroundImage: "linear-gradient(135deg, #f4d58d 0%, #d9a441 100%)" }}
-          aria-hidden
-        />
+        {/* chip + brand */}
+        <div className="flex items-start justify-between gap-3">
+          <span
+            className="h-6 w-8 rounded-[5px] ring-1 ring-white/30 shrink-0"
+            style={{ backgroundImage: "linear-gradient(135deg, #f4d58d 0%, #d9a441 100%)" }}
+            aria-hidden
+          />
+          <span className="text-[10px] uppercase tracking-[0.2em] opacity-85 truncate max-w-[58%] text-end">
+            {venue?.name ?? b.provider}
+          </span>
+        </div>
+        {/* activity + when */}
         <div>
           <h3 className="font-serif text-xl sm:text-2xl leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
             {b.title[lang]}
@@ -109,7 +116,15 @@ export function TicketCardFace({
           <div className="text-[12px] opacity-90 mt-0.5">
             {dayShort} · {b.time}
           </div>
-          <div className="text-[10px] uppercase tracking-[0.24em] opacity-85 mt-2.5">
+        </div>
+        {/* card number + holder */}
+        <div>
+          {b.bookingRef && (
+            <div className="font-mono text-[13px] sm:text-sm tracking-[0.14em] opacity-95 drop-shadow whitespace-nowrap overflow-hidden text-ellipsis">
+              {b.bookingRef}
+            </div>
+          )}
+          <div className="text-[10px] uppercase tracking-[0.24em] opacity-85 mt-1">
             {CARDHOLDER}
           </div>
         </div>
