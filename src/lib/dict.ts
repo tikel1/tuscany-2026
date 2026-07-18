@@ -400,6 +400,8 @@ export const DICT = {
   bookings_copy: { en: "Copy", he: "העתק" },
   bookings_copied: { en: "Copied", he: "הועתק" },
   bookings_pin: { en: "PIN", he: "קוד" },
+  ticket_more: { en: "Details", he: "פרטים" },
+  ticket_less: { en: "Less", he: "פחות" },
   bookings_party: { en: "Party", he: "משתתפים" },
   bookings_phone: { en: "Phone", he: "טלפון" },
   bookings_provider: { en: "Operator", he: "מפעיל" },

@@ -29,7 +29,7 @@ import {
 import { itinerary } from "../data/itinerary";
 import { getAttraction } from "../data/attractions";
 import { getService } from "../data/services";
-import BookingCard from "./BookingCard";
+import WalletTicket from "./WalletTicket";
 import TicketUnlock from "./TicketUnlock";
 import { useBookingsForDay, BOOKED_DAY_NUMBERS } from "../lib/bookingsStore";
 import type {
@@ -687,9 +687,9 @@ function ChapterDetailContent({ day }: { day: Day }) {
                 title={t("bookings_title")}
               />
               {dayBookings.length > 0 ? (
-                <div className="grid gap-4 sm:gap-5">
-                  {dayBookings.map(b => (
-                    <BookingCard key={b.id} booking={b} showDay={false} />
+                <div className="grid gap-4 sm:gap-5 sm:max-w-md">
+                  {dayBookings.map((b, i) => (
+                    <WalletTicket key={b.id} booking={b} index={i} />
                   ))}
                 </div>
               ) : (

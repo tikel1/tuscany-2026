@@ -1,8 +1,22 @@
 import Section from "./Section";
-import BookingCard from "./BookingCard";
+import WalletTicket from "./WalletTicket";
 import TicketUnlock from "./TicketUnlock";
 import { useBookings } from "../lib/bookingsStore";
 import { useT } from "../lib/dict";
+import type { Booking } from "../lib/bookingsTypes";
+
+/** Sort tickets so the next upcoming one leads; past ones fall to the end. */
+function upcomingFirst(activities: Booking[]): Booking[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return [...activities].sort((a, b) => {
+    const ad = a.date ?? "";
+    const bd = b.date ?? "";
+    const aPast = ad !== "" && ad < today;
+    const bPast = bd !== "" && bd < today;
+    if (aPast !== bPast) return aPast ? 1 : -1;
+    return ad.localeCompare(bd);
+  });
+}
 
 export default function BookingsSection() {
   const { data } = useBookings();
@@ -19,9 +33,14 @@ export default function BookingsSection() {
       {!data ? (
         <TicketUnlock />
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {data.activities.map(b => (
-            <BookingCard key={b.id} booking={b} />
+        <div className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {upcomingFirst(data.activities).map((b, i) => (
+            <div
+              key={b.id}
+              className="snap-start shrink-0 w-[86%] xs:w-[78%] sm:w-[360px] self-start"
+            >
+              <WalletTicket booking={b} index={i} />
+            </div>
           ))}
         </div>
       )}

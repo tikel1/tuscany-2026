@@ -14,6 +14,8 @@ export interface Booking {
   id: string;
   /** Itinerary day this booking belongs to (matches Day.dayNumber). */
   dayNumber: number;
+  /** ISO date (YYYY-MM-DD) — used to order tickets upcoming-first. */
+  date?: string;
   /** The attraction this ticket is for — links the booking to its POI. */
   attractionId?: string;
   title: BookingLoc;
