@@ -109,7 +109,7 @@ export const itinerary: Day[] = [
         time: "10:45",
         title: "Canyon Park — SUP inside the canyon (booked)",
         description:
-          "Booked: 6 stand-up paddleboards for the 10:45 slot, gliding the emerald Lima through the gorge. Get there by 10:30 to sort boards and life vests — payment is cash on site. Aerial canyon routes are a separate ticket and usually need a taller child.",
+          "Booked: 6 stand-up paddleboards for the 10:45 slot, gliding the emerald Lima through the gorge. Get there by 10:30 to sort boards and life vests — payment is cash on site (€168). Aerial canyon routes are a separate ticket and usually need a taller child.",
         attractionId: "canyon-park",
         tag: "water",
         rideToNext: { duration: "10 min", note: "Bagni di Lucca → Borgo a Mozzano", departAt: "13:00" }
@@ -151,7 +151,6 @@ export const itinerary: Day[] = [
       { item: "Reef-safe sunscreen & a wide-brim hat" }
     ],
     dayTips: [
-      "Canyon Park SUP is booked for 10:45 (6 boards) — bring €168 cash to pay on site, and arrive by 10:30",
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
       "Cash for the small adventure-park snack bar"
@@ -251,7 +250,7 @@ export const itinerary: Day[] = [
       { item: "Cash for parking, bike rental & gelato" }
     ],
     dayTips: [
-      "Rafting is booked for 09:30 — leave Larciano by 08:00 and check in at Lucca Rafting (Chifenti) by 09:25; wetsuits & gear are provided",
+      "Rafting is booked for 09:30 — leave Larciano by 08:00 to check in at Lucca Rafting (Chifenti) by 09:25",
       "Park Pisa at 'Via Pietrasantina' (€2/hr) — free shuttle to the square",
       "Lucca walls bike rentals from €4/hr; bring an ID for the deposit",
       "Tower climb at Pisa is timed — only book if you actually want the climb",

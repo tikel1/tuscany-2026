@@ -23,6 +23,7 @@ import { getAttraction } from "../data/attractions";
 import { useLocalizePoi } from "../data/i18n";
 import { useLang } from "../lib/i18n";
 import { useT } from "../lib/dict";
+import PoiImage from "./PoiImage";
 
 function mapsHref(query: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -82,6 +83,17 @@ export default function BookingCard({
 
   return (
     <article className="card-paper p-5 sm:p-6">
+      {rawAttraction?.image && (
+        <div className="mb-4 aspect-[16/6] overflow-hidden rounded-xl">
+          <PoiImage
+            src={rawAttraction.image}
+            alt={venue?.name ?? loc(b.title)}
+            region={rawAttraction.region}
+            category={rawAttraction.category}
+            tags={rawAttraction.tags}
+          />
+        </div>
+      )}
       <div className="flex items-baseline justify-between gap-3 flex-wrap">
         <h3 className="font-serif text-2xl text-ink-900 leading-tight">
           {loc(b.title)}

@@ -116,7 +116,7 @@ export const servicesHE: Record<
   },
   "rest-s-porto-santo-stefano": {
     name: "דאל גרקו — פורטו סנטו סטפנו",
-    shortDescription: "דגים טריים בנמל שבו שוכרים את הסירה",
+    shortDescription: "דגים טריים בנמל שממנו יוצא הקטמרן",
     description:
       "ממש על הנמל בפורטו סנטו סטפנו — דייג יומי, ספגטי אלו סקוליו קלאסי, מרפסת עם נוף לים. סיום מושלם ליום הסירה לפני הנסיעה חזרה.",
     address: "Via del Molo 1, פורטו סנטו סטפנו (GR)",

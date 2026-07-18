@@ -631,7 +631,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
           {/* Activities */}
           <section>
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
-            <ol className="mt-6 sm:mt-8 space-y-5 sm:space-y-8">
+            <ol className="space-y-5 sm:space-y-8">
               {localDay.activities.map((a, i, arr) => (
                 <Fragment key={i}>
                   {i === 0 && localDay.rideToFirst && localDay.departureTime && (
@@ -686,9 +686,6 @@ function ChapterDetailContent({ day }: { day: Day }) {
                 eyebrow={t("bookings_eyebrow")}
                 title={t("bookings_title")}
               />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("daytickets_kicker")}
-              </p>
               {dayBookings.length > 0 ? (
                 <div className="grid gap-4 sm:gap-5">
                   {dayBookings.map(b => (
@@ -705,35 +702,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
           {dayPois.length > 0 && (
             <section>
               <SectionLabel eyebrow={t("on_the_map")} title={t("the_days_stops")} />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("ordered_visit")}
-              </p>
               <MiniMap pois={dayPois} />
-              <ol className="mt-4 grid sm:grid-cols-2 gap-2.5">
-                {dayPois.map((p, i) => (
-                  <li
-                    key={p.id}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-cream-50 ring-1 ring-cream-300/70"
-                  >
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-terracotta-500 text-cream-50 flex items-center justify-center text-xs font-semibold">
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <div className="font-serif text-[15px] text-ink-900 leading-tight">
-                        {p.name}
-                      </div>
-                      {p.address && (
-                        <div className="text-[12px] text-ink-700/60 mt-0.5 leading-snug">
-                          {p.address}
-                        </div>
-                      )}
-                      <div className="mt-1.5">
-                        <NavigateLinks name={p.name} coords={p.coords} address={p.address} size={11} />
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
             </section>
           )}
 
@@ -743,9 +712,6 @@ function ChapterDetailContent({ day }: { day: Day }) {
           {localDay.gear && localDay.gear.length > 0 && (
             <section>
               <SectionLabel eyebrow={t("gear_eyebrow")} title={t("gear_title")} />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("gear_kicker")}
-              </p>
               <ul className="grid sm:grid-cols-2 gap-2.5">
                 {localDay.gear.map((g, i) => {
                   const forName = g.for ? attractionNameById.get(g.for) : undefined;
@@ -802,9 +768,6 @@ function ChapterDetailContent({ day }: { day: Day }) {
           {((localDay.dayTips && localDay.dayTips.length > 0) || tips.length > 0) && (
             <section>
               <SectionLabel eyebrow={t("daytips_eyebrow")} title={t("daytips_title")} />
-              <p className="mt-2 mb-5 sm:mb-6 font-serif italic text-ink-700/70 text-[14.5px] sm:text-base">
-                {t("daytips_kicker")}
-              </p>
               <ul className="space-y-2.5">
                 {(localDay.dayTips ?? []).map((line, i) => (
                   <li
@@ -814,10 +777,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
                     <span className="absolute start-3 sm:start-4 top-4 sm:top-5 w-7 h-7 rounded-full bg-gold-500/10 text-sienna-600 flex items-center justify-center">
                       <StickyNote size={14} strokeWidth={1.8} />
                     </span>
-                    <div className="text-[10px] uppercase tracking-[0.22em] font-medium text-sienna-600">
-                      {t("severity_info")}
-                    </div>
-                    <p className="mt-1.5 text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
+                    <p className="text-[13.5px] sm:text-[14.5px] text-ink-700/85 leading-relaxed">
                       {line}
                     </p>
                   </li>
@@ -933,7 +893,7 @@ function ChapterDetailContent({ day }: { day: Day }) {
 
 function SectionLabel({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
-    <div>
+    <div className="mb-4 sm:mb-5">
       <div className="text-[10px] uppercase tracking-[0.32em] text-terracotta-600/85 font-medium">
         {eyebrow}
       </div>

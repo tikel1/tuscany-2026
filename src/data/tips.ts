@@ -37,20 +37,6 @@ export const tips: Tip[] = [
     severity: "info"
   },
   {
-    id: "canyon-park-booking",
-    title: "Canyon Park — reserve water slots early",
-    body:
-      "River SUP and the gentler rafting lines share finite daily quotas. Busy weeks often sell through online before lunchtime — don't bank on rocking up without an email confirmation in August.",
-    severity: "warning"
-  },
-  {
-    id: "boat-no-licence",
-    title: "Boat rental at Argentario — pick the no-licence option",
-    body:
-      "In Italy, boats up to 40 hp / under 10 m can be rented without a nautical licence. Most operators in Porto Santo Stefano (Argentario Boat Rental, Yes Boat, etc.) offer a Gozzo or gommone in this class. Confirm 'senza patente' when you book.",
-    severity: "info"
-  },
-  {
     id: "ferragosto-closures",
     title: "Ferragosto — many shops are still closed for ferie",
     body:

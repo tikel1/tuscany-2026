@@ -16,7 +16,7 @@ export const attractions: POI[] = [
     region: "north",
     shortDescription: "SUP and gorge-side adventure on the Lima",
     description:
-      "An adventure park built into a gorge on the river Lima outside Bagni di Lucca — Italy's best-known canyon playground. Between the wooded cliffs you've got mellow options (paddleboard hire drifting through turquoise narrows, a pebble beach, soft rafting or water trekking) and full-throttle canyon routes with aerial bridges and zip lines overhead. Today's plan calls for an easy family stand-up paddle through the gorge; in peak summer slots go fast, so pin down your booking early. Separate canyon / zip experiences usually enforce their own minimum age and height — often about ten years old and roughly 140 cm — so double-check what's on your confirmation before you arrive.",
+      "An adventure park built into a gorge on the river Lima outside Bagni di Lucca. Between the wooded cliffs are mellow options (paddleboard hire through turquoise narrows, a pebble beach, soft rafting) and full-throttle canyon routes with aerial bridges and zip lines. Your plan is the easy family stand-up paddle through the gorge. Separate canyon / zip routes usually enforce a minimum age and height (about ten years old, roughly 140 cm).",
     image: "./images/canyon-park.jpg",
     imageCredit: {
       author: "Luo Jin Hong (Unsplash)",
@@ -29,10 +29,9 @@ export const attractions: POI[] = [
     coords: [44.0167, 10.5833],
     tags: ["water", "extreme", "family"],
     bookingNote:
-      "Book your Lima water slot ahead — SUP and rafting fill first in summer.",
+      "Booked — SUP on 18 Aug, 10:45, 6 boards (€168 cash on site).",
     difficulty: "easy",
     tips: [
-      "The night before a busy week, call or complete the online booking — walk-ins often lose out",
       "Life jackets are provided; ask the crew to snug them up for smaller kids",
       "Keep phone and cash in a dry bag — most water lines are splash zones",
       "Quick-dry layers and closed-toe water shoes; expect to get properly wet"
@@ -144,7 +143,7 @@ export const attractions: POI[] = [
     region: "north",
     shortDescription: "Gentle white-water rafting suited for families",
     description:
-      "A relaxed, splashy float down the Serchio with calm stretches, a few playful rapids, and chances to jump in and swim. Operators in the Bagni di Lucca / Garfagnana area run family-friendly trips of around 2 hours — wet, cool, and a perfect contrast to the August heat.",
+      "A relaxed, splashy float down the Serchio with calm stretches, a few playful rapids, and chances to jump in and swim. Your booked family trip runs about 1.5 hours with Lucca Rafting in Chifenti — wet, cool, and a perfect contrast to the August heat.",
     image: "./images/serchio-rafting.jpg",
     imageCredit: {
       author: "Unsplash",
@@ -158,7 +157,7 @@ export const attractions: POI[] = [
     tags: ["water", "family", "nature"],
     difficulty: "easy",
     tips: [
-      "Family raft is around 2 hours including swim breaks",
+      "About 1.5 hours including swim breaks",
       "Min age usually 6; under-12s wear life vests the whole way",
       "Wear swimwear, bring a dry change of clothes for the drive home",
       "August water levels are gentle — splashy, not scary"
@@ -372,7 +371,7 @@ export const attractions: POI[] = [
     region: "south",
     shortDescription: "A turquoise pocket cove on the wild side of Argentario",
     description:
-      "Often called the most beautiful cove on Monte Argentario — a small white-pebble beach below sheer cliffs, a tiny Spanish watchtower, and water so clear it looks fake. Reachable on foot via a steep path, but the easy way is to anchor your rental boat just offshore and swim in.",
+      "Often called the most beautiful cove on Monte Argentario — a small white-pebble beach below sheer cliffs, a tiny Spanish watchtower, and water so clear it looks fake. Reachable on foot via a steep path, or from the water on a boat day.",
     image: "./images/cala-del-gesso.jpg",
     imageCredit: {
       author: "Cristina Gottardi (Unsplash)",
@@ -385,7 +384,7 @@ export const attractions: POI[] = [
     tags: ["water", "nature", "view"],
     difficulty: "moderate",
     tips: [
-      "Easiest by boat — anchor offshore and swim in",
+      "Reachable from the water, or on foot",
       "Land path is steep, ~30 min down and a sweaty 40 min back up",
       "White pebbles, no sand — water shoes save your feet",
       "No facilities of any kind: bring your own water and snacks"

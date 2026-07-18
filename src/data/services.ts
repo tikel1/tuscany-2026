@@ -187,7 +187,7 @@ export const services: Service[] = [
     category: "restaurant",
     region: "south",
     base: "south",
-    shortDescription: "Fresh fish in the harbour where you rent the boat",
+    shortDescription: "Fresh fish in the harbour where the catamaran departs",
     description:
       "Right on the harbour at Porto Santo Stefano — daily catch, classic spaghetti allo scoglio, sea-view terrace. Perfect end to the boat day before driving back.",
     address: "Via del Molo 1, Porto Santo Stefano (GR)",
