@@ -18,6 +18,8 @@ export interface Booking {
   date?: string;
   /** The attraction this ticket is for — links the booking to its POI. */
   attractionId?: string;
+  /** Short, indicative type shown big on the card face (e.g. "Cruise day"). */
+  label?: BookingLoc;
   title: BookingLoc;
   day: BookingLoc;
   time: string;

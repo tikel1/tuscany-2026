@@ -24,7 +24,7 @@ export const attractions: POI[] = [
       source: "https://unsplash.com/photos/1qJ_l5O4OXo",
       licenseUrl: "https://unsplash.com/license"
     },
-    website: "https://www.canyonpark.it/",
+    website: "https://www.canyonpark.it/en/",
     address: "Località il Pianello, Bagni di Lucca (LU)",
     coords: [44.0167, 10.5833],
     tags: ["water", "extreme", "family"],
@@ -151,8 +151,8 @@ export const attractions: POI[] = [
       source: "https://unsplash.com/photos/ayhiuTdcUEk",
       licenseUrl: "https://unsplash.com/license"
     },
-    website: "https://www.canyonpark.it/",
-    address: "Garfagnana (LU)",
+    website: "https://www.getyourguide.com/bagni-di-lucca-l160058/lucca-family-friendly-rafting-soft-t513269/",
+    address: "Chifenti, Bagni di Lucca (LU)",
     coords: [44.0742, 10.4853],
     tags: ["water", "family", "nature"],
     difficulty: "easy",
@@ -339,7 +339,7 @@ export const attractions: POI[] = [
       "The harbour town on Monte Argentario, and the departure pier for the booked catamaran cruise. Sail the peninsula with the crew, drop anchor in glassy coves to swim and snorkel right off the boat (gear provided), and enjoy a full lunch served on deck as you go.",
     image: "./images/porto-santo-stefano.jpg",
     imageCredit: wmCredit("Porto_Santo_Stefano"),
-    website: "https://www.getyourguide.com/",
+    website: "https://www.getyourguide.com/porto-santo-stefano-l169819/argentario-catamaran-cruise-with-snorkeling-lunch-t1229195/",
     address: "Porto Santo Stefano, Monte Argentario (GR)",
     coords: [42.4361, 11.1167],
     tags: ["water", "family", "view"],

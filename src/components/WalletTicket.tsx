@@ -97,26 +97,21 @@ export function TicketCardFace({
       </div>
       <div className="absolute inset-0" style={{ backgroundImage: themeFor(b, index) }} />
       <div className="absolute inset-0 p-4 flex flex-col justify-between text-cream-50">
-        {/* chip + brand */}
+        {/* chip + when */}
         <div className="flex items-start justify-between gap-2">
           <span
             className="h-5 w-7 rounded-[4px] ring-1 ring-white/30 shrink-0"
             style={{ backgroundImage: "linear-gradient(135deg, #f4d58d 0%, #d9a441 100%)" }}
             aria-hidden
           />
-          <span className="text-[9px] uppercase tracking-[0.16em] opacity-80 truncate max-w-[58%] text-end">
-            {venue?.name ?? b.provider}
+          <span className="text-[9px] uppercase tracking-[0.16em] opacity-85 whitespace-nowrap">
+            {dayShort} · {b.time}
           </span>
         </div>
-        {/* activity + when */}
-        <div>
-          <h3 className="font-serif text-base sm:text-lg leading-snug line-clamp-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
-            {b.title[lang]}
-          </h3>
-          <div className="text-[10.5px] opacity-90 mt-0.5">
-            {dayShort} · {b.time}
-          </div>
-        </div>
+        {/* the type — short + indicative */}
+        <h3 className="font-serif text-2xl sm:text-3xl leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+          {(b.label ?? b.title)[lang]}
+        </h3>
         {/* card number + holder */}
         <div>
           {b.bookingRef && (
