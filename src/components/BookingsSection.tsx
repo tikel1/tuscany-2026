@@ -45,7 +45,7 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
   const next = () => go(active + 1);
 
   return (
-    <div className="mx-auto max-w-xl">
+    <div className="mx-auto max-w-xl -mt-3 sm:-mt-5">
       <div className="relative">
         {/* Desktop arrows (outside the clipped viewport) */}
         <button
@@ -69,7 +69,17 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
 
         {/* Coverflow viewport — clips the side peeks so the page never scrolls */}
         <div className="overflow-hidden py-2">
-          <div className="relative mx-auto w-[72%] max-w-[340px] aspect-[1.7/1]">
+          <motion.div
+            className="relative mx-auto w-[72%] max-w-[340px] aspect-[1.7/1] touch-pan-y"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.25}
+            onDragEnd={(_e, info) => {
+              const th = 40;
+              if (info.offset.x <= -th) (isRTL ? prev : next)();
+              else if (info.offset.x >= th) (isRTL ? next : prev)();
+            }}
+          >
             {tickets.map((b, i) => {
               const delta = i - active;
               const isActive = delta === 0;
@@ -91,7 +101,7 @@ function TicketDeck({ tickets }: { tickets: Booking[] }) {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
 
