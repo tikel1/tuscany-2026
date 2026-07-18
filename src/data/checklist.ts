@@ -3,36 +3,44 @@ import type { ChecklistItem } from "./types";
 export const bookingChecklist: ChecklistItem[] = [
   {
     id: "book-canyon-park",
-    text: "Booked ✓ — Canyon Park SUP (18 Aug, 10:45)",
+    text: "Canyon Park SUP (18 Aug, 10:45)",
     detail:
-      "6 boards reserved for the 10:45 slot. Payment is cash on site (€168). Confirmation is in Itay's email."
+      "6 boards reserved for the 10:45 slot. Payment is cash on site (€168). Confirmation is in Itay's email.",
+    done: true
   },
   {
     id: "book-argentario-boat",
-    text: "Booked ✓ — Argentario catamaran cruise (23 Aug)",
-    detail: "GetYourGuide / DONNINI, 5 adults + 5 kids. Snorkel gear & lunch included on board. Check in at the Porto Santo Stefano pier by 08:30. Confirmation is in Itay's email."
-  },
-  {
-    id: "book-private-chef",
-    text: "Book a private chef for the villa (21 Aug)",
-    detail: "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. Pici workshop + dinner for the family.",
-    link: "https://www.eatwith.com/",
-    urgent: true
+    text: "Argentario catamaran cruise (23 Aug)",
+    detail: "GetYourGuide / DONNINI, 5 adults + 5 kids. Snorkel gear & lunch included on board. Check in at the Porto Santo Stefano pier by 08:30. Confirmation is in Itay's email.",
+    done: true
   },
   {
     id: "book-rafting",
-    text: "Booked ✓ — Soft rafting, Serchio (19 Aug, 09:30)",
-    detail: "GetYourGuide / Lucca Rafting, whole group. Guide, gear & wetsuits included. Check in at Chifenti by 09:25. Confirmation is in Itay's email."
+    text: "Soft rafting, Serchio (19 Aug, 09:30)",
+    detail: "GetYourGuide / Lucca Rafting, whole group. Guide, gear & wetsuits included. Check in at Chifenti by 09:25. Confirmation is in Itay's email.",
+    done: true
+  },
+  {
+    id: "book-waterpark",
+    text: "Acqua Village waterpark tickets (22 Aug)",
+    detail: "Follonica. Buy online the night before — meaningfully cheaper than at the gate.",
+    link: "https://www.acquavillage.it/"
+  },
+  {
+    id: "book-gondola",
+    text: "Abetone gondola tickets (20 Aug)",
+    detail: "Monte Gomito cable car in the mountains — check the day's opening hours before you drive up."
+  },
+  {
+    id: "book-private-chef",
+    text: "Private chef for the villa (optional, 21 Aug)",
+    detail: "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. Pici workshop + dinner for the family.",
+    link: "https://www.eatwith.com/"
   },
   {
     id: "book-horses",
     text: "Reserve a Maremma horseback hour",
     detail: "Beginner-friendly ranch near Alberese / Albinia. Early-morning slot is best."
-  },
-  {
-    id: "international-driving-permit",
-    text: "Pick up an International Driving Permit for the driver",
-    detail: "Required at the rental counter alongside your home licence. Get it before you fly."
   },
   {
     id: "credit-card-on-driver-name",
@@ -58,9 +66,9 @@ export const packingChecklist: ChecklistItem[] = [
     detail: "Phones, wallets, car keys on the SUP and on the boat at Argentario."
   },
   {
-    id: "snorkels",
-    text: "Snorkel & mask per person (optional now)",
-    detail: "The Argentario catamaran provides snorkel gear on board — only pack your own if the kids prefer their own mask."
+    id: "swim-goggles",
+    text: "Swim goggles — per person",
+    detail: "For the waterpark pools and any hotel/villa pool. (Snorkel gear is provided on the Argentario catamaran, so no need to pack that.)"
   },
   {
     id: "uv-shirts",

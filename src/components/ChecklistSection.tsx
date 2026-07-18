@@ -9,6 +9,18 @@ import { useLocalizeChecklistItem } from "../data/i18n";
 
 const STORAGE_KEY = "tuscany-checklist-v1";
 
+/** Items marked done in the data (e.g. already-booked reservations) start
+ *  checked. A user toggle is remembered and overrides this default. */
+const DEFAULT_DONE: Record<string, boolean> = Object.fromEntries(
+  [...bookingChecklist, ...packingChecklist]
+    .filter(i => i.done)
+    .map(i => [i.id, true])
+);
+
+function itemDone(id: string, checked: Record<string, boolean>): boolean {
+  return id in checked ? checked[id] : !!DEFAULT_DONE[id];
+}
+
 function loadChecked(): Record<string, boolean> {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -32,7 +44,7 @@ function ChecklistList({
     <ul className="space-y-3">
       {items.map(rawItem => {
         const item = localizeChecklistItem(rawItem);
-        const isDone = !!checked[item.id];
+        const isDone = itemDone(item.id, checked);
         return (
           <li
             key={item.id}
@@ -87,7 +99,7 @@ export default function ChecklistSection() {
 
   const toggle = (id: string) => {
     setChecked(prev => {
-      const next = { ...prev, [id]: !prev[id] };
+      const next = { ...prev, [id]: !itemDone(id, prev) };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       } catch {
@@ -98,7 +110,7 @@ export default function ChecklistSection() {
   };
 
   const list = tab === "booking" ? bookingChecklist : packingChecklist;
-  const doneCount = list.filter(i => checked[i.id]).length;
+  const doneCount = list.filter(i => itemDone(i.id, checked)).length;
 
   return (
     <Section
@@ -120,7 +132,7 @@ export default function ChecklistSection() {
             <ClipboardCheck size={14} />
             {t("checklist_booking")}
             <span className={`text-xs ${tab === "booking" ? "text-cream-200" : "text-ink-700/60"}`}>
-              {bookingChecklist.filter(i => checked[i.id]).length}/{bookingChecklist.length}
+              {bookingChecklist.filter(i => itemDone(i.id, checked)).length}/{bookingChecklist.length}
             </span>
           </button>
           <button
@@ -134,7 +146,7 @@ export default function ChecklistSection() {
             <Briefcase size={14} />
             {t("checklist_packing")}
             <span className={`text-xs ${tab === "packing" ? "text-cream-200" : "text-ink-700/60"}`}>
-              {packingChecklist.filter(i => checked[i.id]).length}/{packingChecklist.length}
+              {packingChecklist.filter(i => itemDone(i.id, checked)).length}/{packingChecklist.length}
             </span>
           </button>
         </div>

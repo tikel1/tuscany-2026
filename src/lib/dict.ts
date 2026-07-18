@@ -386,7 +386,7 @@ export const DICT = {
     he: "ההזמנה שלכם ליום הזה"
   },
   bookings_eyebrow: { en: "Booked & ready", he: "הוזמן ומוכן" },
-  bookings_title: { en: "Tickets & logistics", he: "כרטיסים ולוגיסטיקה" },
+  bookings_title: { en: "Tickets", he: "כרטיסים" },
   bookings_kicker: {
     en: "Everything you need on the day",
     he: "כל מה שצריך ביום עצמו"

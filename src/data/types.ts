@@ -343,6 +343,9 @@ export interface ChecklistItem {
   detail?: string;
   link?: string;
   urgent?: boolean;
+  /** Pre-checked by default (e.g. an already-booked reservation). The user
+   *  can still toggle it; their choice is remembered per device. */
+  done?: boolean;
 }
 
 export interface Tip {
