@@ -152,6 +152,44 @@ PIN. Never publish booking reference + PIN pairs as plaintext on a public site.
   point, so the ticket answers "where, when, how do I get there, what's my
   number" in one card. Keep the itinerary day's `driveNotes` leading with the
   *first* drive to that meetup, since the day card shows the first segment.
+- **Present them like a wallet.** On the main page, render the passes as a
+  coverflow deck: active card centered, neighbours faded/scaled to the sides,
+  ordered upcoming-first (by ISO `date`). Support swipe (a framer `drag="x"`
+  gesture — the clipped deck has no native scroll), plus arrows + clickable dots
+  on desktop; navigation is index-based so it works in RTL. One central
+  "Details" toggle expands the active card (not a per-card expander). Keep the
+  card face minimal so text fits a phone: chip + brand, activity + date·time,
+  the card number, and the cardholder — clamp the title to two lines.
+
+### From inbox to tickets (the process that fills the packet)
+
+When the traveller says "I booked things, add them to the app," this is the
+end-to-end flow that produced the encrypted packet:
+
+1. **Get the confirmations.** Read the traveller's email for order/booking
+   confirmations — via a connected Gmail (search terms like *order,
+   confirmation, booking, tickets, your reservation*) or by having them
+   forward/paste. **Verify the mailbox owner first** — a connected Gmail is
+   often the *work* account, not the personal one where trip bookings land; if
+   so, drive their real browser session or ask them to paste. Confirmations are
+   the source of truth — read them, don't retype from memory. Check the
+   **Updates/Promotions** tabs too (GetYourGuide etc. land there).
+2. **Extract, per booking:** activity title, ISO date (→ map to the itinerary
+   `dayNumber`), time + arrive-by, meeting point + address (+ a maps query),
+   provider, phone/email, the booking reference and PIN, price, what's
+   included / to bring, cancellation policy, and the matching `attractionId`.
+   Provide EN + HE for prose fields if the app is bilingual.
+3. **Author the plaintext packet OUTSIDE the repo** (a scratch dir), encrypt it
+   with the shared PIN via `node scripts/encrypt-bookings.mjs <plain.json> <PIN>
+   src/data/bookings.enc.ts`, and commit **only** the ciphertext. Never commit
+   the plaintext or the PIN. Round-trip-test the decrypt before shipping.
+4. **Reconcile the rest of the copy.** A new booking usually contradicts older
+   "you should book X" or DIY text — sweep the itinerary/attractions/tips/
+   checklist (EN + HE) and fix it (see the contradiction audit in *Done means*),
+   and flip the matching "to book" checklist items to a pre-checked `done: true`.
+5. **Share the PIN out-of-band** (e.g. a memorable number like the departure
+   date) and tell the group. To change it, just re-run the encrypt step with the
+   new PIN and redeploy.
 
 ## Build workflow (dependency order)
 
