@@ -49,9 +49,9 @@ section.
 
 This section is the **fast path** for cloning the pattern to another
 destination without re-discovering every decision buried in §§1–21.
-Your workflow should be: **open this markdown in Cursor (or similar),
-say where you are going, paste the skeleton below, and let the model
-execute the checklist** — still grounded in the rest of this document
+Your workflow should be: **open this markdown in your AI coding tool
+(Claude Code, Cursor, or similar), say where you are going, paste the
+skeleton below, and let the model execute the checklist** — still grounded in the rest of this document
 for depth (map behaviour, hero state machine, audio pipeline, etc.).
 
 ### Tomorrow morning execution checklist

@@ -25,7 +25,9 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
-.claude/
+# Ignore local Claude tooling (launch.json etc.) but DO track shared skills.
+.claude/*
+!.claude/skills/
 .DS_Store
 *.suo
 *.ntvs*

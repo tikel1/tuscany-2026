@@ -12,8 +12,9 @@ for you. You don't need to know the code.
 ## What you need
 
 - **A GitHub account** — to host your own copy free on GitHub Pages.
-- **An AI coding assistant** — Cursor or Claude Code work great (the skill lives
-  at `.cursor/skills/build-trip-companion-app/`).
+- **An AI coding assistant** — Claude Code loads the skill automatically (it
+  lives at `.claude/skills/build-trip-companion-app/`). Cursor or any other AI
+  editor works too — the skill is plain markdown you can open and follow.
 - **(Optional) a Google Gemini API key** — free at
   https://aistudio.google.com/apikey — for the in-app AI guide and voice.
   Without one, everything else still works.
@@ -28,7 +29,7 @@ for you. You don't need to know the code.
    cd my-trip
    npm install
    ```
-2. **Open the folder in Cursor** (or Claude Code).
+2. **Open the folder in Claude Code** (or Cursor / your AI editor).
 3. **Kick off the skill** — say:
    > Build my trip app using the `build-trip-companion-app` skill.
 
@@ -36,7 +37,7 @@ for you. You don't need to know the code.
    guide + keys, voice), **reset this reference to a blank trip so none of the
    original author's data carries over**, then rebuild it as yours.
    (Not using a skill-aware tool? Open
-   `.cursor/skills/build-trip-companion-app/SKILL.md` and paste the
+   `.claude/skills/build-trip-companion-app/SKILL.md` and paste the
    "First message the user can paste" block at the bottom.)
 4. **Deploy** — push to your `main`, set the repo's Pages source to "GitHub
    Actions", and your site goes live at `https://<you>.github.io/<repo>/`.
@@ -54,8 +55,8 @@ for you. You don't need to know the code.
 
 ## Where the detail lives
 
-- `.cursor/skills/build-trip-companion-app/SKILL.md` — the guided build (start here).
-- `.cursor/skills/build-trip-companion-app/deriving-destination-flavor.md` — how to
+- `.claude/skills/build-trip-companion-app/SKILL.md` — the guided build (start here).
+- `.claude/skills/build-trip-companion-app/deriving-destination-flavor.md` — how to
   turn any destination into content.
 - `docs/HOW_TO_BUILD_A_VACATION_WEBSITE.md` — the full design playbook.
 
