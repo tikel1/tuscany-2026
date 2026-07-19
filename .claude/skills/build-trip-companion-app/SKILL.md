@@ -264,7 +264,16 @@ Trip Companion build:
 - [ ] 9. Rewrite the AI guide persona (src/lib/gemininio/persona.ts) + keys
 - [ ] 10. (Optional) regenerate audio narration locally
 - [ ] 11. Validate: npm install, npm run lint, npm run build, mobile pass
-- [ ] 12. Deploy: push to main, Pages Source = GitHub Actions, verify URL + OG
+- [ ] 12. Ship it & go live:
+         a. Commit everything and push to YOUR repo's `main` (if you cloned
+            instead of using the template, first point `origin` at your own repo).
+         b. GitHub → repo Settings → Pages → Source: "GitHub Actions" (the
+            bundled .github/workflows deploy runs on every push to main).
+         c. Confirm `vite.config.ts` base is `/<your-repo-slug>/`.
+         d. AI chat enabled? Add the `VITE_GEMINI_API_KEY` repo secret
+            (Settings → Secrets and variables → Actions) and referrer-restrict it.
+         e. Watch the Actions run, then open https://<you>.github.io/<repo>/ and
+            check the page + the share/OG preview.
 ```
 
 ### Key rules that bite if ignored
