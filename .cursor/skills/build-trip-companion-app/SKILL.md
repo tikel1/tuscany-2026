@@ -41,6 +41,23 @@ build, in order.
 For the method of turning *any* destination into concrete content, see
 [deriving-destination-flavor.md](deriving-destination-flavor.md).
 
+## New here? What you'll need
+
+You don't need much to start — the interview below fills the gaps. Have ready
+(or decide as you go):
+
+- **A GitHub account** — you'll push your own copy and host it free on GitHub
+  Pages.
+- **A Google Gemini API key** (optional, recommended) for the in-app AI guide +
+  voice. Free at https://aistudio.google.com/apikey. Without one the app still
+  works — it just asks each visitor for their own key.
+- **Your trip info** — destination, dates, who's coming, where you're staying,
+  any booked tickets. Rough is fine; fill in more later.
+
+The build's **first step wipes this reference back to a blank trip** (the
+original author's family, bookings, content and photos all go) so nothing
+personal carries over — then it's rebuilt as yours.
+
 ## Step 0 — Run the discovery interview first
 
 Do **not** start editing code until you have the answers below. Ask them up
@@ -72,8 +89,20 @@ offer them rather than blocking.
 - **GitHub repo slug** for Pages (e.g. `<place>-<year>`) — sets Vite `base`
 - **Home-screen install label** — short nickname
 - **Browser-tab / share title** — longer marketing-style line
-- **AI tour-guide persona** — name, accent, personality (or accept a suggestion)
-- **Gemini API key?** — whether they want the in-app AI chat enabled
+
+### The AI guide — keys & voice
+- **Enable the AI guide?** If yes, they'll need a **Gemini API key** (free —
+  https://aistudio.google.com/apikey). There are two, kept separate and NEVER
+  committed: `VITE_GEMINI_API_KEY` for the in-app chat (add it as a GitHub
+  Actions secret — it's baked into the build, so restrict the key by HTTP
+  referrer to the Pages domain) and `GEMINI_API_KEY` (no `VITE_` prefix) in a
+  local `.env.local`, used only by the optional audio-generation scripts. No
+  key? The app still runs and asks each visitor for their own.
+- **Persona & voice** — the guide's name, accent/personality, and a voice for
+  the live spoken mode. Offer a suggestion tuned to the destination, or take
+  theirs.
+- **Audio narration** — optional pre-generated clips (word-of-the-day, etc.).
+  Generated locally with the TTS key; skip it and the app is silent-but-fine.
 
 ### Scope confirmations
 - Which sections matter most (reorder the home page to match the trip's rhythm)
@@ -211,6 +240,13 @@ section it cites when a step needs depth.
 ```
 Trip Companion build:
 - [ ] 1. Clone github.com/tikel1/tuscany-2026; keep the Vite+React+Tailwind shell
+- [ ] 1b. MAKE IT YOURS — wipe the reference's personal data so nothing carries
+         over: the family profiles + TRIP_FACTS/planNotes (persona.ts); the
+         bookings packet (src/data/bookings.enc.ts) + BOOKED_DAY_NUMBERS
+         (bookingsStore.tsx) — or remove the Tickets section entirely; every
+         trip data file + its i18n overlay; the photos under public/images; and
+         personalise README/docs. Grep the old traveller + destination names to
+         confirm none survive.
 - [ ] 2. Rename the shell (package, repo slug, vite base, Pages workflow,
          manifest, <title>, OG/Twitter, favicon/cover)
 - [ ] 3. Set the trip clock (start/end constants; use LOCAL YYYY-MM-DD)
@@ -284,16 +320,19 @@ LOGISTICS (as much as I have now)
 TECH / BRAND
 - GitHub repo slug: [e.g. <place>-<year>]
 - Install label: [short nickname]
-- AI guide persona: [name + accent, or suggest one]
+- AI guide: [enable? persona name + accent + voice, or suggest one]
+- Gemini API key: [I'll add my own / set it up later / no AI guide]
 
-Walk me through it in dependency order: repo/Vite base + dates first,
-then data files, i18n, dict, branding, persona + keys, then deploy.
+First wipe the reference to a blank trip, then walk me through it in
+dependency order: repo/Vite base + dates, then data files, i18n, dict,
+branding, persona + keys, then deploy.
 ```
 
 ## Done means
 
 - `npm run build` passes; mobile viewport pass is clean.
-- Every reference to the source repo's old destination and traveller names is
-  gone (grep the previous destination + traveller names to confirm).
+- **No trace of the original author's trip:** grep the old destination + all old
+  traveller/family names and confirm zero hits; the family profiles, TRIP_FACTS,
+  bookings packet and photos are all replaced (or removed).
 - The live GitHub Pages URL loads under its `base` path, the share-link
   preview image renders, and the AI guide answers in the new persona.
