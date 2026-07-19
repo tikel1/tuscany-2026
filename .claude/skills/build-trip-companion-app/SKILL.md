@@ -8,7 +8,6 @@ description: >-
   "make something like this trip site" for their own trip. Drives a discovery
   interview, derives the destination's flavor, then executes the build in
   dependency order.
-disable-model-invocation: true
 ---
 
 # Build a Trip Companion App
@@ -22,16 +21,19 @@ in-app AI tour guide, and pre-generated audio narration. The output should
 
 ## Get the codebase first
 
-This skill refills an existing codebase — it does not build from scratch. Before
-anything else, clone the reference repo:
+This skill refills an existing codebase — it does not build from scratch. It
+ships **inside the template repo**, so if you're reading it, you're almost
+certainly already in the clone. Just install and go:
 
 ```bash
-git clone https://github.com/tikel1/tuscany-2026.git <place>-<year>
-cd <place>-<year>
 npm install
 ```
 
-Everything below assumes you are working inside that clone. The full design
+(Starting from nothing? Create your copy from the template repo you were given —
+"Use this template" on GitHub, or `git clone <that-repo> <place>-<year>` — then
+open it and run this skill.)
+
+Everything below assumes you are working inside that repo. The full design
 rationale lives in its source-of-truth playbook:
 `docs/HOW_TO_BUILD_A_VACATION_WEBSITE.md`. **Read it for depth** on the map
 behavior, hero state machine, audio pipeline, i18n, and AI assistant. This skill
@@ -220,7 +222,8 @@ end-to-end flow that produced the encrypted packet:
    activity page over the email's private "manage booking" deep link, which
    carries a token that could expose the reservation.
 5. **Keep the AI guide in sync (do this on EVERY plan change, not just
-   bookings).** The Gemininio persona (`src/lib/gemininio/persona.ts`) is built
+   bookings).** The AI-guide persona (`src/lib/gemininio/persona.ts` — the
+   template's guide is named "Gemininio"; rename it or keep it) is built
    from the data files, so itinerary / attraction / stay / food edits propagate
    to it automatically — nothing to do for those. What it CANNOT derive is
    per-person plan facts (who skips an activity, a changed headcount or
@@ -239,7 +242,7 @@ section it cites when a step needs depth.
 
 ```
 Trip Companion build:
-- [ ] 1. Clone github.com/tikel1/tuscany-2026; keep the Vite+React+Tailwind shell
+- [ ] 1. Start inside the template repo (this codebase); keep the Vite+React+Tailwind shell
 - [ ] 1b. MAKE IT YOURS — wipe the reference's personal data so nothing carries
          over: the family profiles + TRIP_FACTS/planNotes (persona.ts); the
          bookings packet (src/data/bookings.enc.ts) + BOOKED_DAY_NUMBERS
