@@ -310,35 +310,18 @@ Trip Companion build:
 
 ## First message the user can paste
 
-When kicking off a new trip with this skill, this is the shape to fill:
+Keep the kickoff short — the skill runs the interview itself, so the user
+doesn't need to prepare anything:
 
 ```text
-Build my family trip site from this trip-companion pattern (this skill).
-
-TRIP
-- Destination / region: [...]
-- Country: [...]
-- Dates (local): [YYYY-MM-DD] → [YYYY-MM-DD]
-- Travellers: [names, ages of kids]
-- Site languages: [e.g. primary + a bilingual second-language UI]
-- Destination language (word of the day): [...]
-
-LOGISTICS (as much as I have now)
-- Flights: [airports, times]
-- Car / trains: [pickup & dropoff, company, caveats]
-- Stays: [property names, towns, check-in/out]
-- Hard bookings: [museums, cable cars, tours]
-
-TECH / BRAND
-- GitHub repo slug: [e.g. <place>-<year>]
-- Install label: [short nickname]
-- AI guide: [enable? persona name + accent + voice, or suggest one]
-- Gemini API key: [I'll add my own / set it up later / no AI guide]
-
-First wipe the reference to a blank trip, then walk me through it in
-dependency order: repo/Vite base + dates, then data files, i18n, dict,
-branding, persona + keys, then deploy.
+Build my trip app using the build-trip-companion-app skill.
+First reset the reference to a blank trip, then interview me for the
+details (destination, dates, who's coming, stays, tickets, AI guide),
+build it, and walk me through deploying to GitHub Pages at the end.
 ```
+
+Then conduct Step 0's interview conversationally, filling only the gaps the
+user didn't volunteer.
 
 ## Done means
 
