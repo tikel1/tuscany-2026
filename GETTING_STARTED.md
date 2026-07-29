@@ -50,6 +50,10 @@ for you. You don't need to know the code.
 - **Keys are never committed.** The in-app chat key (`VITE_GEMINI_API_KEY`) goes
   in a GitHub Actions secret; the audio-script key (`GEMINI_API_KEY`) in a local
   `.env.local`. Restrict the chat key to your Pages domain.
+- **Remove the analytics snippet.** `index.html` includes a Microsoft Clarity
+  tracker with the original author's project id. The build strips it — but if
+  you hand-edit, delete that `<script>` block, or your visitors get recorded
+  into someone else's analytics account.
 - **Tickets are PIN-gated + encrypted**, but a short PIN on a public site is
   casual privacy, not a vault — the skill explains the trade-off.
 

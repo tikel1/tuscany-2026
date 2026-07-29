@@ -125,14 +125,16 @@ research and fill each one well.
 
 | Slot | What to derive from the destination |
 |---|---|
-| **Palette** | 3–4 colors pulled from photos of the place + one warm neutral. Defined as `@theme` tokens in `index.css`. |
+| **Palette** | **Mandatory — re-derive, never keep the reference's warm Tuscan tones.** Pull 3–4 colors + one neutral from photos of *this* place (alpine → cool blues/greys/pine; coast → aqua/sand; desert → ochre/clay). Redefine the `@theme` tokens (`--color-cream/terracotta/olive/sienna/ink/gold`…) in `index.css` so the whole app re-skins. After building, open the site: if it still looks like Tuscany, the palette step was skipped. |
 | **App name + icon** | Manifest name, short name, `<title>`, OG/Twitter, favicon. Generate a minimalist destination illustration (or fall back to the country flag). |
 | **Word of the day** | Rename the type after the destination language, refill words that fit each day. |
 | **Drink of the day** | Pull from the local drinking culture; adults only, kids see a juice/treat. |
 | **Culture tips** | Keep the *categories* (holiday closures, midday rhythm, tipping, driving rules/tolls) and fill with the destination's specifics. |
 | **Country fallback + geolocation box** | `TRIP_COUNTRY` and the `isInDestination` bounding box for the "you are here" dot. |
-| **AI persona** | Name, accent instruction, spoken-delivery tag, per-turn voice nudge, and a language-purity rule if UI + persona scripts differ. |
-| **Photos** | Replace everything under `public/images/` with the new destination's POIs, keeping relative `./images/...` paths. |
+| **AI guide persona** | Name, accent instruction, spoken-delivery tag, per-turn voice nudge, and a language-purity rule if UI + persona scripts differ (`src/lib/gemininio/persona.ts`). |
+| **Quiz host** | The kid-quiz host is named **"Quizzo"** with an Italian catchphrase ("Allora!") — destination-specific flavor, **not a fixed brand.** Rename it to something that fits *this* place, in every user-facing string. It lives in: `src/lib/dict.ts` (all `quiz_*` keys, EN + HE), `src/lib/quiz/quizPersona.ts` (`getQuizzoIntro`/`getQuizzoOutro` + the `quizzoPersonaEn/He` system prompts and their catchphrase), and `src/lib/quiz/quizVoice.ts` (voice-picker hint). Grep `Quizzo`/`quizzo` and confirm zero user-facing hits survive. |
+| **Header / hero images** | The full-bleed hero and section headers set the whole first impression, so they need **high-resolution landscape photography** of the destination (wide, well-lit scenery — not thumbnails or logos). Low-res or wrongly-cropped hero art makes an otherwise-good build look broken. Source generous, correctly-licensed wide shots; keep the relative `./images/...` paths. |
+| **Photos** | Replace everything else under `public/images/` with the new destination's POIs, keeping relative `./images/...` paths. |
 
 ## Sensitive info behind a shared PIN (optional)
 
@@ -248,8 +250,12 @@ Trip Companion build:
          bookings packet (src/data/bookings.enc.ts) + BOOKED_DAY_NUMBERS
          (bookingsStore.tsx) — or remove the Tickets section entirely; every
          trip data file + its i18n overlay; the photos under public/images; and
-         personalise README/docs. Grep the old traveller + destination names to
-         confirm none survive.
+         personalise README/docs. **Remove the author's analytics: delete the
+         Microsoft Clarity `<script>` block in `index.html` (the IIFE ending in
+         a `clarity` project id). If you leave it, every visitor to YOUR site is
+         recorded into the original author's Clarity account — add your own id
+         only if you want your own analytics.** Grep the old traveller +
+         destination names AND the old Clarity id to confirm none survive.
 - [ ] 2. Rename the shell (package, repo slug, vite base, Pages workflow,
          manifest, <title>, OG/Twitter, favicon/cover)
 - [ ] 3. Set the trip clock (start/end constants; use LOCAL YYYY-MM-DD)
@@ -285,12 +291,33 @@ Trip Companion build:
   it shifts the day across timezones.
 - **No placeholders.** Verify every address, opening hour, and phone number.
   Lorem ipsum survives exactly until the trip starts.
+- **Titles must fit the actual trip — never a hardcoded count or place.** The
+  reference ships headings that assert specifics — the stays section reads
+  "Two homes, two halves" (`stays_title` in `dict.ts`), the kicker "Five nights
+  up north, five nights down south" — and those go stale the moment a trip has
+  one base or three. For each count- or geography-specific heading, either
+  derive it from the data (e.g. choose the stays title by `stays.length` in
+  `StaysSection.tsx`, with singular/plural dict keys) or rewrite it generic.
+  After building, scan every section title and subtitle for a claim that
+  doesn't match this trip.
+- **Re-skin the palette and the quiz host, don't inherit them.** Two things
+  quietly survive from the reference if you forget: the warm Tuscan color
+  tokens and the "Quizzo" quiz host. Both are flavor, not structure — change
+  them per destination (see the flavor table).
 - **Mobile first, always.** Test hero, chapter detail, map, language switch,
   install prompt, and chat at a phone viewport before shipping.
 - **The plan comes first; emergency goes near the end** in the home-page order.
 - **Two API keys, different prefixes.** In-app chat uses `VITE_GEMINI_API_KEY`
   (baked at build, restrict by HTTP referrer). Local TTS scripts use
   `GEMINI_API_KEY` (no `VITE_` prefix). Never commit either.
+- **Strip the author's analytics — don't inherit a tracking id.** `index.html`
+  ships a Microsoft Clarity snippet with a hardcoded project id. A Clarity id
+  isn't domain-locked, so a copied one keeps sending YOUR visitors' heatmaps
+  and session recordings into the original author's account. Delete the whole
+  Clarity `<script>` block on build (same for any Google Analytics / gtag or
+  other embedded tracker); add your own id afterward only if you want it. The
+  original author can't scrub it from your deployed site later — the only fix
+  is to not ship it.
 - **A password on a public static site is not real security.** Everything the
   app renders is in the public source + bundle. If you surface booking
   credentials, encrypt the packet and commit ciphertext only (never plaintext,
@@ -329,5 +356,18 @@ user didn't volunteer.
 - **No trace of the original author's trip:** grep the old destination + all old
   traveller/family names and confirm zero hits; the family profiles, TRIP_FACTS,
   bookings packet and photos are all replaced (or removed).
+- **No inherited analytics:** the Microsoft Clarity `<script>` (and any other
+  embedded tracker) is removed from `index.html` — grep the old Clarity project
+  id and confirm zero hits.
 - The live GitHub Pages URL loads under its `base` path, the share-link
   preview image renders, and the AI guide answers in the new persona.
+- **The build looks like the new place, not Tuscany:** the palette is
+  re-derived, the hero uses high-res destination scenery, the quiz host is
+  renamed, and no section title asserts a count or place that doesn't match
+  this trip. Grep `Quizzo`/`quizzo` → zero user-facing hits.
+- **Quizzes are playable pre-trip.** The reference's `isQuizUnlocked`
+  (`tripState.ts`) only opens the first two days and date-locks the rest until
+  each chapter's date — so on a not-yet-started trip almost every quiz reads
+  "locked." Unless the traveller specifically wants a no-spoilers reveal,
+  loosen it so all days are playable (e.g. `return true`, or gate behind an
+  opt-in flag). Check a mid-trip day shows Start, not a lock message.

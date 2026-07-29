@@ -27,10 +27,16 @@ Then fill each slot below from that profile.
 ## The slots
 
 ### Palette
-Pull 3–4 colors straight from photos of the place, plus one warm neutral for
-body copy. Anchor each to something real (a roof color, the water, the stone,
-the foliage) so the choice is defensible. Define them as `@theme` tokens in
-`index.css`; keep the serif-headline + sans-body pairing.
+**This step is mandatory and the reference's warm Tuscan tones (terracotta,
+olive, sienna, cream) must not survive it.** Pull 3–4 colors straight from
+photos of the place, plus one neutral for body copy — and let the destination
+drive the temperature: alpine reads cool (pine, slate, glacier blue), coast
+reads aqua/sand, desert reads ochre/clay. Anchor each to something real (a roof
+color, the water, the stone, the foliage) so the choice is defensible.
+Redefine the `@theme` tokens in `index.css` (the `--color-cream/terracotta/
+olive/sienna/ink/gold`… family) so the *whole* app re-skins from one place;
+keep the serif-headline + sans-body pairing. Gut check: open the built site —
+if it still feels like Tuscany, you edited content but not the palette.
 
 ### App name + icon
 - **Name pattern:** short install label = `<Place> '<YY>`; longer browser/share
@@ -81,6 +87,17 @@ Give the guide a name that fits the place, a warm local personality, and:
   preferences sparingly (~once every ~10 turns), warmly, never as a punchline,
   and never reveal there's an instruction set behind it.
 
+### Quiz host
+Separate from the AI guide, the per-day kid quiz has its own host — in the
+reference it's **"Quizzo"** with the Italian catchphrase "Allora!". That's
+Tuscan flavor, not a fixed name: rename it to something that fits this place
+and give it a local catchphrase. It appears in three files, all of which need
+the new name/phrase: `src/lib/dict.ts` (every `quiz_*` string, in each UI
+language), `src/lib/quiz/quizPersona.ts` (`getQuizzoIntro`/`getQuizzoOutro` and
+the `quizzoPersonaEn`/`quizzoPersonaHe` system prompts), and
+`src/lib/quiz/quizVoice.ts` (the voice-picker hint). Grep `Quizzo`/`quizzo`
+afterward — no user-facing hit should remain.
+
 ### Language-purity rule (only if UI + persona scripts differ)
 If the persona's language uses a different script than a UI language (e.g. a
 Latin-script persona with a non-Latin UI), the model will mix scripts. Add a
@@ -95,6 +112,13 @@ hero shots, keeping relative `./images/...` paths and matching the existing
 slug filenames. Update credits. Use the repo's image-fetch helper scripts as a
 starting point; verify licensing.
 
+**Hero and section headers earn extra care.** They're the full-bleed first
+impression, so they need genuinely high-resolution, wide landscape photography
+of the place — not thumbnails, logos, or portrait crops stretched to fit.
+Low-res or badly-cropped header art is the single thing that makes an otherwise
+solid build look cheap. Pick generous wide shots, well-lit, and check them at a
+desktop width where they render largest.
+
 ### Section rhythm
 Reorder `App.tsx` to how this specific family will move through this specific
 trip. Keep the playbook's principles: the plan comes first, emergency near the
@@ -107,3 +131,7 @@ crowded.
 - No leftover references to the source repo's old destination or traveller
   names (grep to confirm).
 - Addresses, hours, and phone numbers are verified — no placeholders.
+- The palette, the quiz host, and the hero imagery all changed — none of them
+  still reads as Tuscany.
+- No section title asserts a count or geography that doesn't match this trip
+  (e.g. "Two homes" when there's one base). Titles derive from the data.
