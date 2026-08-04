@@ -12,7 +12,12 @@
 //      once and serving as static assets is cheaper, faster (no API
 //      latency on first play), and burns no characters in production.
 //
-// Run with the ElevenLabs key in env (key NEVER ends up in git):
+// The key NEVER ends up in git. Easiest: add a line to .env.local
+// (gitignored), which this script reads on startup:
+//
+//     ELEVEN_API_KEY=sk-…
+//
+// Or pass it per-run:
 //
 //     # PowerShell
 //     $env:ELEVEN_API_KEY = "sk-…"; node scripts/fetch-attraction-audio.mjs
@@ -26,6 +31,7 @@
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadProjectEnvLocal } from "./lib/google-tts.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
@@ -152,9 +158,15 @@ async function fileExists(path) {
 /* ------------------------------------------------------------------ */
 
 async function main() {
+  // The Hebrew script already reads .env.local; do the same here so the key
+  // can live in the (gitignored) env file instead of being re-exported by
+  // hand on every run. A real env var still wins over the file.
+  await loadProjectEnvLocal(REPO_ROOT);
   const apiKey = process.env.ELEVEN_API_KEY;
   if (!apiKey) {
-    console.error("Missing ELEVEN_API_KEY env var. See script header for usage.");
+    console.error(
+      "Missing ELEVEN_API_KEY. Put it in .env.local (gitignored) or export it. See script header."
+    );
     process.exit(1);
   }
   const force = process.argv.includes("--force");
