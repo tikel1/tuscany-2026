@@ -706,7 +706,21 @@ export const itinerary: Day[] = [
         // Day 8's title literally calls out "the floating city" — Civita is
         // the headline finale, not a "skip if tired" extra. Opt it out of
         // the auto-rule that would otherwise mark the 3rd attraction optional.
-        optional: false
+        optional: false,
+        rideToNext: {
+          duration: "1 h 40",
+          note: "Civita → Rome, via Orte and the A1 — only if you're doing the match",
+          departAt: "17:30"
+        }
+      },
+      {
+        time: "20:45 (optional — the Rome swap)",
+        title: "Serie A opening night: Roma vs Fiorentina",
+        description:
+          "Matchday one of Serie A 2026/27 at the Stadio Olimpico, with Tuscany's own Fiorentina as the away side. Tickets must be bought in advance, in each traveller's name, at asroma.com. Full time is ~22:40 and you'd be back at Cortevecchia around 01:30 — a brilliant night, but only if you're happy to start Day 9 late or sleep in Rome.",
+        attractionId: "roma-fiorentina-olimpico",
+        tag: "culture",
+        optional: true
       }
     ],
     gear: [
@@ -715,13 +729,23 @@ export const itinerary: Day[] = [
       { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
       { item: "Beach mat for Bolsena's pebble shore", for: "lago-di-bolsena" },
       { item: "Comfortable walking shoes for the steep Civita climb", for: "civita-di-bagnoregio" },
-      { item: "Sun hats, sunscreen, refilled water bottles" }
+      { item: "Sun hats, sunscreen, refilled water bottles" },
+      {
+        item: "Passports for everyone — the Olimpico checks ID against the name on each ticket",
+        for: "roma-fiorentina-olimpico"
+      },
+      {
+        item: "Neutral clothes for the stadium — no Fiorentina purple in a home sector",
+        for: "roma-fiorentina-olimpico"
+      }
     ],
     dayTips: [
       "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
       "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
       "Civita footbridge ticket ~€5/adult, cash only",
-      "Eat lunch by 13:30 — village kitchens close hard at 14:30"
+      "Eat lunch by 13:30 — village kitchens close hard at 14:30",
+      "Rome swap: buy the Roma–Fiorentina tickets the moment they go on general sale — opening night fills up",
+      "If you take the match, either sleep in Rome or push Day 9's horseback ride later; you won't be in bed before 02:00"
     ],
     italianWords: [
       {

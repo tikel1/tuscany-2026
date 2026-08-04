@@ -58,6 +58,10 @@ const TARGETS = [
   // gorge ref; Luo Jin Hong on Unsplash). Visually suggests the Lima canyon.
   ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
+  // Optional Day 8 evening swap: Roma vs Fiorentina at the Olimpico.
+  // The article's lead image is a huge panorama whose /thumb/ URL 400s, so
+  // go through Special:FilePath, which serves a sane resized JPG.
+  ["stadio-olimpico.jpg",    { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Stadio_Olimpico_2024.jpg?width=1600" }],
   // Forest ropes course — rope bridges between tall trees (Unsplash, free)
   ["selva-buffardello.jpg",  { url: unsplash("photo-1775647423221-ac87d3ec338b") }],
   // Soft rafting — group on a raft going down a river (Unsplash, free)

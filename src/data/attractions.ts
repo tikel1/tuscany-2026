@@ -736,6 +736,76 @@ export const attractions: POI[] = [
         distractors: ["The Vikings", "The Egyptians", "The Aztecs"]
       }
     ]
+  },
+  // ---------- OPTIONAL EVENING SWAP (Day 8, 24 Aug) ----------
+  // Not a Tuscan site at all — a Rome night out that only makes sense
+  // because Day 8 already ends at Civita di Bagnoregio, ~1 h 40 from the
+  // Stadio Olimpico. Filed under "south" so it lives with the Maremma
+  // week in the region filter; the map will simply reach a bit further
+  // down into Lazio.
+  {
+    id: "roma-fiorentina-olimpico",
+    name: "Roma vs Fiorentina — Serie A at the Stadio Olimpico",
+    category: "attraction",
+    region: "south",
+    shortDescription: "Serie A opening night in Rome, with Tuscany's team as the away side",
+    description:
+      "Serie A 2026/27 opens over the weekend of 22–24 August, and the very last match of matchday one is Roma vs Fiorentina at the Stadio Olimpico on Monday 24 August, 20:45. It is the ideal fixture to gatecrash from the Maremma: Fiorentina are the Tuscan club, so the region you have been driving through all week walks out as the away team, in purple, against the Giallorossi. Around seventy thousand seats, the Curva Sud singing from an hour before kick-off, and the marble statues of the Foro Italico lit up on the walk in. Geographically it barely bends the day — Civita di Bagnoregio, the standard Day 8 finale, is only about 1 h 40 from the stadium, so the itinerary is already pointing at Rome by late afternoon.",
+    image: "./images/stadio-olimpico.jpg",
+    imageCredit: wmCredit("Stadio_Olimpico"),
+    website: "https://www.asroma.com/en/tickets/men",
+    address: "Stadio Olimpico, Viale dei Gladiatori, Foro Italico, Rome",
+    coords: [41.9339, 12.4547],
+    tags: ["culture", "family", "village"],
+    openingNote:
+      "Monday 24 Aug 2026, kick-off 20:45. Gates usually open around two hours before; the Foro Italico security queue is slow on the opening matchday.",
+    bookingNote:
+      "Not booked. Buy direct at asroma.com with a free MyASR account — tickets are digital, into your phone wallet or the Il Mio Posto app. Every ticket is nominative, so you need each traveller's full name and date of birth at checkout.",
+    difficulty: "moderate",
+    tips: [
+      "Buy from asroma.com, not a reseller — a free MyASR account is all you need for a fixture like this",
+      "Italian tickets carry the holder's name and date of birth, and ID is checked at the turnstile. Bring every passport, kids included",
+      "Sit in Tribuna Tevere or Distinti — clear view, family crowd. Curva Sud is the ultras' end; not with children",
+      "Wear neutral colours. Fiorentina purple in a home sector is a genuine problem, not a joke",
+      "Reckon on roughly €30–60 for the curve and €50–100 for the Tribune on an opening-night fixture; under-14s are usually discounted",
+      "Park at Piazzale Clodio or a garage near Ponte Milvio and walk 15–20 min, or leave the car at Piazzale Flaminio and ride tram 2 to its Piazza Mancini terminus. Viale dei Gladiatori closes to traffic on matchday",
+      "Full time is ~22:40. Out of the car park by 23:15, back at Cortevecchia around 01:30 — decide about Day 9 before you commit"
+    ],
+    quizFacts: [
+      {
+        question: "Which team from Tuscany is playing in Rome on the night of 24 August?",
+        correctAnswer: "Fiorentina, from Florence",
+        distractors: ["Juventus, from Turin", "Napoli, from Naples", "Inter, from Milan"]
+      },
+      {
+        question: "Fiorentina are nicknamed 'La Viola'. What colour are their shirts?",
+        correctAnswer: "Purple",
+        distractors: ["Bright orange", "Pink and green stripes", "Silver"]
+      },
+      {
+        question: "The Stadio Olimpico got its name from which huge event Rome hosted in 1960?",
+        correctAnswer: "The Olympic Games",
+        distractors: [
+          "The first ever World Cup",
+          "A Formula 1 race",
+          "The Eurovision Song Contest"
+        ]
+      },
+      {
+        question: "Two Serie A clubs share the Stadio Olimpico as their home ground. Roma is one — who is the other?",
+        correctAnswer: "Lazio",
+        distractors: ["Napoli", "AC Milan", "Torino"]
+      },
+      {
+        question: "What is the nickname of AS Roma, taken from the yellow and red of the city?",
+        correctAnswer: "I Giallorossi — the yellow-and-reds",
+        distractors: [
+          "I Bianconeri — the white-and-blacks",
+          "Gli Azzurri — the blues",
+          "I Rossoneri — the red-and-blacks"
+        ]
+      }
+    ]
   }
 ];
 

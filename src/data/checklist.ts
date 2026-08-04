@@ -32,6 +32,14 @@ export const bookingChecklist: ChecklistItem[] = [
     detail: "Monte Gomito cable car in the mountains — check the day's opening hours before you drive up."
   },
   {
+    id: "book-roma-fiorentina",
+    text: "Roma–Fiorentina tickets, Stadio Olimpico (24 Aug, 20:45) — optional",
+    detail:
+      "Serie A matchday 1. Buy direct at asroma.com with a free MyASR account. Every ticket is nominative, so you need each traveller's full name and date of birth at checkout, and passports are checked at the turnstiles. Tribuna Tevere or Distinti for a family view — not Curva Sud. Decide early: it turns Day 8 into a ~02:00 night.",
+    link: "https://www.asroma.com/en/tickets/men",
+    urgent: true
+  },
+  {
     id: "book-private-chef",
     text: "Private chef dinner at the villa (optional)",
     detail: "Chef-at-Home Tuscany / Eatwith / Airbnb Experiences. Pici workshop + dinner. Pick a settled villa evening (22–25 Aug) — not the 21st, that's the hotel-switch day.",
