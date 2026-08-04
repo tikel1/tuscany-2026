@@ -752,7 +752,14 @@ export const attractions: POI[] = [
     description:
       "Serie A 2026/27 opens over the weekend of 22–24 August, and the very last match of matchday one is Roma vs Fiorentina at the Stadio Olimpico on Monday 24 August, 20:45. It is the ideal fixture to gatecrash from the Maremma: Fiorentina are the Tuscan club, so the region you have been driving through all week walks out as the away team, in purple, against the Giallorossi. Around seventy thousand seats, the Curva Sud singing from an hour before kick-off, and the marble statues of the Foro Italico lit up on the walk in. Geographically it barely bends the day — Civita di Bagnoregio, the standard Day 8 finale, is only about 1 h 40 from the stadium, so the itinerary is already pointing at Rome by late afternoon.",
     image: "./images/stadio-olimpico.jpg",
-    imageCredit: wmCredit("Stadio_Olimpico"),
+    // Not wmCredit(): that helper asserts CC BY-SA and generic "Wikimedia
+    // contributors". This file is CC0, so spell the actual terms out.
+    imageCredit: {
+      author: "Dani- (Wikimedia Commons)",
+      license: "CC0",
+      source: "https://commons.wikimedia.org/wiki/File:Estadio_de_la_roma.jpg",
+      licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
     website: "https://www.asroma.com/en/tickets/men",
     address: "Stadio Olimpico, Viale dei Gladiatori, Foro Italico, Rome",
     coords: [41.9339, 12.4547],

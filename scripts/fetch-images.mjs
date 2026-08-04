@@ -59,9 +59,14 @@ const TARGETS = [
   ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
   // Optional Day 8 evening swap: Roma vs Fiorentina at the Olimpico.
-  // The article's lead image is a huge panorama whose /thumb/ URL 400s, so
-  // go through Special:FilePath, which serves a sane resized JPG.
-  ["stadio-olimpico.jpg",    { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Stadio_Olimpico_2024.jpg?width=1600" }],
+  // Deliberately a night INTERIOR from a seat in the stand — floodlit ring,
+  // the pitch in play, giallorossi flag — not the drone-over-an-empty-bowl
+  // exterior. The card is selling a night at the football, not architecture.
+  // NOTE: the committed file is hand-cropped from 4:3 to 16:9 (top ~19% of
+  // the dark ceiling void trimmed) and resized to 1400px. Re-running this
+  // target with --force re-downloads the UNCROPPED original, so redo the
+  // crop if you ever refresh it. Via Special:FilePath for a sane resize.
+  ["stadio-olimpico.jpg",    { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Estadio_de_la_roma.jpg?width=2400" }],
   // Forest ropes course — rope bridges between tall trees (Unsplash, free)
   ["selva-buffardello.jpg",  { url: unsplash("photo-1775647423221-ac87d3ec338b") }],
   // Soft rafting — group on a raft going down a river (Unsplash, free)
