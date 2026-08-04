@@ -193,11 +193,17 @@ async function main() {
     );
   }
 
-  try {
-    await execFileP("ffmpeg", ["-version"]);
-  } catch {
-    console.error("ffmpeg is required on PATH (normalize MP3 output).");
-    process.exit(1);
+  // Only the Google / Gemini paths need ffmpeg: they come back as PCM and go
+  // through normalizeMp3ToAttractionStandard. ElevenLabs already returns a
+  // finished mp3_44100_128 that we write straight to disk, exactly like the
+  // English script does, so don't demand ffmpeg for a run that never calls it.
+  if (!eleven) {
+    try {
+      await execFileP("ffmpeg", ["-version"]);
+    } catch {
+      console.error("ffmpeg is required on PATH (normalize MP3 output).");
+      process.exit(1);
+    }
   }
 
   await mkdir(OUT_DIR, { recursive: true });
