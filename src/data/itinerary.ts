@@ -511,6 +511,7 @@ export const itinerary: Day[] = [
     region: "south",
     base: "Cortevecchia",
     title: "Pure adrenaline — Acqua Village Follonica",
+    subtitle: "Or swap the slides for the Amiata side — see the two optional stops",
     activities: [
       {
         time: "Morning to evening",
@@ -518,9 +519,28 @@ export const itinerary: Day[] = [
         description: "Full day of slides, wave pool, lazy river, Polynesian shows.",
         attractionId: "acqua-village-follonica",
         tag: "extreme"
+      },
+      {
+        time: "Optional swap — morning",
+        title: "Santa Fiora & the Peschiera",
+        description:
+          "The quiet alternative to a 1 h 20 drive each way for a waterpark. Santa Fiora is 30 minutes north, on the Monte Amiata slope: a stone village on Italy's most-beautiful list, built around a 16th-century walled spring pool full of enormous trout, shaded and cool when the Maremma is baking. Still water, still a win with the kids, a fraction of the driving.",
+        attractionId: "santa-fiora",
+        tag: "village",
+        optional: true,
+        rideToNext: { duration: "20 min", note: "Santa Fiora → Podere dei Nobili, if you add the wildlife park" }
+      },
+      {
+        time: "Optional swap — afternoon",
+        title: "Parco Faunistico del Monte Amiata",
+        description:
+          "Bolt-on to the Santa Fiora morning if the group has the legs for it: Apennine wolves, deer and birds of prey on open fenced hillside, 20 minutes from Santa Fiora. It's a proper walk on an exposed slope with no guarantee of seeing the wolves, so it rewards patience rather than a quick look. Closed Mondays; a Saturday is fine.",
+        attractionId: "monte-labro-wildlife",
+        tag: "nature",
+        optional: true
       }
     ],
-    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min",
+    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min · or Cortevecchia → Santa Fiora ≈ 30 min → wildlife park ≈ 20 min",
     restaurants: ["rest-s-trattoria-verdi", "rest-s-i-due-cippi"],
     drinkOfTheDay: {
       name: "Spritz al Limone",
@@ -534,13 +554,16 @@ export const itinerary: Day[] = [
       { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
       { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
       { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
-      { item: "A €1 coin for the locker", for: "acqua-village-follonica" }
+      { item: "A €1 coin for the locker", for: "acqua-village-follonica" },
+      { item: "Proper shoes, hats and water if you take the Amiata swap — the wildlife park is an exposed hillside walk", for: "monte-labro-wildlife" }
     ],
     dayTips: [
       "Online tickets meaningfully cheaper — buy them the night before",
       "Outside food allowed in the picnic zone; cooler bag = saves €€€",
       "Arrive at opening (10:00) — slide queues triple after 13:00",
-      "Polynesian show times are posted at the gate; don't miss the evening one"
+      "Polynesian show times are posted at the gate; don't miss the evening one",
+      "The Amiata swap is an either/or, not an add-on: Follonica is 1 h 20 west, Santa Fiora is 30 min north. Decide at breakfast",
+      "If you swap, ring the wildlife park first (0564 966867) — it's dawn-to-dusk but closed Mondays and it shuts in bad weather"
     ],
     italianWords: [
       {

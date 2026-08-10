@@ -737,6 +737,106 @@ export const attractions: POI[] = [
       }
     ]
   },
+  // ---------- MONTE AMIATA SIDE (host's suggestions, ~30 min north) ----------
+  {
+    id: "santa-fiora",
+    name: "Santa Fiora & the Peschiera",
+    category: "attraction",
+    region: "south",
+    shortDescription: "Spring-fed trout pool in one of Italy's loveliest villages",
+    description:
+      "A stone village on the flank of Monte Amiata, on the official list of Italy's most beautiful borghi, and the reason to come is the Peschiera: a walled basin built by the Sforza family in the 16th century, fed by the springs that become the river Fiora, so clear you can count the trout. It sits in a small park below the old town, cool and shaded even in August, with a chapel on an island in the middle. The rest of the village is a short, steep wander of grey stone lanes, a Romanesque church full of Della Robbia terracottas, and a mining museum. The host at Cortevecchia flags it as a 30-minute drive.",
+    image: "./images/santa-fiora.jpg",
+    imageCredit: {
+      author: "Termauri (Wikimedia Commons)",
+      license: "CC BY-SA 4.0",
+      source: "https://commons.wikimedia.org/wiki/File:Peschiera_di_Santa_Fiora.jpg",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    website: "https://www.comune.santafiora.gr.it/",
+    address: "Santa Fiora (GR), Monte Amiata",
+    coords: [42.831581, 11.5858657],
+    tags: ["village", "water", "family", "nature"],
+    difficulty: "easy",
+    openingNote:
+      "The Peschiera park is open access and free; the village is always open. Shops and the church shut for a long lunch, roughly 13:00–16:00.",
+    tips: [
+      "Park outside the centre and walk in — the lanes are steep and narrow",
+      "The Peschiera is for looking, not swimming; it's a working spring, not a pool",
+      "Cool and shaded when the Maremma is at its worst — a good midday escape",
+      "Kids: bring a few coins, there's usually fish food, and the trout are enormous"
+    ],
+    quizFacts: [
+      {
+        question: "What lives in Santa Fiora's Peschiera, the walled pool in the village park?",
+        correctAnswer: "Trout",
+        distractors: ["Dolphins", "Penguins", "Crocodiles"]
+      },
+      {
+        question: "The spring at Santa Fiora is the start of which river?",
+        correctAnswer: "The Fiora",
+        distractors: ["The Arno", "The Tiber", "The Nile"]
+      },
+      {
+        question: "Santa Fiora sits on the side of Monte Amiata. What is Monte Amiata?",
+        correctAnswer: "An old volcano, now a 1,700 m mountain",
+        distractors: [
+          "A very large sand dune",
+          "A man-made hill of mining rubble",
+          "An island just off the coast"
+        ]
+      }
+    ]
+  },
+  {
+    id: "monte-labro-wildlife",
+    // The host called it "Monte Labro"; its official name is the Parco
+    // Faunistico del Monte AMIATA, on the northern slopes of Monte Labbro
+    // (two b's). Kept both spellings findable in the name and address.
+    name: "Parco Faunistico del Monte Amiata (Monte Labbro)",
+    category: "attraction",
+    region: "south",
+    shortDescription: "Hillside wildlife park — wolves, deer and Apennine species",
+    description:
+      "A wildlife park on the northern slopes of Monte Labbro, near Arcidosso, where Apennine wolves, deer, chamois and birds of prey live in large fenced areas of open hillside rather than in cages. It is a walk rather than a zoo stroll: gravel and grass paths across a slope with wide views over the Maremma, and the animals are wild enough that you are not guaranteed to see everything, which is rather the point. About 30 minutes from Cortevecchia, and it pairs naturally with Santa Fiora on the same half-day.",
+    image: "./images/monte-labro.jpg",
+    imageCredit: {
+      author: "Bierre (Wikimedia Commons)",
+      license: "CC0",
+      source: "https://commons.wikimedia.org/wiki/File:Lupo_amiata.JPG",
+      licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    website: "https://www.comune.arcidosso.gr.it/it/vivere/riserva-naturale-del-monte-labbro",
+    address: "Località Podere dei Nobili, Arcidosso (GR) — off the SS323 to Roccalbegna",
+    coords: [42.8324376, 11.5220367],
+    tags: ["nature", "family", "view"],
+    difficulty: "moderate",
+    openingNote:
+      "Open daily dawn to dusk, CLOSED MONDAYS. Reached off the SS323 between Arcidosso and Roccalbegna; there's a proper car park at the entrance. Tel 0564 966867.",
+    bookingNote: "Not booked and not bookable — tickets on the gate. Ring ahead if the weather looks bad.",
+    tips: [
+      "Closed on Mondays — our free day is a Saturday, but don't improvise this one on a Monday",
+      "Real walking on an open hillside — proper shoes, hats and water, not sandals",
+      "Wolves are shy and the enclosures are big; early or late is your best chance",
+      "Almost no shade on the upper paths, so avoid the middle of an August afternoon"
+    ],
+    quizFacts: [
+      {
+        question: "Which shy predator is the animal people come to Monte Labro hoping to see?",
+        correctAnswer: "The Apennine wolf",
+        distractors: ["The polar bear", "The tiger", "The giant panda"]
+      },
+      {
+        question: "How do the animals at the Parco Faunistico live?",
+        correctAnswer: "In big fenced areas of open hillside",
+        distractors: [
+          "In small indoor cages",
+          "Completely free, wandering the car park",
+          "In a large aquarium"
+        ]
+      }
+    ]
+  },
   // ---------- OPTIONAL EVENING SWAP (Day 8, 24 Aug) ----------
   // Not a Tuscan site at all — a Rome night out that only makes sense
   // because Day 8 already ends at Civita di Bagnoregio, ~1 h 40 from the

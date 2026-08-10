@@ -9,11 +9,18 @@
  * (Maps) or "Go" (Waze) themselves once they've decided.
  *
  * Strategy:
- *   - With a name → search by "<name>, <address-or-Italy>". Google
- *     Maps usually opens directly to the top hit's place card; Waze
- *     opens search results with the place pinned.
+ *   - With a name → search by "<name>, <address-or-Italy>", ALWAYS
+ *     anchored on our own coordinates (Google `/@lat,lon,15z`, Waze
+ *     `ll=`). Google Maps usually opens directly to the top hit's place
+ *     card; Waze opens search results with the place pinned.
  *   - Without a name → drop a plain coord pin. The user still sees
  *     the location on the map and can tap nav themselves.
+ *
+ * The coordinate anchor is not decoration. Tenuta Cortevecchia, our
+ * southern base, has no OpenStreetMap record at all and is a remote
+ * estate down gravel roads; an unanchored text search for it is a
+ * coin flip. Anchoring means the worst case is "right place, no place
+ * card" rather than "confidently wrong town".
  */
 
 export interface NavTarget {
@@ -46,7 +53,13 @@ export function googleMapsPlaceUrl(target: NavTarget | [number, number]): string
     return `https://www.google.com/maps/?q=${lat},${lon}`;
   }
   const query = encodeURIComponent(buildSearchQuery(target));
-  return `https://www.google.com/maps/search/?api=1&query=${query}`;
+  const [lat, lon] = target.coords;
+  // The `/@lat,lon,zoom` suffix centres the map on our own coordinates
+  // before the text search runs, so a place whose NAME doesn't resolve
+  // (remote agriturismi, unnamed trailheads, a beach with no listing)
+  // still lands the user in the right valley instead of on a same-named
+  // place three provinces away. See the note on buildSearchQuery.
+  return `https://www.google.com/maps/search/${query}/@${lat},${lon},15z`;
 }
 
 /**
@@ -61,7 +74,12 @@ export function wazePlaceUrl(target: NavTarget | [number, number]): string {
     return `https://waze.com/ul?ll=${lat},${lon}&navigate=no`;
   }
   const query = encodeURIComponent(buildSearchQuery(target));
-  return `https://waze.com/ul?q=${query}&navigate=no`;
+  const [lat, lon] = target.coords;
+  // `ll` sets the centre Waze searches around, so `q` can't drag us to a
+  // same-named place elsewhere in Italy — and when `q` matches nothing at
+  // all, Waze falls back to the pin at `ll`, which is exactly where we
+  // want the car pointed anyway.
+  return `https://waze.com/ul?ll=${lat},${lon}&q=${query}&navigate=no`;
 }
 
 /* ------------------------------------------------------------------ */

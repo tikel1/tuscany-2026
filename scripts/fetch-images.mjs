@@ -58,6 +58,12 @@ const TARGETS = [
   // gorge ref; Luo Jin Hong on Unsplash). Visually suggests the Lima canyon.
   ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
+  // Day 6 optional Amiata swap (the Cortevecchia host's suggestions).
+  // The Peschiera with the village stacked behind it — the whole reason to go.
+  ["santa-fiora.jpg",        { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Peschiera_di_Santa_Fiora.jpg?width=1600" }],
+  // An Apennine wolf in a meadow, not a landscape: the card should promise
+  // the animal you're driving up there hoping to see.
+  ["monte-labro.jpg",        { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Lupo_amiata.JPG?width=1400" }],
   // Optional Day 8 evening swap: Roma vs Fiorentina at the Olimpico.
   // Deliberately a night INTERIOR from a seat in the stand — floodlit ring,
   // the pitch in play, giallorossi flag — not the drone-over-an-empty-bowl

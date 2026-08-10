@@ -172,6 +172,67 @@ export const wineries: Winery[] = [
       license: "CC BY-SA",
       source: "https://en.wikipedia.org/wiki/Sovana"
     }
+  },
+  /* The Cortevecchia host flagged four denominations they sit near.
+   * Morellino di Scansano is already covered three times above, so these
+   * fill the other three. NOTE these break the "within 25 minutes" rule
+   * at the top of this file: Montecucco is a genuine half-hour, but
+   * Montalcino and Montepulciano are 1 h+ and only make sense if you do
+   * a Val d'Orcia day. The drive is stated in each bookingNote so nobody
+   * sets off for a "quick tasting" that eats the afternoon. */
+  {
+    id: "win-s-collemassari",
+    name: "Castello ColleMassari",
+    region: "south",
+    appellation: "Montecucco Sangiovese DOCG",
+    description:
+      "The estate that put Montecucco on the map — a big organic property on the Monte Amiata side, the closest serious denomination to Cortevecchia. Modern gravity-fed cellar built into the hillside, and the tour is one of the better ones for anyone who actually wants to see how wine is made rather than just drink it. Sangiovese grown between the Amiata and the Maremma: firmer and more mineral than Morellino.",
+    website: "https://www.collemassari.it/en/",
+    address: "Loc. Poggi del Sasso, Cinigiano (GR)",
+    coords: [42.9072766, 11.3231486],
+    bookingNote: "~40 min from Cortevecchia. Book the cellar tour online a few days ahead.",
+    image: "./images/wine-collemassari.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Montecucco_DOC"
+    }
+  },
+  {
+    id: "win-s-col-dorcia",
+    name: "Col d'Orcia",
+    region: "south",
+    appellation: "Brunello di Montalcino DOCG",
+    description:
+      "One of Montalcino's largest organic estates, at Sant'Angelo in Colle on the warm southern slope. Brunello is 100% Sangiovese aged at least five years, and this is the classic version: dried cherry, leather, tobacco, a long slow finish. The visitor set-up is properly organised — cellar tour, a park, and views straight across the Val d'Orcia to Monte Amiata, which is the mountain you'll be looking at from the villa all week.",
+    website: "https://www.coldorcia.it/en/",
+    address: "Via Giuseppe Garibaldi 42, Sant'Angelo in Colle, Montalcino (SI)",
+    coords: [42.9939571, 11.4604941],
+    bookingNote: "~1 h 15 from Cortevecchia — a Val d'Orcia day, not a quick hop. Book ahead.",
+    image: "./images/wine-col-dorcia.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Brunello_di_Montalcino"
+    }
+  },
+  {
+    id: "win-s-avignonesi",
+    name: "Avignonesi",
+    region: "south",
+    appellation: "Vino Nobile di Montepulciano DOCG",
+    description:
+      "A biodynamic estate outside Montepulciano, farming without chemicals and famous for a Vin Santo aged ten years in tiny barrels — one of the great sweet wines of Italy and worth the detour on its own. Vino Nobile is Sangiovese again (here called Prugnolo Gentile), softer and more floral than Brunello. They run tastings with food, which makes this the most civilised of the three for a long lunch.",
+    website: "https://www.avignonesi.it/en/",
+    address: "Via Colonica 1, Valiano di Montepulciano (SI)",
+    coords: [43.1735808, 11.9333283],
+    bookingNote: "~1 h 40 from Cortevecchia — the furthest of the lot. Book, and make a day of it.",
+    image: "./images/wine-avignonesi.jpg",
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "CC BY-SA",
+      source: "https://en.wikipedia.org/wiki/Vino_Nobile_di_Montepulciano"
+    }
   }
 ];
 
