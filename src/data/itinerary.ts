@@ -705,7 +705,7 @@ export const itinerary: Day[] = [
     date: "2026-08-24",
     weekday: "Monday",
     departureTime: "06:45",
-    rideToFirst: { duration: "25 min", note: "Cortevecchia → Saturnia" },
+    rideToFirst: { duration: "15 min", note: "Cortevecchia → Saturnia (the host's number)" },
     region: "south",
     base: "Cortevecchia",
     title: "Hot springs at dawn, lake swim, the floating city",

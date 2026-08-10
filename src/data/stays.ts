@@ -68,16 +68,12 @@ export const stays: Stay[] = [
     website: "https://tenutacortevecchia.it/en/",
     bookingLink: "https://tenutacortevecchia.it/en/",
     address: "Località Cortevecchia, 58055 Semproniano (GR)",
-    // TWO host-supplied positions disagree by ~1.65 km and we cannot tell
-    // which is the gate and which is the property record:
-    //   WhatsApp arrival brief  42.749253, 11.568486  -> Belvedere/Petricci
-    //   Booking confirmation    42.738726, 11.582693  -> "Strada Vicinale
-    //                                                    di Cortevecchia"
-    // Using the WhatsApp one because that message is literally the "how to
-    // arrive" instruction, so it should be the gate. But the booking GPS
-    // sits on a road named after the estate, which is not nothing — worth
-    // one question to the host before departure. Both are plausible on a
-    // 2,000-hectare property. lib/nav.ts now anchors on this value.
+    // SETTLED: where sources conflict, the host's WhatsApp wins. Their
+    // arrival brief gives 42.749253, 11.568486; the SimpleBooking
+    // confirmation email gives 42.738726, 11.582693 (~1.65 km away, on
+    // "Strada Vicinale di Cortevecchia"). We use the WhatsApp position —
+    // it is the message that tells arriving guests where to drive, and
+    // lib/nav.ts anchors the Maps/Waze search on this value.
     coords: [42.749253, 11.568486],
     checkIn: "2026-08-21",
     checkOut: "2026-08-26",
@@ -95,7 +91,7 @@ export const stays: Stay[] = [
       "Drive slowly the whole way in — it's a working hunting estate and there are wild boar and deer on these roads"
     ],
     highlights: [
-      "~25 min from Saturnia hot springs (the host says 15; trust the longer number for a 07:30 start)",
+      "~15 min from Saturnia hot springs, per the host — the dawn start is an easy win from here",
       "~30 min from Pitigliano and the Vie Cave",
       "Big private pool, kitchen built for a chef-at-home night",
       "Total privacy — historic restored buildings"
@@ -105,9 +101,7 @@ export const stays: Stay[] = [
       "Check-out is 08:00–10:00, but we leave at 03:30 for the flight. Settle up and arrange the key drop the night before",
       "Send photos of the front AND back of everyone's passport by WhatsApp before arrival — the host asks for this to pre-fill check-in",
       "Host / urgent contact: +39 331 259 3972 (WhatsApp or call)",
-      "Saturnia is ~25 min away, though the host claims 15. Plan the 07:30 dawn start against 25",
       "Booked room only — no breakfast. On an estate this remote that means the first morning needs shopping done the day before",
-      "Two host-given map positions differ by ~1.6 km. Ask them to confirm the gate before you set off",
       "It's a working hunting estate: wild boar and deer on the roads. Drive slowly on the property and keep the kids away from the animals"
     ]
   }

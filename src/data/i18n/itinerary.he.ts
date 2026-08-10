@@ -591,7 +591,7 @@ export const itineraryHE: Record<number, DayHE> = {
     title: "מעיינות חמים בזריחה, שחייה באגם, העיר הצפה",
     subtitle: "סיבוב מלא במרמה הדרומית",
     departureTime: "06:45",
-    rideToFirst: { duration: "25 דק׳", note: "קורטווקיה → סטורניה" },
+    rideToFirst: { duration: "15 דק׳", note: "קורטווקיה → סאטורניה (המספר של המארח)" },
     base: "קורטווקיה",
     activities: [
       {
