@@ -421,12 +421,17 @@ export const itinerary: Day[] = [
         description: "Drive 30 minutes to Siena. Have a late lunch, stretch the kids' legs around Piazza del Campo, and stock up at a supermarket for the villa's first morning.",
         attractionId: "siena",
         tag: "culture",
-        rideToNext: { duration: "2 h", note: "Siena → Cortevecchia", departAt: "16:30" }
+        rideToNext: {
+          duration: "2 h",
+          note: "Siena → Cortevecchia — leave on time, check-in shuts at 18:00",
+          departAt: "15:30"
+        }
       },
       {
-        time: "Late afternoon",
+        time: "17:30 (check-in closes 18:00)",
         title: "Arrive at Tenuta Cortevecchia",
-        description: "Settle into the villa, unpack, swim in the private pool, decompress."
+        description:
+          "Through the main gate by the flags and the fountain, ring the bell, then the yellow farmhouse on the left down the avenue is reception. Settle in, unpack, swim in the private pool, decompress. Drive slowly on the estate — wild boar and deer use these roads."
       }
     ],
     driveNotes: "Larciano → Sentierelsa ≈ 1 h 15 min · Sentierelsa → Siena ≈ 30 min · Siena → Cortevecchia ≈ 2 h",
@@ -445,10 +450,12 @@ export const itinerary: Day[] = [
       { item: "Snacks & water for the long drive south" }
     ],
     dayTips: [
+      "Cortevecchia check-in is 15:00–18:00, hard stop. Leaving Siena at 15:30 lands you ~17:30 — if lunch overruns, call +39 331 259 3972 from the road rather than arriving unannounced",
+      "Send everyone's passport photos (front AND back) to that number over WhatsApp before you arrive — the host uses them to pre-fill check-in",
       "Fuel up before the A1 entry — autostrada gas is +20–30 c/L",
-      "Confirm Cortevecchia check-in window with the host before you leave",
       "No public toilets at Sentierelsa trailhead — go in Colle di Val d'Elsa first",
-      "Plan an early-evening arrival; you don't want to discover the gravel road in the dark"
+      "Do the big supermarket run in Siena. The estate is remote and you arrive near closing time",
+      "Last stretch is gravel on a working hunting estate — wild boar and deer on the road, so take it slowly"
     ],
     italianWords: [
       {
@@ -844,7 +851,9 @@ export const itinerary: Day[] = [
     dayTips: [
       "Riding helmets are provided; minimum age usually 6",
       "Pitigliano synagogue closes early on Friday — go before lunch if it's a Friday",
-      "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano"
+      "Buy the 'sfratto dei Goym' from the kosher bakery in Pitigliano",
+      "Tonight: settle the bill and agree the 03:30 key drop with the host (+39 331 259 3972). Their check-out desk is 08:00–10:00 and we leave five hours before it opens",
+      "Pack the car tonight too — loading in the dark on gravel with everyone half asleep is not a 03:15 job"
     ],
     italianWords: [
       {
@@ -934,6 +943,7 @@ export const itinerary: Day[] = [
       { item: "All gels & liquids re-decanted to ≤ 100 ml" }
     ],
     dayTips: [
+      "We leave Cortevecchia before their 08:00–10:00 check-out desk opens — the key drop must already be agreed with the host from last night",
       "Bag drop opens exactly 2 h before departure — be there at 03:30",
       "Return the rental with a full tank — closest 24/7 pump is on Via Portuense",
       "Allow 10–15 min for the rental shuttle from car return to terminal",

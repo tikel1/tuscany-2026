@@ -32,6 +32,20 @@ export const bookingChecklist: ChecklistItem[] = [
     detail: "Monte Gomito cable car in the mountains — check the day's opening hours before you drive up."
   },
   {
+    id: "send-cortevecchia-ids",
+    text: "Send passport photos to Cortevecchia before 21 Aug",
+    detail:
+      "The host asked for the front AND back of every guest's ID over WhatsApp, ahead of arrival, so check-in is quick. Send to +39 331 259 3972. Same message thread to use if you're running late — check-in is 15:00–18:00 and they shut the desk at 18:00.",
+    urgent: true
+  },
+  {
+    id: "confirm-cortevecchia-early-checkout",
+    text: "Agree the 03:30 key drop at Cortevecchia",
+    detail:
+      "Their check-out desk is 08:00–10:00 and we leave at 03:30 on 26 Aug for the FCO flight. Settle the bill and arrange how to leave the keys before the last evening, not on the night.",
+    urgent: true
+  },
+  {
     id: "book-roma-fiorentina",
     text: "Roma–Fiorentina tickets, Stadio Olimpico (24 Aug, 20:45) — optional",
     detail:

@@ -57,15 +57,29 @@ export const stays: Stay[] = [
     website: "https://tenutacortevecchia.it/en/",
     bookingLink: "https://tenutacortevecchia.it/en/",
     address: "Località Cortevecchia, 58055 Semproniano (GR)",
-    coords: [42.6919, 11.5378],
+    // Position given by the host over WhatsApp, 2026-08-04. The previous
+    // value was ~7 km south-west of here. Note this drives the MAP PINS
+    // (MapView / MiniMap), not the Maps+Waze buttons — those go through
+    // buildSearchQuery() in lib/nav.ts and search on "<name>, <address>"
+    // text, ignoring coords entirely for a named target.
+    // Reverse-geocodes to Belvedere / Petricci, Semproniano (GR) 58055.
+    coords: [42.749253, 11.568486],
     checkIn: "2026-08-21",
     checkOut: "2026-08-26",
     nights: 5,
     highlights: [
-      "~25 min from Saturnia hot springs (early morning win)",
+      "~25 min from Saturnia hot springs (the host says 15; trust the longer number for a 07:30 start)",
       "~30 min from Pitigliano and the Vie Cave",
       "Big private pool, kitchen built for a chef-at-home night",
-      "Total privacy — historic restored buildings"
+      "Total privacy — historic restored buildings",
+      "Arrival: main gate with the flags and the fountain, ring the bell, then the yellow farmhouse on your left down the avenue is reception"
+    ],
+    warnings: [
+      "Check-in is 15:00–18:00 only. Our plan lands close to the edge — if you slip, call ahead, don't just turn up late",
+      "Check-out is 08:00–10:00, but we leave at 03:30 for the flight. Settle up and arrange the key drop the night before",
+      "Send photos of the front AND back of everyone's passport by WhatsApp before arrival — the host asks for this to pre-fill check-in",
+      "Host / urgent contact: +39 331 259 3972 (WhatsApp or call)",
+      "It's a working hunting estate: wild boar and deer on the roads. Drive slowly on the property and keep the kids away from the animals"
     ]
   }
 ];
