@@ -304,6 +304,13 @@ export const DICT = {
   stay_highlights: { en: "Why we picked it", he: "למה בחרנו בו" },
   stay_warnings: { en: "Worth knowing", he: "כדאי לדעת" },
   stay_open_booking: { en: "Open booking", he: "פתח הזמנה" },
+  stay_show_more: { en: "Show all the details", he: "להציג את כל הפרטים" },
+  stay_show_less: { en: "Hide the details", he: "להסתיר את הפרטים" },
+  stay_checkin: { en: "Check-in", he: "צ׳ק־אין" },
+  stay_checkout: { en: "Check-out", he: "צ׳ק־אאוט" },
+  stay_address: { en: "Address", he: "כתובת" },
+  stay_phone: { en: "Property phone", he: "טלפון הנכס" },
+  stay_arrival: { en: "Getting in", he: "איך נכנסים" },
 
   /* ---------- TripStats ---------- */
   trip_stats_eyebrow: { en: "By the numbers", he: "במספרים" },

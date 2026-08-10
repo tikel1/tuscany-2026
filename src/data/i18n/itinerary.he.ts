@@ -349,9 +349,9 @@ export const itineraryHE: Record<number, DayHE> = {
     ]
   },
   5: {
+    departureTime: "09:45",
     title: "טיול נחל דרומה, מתמקמים בווילה",
     subtitle: "יום מעבר — טיול הנחל בסנטיירלסה בדרך",
-    departureTime: "10:00",
     rideToFirst: { duration: "1 שעה 15 דק׳", note: "לרצ׳אנו → סנטיירלזה" },
     base: "לרצ'יאנו → קורטווקיה",
     activities: [

@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, AlertTriangle, Check } from "lucide-react";
+import { ExternalLink, MapPin, AlertTriangle, ChevronDown, LogIn, LogOut, Phone, DoorOpen } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { stays } from "../data/stays";
@@ -125,6 +125,124 @@ function StayHero({ stay }: { stay: Stay }) {
   );
 }
 
+/** A labelled row inside the expanded details panel. */
+function DetailRow({
+  icon,
+  label,
+  children
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex gap-2.5">
+      <span className="text-olive-600 shrink-0 mt-[3px]">{icon}</span>
+      <div className="min-w-0">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-ink-700/60 font-medium">
+          {label}
+        </div>
+        <div className="text-sm text-ink-800 leading-relaxed">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/* The card face stays short — photo, name, dates, the pitch. Everything a
+ * person only needs on the day they actually arrive (exact address, the
+ * check-in window, the gate-and-front-desk walkthrough, the warnings) sits
+ * behind this toggle, so the section still scans in one screen. */
+function StayDetails({ stay: s }: { stay: Stay }) {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="mt-4">
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] font-medium text-terracotta-600 hover:text-terracotta-700 transition-colors"
+      >
+        {open ? t("stay_show_less") : t("stay_show_more")}
+        <ChevronDown
+          size={14}
+          className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4 space-y-3.5">
+              {s.address && (
+                <DetailRow icon={<MapPin size={14} />} label={t("stay_address")}>
+                  {s.address}
+                </DetailRow>
+              )}
+              {s.checkInWindow && (
+                <DetailRow icon={<LogIn size={14} />} label={t("stay_checkin")}>
+                  {s.checkInWindow}
+                </DetailRow>
+              )}
+              {s.checkOutWindow && (
+                <DetailRow icon={<LogOut size={14} />} label={t("stay_checkout")}>
+                  {s.checkOutWindow}
+                </DetailRow>
+              )}
+              {s.publicPhone && (
+                <DetailRow icon={<Phone size={14} />} label={t("stay_phone")}>
+                  <a href={`tel:${s.publicPhone.replace(/\s/g, "")}`} className="hover:text-terracotta-600">
+                    {s.publicPhone}
+                  </a>
+                </DetailRow>
+              )}
+              {s.arrival && s.arrival.length > 0 && (
+                <DetailRow icon={<DoorOpen size={14} />} label={t("stay_arrival")}>
+                  <ol className="mt-0.5 space-y-1.5">
+                    {s.arrival.map((step, i) => (
+                      <li key={i} className="flex gap-2">
+                        <span className="shrink-0 w-4 h-4 mt-0.5 rounded-full bg-olive-500/15 text-olive-700 text-[10px] font-semibold flex items-center justify-center">
+                          {i + 1}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </DetailRow>
+              )}
+
+              {/* "Why we picked it" deliberately not rendered: by the time
+                  you're opening this panel you have already booked the place,
+                  so the sell is noise. The panel is arrival logistics only. */}
+              {s.warnings && s.warnings.length > 0 && (
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-terracotta-700/85 font-medium">
+                    {t("stay_warnings")}
+                  </div>
+                  <ul className="mt-1.5 space-y-1.5">
+                    {s.warnings.map((w, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-terracotta-700">
+                        <AlertTriangle size={14} className="text-terracotta-500 shrink-0 mt-0.5" />
+                        <span>{w}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function StaysSection() {
   const t = useT();
   const { lang } = useLang();
@@ -174,37 +292,7 @@ export default function StaysSection() {
                 {s.description}
               </p>
 
-              {s.highlights.length > 0 && (
-                <>
-                  <div className="mt-4 text-[10px] uppercase tracking-[0.22em] text-olive-700/85 font-medium">
-                    {t("stay_highlights")}
-                  </div>
-                  <ul className="mt-1.5 space-y-1.5">
-                    {s.highlights.map((h, i) => (
-                      <li key={i} className="flex gap-2 text-sm text-ink-800">
-                        <Check size={14} className="text-olive-500 shrink-0 mt-0.5" />
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              {s.warnings && s.warnings.length > 0 && (
-                <>
-                  <div className="mt-4 text-[10px] uppercase tracking-[0.22em] text-terracotta-700/85 font-medium">
-                    {t("stay_warnings")}
-                  </div>
-                  <ul className="mt-1.5 space-y-1.5">
-                    {s.warnings.map((w, i) => (
-                      <li key={i} className="flex gap-2 text-sm text-terracotta-700">
-                        <AlertTriangle size={14} className="text-terracotta-500 shrink-0 mt-0.5" />
-                        <span>{w}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+              <StayDetails stay={s} />
 
               <div className="mt-5 pt-4 border-t border-cream-300/60 flex flex-wrap gap-x-4 gap-y-2">
                 {s.bookingLink && (

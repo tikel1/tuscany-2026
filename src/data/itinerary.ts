@@ -400,7 +400,7 @@ export const itinerary: Day[] = [
     dayNumber: 5,
     date: "2026-08-21",
     weekday: "Friday",
-    departureTime: "10:00",
+    departureTime: "09:45",
     rideToFirst: { duration: "1 h 15 min", note: "Larciano → Sentierelsa" },
     region: "transit",
     base: "Larciano → Cortevecchia",

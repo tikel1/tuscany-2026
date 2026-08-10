@@ -111,6 +111,19 @@ export interface Stay extends POI {
   bookingLink?: string;
   highlights: string[];
   warnings?: string[];
+  /** Arrival window as the property states it, e.g. "15:00–18:00" or
+   *  "from 15:00". Shown in the stay card's expanded details. Keep it
+   *  verbatim from the host — a window we invented is worse than none. */
+  checkInWindow?: string;
+  /** Departure window, e.g. "before 10:00". Same rule. */
+  checkOutWindow?: string;
+  /** Step-by-step "how do I actually get in" notes from the host: the
+   *  gate to use, where reception is, who to ring. Ordered; rendered as
+   *  a numbered list behind the card's "show more". */
+  arrival?: string[];
+  /** Publicly listed property phone (a switchboard or booking line, NOT
+   *  a host's personal mobile — this repo is public). */
+  publicPhone?: string;
   /** Optional extra photos shown in the stay-card carousel.
    *  When present, the card crossfades through `[image, ...gallery]`. */
   gallery?: string[];
