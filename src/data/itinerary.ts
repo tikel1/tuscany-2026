@@ -153,7 +153,8 @@ export const itinerary: Day[] = [
     dayTips: [
       "Eat early-ish lunch in Borgo a Mozzano: most kitchens close at 14:30",
       "Selva del Buffardello is in chestnut forest at 850 m — bring a long sleeve",
-      "Cash for the small adventure-park snack bar"
+      "Cash for the small adventure-park snack bar",
+      "Last chance to cancel tomorrow's rafting for a full refund is 09:30 THIS morning — after that it's paid either way"
     ],
     italianWords: [
       {

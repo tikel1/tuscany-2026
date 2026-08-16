@@ -17,7 +17,8 @@ export const bookingChecklist: ChecklistItem[] = [
   {
     id: "book-rafting",
     text: "Soft rafting, Serchio (19 Aug, 09:30)",
-    detail: "GetYourGuide / Lucca Rafting, whole group. Guide, gear & wetsuits included. Check in at Chifenti by 09:25. Confirmation is in Itay's email.",
+    detail:
+      "GetYourGuide / Lucca Rafting, confirmed and paid for 6 adults + 6 children, 1.5 h in English. Guide, gear, wetsuits and souvenir photos included. Check in at Lucca Rafting, Chifenti, by 09:25 — arrive late and the slot is forfeit. Provider LUCCARAFTING, +39 340 711 6974. Free cancellation only until 09:30 on 18 Aug. Booking reference and PIN are in Itay's email.",
     done: true
   },
   {

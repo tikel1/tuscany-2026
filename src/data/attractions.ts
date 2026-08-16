@@ -152,15 +152,25 @@ export const attractions: POI[] = [
       licenseUrl: "https://unsplash.com/license"
     },
     website: "https://www.getyourguide.com/bagni-di-lucca-l160058/lucca-family-friendly-rafting-soft-t513269/",
-    address: "Chifenti, Bagni di Lucca (LU)",
-    coords: [44.0742, 10.4853],
+    // Meeting point verbatim from the GetYourGuide confirmation, 2026-08-19.
+    // The old pin sat 10 km up the valley in BARGA, which for a check-in you
+    // forfeit by being late was the worst possible place to be wrong. Chifenti
+    // is ~1.7 km from Ponte del Diavolo, which cross-checks: the trip finishes
+    // with the group photo under that bridge.
+    address: "Via di Serraglia, SS12 dell'Abetone e del Brennero, 55023 Chifenti (LU)",
+    coords: [43.9997062, 10.5592664],
     tags: ["water", "family", "nature"],
     difficulty: "easy",
+    openingNote:
+      "Booked slot 09:30, be there 09:25 — GetYourGuide is explicit that a late arrival forfeits the slot. Check in with the staff at Lucca Rafting; the trip ends where it starts.",
+    bookingNote:
+      "Confirmed and paid. Provider is LUCCARAFTING, +39 340 711 6974 for anything about the day itself. Free cancellation only until 09:30 on 18 Aug — the morning before.",
     tips: [
       "About 1.5 hours including swim breaks",
       "Min age usually 6; under-12s wear life vests the whole way",
       "Wear swimwear, bring a dry change of clothes for the drive home",
-      "August water levels are gentle — splashy, not scary"
+      "August water levels are gentle — splashy, not scary",
+      "Guide, gear and a wetsuit for all 12 of you are included, and so are the souvenir photos — no need to risk a phone on the water"
     ]
   },
   {
