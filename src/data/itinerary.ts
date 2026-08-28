@@ -103,7 +103,7 @@ export const itinerary: Day[] = [
     rideToFirst: { duration: "1 h", note: "Larciano → Bagni di Lucca" },
     region: "north",
     base: "Larciano",
-    title: "Turquoise canyon, Devil's Bridge & forest ropes",
+    title: "Turquoise canyon and the Devil's Bridge",
     activities: [
       {
         time: "10:45",
@@ -308,40 +308,35 @@ export const itinerary: Day[] = [
     date: "2026-08-20",
     weekday: "Thursday",
     departureTime: "09:30",
-    rideToFirst: { duration: "1 h", note: "Larciano → Abetone" },
+    rideToFirst: { duration: "30 min", note: "Larciano → Mammiano Basso (the bridge)" },
     region: "north",
     base: "Larciano",
-    title: "Above the clouds — Abetone gondola",
+    title: "The suspension bridge, then above the clouds at Abetone",
     activities: [
       {
         time: "Morning",
-        title: "Drive to Abetone, ride to Monte Gomito",
+        title: "Ponte Sospeso delle Ferriere",
+        description:
+          "Added on the day and worth the stop. Italy's longest pedestrian suspension bridge: 227 m of steel walkway, 80 cm wide, hanging 36 m over the Lima — the same river the SUP went down at Canyon Park. It sways. Free, always open, and it sits right on the SS12 on the way up to Abetone.",
+        attractionId: "ponte-sospeso",
+        tag: "view",
+        rideToNext: { duration: "35 min", note: "Mammiano Basso → Abetone, up the Lima valley" }
+      },
+      {
+        time: "Late morning",
+        title: "Drive up to Abetone, ride to Monte Gomito",
         description: "Modern gondola to nearly 1,900 m — cool air, wide views.",
         attractionId: "abetone-monte-gomito",
         tag: "view"
       },
       {
-        time: "Midday",
-        title: "Family ridge walk",
-        description: "Easy, breezy walk along the open ridgeline. Picnic with a view."
-      },
-      {
-        time: "Afternoon",
-        title: "Pine forest picnic, then home to pack",
-        description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south.",
-        rideToNext: { duration: "35 min", note: "Abetone → Mammiano Basso, down the Lima valley", departAt: "16:00" }
-      },
-      {
-        time: "Late afternoon",
-        title: "Ponte Sospeso delle Ferriere",
-        description:
-          "Added on the day and worth it. Italy's longest pedestrian suspension bridge: 227 m of steel walkway, 80 cm wide, hanging 36 m over the Lima — the same river the SUP went down at Canyon Park. It sways. Free, always open, and directly on the road back down to Larciano.",
-        attractionId: "ponte-sospeso",
-        tag: "view",
-        rideToNext: { duration: "30 min", note: "Mammiano Basso → Larciano" }
+        time: "Midday to afternoon",
+        title: "Hike the ridge at Abetone",
+        description: "Easy, breezy walking along the open ridgeline in air 12-15 degrees cooler than the valley. This is what the day turned out to be — no picnic, just the walk.",
+        rideToNext: { duration: "1 h", note: "Abetone → Larciano, the long descent", departAt: "16:00" }
       }
     ],
-    driveNotes: "Larciano ↔ Abetone ≈ 1 h",
+    driveNotes: "Larciano → Mammiano Basso ≈ 30 min · Mammiano Basso → Abetone ≈ 35 min · Abetone → Larciano ≈ 1 h",
     restaurants: ["rest-n-pizzeria-da-paolo", "rest-n-vinci"],
     drinkOfTheDay: {
       name: "Negroni",
@@ -353,14 +348,14 @@ export const itinerary: Day[] = [
       { item: "Long sleeves & a light jacket — 12–15 °C cooler at 1,900 m", for: "abetone-monte-gomito" },
       { item: "Long trousers for the ridge walk (sunburn at altitude is real)", for: "abetone-monte-gomito" },
       { item: "Hiking-grade trail shoes, not sandals", for: "abetone-monte-gomito" },
-      { item: "A proper picnic kit: bread, cheese, fruit, water, a knife" },
+      { item: "Water and snacks for the ridge — mountain restaurants shut mid-afternoon" },
       { item: "Sunscreen, sunglasses & a windbreaker for the gondola ride", for: "abetone-monte-gomito" }
     ],
     dayTips: [
       "First gondola ~09:30, last descent ~17:00 — set a phone alarm",
-      "Mountain restaurants close mid-afternoon; pack the picnic instead",
+      "Mountain restaurants close mid-afternoon — carry your own water and snacks",
       "Cash for the gondola — card sometimes flaky at the booth",
-      "Use the cool half of the day for the ridge walk; descend by 15:00 to start packing"
+      "Do the bridge on the way up while it is quiet; the walkway takes one person at a time"
     ],
     italianWords: [
       {
@@ -521,31 +516,16 @@ export const itinerary: Day[] = [
     rideToFirst: { duration: "20 min", note: "Cortevecchia → Saturnia" },
     region: "south",
     base: "Cortevecchia",
-    title: "Saturnia at the springs, then the villa pool",
-    subtitle: "What we actually did — the waterpark moved to Day 8",
+    title: "Saturnia's hot springs",
+    subtitle: "The waterpark moved to Day 8",
     activities: [
       {
         time: "Morning to mid-afternoon",
-        title: "Saturnia — a whole day at the Cascate del Mulino",
+        title: "Saturnia — the Cascate del Mulino hot springs",
         description:
-          "Not the dawn raid the plan called for: we gave Saturnia the entire day instead, which turned out to be the better trade. Twenty minutes from the estate, so you can retreat to the villa when the sun gets serious.",
+          "Free open-air thermal pools where the sulphur water drops over travertine terraces at about 37 degrees. Twenty minutes from the estate, so it is easy to leave when it fills up and come back later.",
         attractionId: "saturnia",
         tag: "water"
-      },
-      {
-        time: "Late afternoon",
-        title: "Back to the villa pool",
-        description:
-          "The other half of the day. Cortevecchia's pool, the shade, and nobody in a car. After a week of driving this is the part everyone remembered."
-      },
-      {
-        time: "Optional — the original plan",
-        title: "Acqua Village Follonica",
-        description:
-          "The waterpark this day was built around. We moved it to Day 8. Kept because it is a real alternative if you would rather have slides than sulphur: 1 h 40 each way to Follonica.",
-        attractionId: "acqua-village-follonica",
-        tag: "extreme",
-        optional: true
       },
       {
         time: "Optional swap — morning",
@@ -567,7 +547,7 @@ export const itinerary: Day[] = [
         optional: true
       }
     ],
-    driveNotes: "Cortevecchia ↔ Saturnia ≈ 20 min · Follonica (if you swap) ≈ 1 h 40 each way",
+    driveNotes: "Cortevecchia ↔ Saturnia ≈ 20 min · Santa Fiora ≈ 25 min",
     restaurants: ["rest-s-lo-scangeo", "rest-s-il-barilotto", "rest-s-novecento"],
     drinkOfTheDay: {
       name: "Spritz al Limone",
@@ -576,21 +556,18 @@ export const itinerary: Day[] = [
       servingNote: "Tall glass · ice · 3 parts Prosecco · 2 parts Limoncello · soda · lemon wheel"
     },
     gear: [
-      { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
-      { item: "Waterproof phone case", for: "acqua-village-follonica" },
-      { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
-      { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
-      { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
-      { item: "A €1 coin for the locker", for: "acqua-village-follonica" },
+      { item: "Swimwear under your clothes for Saturnia (skip the queue)", for: "saturnia" },
+      { item: "Microfibre towel — quick to dry between dips" },
+      { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
+      { item: "Sun hats, sunscreen, refilled water bottles" },
       { item: "Proper shoes, hats and water if you take the Amiata swap — the wildlife park is an exposed hillside walk", for: "monte-labro-wildlife" }
     ],
     dayTips: [
-      "Online tickets meaningfully cheaper — buy them the night before",
-      "Outside food allowed in the picnic zone; cooler bag = saves €€€",
-      "Arrive at opening (10:00) — slide queues triple after 13:00",
-      "Polynesian show times are posted at the gate; don't miss the evening one",
-      "The Amiata swap is an either/or, not an add-on: Follonica is 1 h 20 west, Santa Fiora is 30 min north. Decide at breakfast",
-      "If you swap, ring the wildlife park first (0564 966867) — it's dawn-to-dusk but closed Mondays and it shuts in bad weather"
+      "Going all day beats the dawn raid: it is 20 min away, so you can leave when it fills up and come back later",
+      "Rinse swimwear thoroughly — sulphur stains light fabrics",
+      "Eat lunch by 13:30 — village kitchens close hard at 14:30",
+      "The Amiata swap is an either/or, not an add-on: Santa Fiora is 25 min north. Decide at breakfast",
+      "If you swap, ring the wildlife park first (0564 966867) — it is dawn-to-dusk but closed Mondays and shuts in bad weather"
     ],
     italianWords: [
       {
@@ -781,12 +758,13 @@ export const itinerary: Day[] = [
       }
     ],
     gear: [
-      { item: "Swimwear under your clothes for Saturnia (skip the queue)", for: "saturnia" },
-      { item: "Microfibre towel — quick to dry between stops" },
-      { item: "Sandals you don't mind smelling sulphury for a day", for: "saturnia" },
-      { item: "Beach mat for Bolsena's pebble shore", for: "lago-di-bolsena" },
-      { item: "Comfortable walking shoes for the steep Civita climb", for: "civita-di-bagnoregio" },
-      { item: "Sun hats, sunscreen, refilled water bottles" },
+      { item: "Two sets of swimwear per person (one dry for the drive)", for: "acqua-village-follonica" },
+      { item: "Waterproof phone case", for: "acqua-village-follonica" },
+      { item: "Swim shirts / rash guards for kids — sun is harsh on the slides", for: "acqua-village-follonica" },
+      { item: "Water shoes — pavement around the wave pool gets very hot", for: "acqua-village-follonica" },
+      { item: "Beach towels (rentals are paid)", for: "acqua-village-follonica" },
+      { item: "A €1 coin for the locker", for: "acqua-village-follonica" },
+      { item: "Comfortable walking shoes if you add the steep Civita climb", for: "civita-di-bagnoregio" },
       {
         item: "Passports for everyone — the Olimpico checks ID against the name on each ticket",
         for: "roma-fiorentina-olimpico"
@@ -797,12 +775,13 @@ export const itinerary: Day[] = [
       }
     ],
     dayTips: [
-      "Saturnia: be in the pools by 07:30 — it's a different place after 10:00",
-      "Rinse swimwear thoroughly at Bolsena — sulphur stains light fabrics",
-      "Civita footbridge ticket ~€5/adult, cash only",
-      "Eat lunch by 13:30 — village kitchens close hard at 14:30",
+      "Online tickets meaningfully cheaper — buy them the night before",
+      "Outside food allowed in the picnic zone; cooler bag = saves €€€",
+      "Arrive at opening (10:00) — slide queues triple after 13:00",
+      "Polynesian show times are posted at the gate; don't miss the evening one",
+      "Civita footbridge ticket ~€5/adult, cash only, if you add it",
       "Rome swap: buy the Roma–Fiorentina tickets the moment they go on general sale — opening night fills up",
-      "If you take the match, either sleep in Rome or push Day 9's horseback ride later; you won't be in bed before 02:00"
+      "If you take the match, either sleep in Rome or push Day 9 later; you won't be in bed before 02:00"
     ],
     italianWords: [
       {
@@ -864,12 +843,12 @@ export const itinerary: Day[] = [
     rideToFirst: { duration: "25 min", note: "Cortevecchia → Manciano (Omnia Ranch)" },
     region: "south",
     base: "Cortevecchia",
-    title: "Maremma horses & the Etruscan rock maze",
+    title: "A morning on horseback above Manciano",
     activities: [
       {
         time: "Morning",
         title: "Horse riding at Omnia Ranch, Manciano",
-        description: "1-hour family pony / horse trail through pine forest and dunes.",
+        description: "A morning ride in the hills above Manciano — treks and lessons for every level, twenty-five minutes from the villa instead of the two hours the coast would have cost.",
         attractionId: "omnia-ranch",
         tag: "nature",
         rideToNext: { duration: "25 min", note: "Manciano → Pitigliano hills", departAt: "11:30" }
@@ -889,13 +868,15 @@ export const itinerary: Day[] = [
         title: "Vitozza cave city (wilder option)",
         description: "Swap the Vie Cave for the abandoned cave dwellings of Vitozza — bring headlamps.",
         attractionId: "vitozza",
+        // Trip verdict: the rain took the afternoon; Vitozza did not happen.
+        optional: true,
         tag: "cave"
       }
     ],
     gear: [
-      { item: "Long pants (jeans) for the horseback ride", for: "maremma-horseback" },
+      { item: "Long pants (jeans) for the horseback ride", for: "omnia-ranch" },
       { item: "Closed-toe shoes for everything today — riding, caves, cobbles" },
-      { item: "Sun hats & long-sleeve light shirts for the open ride", for: "maremma-horseback" },
+      { item: "Sun hats & long-sleeve light shirts for the open ride", for: "omnia-ranch" },
       { item: "Headlamps if doing Vitozza (one per person)", for: "vitozza" },
       { item: "A light layer for the cool tufa corridors", for: "via-cava-san-giuseppe" },
       { item: "Water bottles and snacks — gaps between food stops" }

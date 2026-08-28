@@ -440,40 +440,6 @@ export const attractions: POI[] = [
     ]
   },
   {
-    id: "maremma-horseback",
-    name: "Maremma Horseback Riding",
-    category: "attraction",
-    region: "south",
-    shortDescription: "Ride with the butteri (Maremma cowboys) through dunes and pine forest",
-    description:
-      "The Maremma is Italy's old cowboy country, and several family-run agriturismi offer guided beginner rides through umbrella-pine forests and back-country dunes. Cool early-morning slot is the best — book a 1-hour family pony / horse experience at a ranch near Alberese or Albinia.",
-    image: "./images/maremma-horse.jpg",
-    imageCredit: wmCredit("Maremmano"),
-    website: "https://parco-maremma.it/",
-    address: "Parco della Maremma, Alberese (GR)",
-    coords: [42.6647, 11.0883],
-    tags: ["nature", "family"],
-    difficulty: "easy",
-    tips: [
-      "Long pants (jeans) and closed-toe shoes are non-negotiable",
-      "Min age usually 6 for trail rides; younger kids get a led pony",
-      "Book the 09:00 slot — by 11 it's brutally hot in the open",
-      "Helmets always provided; bring a wide-brim hat for after"
-    ],
-    quizFacts: [
-      {
-        question: "Which famous American cowboy did the Italian cowboys beat in 1890?",
-        correctAnswer: "Buffalo Bill",
-        distractors: ["John Wayne", "Wild Bill Hickok", "Indiana Jones"]
-      },
-      {
-        question: "What are the Maremma cowboys called?",
-        correctAnswer: "Butteri",
-        distractors: ["Vaqueros", "Gauchos", "Banditos"]
-      }
-    ]
-  },
-  {
     id: "pitigliano",
     name: "Pitigliano",
     category: "attraction",
