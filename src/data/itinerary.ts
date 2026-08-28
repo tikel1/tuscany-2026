@@ -528,7 +528,7 @@ export const itinerary: Day[] = [
         tag: "water"
       },
       {
-        time: "Optional swap — morning",
+        time: "Morning",
         title: "Santa Fiora & the Peschiera",
         description:
           "The quiet alternative to a 1 h 20 drive each way for a waterpark. Santa Fiora is 30 minutes north, on the Monte Amiata slope: a stone village on Italy's most-beautiful list, built around a 16th-century walled spring pool full of enormous trout, shaded and cool when the Maremma is baking. Still water, still a win with the kids, a fraction of the driving.",
@@ -538,7 +538,7 @@ export const itinerary: Day[] = [
         rideToNext: { duration: "20 min", note: "Santa Fiora → Podere dei Nobili, if you add the wildlife park" }
       },
       {
-        time: "Optional swap — afternoon",
+        time: "Afternoon",
         title: "Parco Faunistico del Monte Amiata",
         description:
           "Bolt-on to the Santa Fiora morning if the group has the legs for it: Apennine wolves, deer and birds of prey on open fenced hillside, 20 minutes from Santa Fiora. It's a proper walk on an exposed slope with no guarantee of seeing the wolves, so it rewards patience rather than a quick look. Closed Mondays; a Saturday is fine.",
@@ -724,7 +724,7 @@ export const itinerary: Day[] = [
         tag: "extreme"
       },
       {
-        time: "Optional — never happened",
+        time: "Midday",
         title: "Swim in Lago di Bolsena",
         description:
           "Was on the original Day 8 loop and we did not get to it. Cool, clean volcanic lake, gentler than the August coast — 1 h 07 from the estate if you want it another time.",
@@ -748,7 +748,7 @@ export const itinerary: Day[] = [
         }
       },
       {
-        time: "20:45 (optional — the Rome swap)",
+        time: "20:45",
         title: "Serie A opening night: Roma vs Fiorentina",
         description:
           "Matchday one of Serie A 2026/27 at the Stadio Olimpico, with Tuscany's own Fiorentina as the away side. Tickets must be bought in advance, in each traveller's name, at asroma.com. Full time is ~22:40 and you'd be back at Cortevecchia around 01:30 — a brilliant night, but only if you're happy to start Day 9 late or sleep in Rome.",

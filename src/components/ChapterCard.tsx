@@ -10,6 +10,7 @@ import { useT, localizeShortDate, localizeWeekday, type DictKey } from "../lib/d
 import { useLang } from "../lib/i18n";
 import { useLocalizeDay, useLocalizePoi } from "../data/i18n";
 import PoiImage from "./PoiImage";
+import { splitDayPlan } from "../lib/dayPlan";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -86,8 +87,13 @@ export default function ChapterCard({ day }: { day: Day }) {
 
   const lead = resolveLead(localDay, localizePoi);
   const hasTicket = BOOKED_DAY_NUMBERS.has(day.dayNumber);
-  const previewActivities = localDay.activities.slice(0, 3);
-  const remaining = Math.max(0, localDay.activities.length - previewActivities.length);
+  /* The card previews the committed plan only. Before this, an optional
+     stop could occupy one of the three slots and read as something the day
+     actually does. Plan B is surfaced as a count in the footer instead. */
+  const { mainPlan, planB } = splitDayPlan(localDay);
+  const previewActivities = mainPlan.slice(0, 3).map(g => g.activity);
+  const remaining = Math.max(0, mainPlan.length - previewActivities.length);
+  const planBCount = planB.length;
 
   const accentText =
     day.region === "south"
@@ -186,11 +192,16 @@ export default function ChapterCard({ day }: { day: Day }) {
           })}
         </ul>
 
-        {(remaining > 0 || localDay.driveNotes || hasTicket) && (
+        {(remaining > 0 || planBCount > 0 || localDay.driveNotes || hasTicket) && (
           <div className="mt-3 flex items-center gap-3 text-[11px] text-ink-700/65 flex-wrap">
             {hasTicket && (
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-terracotta-500/12 text-terracotta-700 font-medium">
                 <Ticket size={12} /> {t("nav_bookings")}
+              </span>
+            )}
+            {planBCount > 0 && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-cream-200/80 text-ink-700/80 font-medium">
+                {t("plan_b")} · {planBCount}
               </span>
             )}
             {remaining > 0 && (

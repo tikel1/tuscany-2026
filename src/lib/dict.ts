@@ -100,6 +100,8 @@ export const DICT = {
   back_to_plan: { en: "Back to the plan", he: "חזרה לתוכנית" },
   todays_plan: { en: "Today's plan", he: "תוכנית היום" },
   hour_by_hour: { en: "Hour by hour", he: "שעה אחרי שעה" },
+  plan_b: { en: "Plan B", he: "תוכנית ב׳" },
+  plan_b_kicker: { en: "what we skipped, and what you could swap in", he: "מה שדילגנו עליו, ומה אפשר להחליף" },
   on_the_map: { en: "On the map", he: "על המפה" },
   the_days_stops: { en: "The day's stops", he: "עצירות היום" },
   ordered_visit: {

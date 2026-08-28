@@ -52,6 +52,7 @@ import { useT, localizeShortDate, localizeWeekday, type DictKey } from "../lib/d
 import { useLang } from "../lib/i18n";
 import { useLocalizeDay, useLocalizePoi, useLocalizeService, useLocalizeTip } from "../data/i18n";
 import PoiImage from "./PoiImage";
+import { splitDayPlan } from "../lib/dayPlan";
 import PhotoCredit from "./PhotoCredit";
 import MiniMap from "./MiniMap";
 import ListenButton from "./ListenButton";
@@ -77,34 +78,6 @@ const REGION_KEY: Record<string, DictKey> = {
   south: "region_south_long",
   transit: "region_transit_long"
 };
-
-/** Decide whether an activity should render with the "Optional" badge.
- *
- *  Source-of-truth waterfall:
- *   1. If the data sets `activity.optional` explicitly (true OR false), honor
- *      it — that's the curator's intent (e.g. Day 9's Civita is the headline,
- *      so it sets optional:false to opt OUT of the auto-rule).
- *   2. Otherwise apply a rule of thumb: a day full of multi-hour stops can
- *      realistically only fit ~2 of them with drives in between. So once a
- *      day has more than 2 activities tied to a real attraction (anything
- *      with `attractionId`), the 3rd-and-later attractions are auto-marked
- *      optional. Activities without an attractionId (drives, picnics,
- *      check-ins) never count toward the threshold and never auto-go optional.
- *
- *  This lets the data stay terse — most days get the right behavior
- *  for free — while still allowing per-activity overrides where the
- *  heuristic doesn't match the curator's intent. */
-function isActivityOptional(activity: DayActivity, index: number, day: Day): boolean {
-  if (activity.optional !== undefined) return activity.optional;
-  if (!activity.attractionId) return false;
-  const attractionCount = day.activities.filter(a => a.attractionId).length;
-  if (attractionCount <= 2) return false;
-  // Position of THIS activity among attractionId-bearing siblings (1-indexed).
-  const attractionPosition = day.activities
-    .slice(0, index + 1)
-    .filter(a => a.attractionId).length;
-  return attractionPosition > 2;
-}
 
 interface ResolvedLead {
   src?: string;
@@ -401,6 +374,8 @@ function ChapterDetailContent({ day }: { day: Day }) {
     currentSlide ??
     ({ place: undefined, credit: lead.credit } as Pick<ChapterSlide, "place" | "credit">);
   const italianWords = localDay.italianWords ?? [];
+
+  const { mainPlan, planB } = splitDayPlan(localDay);
   const tips = tipsForDay(day.dayNumber).map(localizeTip);
 
   // POIs visited this day, in order, localized
@@ -628,14 +603,24 @@ function ChapterDetailContent({ day }: { day: Day }) {
             <ItalianWordCarousel dayNumber={day.dayNumber} words={italianWords} />
           )}
 
-          {/* Activities */}
+          {/* Activities — split into the committed plan and Plan B */}
           <section>
             <SectionLabel eyebrow={t("todays_plan")} title={t("hour_by_hour")} />
+            {/* The day splits in two: what the plan actually commits to, and
+                everything optional gathered under one "Plan B" heading. Before
+                this, optionals were interleaved and you had to read every
+                eyebrow to work out which stops were real.
+
+                Ride connectors are drawn only BETWEEN CONSECUTIVE MEMBERS OF
+                THE SAME GROUP. Otherwise pulling an optional out of the middle
+                leaves the stop above it pointing at somewhere no longer next
+                (Day 9's ranch would still say "-> Pitigliano hills" with
+                Pitigliano moved into Plan B). */}
             <ol className="space-y-5 sm:space-y-8">
-              {localDay.activities.map((a, i, arr) => (
+              {mainPlan.map(({ activity: a, index: i }, pos) => (
                 <Fragment key={i}>
-                  {i === 0 && localDay.rideToFirst && localDay.departureTime && (
-                    <RideConnector 
+                  {pos === 0 && localDay.rideToFirst && localDay.departureTime && (
+                    <RideConnector
                       departAt={localDay.departureTime}
                       duration={localDay.rideToFirst.duration}
                       note={localDay.rideToFirst.note}
@@ -643,15 +628,12 @@ function ChapterDetailContent({ day }: { day: Day }) {
                   )}
                   <ActivityRow
                     activity={a}
-                    index={i}
+                    index={pos}
                     isToday={isToday}
-                    optional={isActivityOptional(a, i, localDay)}
+                    optional={false}
                   />
-                  {/* Inline ride connector — rendered only when this stop
-                      has a meaningful drive to the next one. Slips into
-                      the ordered list between two activity rows. */}
-                  {a.rideToNext && i < arr.length - 1 && (
-                    <RideConnector 
+                  {a.rideToNext && pos < mainPlan.length - 1 && (
+                    <RideConnector
                       duration={a.rideToNext.duration ?? ""}
                       note={a.rideToNext.note}
                       departAt={a.rideToNext.departAt}
@@ -660,6 +642,38 @@ function ChapterDetailContent({ day }: { day: Day }) {
                 </Fragment>
               ))}
             </ol>
+
+            {planB.length > 0 && (
+              <div className="mt-10 sm:mt-12 pt-6 border-t border-cream-300/60">
+                <div className="flex items-baseline gap-2.5 mb-5">
+                  <span className="text-[10px] uppercase tracking-[0.24em] text-terracotta-700/85 font-medium">
+                    {t("plan_b")}
+                  </span>
+                  <span className="text-sm text-ink-700/60 font-serif italic">
+                    {t("plan_b_kicker")}
+                  </span>
+                </div>
+                <ol className="space-y-5 sm:space-y-8">
+                  {planB.map(({ activity: a, index: i }, pos) => (
+                    <Fragment key={i}>
+                      <ActivityRow
+                        activity={a}
+                        index={pos}
+                        isToday={isToday}
+                        optional
+                      />
+                      {a.rideToNext && pos < planB.length - 1 && (
+                        <RideConnector
+                          duration={a.rideToNext.duration ?? ""}
+                          note={a.rideToNext.note}
+                          departAt={a.rideToNext.departAt}
+                        />
+                      )}
+                    </Fragment>
+                  ))}
+                </ol>
+              </div>
+            )}
 
             {localDay.driveNotes && (
               <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-cream-300/60 flex items-start gap-3">
