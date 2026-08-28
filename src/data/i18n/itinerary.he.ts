@@ -480,34 +480,34 @@ export const itineraryHE: Record<number, DayHE> = {
     ],
     italianWords: [
       {
-        pronounce: "שִיווֹלוֹ",
-        meaning: "מגלשה",
-        exampleMeaning: "המגלשה הכי גבוהה, בבקשה!"
+        pronounce: "טֶרְמֶה",
+        meaning: "מעיינות חמים",
+        exampleMeaning: "מעיינות סאטורניה בזריחה."
       },
       {
-        pronounce: "דִיוורטִימֶנְטוֹ",
-        meaning: "כיף",
-        exampleMeaning: "איזה כיף!"
+        pronounce: "לָאגוֹ",
+        meaning: "אגם",
+        exampleMeaning: "טבילה באגם."
       },
       {
-        pronounce: "פִּשִינָה",
-        meaning: "בריכה",
-        exampleMeaning: "בואו לבריכה."
+        pronounce: "פָּנוֹרָמָה",
+        meaning: "נוף",
+        exampleMeaning: "איזה נוף!"
       },
       {
-        pronounce: "סקִיצוֹ",
-        meaning: "שפריץ מים",
-        exampleMeaning: "איזה שפריץ מהבריכה!"
+        pronounce: "וָאפּוֹרֶה",
+        meaning: "אדים",
+        exampleMeaning: "אפשר לראות את האדים על המים החמים."
       },
       {
-        pronounce: "טוּבוֹ",
-        meaning: "מגלשת צינור",
-        exampleMeaning: "אני יורד במגלשת הצינור הכחולה!"
+        pronounce: "קַנּוּצָ'ה",
+        meaning: "קשית",
+        exampleMeaning: "קשית לגרניטה המתוקה."
       },
       {
-        pronounce: "גרִידָארֶה",
-        meaning: "לצעוק",
-        exampleMeaning: "לא צריך לצעוק — אני שומע!"
+        pronounce: "טוּפוֹ",
+        meaning: "קפיצת ראש",
+        exampleMeaning: "אני קופץ קפיצת ראש לאגם!"
       }
     ],
     drinkOfTheDay: {
@@ -644,34 +644,34 @@ export const itineraryHE: Record<number, DayHE> = {
     ],
     italianWords: [
       {
-        pronounce: "טֶרְמֶה",
-        meaning: "מעיינות חמים",
-        exampleMeaning: "מעיינות סאטורניה בזריחה."
+        pronounce: "שִיווֹלוֹ",
+        meaning: "מגלשה",
+        exampleMeaning: "המגלשה הכי גבוהה, בבקשה!"
       },
       {
-        pronounce: "לָאגוֹ",
-        meaning: "אגם",
-        exampleMeaning: "טבילה באגם."
+        pronounce: "דִיוורטִימֶנְטוֹ",
+        meaning: "כיף",
+        exampleMeaning: "איזה כיף!"
       },
       {
-        pronounce: "פָּנוֹרָמָה",
-        meaning: "נוף",
-        exampleMeaning: "איזה נוף!"
+        pronounce: "פִּשִינָה",
+        meaning: "בריכה",
+        exampleMeaning: "בואו לבריכה."
       },
       {
-        pronounce: "וָאפּוֹרֶה",
-        meaning: "אדים",
-        exampleMeaning: "אפשר לראות את האדים על המים החמים."
+        pronounce: "סקִיצוֹ",
+        meaning: "שפריץ מים",
+        exampleMeaning: "איזה שפריץ מהבריכה!"
       },
       {
-        pronounce: "קַנּוּצָ'ה",
-        meaning: "קשית",
-        exampleMeaning: "קשית לגרניטה המתוקה."
+        pronounce: "טוּבוֹ",
+        meaning: "מגלשת צינור",
+        exampleMeaning: "אני יורד במגלשת הצינור הכחולה!"
       },
       {
-        pronounce: "טוּפוֹ",
-        meaning: "קפיצת ראש",
-        exampleMeaning: "אני קופץ קפיצת ראש לאגם!"
+        pronounce: "גרִידָארֶה",
+        meaning: "לצעוק",
+        exampleMeaning: "לא צריך לצעוק — אני שומע!"
       }
     ],
     drinkOfTheDay: {

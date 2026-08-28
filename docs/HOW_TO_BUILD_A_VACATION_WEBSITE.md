@@ -41,6 +41,7 @@ section.
 20. [Common gotchas](#20-common-gotchas)
 21. [If you only do five things](#21-if-you-only-do-five-things)
 22. [Per-day quiz (kid recap with a host persona)](#22-per-day-quiz-kid-recap-with-a-host-persona)
+23. [What only the trip taught us (post-trip)](#23-what-only-the-trip-taught-us-post-trip-aug-2026)
 - [Appendix A: Few-shot reference — the Tuscany 2026 build](#appendix-a-few-shot-reference--the-tuscany-2026-build)
 
 ---
@@ -3053,6 +3054,103 @@ src/data/
 
 Worked persona name + a sample EN/HE question pair lives in
 **Appendix A13**.
+
+---
+
+## 23. What only the trip taught us (post-trip, Aug 2026)
+
+Everything above was written before anyone travelled. This section is the
+list of things that looked fine in a browser at home and were wrong in a
+car in Tuscany. Read it before you build the next one; each item cost a
+real day out.
+
+### 23.1 Nav links must resolve to ONE place, not a search
+
+The single most-used feature, and we got it wrong twice.
+
+- `https://www.google.com/maps/search/<query>` renders a **results list**.
+  Waze's `?q=` does the same. Standing in a car park choosing between five
+  pins is a worse experience than no button at all.
+- Anchoring the search on coordinates (`/@lat,lon,15z`) is **not enough**.
+  When the name doesn't resolve, Google collapses the URL to an empty
+  `/maps/place//@...` and shows a generic map. Verified with a remote
+  agriturismo that has no OpenStreetMap record.
+- What works: `https://www.google.com/maps/place/<lat>,<lon>/@<lat>,<lon>,17z`
+  and `https://waze.com/ul?ll=<lat>,<lon>&navigate=no`. One pin, always.
+- You trade the business card (hours, photos) for determinism. Take the
+  trade. But it only works if the coordinates are right, which is 23.2.
+
+### 23.2 Geocode every coordinate. Never estimate one.
+
+Four pins in this build were wrong by 2.6 km, 7 km, 10 km and 10 km. The
+rafting meeting point was pinned in the wrong town, for an activity whose
+operator forfeits your slot if you are late.
+
+- Geocode from the **address on the booking confirmation**, not from a
+  guess or a town name.
+- Cross-check against something independent. Chifenti being 1.7 km from
+  Ponte del Diavolo confirmed the rafting fix, because the trip ends with a
+  photo under that bridge.
+- **Beware the reverse audit.** Geocoding a vague address string like
+  "SR74 — Manciano (GR)" returns a point 19.5 km away on that road. That
+  is the *address* being vague, not the pin being wrong. Do not bulk-"fix"
+  coordinates from a geocoder without checking each one, or you will break
+  correct pins.
+
+### 23.3 A voice fallback must match the persona it replaces
+
+The quiz speaks through Gemini Live with a named male voice. On a failed
+connect it fell back to `window.speechSynthesis`, which picks the platform
+default — Samantha on Apple. Kids heard a man sometimes and a woman other
+times, and read it as a bug, correctly.
+
+- If your primary voice has a gender, **name-match the same gender** in the
+  fallback before falling back to "any voice in this language".
+- Set the connect timeout for **holiday mobile data**, not office wifi. 3 s
+  lost the race constantly; 8 s did not.
+- A silent downgrade is still a downgrade. Consider surfacing it.
+
+### 23.4 `speechSynthesis` stops at ~15 seconds
+
+Chrome and Safari both cut long utterances off mid-sentence. Reported from
+the trip as "the audio stopped after a few seconds". The fix is the known
+pause/resume keepalive on a timer, cleared on both `onend` and `onerror` so
+it cannot leak an interval. Budget for this the moment you use browser TTS
+for anything longer than a sentence.
+
+### 23.5 Give any narrated UI a replay control
+
+"Read it again" was the single most-requested missing button. Kids miss the
+question the first time, every time. Put it next to mute. Make it cancel
+in-flight audio first, or the repeat queues behind the line still playing,
+and unmute if muted — tapping replay is an unambiguous request to hear
+something.
+
+### 23.6 Check external links before you leave, not after
+
+18 of 34 `website` URLs were broken by departure: dead domains, `/en/`
+paths that had 404'd since, and one site returning 403 to everyone.
+
+- Automate it. A 20-line script that fetches every URL and reports
+  non-200s pays for itself.
+- **Distinguish bot-blocking from breakage.** GetYourGuide returns 403 to
+  curl and loads perfectly in a browser. Check the suspicious ones in a
+  real browser before "fixing" a working link.
+- Prefer stable institutional URLs (Wikipedia, visittuscany.com, the comune
+  site) over a small business's own domain, which will churn.
+
+### 23.7 Model the trip that happened, not only the one you planned
+
+Plans do not survive contact. Ours swapped two whole days, skipped three
+activities and added one nobody had heard of. The data model handled it
+because `optional: true` already existed — the day still reads as a
+coherent chapter with the unfinished parts visibly marked rather than
+deleted.
+
+- Build the "we didn't do this" state from day one.
+- After the trip, reconcile rather than rewrite: mark what did not happen
+  as optional, keep it, and add what actually did. The result is a better
+  guide for whoever goes next than either the plan or a pure diary.
 
 ---
 

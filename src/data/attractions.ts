@@ -747,6 +747,98 @@ export const attractions: POI[] = [
       }
     ]
   },
+  // ---------- ADDED AFTER THE TRIP (things we actually did) ----------
+  {
+    id: "ponte-sospeso",
+    name: "Ponte Sospeso delle Ferriere",
+    category: "attraction",
+    region: "north",
+    shortDescription: "Italy's longest pedestrian suspension bridge, 36 m over the Lima",
+    description:
+      "A 227-metre steel footbridge strung 36 metres above the river Lima between Popiglio and Mammiano Basso, built in 1923 so foundry workers could reach the ironworks without walking the long way round. It is 80 centimetres wide, it moves under you, and it held the record as the longest pedestrian suspension bridge in the world for decades. Free, always open, and lit at night since 2014. The same river you paddled at Canyon Park, seen from a very different angle.",
+    image: "./images/ponte-sospeso.jpg",
+    imageCredit: {
+      author: "Mongolo1984 (Wikimedia Commons)",
+      license: "CC BY-SA 4.0",
+      source: "https://commons.wikimedia.org/wiki/File:Ponte_sospeso_delle_Ferriere_(San_Marcello_Piteglio)_01.jpg",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    website: "https://www.visittuscany.com/en/attractions/the-ferriere-suspension-bridge/",
+    address: "Mammiano Basso, San Marcello Piteglio (PT)",
+    coords: [44.05325, 10.76625],
+    tags: ["view", "family", "nature"],
+    difficulty: "easy",
+    openingNote: "Free and open all year, day and night — it is lit after dark.",
+    tips: [
+      "Car park at Mammiano Basso, a few minutes' walk from the entrance",
+      "80 cm wide and it sways — fine for confident kids, genuinely unnerving if you dislike heights",
+      "One at a time on the narrow deck; there is no passing place in the middle",
+      "Hold phones tightly or pocket them: 36 m straight down to the river"
+    ],
+    quizFacts: [
+      {
+        question: "How high above the river does the Ponte Sospeso hang?",
+        correctAnswer: "About 36 metres",
+        distractors: ["About 3 metres", "About 200 metres", "About 1 kilometre"]
+      },
+      {
+        question: "Why was the suspension bridge built back in 1923?",
+        correctAnswer: "So factory workers could cross the river quickly",
+        distractors: [
+          "So sheep could reach a better field",
+          "For a famous bicycle race",
+          "To carry water to a castle"
+        ]
+      },
+      {
+        question: "How wide is the walkway you cross?",
+        correctAnswer: "Only about 80 centimetres",
+        distractors: ["Wide enough for two cars", "About 5 metres", "Exactly one metre"]
+      }
+    ]
+  },
+  {
+    id: "omnia-ranch",
+    name: "Centro Ippico Omnia Ranch",
+    category: "attraction",
+    region: "south",
+    shortDescription: "Horse riding in the Maremma hills, 20 minutes from the villa",
+    description:
+      "A small riding centre in the hills outside Manciano offering treks and lessons for every level, from first-time children to confident riders. The reason it replaced the Alberese plan is simple geography: Alberese is nearly two hours from Cortevecchia, and this is a short hop, which turns a whole day into a morning.",
+    // The ranch is at "Località Le Fabbre" and that address does NOT geocode.
+    // These coordinates are MANCIANO TOWN, not the ranch, and nav.ts now sends
+    // you straight to whatever is here. Confirm the pin with the ranch before
+    // relying on it. Flagged to Itay rather than shipped as false precision.
+    coords: [42.5883, 11.5158],
+    // Reuses the Maremma horse photo already in the repo. We have no picture
+    // of this specific ranch and a stock shot pretending otherwise would be
+    // worse than an honest one of the right activity in the right region.
+    image: "./images/maremma-horse.jpg",
+    imageCredit: wmCredit("Maremma"),
+    website: "https://www.facebook.com/omniaranch/",
+    address: "Località Le Fabbre, 58014 Manciano (GR) — pin unconfirmed, see note",
+    tags: ["nature", "family"],
+    difficulty: "easy",
+    openingNote: "Roughly 09:00–20:00. Ring ahead — it is a small operation and rides are arranged, not walk-in.",
+    tips: [
+      "Confirm the exact meeting point when you book — the pin in this app is Manciano town, not the ranch",
+      "Treks and lessons for all levels, including complete beginners",
+      "Long trousers and closed shoes; helmets are provided",
+      "Mornings are far kinder than a Maremma afternoon in August"
+    ],
+    quizFacts: [
+      {
+        question: "What is the Maremma, the area where the ranch is?",
+        correctAnswer: "A wild coastal region of Tuscany",
+        distractors: ["A kind of pasta", "A mountain in the Alps", "A city near Venice"]
+      },
+      {
+        question: "What do the cowboys of the Maremma call themselves?",
+        correctAnswer: "Butteri",
+        distractors: ["Gondolieri", "Paparazzi", "Maestri"]
+      }
+    ]
+  },
   // ---------- MONTE AMIATA SIDE (host's suggestions, ~30 min north) ----------
   {
     id: "santa-fiora",

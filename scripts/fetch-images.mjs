@@ -58,6 +58,10 @@ const TARGETS = [
   // gorge ref; Luo Jin Hong on Unsplash). Visually suggests the Lima canyon.
   ["canyon-park.jpg",        { url: unsplash("photo-1773933609524-000b6e72a101") }],
   ["ponte-del-diavolo.jpg",  { wiki: "Ponte_della_Maddalena" }],
+  // Added after the trip: the suspension bridge we detoured to on Day 4.
+  // Shot from the entrance looking along the deck, so the card sells the
+  // 227 m of 80 cm-wide walkway rather than a distant view of a cable.
+  ["ponte-sospeso.jpg",      { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ponte_sospeso_delle_Ferriere_(San_Marcello_Piteglio)_01.jpg?width=1600" }],
   // Day 6 optional Amiata swap (the Cortevecchia host's suggestions).
   // The Peschiera with the village stacked behind it — the whole reason to go.
   ["santa-fiora.jpg",        { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Peschiera_di_Santa_Fiora.jpg?width=1600" }],

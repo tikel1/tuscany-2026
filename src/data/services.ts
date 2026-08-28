@@ -143,6 +143,46 @@ export const services: Service[] = [
     hours: "Lunch & dinner; check closure day"
   },
   {
+    // ----- Verdicts from the trip itself: these three were the good ones -----
+    id: "rest-s-il-barilotto",
+    name: "Il Barilotto — Santa Fiora",
+    category: "restaurant",
+    region: "south",
+    base: "south",
+    shortDescription: "The Santa Fiora favourite, tried and rated on the trip",
+    description:
+      "In Marroneto just outside Santa Fiora, on the Monte Amiata side. One of the three places the family actually ate at and would go back to — worth pairing with the Peschiera and the village.",
+    address: "Via Carolina 24, Marroneto, Santa Fiora (GR)",
+    coords: [42.8309006, 11.5861617],
+    hours: "Lunch & dinner; check the closing day"
+  },
+  {
+    id: "rest-s-novecento",
+    name: "Novecento — Semproniano",
+    category: "restaurant",
+    region: "south",
+    base: "south",
+    shortDescription: "The village local, six minutes from the estate",
+    description:
+      "In Semproniano itself, the nearest village to Cortevecchia. The closest good dinner to the villa by a wide margin, which matters on an estate booked room-only with no restaurant of its own.",
+    address: "Via Toscana 4, Semproniano (GR)",
+    coords: [42.7281921, 11.5418539],
+    hours: "Lunch & dinner; check the closing day"
+  },
+  {
+    id: "rest-s-lo-scangeo",
+    name: "Lo Scangeo — Saturnia",
+    category: "restaurant",
+    region: "south",
+    base: "south",
+    shortDescription: "Rated on the trip — on the SP10 by the springs",
+    description:
+      "Down on the SP10 near the Terme di Saturnia rather than up in the village, so it pairs naturally with a morning at the Cascate del Mulino.",
+    address: "SP10, Terme di Saturnia, Saturnia, Manciano (GR)",
+    coords: [42.6688346, 11.5113493],
+    hours: "Lunch & dinner; check the closing day"
+  },
+  {
     id: "rest-s-i-due-cippi",
     name: "I Due Cippi da Michele — Saturnia",
     category: "restaurant",

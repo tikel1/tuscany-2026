@@ -128,10 +128,9 @@ export const itinerary: Day[] = [
         description: "Shaded forest adventure park with kid-height routes (from 100 cm) — the kids get the real ropes experience.",
         attractionId: "selva-buffardello",
         tag: "extreme",
-        // Day 2's title literally calls out "forest ropes" — the ropes
-        // course is the headline finale, not a "skip if tired" extra.
-        // Opt out of the auto-rule that would mark the 3rd attraction optional.
-        optional: false
+        // Trip verdict: we only did the SUP. The ropes course stayed on the
+        // list and never happened, so it is honestly an optional now.
+        optional: true
       }
     ],
     driveNotes: "Larciano ↔ Bagni di Lucca ≈ 1 h",
@@ -232,7 +231,9 @@ export const itinerary: Day[] = [
         title: "Lucca city walls bike loop",
         description: "On the way back, rent bikes near Porta San Pietro or Piazzale Verdi and ride the 4 km tree-lined ring on top of Lucca's Renaissance walls. Flat, traffic-free, glorious in the late-afternoon light. Drop the bikes and disappear into the old town for gelato.",
         attractionId: "lucca-walls",
-        tag: "family"
+        tag: "family",
+        // Trip verdict: we ran out of day and skipped the bikes.
+        optional: true
       }
     ],
     driveNotes: "Larciano → Chifenti ≈ 1 h · Chifenti → Pisa ≈ 45 min · Pisa → Lucca ≈ 30 min · Lucca → Larciano ≈ 35 min",
@@ -328,7 +329,16 @@ export const itinerary: Day[] = [
         time: "Afternoon",
         title: "Pine forest picnic, then home to pack",
         description: "Descend, stretch out in the woods at the bottom, head back to Larciano to pack for the south.",
-        rideToNext: { duration: "1 h", note: "Abetone → Larciano, the long descent", departAt: "16:00" }
+        rideToNext: { duration: "35 min", note: "Abetone → Mammiano Basso, down the Lima valley", departAt: "16:00" }
+      },
+      {
+        time: "Late afternoon",
+        title: "Ponte Sospeso delle Ferriere",
+        description:
+          "Added on the day and worth it. Italy's longest pedestrian suspension bridge: 227 m of steel walkway, 80 cm wide, hanging 36 m over the Lima — the same river the SUP went down at Canyon Park. It sways. Free, always open, and directly on the road back down to Larciano.",
+        attractionId: "ponte-sospeso",
+        tag: "view",
+        rideToNext: { duration: "30 min", note: "Mammiano Basso → Larciano" }
       }
     ],
     driveNotes: "Larciano ↔ Abetone ≈ 1 h",
@@ -508,18 +518,34 @@ export const itinerary: Day[] = [
     date: "2026-08-22",
     weekday: "Saturday",
     departureTime: "09:30",
-    rideToFirst: { duration: "1 h 20 min", note: "Cortevecchia → Follonica" },
+    rideToFirst: { duration: "20 min", note: "Cortevecchia → Saturnia" },
     region: "south",
     base: "Cortevecchia",
-    title: "Pure adrenaline — Acqua Village Follonica",
-    subtitle: "Or swap the slides for the Amiata side — see the two optional stops",
+    title: "Saturnia at the springs, then the villa pool",
+    subtitle: "What we actually did — the waterpark moved to Day 8",
     activities: [
       {
-        time: "Morning to evening",
+        time: "Morning to mid-afternoon",
+        title: "Saturnia — a whole day at the Cascate del Mulino",
+        description:
+          "Not the dawn raid the plan called for: we gave Saturnia the entire day instead, which turned out to be the better trade. Twenty minutes from the estate, so you can retreat to the villa when the sun gets serious.",
+        attractionId: "saturnia",
+        tag: "water"
+      },
+      {
+        time: "Late afternoon",
+        title: "Back to the villa pool",
+        description:
+          "The other half of the day. Cortevecchia's pool, the shade, and nobody in a car. After a week of driving this is the part everyone remembered."
+      },
+      {
+        time: "Optional — the original plan",
         title: "Acqua Village Follonica",
-        description: "Full day of slides, wave pool, lazy river, Polynesian shows.",
+        description:
+          "The waterpark this day was built around. We moved it to Day 8. Kept because it is a real alternative if you would rather have slides than sulphur: 1 h 40 each way to Follonica.",
         attractionId: "acqua-village-follonica",
-        tag: "extreme"
+        tag: "extreme",
+        optional: true
       },
       {
         time: "Optional swap — morning",
@@ -541,8 +567,8 @@ export const itinerary: Day[] = [
         optional: true
       }
     ],
-    driveNotes: "Cortevecchia ↔ Follonica ≈ 1 h 20 min · or Cortevecchia → Santa Fiora ≈ 30 min → wildlife park ≈ 20 min",
-    restaurants: ["rest-s-trattoria-verdi", "rest-s-i-due-cippi"],
+    driveNotes: "Cortevecchia ↔ Saturnia ≈ 20 min · Follonica (if you swap) ≈ 1 h 40 each way",
+    restaurants: ["rest-s-lo-scangeo", "rest-s-il-barilotto", "rest-s-novecento"],
     drinkOfTheDay: {
       name: "Spritz al Limone",
       type: "aperitif",
@@ -568,46 +594,46 @@ export const itinerary: Day[] = [
     ],
     italianWords: [
       {
-        word: "Scivolo",
-        pronounce: "SHEE-voh-loh",
-        meaning: "Slide",
-        example: "Lo scivolo più alto, per favore!",
-        exampleMeaning: "The tallest slide, please!"
+        word: "Terme",
+        pronounce: "TAIR-meh",
+        meaning: "Thermal baths, hot springs",
+        example: "Le terme di Saturnia all'alba.",
+        exampleMeaning: "The Saturnia hot springs at dawn."
       },
       {
-        word: "Divertimento",
-        pronounce: "dee-vehr-tee-MEN-toh",
-        meaning: "Fun",
-        example: "Che divertimento!",
-        exampleMeaning: "What fun!"
+        word: "Lago",
+        pronounce: "LAH-goh",
+        meaning: "Lake",
+        example: "Un tuffo nel lago.",
+        exampleMeaning: "A dip in the lake."
       },
       {
-        word: "Piscina",
-        pronounce: "pee-SHEE-nah",
-        meaning: "Swimming pool",
-        example: "Andiamo in piscina.",
-        exampleMeaning: "Let's go to the pool."
+        word: "Panorama",
+        pronounce: "pah-noh-RAH-mah",
+        meaning: "View, panorama",
+        example: "Che panorama!",
+        exampleMeaning: "What a view!"
       },
       {
-        word: "Schizzo",
-        pronounce: "SKEET-tzoh",
-        meaning: "Splash, squirt, splotch",
-        example: "Che schizzo dalla piscina!",
-        exampleMeaning: "What a splash from the pool!"
+        word: "Vapore",
+        pronounce: "vah-POH-reh",
+        meaning: "Steam (hot-springs mist)",
+        example: "Si vede il vapore sull'acqua calda.",
+        exampleMeaning: "You can see the steam on the hot water."
       },
       {
-        word: "Tubo",
-        pronounce: "TOO-boh",
-        meaning: "Tube (slide tube — not 'tube-oh')",
-        example: "Scendo nel tubo blu!",
-        exampleMeaning: "I'm going down the blue tube!"
+        word: "Cannuccia",
+        pronounce: "kahn-NOOT-chah",
+        meaning: "Drinking straw (not 'can-ooch')",
+        example: "Una cannuccia per la granita.",
+        exampleMeaning: "A straw for the slush ice."
       },
       {
-        word: "Gridare",
-        pronounce: "gree-DAH-reh",
-        meaning: "To shout (not 'grid')",
-        example: "Non serve gridare, ti sento!",
-        exampleMeaning: "No need to shout — I can hear you!"
+        word: "Tuffo",
+        pronounce: "TOOF-foh",
+        meaning: "Dive, splash jump",
+        example: "Faccio un tuffo nel lago!",
+        exampleMeaning: "I'm doing a cannonball into the lake!"
       }
     ]
   },
@@ -705,28 +731,29 @@ export const itinerary: Day[] = [
     dayNumber: 8,
     date: "2026-08-24",
     weekday: "Monday",
-    departureTime: "06:45",
-    rideToFirst: { duration: "15 min", note: "Cortevecchia → Saturnia (the host's number)" },
+    departureTime: "09:30",
+    rideToFirst: { duration: "1 h 40 min", note: "Cortevecchia → Follonica" },
     region: "south",
     base: "Cortevecchia",
-    title: "Hot springs at dawn, lake swim, the floating city",
-    subtitle: "A full circuit of the southern Maremma",
+    title: "The waterpark day",
+    subtitle: "Swapped with Day 6 — Saturnia moved there, the slides came here",
     activities: [
       {
-        time: "07:30 (critical)",
-        title: "Saturnia — Cascate del Mulino",
-        description: "Arrive by 07:30 for a near-empty turquoise pool. By 10:00 it's packed and parking is gone.",
-        attractionId: "saturnia",
-        tag: "water",
-        rideToNext: { duration: "1 h 20", note: "Saturnia → Bolsena, hills and lakes", departAt: "11:00" }
+        time: "Morning to evening",
+        title: "Acqua Village Follonica",
+        description:
+          "The waterpark, moved here from Day 6. Slides, wave pool, lazy river, Polynesian shows. A long drive each way, but a full day once you are there.",
+        attractionId: "acqua-village-follonica",
+        tag: "extreme"
       },
       {
-        time: "Midday",
+        time: "Optional — never happened",
         title: "Swim in Lago di Bolsena",
-        description: "Cool, clean volcanic lake — gentler than the August coast.",
+        description:
+          "Was on the original Day 8 loop and we did not get to it. Cool, clean volcanic lake, gentler than the August coast — 1 h 07 from the estate if you want it another time.",
         attractionId: "lago-di-bolsena",
         tag: "water",
-        rideToNext: { duration: "30 min", note: "Bolsena → Civita di Bagnoregio", departAt: "15:00" }
+        optional: true
       },
       {
         time: "Afternoon",
@@ -734,10 +761,9 @@ export const itinerary: Day[] = [
         description: "Walk the long footbridge into the 'dying city' on its tufa pedestal.",
         attractionId: "civita-di-bagnoregio",
         tag: "culture",
-        // Day 8's title literally calls out "the floating city" — Civita is
-        // the headline finale, not a "skip if tired" extra. Opt it out of
-        // the auto-rule that would otherwise mark the 3rd attraction optional.
-        optional: false,
+        // Trip verdict: the day became the waterpark, so Civita did not
+        // happen either. Honest optional now.
+        optional: true,
         rideToNext: {
           duration: "1 h 40",
           note: "Civita → Rome, via Orte and the A1 — only if you're doing the match",
@@ -780,49 +806,49 @@ export const itinerary: Day[] = [
     ],
     italianWords: [
       {
-        word: "Terme",
-        pronounce: "TAIR-meh",
-        meaning: "Thermal baths, hot springs",
-        example: "Le terme di Saturnia all'alba.",
-        exampleMeaning: "The Saturnia hot springs at dawn."
+        word: "Scivolo",
+        pronounce: "SHEE-voh-loh",
+        meaning: "Slide",
+        example: "Lo scivolo più alto, per favore!",
+        exampleMeaning: "The tallest slide, please!"
       },
       {
-        word: "Lago",
-        pronounce: "LAH-goh",
-        meaning: "Lake",
-        example: "Un tuffo nel lago.",
-        exampleMeaning: "A dip in the lake."
+        word: "Divertimento",
+        pronounce: "dee-vehr-tee-MEN-toh",
+        meaning: "Fun",
+        example: "Che divertimento!",
+        exampleMeaning: "What fun!"
       },
       {
-        word: "Panorama",
-        pronounce: "pah-noh-RAH-mah",
-        meaning: "View, panorama",
-        example: "Che panorama!",
-        exampleMeaning: "What a view!"
+        word: "Piscina",
+        pronounce: "pee-SHEE-nah",
+        meaning: "Swimming pool",
+        example: "Andiamo in piscina.",
+        exampleMeaning: "Let's go to the pool."
       },
       {
-        word: "Vapore",
-        pronounce: "vah-POH-reh",
-        meaning: "Steam (hot-springs mist)",
-        example: "Si vede il vapore sull'acqua calda.",
-        exampleMeaning: "You can see the steam on the hot water."
+        word: "Schizzo",
+        pronounce: "SKEET-tzoh",
+        meaning: "Splash, squirt, splotch",
+        example: "Che schizzo dalla piscina!",
+        exampleMeaning: "What a splash from the pool!"
       },
       {
-        word: "Cannuccia",
-        pronounce: "kahn-NOOT-chah",
-        meaning: "Drinking straw (not 'can-ooch')",
-        example: "Una cannuccia per la granita.",
-        exampleMeaning: "A straw for the slush ice."
+        word: "Tubo",
+        pronounce: "TOO-boh",
+        meaning: "Tube (slide tube — not 'tube-oh')",
+        example: "Scendo nel tubo blu!",
+        exampleMeaning: "I'm going down the blue tube!"
       },
       {
-        word: "Tuffo",
-        pronounce: "TOOF-foh",
-        meaning: "Dive, splash jump",
-        example: "Faccio un tuffo nel lago!",
-        exampleMeaning: "I'm doing a cannonball into the lake!"
+        word: "Gridare",
+        pronounce: "gree-DAH-reh",
+        meaning: "To shout (not 'grid')",
+        example: "Non serve gridare, ti sento!",
+        exampleMeaning: "No need to shout — I can hear you!"
       }
     ],
-    restaurants: ["rest-s-i-due-cippi", "rest-s-trattoria-verdi"],
+    restaurants: ["rest-s-novecento", "rest-s-trattoria-verdi"],
     drinkOfTheDay: {
       name: "Bianco di Pitigliano DOC",
       type: "wine",
@@ -835,24 +861,26 @@ export const itinerary: Day[] = [
     date: "2026-08-25",
     weekday: "Tuesday",
     departureTime: "09:30",
-    rideToFirst: { duration: "40 min", note: "Cortevecchia → Marina di Alberese" },
+    rideToFirst: { duration: "25 min", note: "Cortevecchia → Manciano (Omnia Ranch)" },
     region: "south",
     base: "Cortevecchia",
     title: "Maremma horses & the Etruscan rock maze",
     activities: [
       {
         time: "Morning",
-        title: "Horseback ride in the Maremma",
+        title: "Horse riding at Omnia Ranch, Manciano",
         description: "1-hour family pony / horse trail through pine forest and dunes.",
-        attractionId: "maremma-horseback",
+        attractionId: "omnia-ranch",
         tag: "nature",
-        rideToNext: { duration: "1 h", note: "Maremma coast → Pitigliano hills", departAt: "11:30" }
+        rideToNext: { duration: "25 min", note: "Manciano → Pitigliano hills", departAt: "11:30" }
       },
       {
         time: "Lunch",
         title: "Pitigliano + Via Cava di San Giuseppe",
         description: "Photograph Pitigliano from the viewpoint, walk the old Jewish quarter. Then dive into the cool Etruscan rock corridors.",
         attractionId: "pitigliano",
+        // Trip verdict: it rained and Little Jerusalem did not happen.
+        optional: true,
         tag: "culture",
         rideToNext: { duration: "20 min", note: "Pitigliano → Vitozza, scenic tufa road", departAt: "16:00" }
       },
