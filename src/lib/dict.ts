@@ -753,6 +753,7 @@ export const DICT = {
 
   /* ---------- Mute toggle ---------- */
   quiz_mute: { en: "Mute Quizzo", he: "השתק את קוויצו" },
+  quiz_repeat: { en: "Read the question again", he: "לקרוא את השאלה שוב" },
   quiz_unmute: { en: "Unmute Quizzo", he: "בטלו את ההשתקה" },
 
   /* ---------- Fallback banner (Gemini failed in offline mode) ---------- */

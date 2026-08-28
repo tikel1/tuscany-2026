@@ -186,6 +186,31 @@ export default function Quiz({
     });
   }
 
+  /** The exact spoken form of a question: the prompt, then the options
+   *  numbered so a kid can answer "three" out loud. Shared by the first
+   *  reading and the replay button so they can never drift apart. */
+  function questionSpeech(q: { question: string; options: string[] }): string {
+    const optsText = q.options.map((opt, i) => `${i + 1}. ${opt}`).join(". ");
+    return `${q.question} ${optsText}`;
+  }
+
+  /** Read the current question again. Cancels whatever is mid-sentence
+   *  first, otherwise the repeat queues up behind it and the kid waits
+   *  through the old line twice. Unmutes if muted — tapping "read it
+   *  again" is an unambiguous request to hear something. */
+  function repeatQuestion(): void {
+    if (phase.kind !== "playing") return;
+    const q = phase.questions[phase.current];
+    if (!q) return;
+    if (mutedRef.current) {
+      mutedRef.current = false;
+      setMuted(false);
+      saveQuizMute(false);
+    }
+    voiceRef.current?.cancel();
+    speak(questionSpeech(q));
+  }
+
   /** Mute-aware SFX play. */
   function playSfx(name: Parameters<typeof sfx.play>[0]): void {
     if (mutedRef.current) return;
@@ -362,9 +387,7 @@ export default function Quiz({
       setVoiceBackend(voice.backend);
 
       speak(getQuizzoIntro(lang, day));
-      const q = quiz.questions[0];
-      const optsText = q.options.map((opt, i) => `${i + 1}. ${opt}`).join(". ");
-      speak(`${q.question} ${optsText}`);
+      speak(questionSpeech(quiz.questions[0]));
     } catch {
       setVoiceBackend("none");
     }
@@ -467,9 +490,7 @@ export default function Quiz({
         return p;
       }
 
-      const next = p.questions[nextIndex];
-      const optsText = next.options.map((opt, i) => `${i + 1}. ${opt}`).join(". ");
-      speak(`${next.question} ${optsText}`);
+      speak(questionSpeech(p.questions[nextIndex]));
 
       return { ...p, current: nextIndex };
     });
@@ -577,6 +598,17 @@ export default function Quiz({
             shows in playing/done/error. Sits above the Sparkles
             decoration. */}
         <div className="absolute top-3 end-3 z-10 flex items-center gap-1">
+          {phase.kind === "playing" && (
+            <button
+              type="button"
+              onClick={repeatQuestion}
+              aria-label={t("quiz_repeat")}
+              title={t("quiz_repeat")}
+              className="w-8 h-8 rounded-full text-ink-700/55 hover:bg-cream-100 hover:text-ink-800 flex items-center justify-center transition-colors"
+            >
+              <RotateCcw size={15} />
+            </button>
+          )}
           <button
             type="button"
             onClick={toggleMute}

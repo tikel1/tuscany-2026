@@ -32,7 +32,7 @@ export const wineries: Winery[] = [
     appellation: "Carmignano DOCG",
     description:
       "Tiny biodynamic family winery in Bacchereto, just up the road from Capezzana. Artisanal everything — wild yeasts, no filtration, very small production. A more intimate visit than Capezzana, with the family pouring.",
-    website: "https://www.fattoriadibacchereto.it/",
+    website: "https://www.visittuscany.com/en/destinations/carmignano/",
     address: "Via Fontemorana 179, Carmignano (PO)",
     coords: [43.8275, 11.0167],
     bookingNote: "Call ahead — sometimes closed for harvest in late August.",
@@ -68,7 +68,7 @@ export const wineries: Winery[] = [
     appellation: "Chianti Montalbano",
     description:
       "A small Chianti Montalbano estate above Pomino — fresh, easy-drinking Sangiovese and a celebrated extra-virgin olive oil. Lovely terrace looking over the Pistoian valley; perfect quick stop on the way back from Vinci.",
-    website: "https://www.fattoriapetrognano.it/",
+    website: "https://www.fattoriadipetrognano.it/",
     address: "Via di Petrognano 3, Pomino (FI)",
     coords: [43.8911, 11.4231],
     bookingNote: "Walk-ins for tastings most afternoons; call ahead in August.",
@@ -90,7 +90,7 @@ export const wineries: Winery[] = [
     appellation: "Morellino di Scansano DOCG",
     description:
       "Elisabetta Geppetti's legendary estate — the producer who turned Morellino di Scansano from a local curiosity into a DOCG taken seriously worldwide. Their flagship 'Saffredi' is a Tuscan Super-cult; the everyday Morellino is brilliant value. English tastings on the terrace.",
-    website: "https://www.elisabettageppetti.com/en/",
+    website: "https://fattorialepupille.it/",
     address: "Loc. Pereta, Magliano in Toscana (GR)",
     coords: [42.5742, 11.3522],
     bookingNote: "Book by email a week ahead — Elisabetta's team does a great visit.",
@@ -108,7 +108,7 @@ export const wineries: Winery[] = [
     appellation: "Morellino di Scansano DOCG",
     description:
       "A hands-on Scansano producer with a friendly tasting room right on the SR322. Family-run, organic, and very welcoming to drop-ins — a great low-stakes introduction to Morellino if you don't have time to make Le Pupille happen.",
-    website: "https://www.roccapesta.com/en/",
+    website: "https://www.roccapesta.com/",
     address: "Loc. Banditaccia, Scansano (GR)",
     coords: [42.6864, 11.3389],
     bookingNote: "Walk-ins welcome; call ahead in peak August.",
@@ -126,7 +126,7 @@ export const wineries: Winery[] = [
     appellation: "Maremma Toscana DOC · Morellino di Scansano DOCG",
     description:
       "Frescobaldi's striking modernist Maremma estate near Magliano — a ship-shaped winery half-buried in the hillside. Polished, multi-language tours, beautiful vineyard views and a serious tasting room. The opposite of the small-family vibe — go for the architecture and the polish.",
-    website: "https://www.frescobaldi.com/wineries/tenuta-ammiraglia/",
+    website: "https://www.frescobaldi.com/",
     address: "Loc. Pian dei Bichi, Magliano in Toscana (GR)",
     coords: [42.5878, 11.2942],
     bookingNote: "Online bookings, English-speaking staff, easy with kids.",
@@ -187,7 +187,7 @@ export const wineries: Winery[] = [
     appellation: "Montecucco Sangiovese DOCG",
     description:
       "The estate that put Montecucco on the map — a big organic property on the Monte Amiata side, the closest serious denomination to Cortevecchia. Modern gravity-fed cellar built into the hillside, and the tour is one of the better ones for anyone who actually wants to see how wine is made rather than just drink it. Sangiovese grown between the Amiata and the Maremma: firmer and more mineral than Morellino.",
-    website: "https://www.collemassari.it/en/",
+    website: "https://www.collemassari.it/",
     address: "Loc. Poggi del Sasso, Cinigiano (GR)",
     coords: [42.9072766, 11.3231486],
     bookingNote: "~40 min from Cortevecchia. Book the cellar tour online a few days ahead.",
@@ -205,7 +205,7 @@ export const wineries: Winery[] = [
     appellation: "Brunello di Montalcino DOCG",
     description:
       "One of Montalcino's largest organic estates, at Sant'Angelo in Colle on the warm southern slope. Brunello is 100% Sangiovese aged at least five years, and this is the classic version: dried cherry, leather, tobacco, a long slow finish. The visitor set-up is properly organised — cellar tour, a park, and views straight across the Val d'Orcia to Monte Amiata, which is the mountain you'll be looking at from the villa all week.",
-    website: "https://www.coldorcia.it/en/",
+    website: "https://www.coldorcia.it/",
     address: "Via Giuseppe Garibaldi 42, Sant'Angelo in Colle, Montalcino (SI)",
     coords: [42.9939571, 11.4604941],
     bookingNote: "~1 h 15 from Cortevecchia — a Val d'Orcia day, not a quick hop. Book ahead.",

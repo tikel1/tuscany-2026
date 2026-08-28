@@ -1,42 +1,32 @@
 /**
- * Place-aware deep links to Google Maps and Waze.
+ * Deep links to Google Maps and Waze that resolve to EXACTLY ONE place.
  *
- * Old behaviour was to launch each app in **active turn-by-turn nav
- * mode** straight from coordinates. That was useful in the car but
- * skipped the "let me see what this place actually is" step — hours,
- * photos, reviews, the actual address. The new builders open the
- * **place's listing** in each app and let the user tap "Directions"
- * (Maps) or "Go" (Waze) themselves once they've decided.
+ * History, because this has now been wrong twice:
+ *   1. Originally these launched turn-by-turn nav straight from coords.
+ *   2. Then they became text searches ("<name>, <address>") so the user
+ *      would get a place card with hours and photos. That is what shipped
+ *      for the trip, and in the field it was the wrong call: Google's
+ *      `/maps/search/` renders a RESULTS LIST, and Waze's `q=` does the
+ *      same, so you stand in a car park picking from five options. When
+ *      the name doesn't resolve at all (Tenuta Cortevecchia has no
+ *      OpenStreetMap record) Google collapses to a generic map.
+ *   3. Now: `/maps/place/<lat>,<lon>` and Waze `ll=` only. One pin, one
+ *      destination, no list, no ambiguity.
  *
- * Strategy:
- *   - With a name → search by "<name>, <address-or-Italy>", ALWAYS
- *     anchored on our own coordinates (Google `/@lat,lon,15z`, Waze
- *     `ll=`). Google Maps usually opens directly to the top hit's place
- *     card; Waze opens search results with the place pinned.
- *   - Without a name → drop a plain coord pin. The user still sees
- *     the location on the map and can tap nav themselves.
- *
- * The coordinate anchor is not decoration. Tenuta Cortevecchia, our
- * southern base, has no OpenStreetMap record at all and is a remote
- * estate down gravel roads; an unanchored text search for it is a
- * coin flip. Anchoring means the worst case is "right place, no place
- * card" rather than "confidently wrong town".
+ * We give up the business card on famous places to get that. The bet is
+ * that a pin on the right spot beats a card you have to find, and it only
+ * holds because every coordinate in the data is geocoded rather than
+ * estimated — see the coordinate audit in docs/.
  */
 
 export interface NavTarget {
-  /** Place name (used in the search query). */
+  /** Place name. No longer used to build the URL (see the note above) —
+   *  callers still pass it for accessible labels and tooltips. */
   name: string;
-  /** Lat, lon. Used when no name is available. */
+  /** Lat, lon. THE destination. Everything else is decoration. */
   coords: [number, number];
-  /** Optional street address. Sharpens the search; if absent we
-   *  fall back to "<name>, Italy" which is still usually enough. */
+  /** Optional street address, shown in the UI next to the buttons. */
   address?: string;
-}
-
-function buildSearchQuery(target: NavTarget): string {
-  const trimmedName = target.name.trim();
-  const addr = target.address?.trim();
-  return addr ? `${trimmedName}, ${addr}` : `${trimmedName}, Italy`;
 }
 
 /**
@@ -48,18 +38,19 @@ function buildSearchQuery(target: NavTarget): string {
  * Maps will drop a pin instead of opening a card.
  */
 export function googleMapsPlaceUrl(target: NavTarget | [number, number]): string {
-  if (Array.isArray(target)) {
-    const [lat, lon] = target;
-    return `https://www.google.com/maps/?q=${lat},${lon}`;
-  }
-  const query = encodeURIComponent(buildSearchQuery(target));
-  const [lat, lon] = target.coords;
-  // The `/@lat,lon,zoom` suffix centres the map on our own coordinates
-  // before the text search runs, so a place whose NAME doesn't resolve
-  // (remote agriturismi, unnamed trailheads, a beach with no listing)
-  // still lands the user in the right valley instead of on a same-named
-  // place three provinces away. See the note on buildSearchQuery.
-  return `https://www.google.com/maps/search/${query}/@${lat},${lon},15z`;
+  const [lat, lon] = Array.isArray(target) ? target : target.coords;
+  // `/maps/place/<lat>,<lon>` resolves to ONE destination, every time.
+  //
+  // We shipped `/maps/search/<name>/@lat,lon` before and it was wrong in the
+  // field: `/search/` renders a RESULTS LIST, so you arrive at the car park
+  // still choosing between five things. Worse, when the name doesn't resolve
+  // (verified with Tenuta Cortevecchia) Google collapses the URL to an empty
+  // `/maps/place//@...` and drops you on a generic map.
+  //
+  // The trade-off is deliberate: we lose the business card for famous places
+  // and get a coordinate pin instead. A pin on the right spot beats a card
+  // you have to pick out of a list, and every coordinate here is geocoded.
+  return `https://www.google.com/maps/place/${lat},${lon}/@${lat},${lon},17z`;
 }
 
 /**
@@ -69,38 +60,11 @@ export function googleMapsPlaceUrl(target: NavTarget | [number, number]): string
  * themselves.
  */
 export function wazePlaceUrl(target: NavTarget | [number, number]): string {
-  if (Array.isArray(target)) {
-    const [lat, lon] = target;
-    return `https://waze.com/ul?ll=${lat},${lon}&navigate=no`;
-  }
-  const query = encodeURIComponent(buildSearchQuery(target));
-  const [lat, lon] = target.coords;
-  // `ll` sets the centre Waze searches around, so `q` can't drag us to a
-  // same-named place elsewhere in Italy — and when `q` matches nothing at
-  // all, Waze falls back to the pin at `ll`, which is exactly where we
-  // want the car pointed anyway.
-  return `https://waze.com/ul?ll=${lat},${lon}&q=${query}&navigate=no`;
-}
-
-/* ------------------------------------------------------------------ */
-/* Deprecated aliases — kept so any straggler imports still compile.   */
-/* New code should use googleMapsPlaceUrl / wazePlaceUrl instead.      */
-/* ------------------------------------------------------------------ */
-
-/** @deprecated Use {@link googleMapsPlaceUrl} so the user lands on the
- *  place card instead of being thrown straight into navigation. */
-export function googleMapsNavUrl(coords: [number, number]): string {
-  return googleMapsPlaceUrl(coords);
-}
-
-/** @deprecated Use {@link wazePlaceUrl}. */
-export function wazeNavUrl(coords: [number, number]): string {
-  return wazePlaceUrl(coords);
-}
-
-/** @deprecated Older callsites import { navUrl }. Maps to the place URL. */
-export function navUrl(coords: [number, number]): string {
-  return googleMapsPlaceUrl(coords);
+  const [lat, lon] = Array.isArray(target) ? target : target.coords;
+  // `ll` alone pins the exact point. We used to also pass `q=<name>`, which
+  // turned this into a SEARCH and gave Waze licence to offer alternatives.
+  // `navigate=no` still lets the user eyeball it before tapping Go.
+  return `https://waze.com/ul?ll=${lat},${lon}&navigate=no`;
 }
 
 /* ------------------------------------------------------------------ */

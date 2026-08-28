@@ -25,7 +25,16 @@ import { LiveSession } from "../gemininio/live";
 import { PcmPlayer } from "../gemininio/audio";
 import type { Lang } from "../lang";
 
-const LIVE_CONNECT_TIMEOUT_MS = 3000;
+// 3 s was too tight on holiday mobile data: the Live connect lost the race
+// often enough that families kept getting the browser fallback (and its
+// default female voice) instead of Charon. 8 s still fails fast enough that
+// nobody stares at a dead screen.
+const LIVE_CONNECT_TIMEOUT_MS = 8000;
+
+/** Chrome and Safari both stop speechSynthesis at roughly 15 s unless you
+ *  poke it. Reported from the trip as "the audio stopped after a few
+ *  seconds". We pause/resume on a timer for the life of an utterance. */
+const TTS_KEEPALIVE_MS = 10000;
 
 /* ------------------------------------------------------------------ */
 /* Common interface                                                    */
@@ -261,18 +270,29 @@ class BrowserTtsQuizVoice implements QuizVoice {
       );
       return;
     }
+    // Quizzo is MALE on the Live path (the "Charon" voice). When we drop to
+    // the browser we must not switch gender mid-quiz — that is exactly what
+    // the family heard: sometimes a man, sometimes Samantha. Apple ships
+    // Alex/Daniel/Fred, Android ships "male" variants, so name-match first
+    // and only then fall back to any voice in the right language.
+    const MALE = /alex|daniel|fred|oliver|thomas|luca|male|rishi|aaron|arthur|gordon|reed|eddy \(en|carmit/i;
+    const byLang = (re: RegExp) => voices.filter(v => re.test(v.lang));
+    const pickMale = (pool: SpeechSynthesisVoice[]) =>
+      pool.find(v => MALE.test(v.name)) ?? pool[0] ?? null;
+
     if (this.lang === "he") {
-      this.chosenVoice =
-        voices.find(v => /^he/i.test(v.lang)) ??
-        voices.find(v => /hebrew/i.test(v.name)) ??
-        null;
+      const he = byLang(/^he/i);
+      this.chosenVoice = pickMale(he) ?? voices.find(v => /hebrew/i.test(v.name)) ?? null;
     } else {
-      // Prefer an Italian-accented English voice if one is installed,
-      // else any en-* voice, else the default.
+      // An Italian male voice speaking English is closest to Quizzo; then any
+      // Italian voice; then an English male; then whatever exists.
+      const it = byLang(/^it/i);
+      const en = byLang(/^en/i);
       this.chosenVoice =
-        voices.find(v => /italian|italiano/i.test(v.name) && /^en/i.test(v.lang)) ??
-        voices.find(v => /^it/i.test(v.lang)) ??
-        voices.find(v => /^en/i.test(v.lang)) ??
+        it.find(v => MALE.test(v.name)) ??
+        en.find(v => MALE.test(v.name)) ??
+        it[0] ??
+        en[0] ??
         null;
     }
   }
@@ -294,8 +314,27 @@ class BrowserTtsQuizVoice implements QuizVoice {
         u.rate = 0.95;
         u.pitch = 1.15;
         u.volume = 1;
-        u.onend = () => resolve();
+        // Chrome/Safari silently stop long utterances at ~15 s. Pausing and
+        // immediately resuming resets their internal timer. Cleared on end
+        // and on error so we never leak an interval.
+        const keepAlive = setInterval(() => {
+          try {
+            if (window.speechSynthesis.speaking) {
+              window.speechSynthesis.pause();
+              window.speechSynthesis.resume();
+            }
+          } catch {
+            /* ignore */
+          }
+        }, TTS_KEEPALIVE_MS);
+        const done = () => clearInterval(keepAlive);
+
+        u.onend = () => {
+          done();
+          resolve();
+        };
         u.onerror = ev => {
+          done();
           // "interrupted" / "canceled" events fire when WE cancel
           // intentionally — treat as resolve, not reject.
           if (ev.error === "interrupted" || ev.error === "canceled") {
