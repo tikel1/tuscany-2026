@@ -25,6 +25,7 @@ import { useLocalizePoi } from "../data/i18n";
 import { useLang } from "../lib/i18n";
 import { useT } from "../lib/dict";
 import PoiImage from "./PoiImage";
+import { googleMapsPlaceUrl } from "../lib/nav";
 
 /** All orders are under the trip owner's name — printed on each pass. */
 const CARDHOLDER = "Itay Kaplan";
@@ -48,7 +49,20 @@ function themeFor(b: Booking, index: number): string {
   return THEMES[b.id] ?? FALLBACKS[index % FALLBACKS.length];
 }
 
-function mapsHref(query: string): string {
+/**
+ * Directions link for a ticket.
+ *
+ * This is the SECOND nav path in the app and it was missed when lib/nav.ts
+ * was fixed: it still built a text search, so a booked meeting point could
+ * open a list of results. When the booking is linked to an attraction we
+ * now reuse the same coordinate-anchored builder as everywhere else, so the
+ * rafting check-in opens the pin in Chifenti and not five options.
+ *
+ * The text query is only a last resort, for a booking with no linked POI —
+ * there are no coordinates in the encrypted bookings packet to fall back to.
+ */
+function mapsHref(query: string, coords?: [number, number]): string {
+  if (coords) return googleMapsPlaceUrl(coords);
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
@@ -180,7 +194,7 @@ export function TicketDetails({ booking: b }: { booking: Booking }) {
         {b.address && <div className="text-ink-700/70 text-sm">{b.address}</div>}
         {b.mapsQuery && (
           <a
-            href={mapsHref(b.mapsQuery)}
+            href={mapsHref(b.mapsQuery, raw?.coords)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-terracotta-700 text-sm mt-0.5 hover:underline"
