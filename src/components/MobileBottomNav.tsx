@@ -16,8 +16,8 @@ const TABS: { id: string; key: DictKey; Icon: typeof CalendarDays }[] = [
 ];
 
 const MORE_LINKS: { id: string; key: DictKey }[] = [
-  { id: "bookings",  key: "nav_bookings" },
   { id: "stays",     key: "nav_stays" },
+  { id: "bookings",  key: "nav_bookings" },
   { id: "tips",      key: "nav_tips" },
   { id: "checklist", key: "nav_checklist" },
   { id: "emergency", key: "nav_emergency" }
@@ -30,12 +30,12 @@ const MORE_LABEL: Record<"en" | "he", string> = { en: "More", he: "עוד" };
 // highlight detection).
 const SECTION_IDS = [
   "trip",
-  "bookings",
   "map",
   "attractions",
   "services",
-  "food",
   "stays",
+  "bookings",
+  "food",
   "tips",
   "checklist",
   "emergency"

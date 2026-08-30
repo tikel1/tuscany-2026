@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { useT, type DictKey } from "../lib/dict";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-// Nav order requested by the user: Plan → Places → Food → Map →
-// Stays → Tips → Lists → Emergency. Services (local gas /
-// supermarket) intentionally lives on the page but not in the nav.
+// Nav order requested by the user: Plan → Map → Places → Stays →
+// Tickets → Food → Tips → Lists → Emergency. This matches the order the
+// sections appear in on the page. Services (local gas / supermarket)
+// intentionally lives on the page but not in the nav.
 const links: { id: string; key: DictKey }[] = [
   { id: "trip",        key: "nav_plan" },
-  { id: "bookings",    key: "nav_bookings" },
-  { id: "attractions", key: "nav_attractions" },
-  { id: "food",        key: "nav_food" },
   { id: "map",         key: "nav_map" },
+  { id: "attractions", key: "nav_attractions" },
   { id: "stays",       key: "nav_stays" },
+  { id: "bookings",    key: "nav_bookings" },
+  { id: "food",        key: "nav_food" },
   { id: "tips",        key: "nav_tips" },
   { id: "checklist",   key: "nav_checklist" },
   { id: "emergency",   key: "nav_emergency" }

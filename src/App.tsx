@@ -54,9 +54,6 @@ export default function App() {
       <ItinerarySection />
 
       <SectionOrnament />
-      <BookingsSection />
-
-      <SectionOrnament />
       <MapView registerFocus={registerFocus} />
 
       <SectionOrnament />
@@ -66,10 +63,18 @@ export default function App() {
       <ServicesSection />
 
       <SectionOrnament />
-      <FoodAndWineSection />
-
-      <SectionOrnament />
       <StaysSection />
+
+      {/* Tickets sit with the stays: both are "things already booked", so
+          the confirmations live next to the beds rather than interrupting
+          the browse-the-region flow above. */}
+      <SectionOrnament />
+      <BookingsSection />
+
+      {/* General reference from here down: what to eat, what to know, what
+          to pack, who to call. None of it is tied to a specific day. */}
+      <SectionOrnament />
+      <FoodAndWineSection />
 
       <SectionOrnament />
       <TipsSection />
