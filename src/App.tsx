@@ -60,9 +60,6 @@ export default function App() {
       <AttractionsGrid />
 
       <SectionOrnament />
-      <ServicesSection />
-
-      <SectionOrnament />
       <StaysSection />
 
       {/* Tickets sit with the stays: both are "things already booked", so
@@ -75,6 +72,9 @@ export default function App() {
           to pack, who to call. None of it is tied to a specific day. */}
       <SectionOrnament />
       <FoodAndWineSection />
+
+      <SectionOrnament />
+      <ServicesSection />
 
       <SectionOrnament />
       <TipsSection />

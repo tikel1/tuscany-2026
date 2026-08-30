@@ -32,10 +32,10 @@ const SECTION_IDS = [
   "trip",
   "map",
   "attractions",
-  "services",
   "stays",
   "bookings",
   "food",
+  "services",
   "tips",
   "checklist",
   "emergency"
