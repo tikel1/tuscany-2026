@@ -3152,6 +3152,101 @@ deleted.
   as optional, keep it, and add what actually did. The result is a better
   guide for whoever goes next than either the plan or a pure diary.
 
+### 23.8 Group the optional stops; don't interleave them
+
+Marking a stop `optional` is not enough once a day has three or four of
+them. Interleaved, the reader has to inspect every eyebrow to work out
+which stops the day actually commits to.
+
+- Split each day into the committed plan and one **"Plan B"** block. Same
+  data, one heading, and the day becomes scannable.
+- Reflect it on the day card too. Our home-page cards previewed the first
+  three activities regardless of status, so an optional stop could occupy a
+  slot and read as something the day does.
+- **The trap:** drive connectors are chained (`rideToNext` points at
+  whatever follows). Pull an optional out of the middle and the stop above
+  it still says "-> Pitigliano hills" for a Pitigliano that has moved. Draw
+  connectors only *between consecutive members of the same group*.
+- Keep each activity's ORIGINAL index when you partition. The positional
+  "3rd attraction onward is optional" auto-rule needs the real day shape;
+  only the display numbering should restart per group.
+
+### 23.9 Fix the pattern, not the instance
+
+We fixed the Maps/Waze builder in `lib/nav.ts`, verified it, shipped it —
+and the bug survived, because `WalletTicket.tsx` had its own private
+`mapsHref()` doing the old text search. Every *booked* activity, the ones
+you most need to find, still opened a results list.
+
+It surfaced only because the post-deploy check grepped the **live bundle**
+for the string that should have disappeared, and found it once.
+
+- After fixing a shared behaviour, grep the whole repo for the broken
+  pattern before claiming it is fixed.
+- Then grep the built artifact for it, not the source.
+- If two components need the same rule, extract it. We later moved the
+  optional-stop rule into `src/lib/dayPlan.ts` for exactly this reason:
+  two copies drift the first time either changes.
+
+### 23.10 Equal array lengths are not alignment
+
+The Hebrew translations overlay the English **by array index**. After
+swapping two days, our Hebrew Day 8 was still the entire old plan — title,
+subtitle, departure time, first activity — while English had become the
+waterpark day. Every Hebrew caption was attached to the wrong activity.
+
+An alignment check passed the whole time, because it compared activity
+**counts** (4 and 4) and never looked at content.
+
+- Compare the labels themselves side by side, day by day. Print them.
+- Any positional overlay needs this check in CI or a script, not eyeballs.
+- The same applies to `gear` (positional string array) and to the whole
+  file whenever you insert or reorder an entry.
+
+### 23.11 Swapping two days moves more than the activities
+
+A day is not just its `activities`. When the trip swapped the waterpark and
+the hot springs between Day 6 and Day 8, we moved the activities and the
+Italian word cards and stopped there. The result shipped advising people to
+watch for slide queues on the hot-springs day, and warning about sulphur
+stains at the waterpark.
+
+Everything below belongs to the day and has to travel with it:
+`title`, `subtitle`, `departureTime`, `rideToFirst`, `driveNotes`, `gear`,
+`dayTips`, `italianWords`, `restaurants`, `drinkOfTheDay` — in **both**
+language files. Write the list down before you start moving things.
+
+### 23.12 Section order lives in more than one file
+
+Reordering the home page touched three places, and only two of them are
+obvious:
+
+1. `App.tsx` — the DOM order.
+2. `Navbar.tsx` — the desktop link order.
+3. `MobileBottomNav.tsx` — `SECTION_IDS`, which the scroll-spy walks in
+   order, keeping the **last** section above the fold.
+
+Miss the third and nothing errors: the mobile navbar just quietly
+highlights the wrong tab as you scroll, with nothing on screen to explain
+why. Keep that array in DOM order, and leave a comment there saying so.
+
+### 23.13 A failing check is a claim about the check
+
+Four times in one session a verification probe reported a problem that did
+not exist: a grep window too small to reach the string, a case-sensitive
+regex against a CSS-uppercased label, a query for `<a href>` where the nav
+renders `<button onClick>`, and an English assertion run while the browser
+was still in Hebrew from an earlier test.
+
+Every one of them looked exactly like a real bug.
+
+- When a check fails, first ask whether the check is right. Confirm the
+  selector, the language, the window, the case.
+- Prove the probe can see a value you know is there before trusting it to
+  tell you one is missing.
+- An empty result is the least trustworthy result there is: it is what you
+  get both when nothing matches and when you asked the wrong question.
+
 ---
 
 ## Appendix A: Few-shot reference — the Tuscany 2026 build
