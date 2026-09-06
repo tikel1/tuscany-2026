@@ -250,10 +250,13 @@ html[dir="rtl"] .leaflet-control-attribution {
    terracotta pins would be sepia'd along with the map they sit on.
 
    Values were tuned by compositing real tiles offline and comparing
-   z8 and z13 against the cream palette. Stronger sepia than this goes
-   monochrome and loses both the sea and the terrain greens. */
+   against the cream palette at z8 and z13. The window is narrower than
+   it looks: past ~0.55 sepia it goes monochrome and loses both the sea
+   blue and the terrain greens, and below ~0.30 it stops reading as aged
+   at all. 0.40 sits where it is still clearly parchment but the map is
+   still legible as a map. */
 .leaflet-tile-pane {
-  filter: sepia(0.55) saturate(0.7) contrast(0.88) brightness(1.06);
+  filter: sepia(0.4) saturate(0.75) contrast(0.9) brightness(1.06);
 }
 
 /* "You are here" marker pulse — the inner blue dot stays put while a
