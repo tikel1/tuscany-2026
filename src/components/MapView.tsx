@@ -510,15 +510,19 @@ export default function MapView({ registerFocus }: Props) {
           scrollWheelZoom={true}
           className="h-[70svh] sm:h-[600px] w-full"
         >
-          {/* CartoDB Voyager — warm, editorial off-cream tiles that pair
-              nicely with the Tuscan palette. Free for low-traffic personal
-              use, no API key required (Stadia's Stamen Watercolor blocks
-              non-localhost without an account, which is why we moved off it). */}
+          {/* Esri World Topo Map. We were on CartoDB Voyager until CARTO
+              started gating their raster basemaps: the tiles kept returning
+              HTTP 200 with a valid PNG that had "API KEY REQUIRED" painted
+              across it, so nothing errored and the map just looked broken.
+              Esri needs no key and still shows towns, roads and terrain.
+              NOTE the {z}/{y}/{x} order - Esri puts y before x - and that
+              there is no @2x variant, so no {r} placeholder here.
+              OSM's own tile server is NOT an option: it serves an
+              "Access blocked" tile to apps under its usage policy. */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-            subdomains="abcd"
-            maxZoom={20}
+            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+            maxZoom={19}
           />
           <MapController pois={allPOIs} markersRef={markersRef} ref={flyRef} />
 
