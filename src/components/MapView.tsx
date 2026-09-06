@@ -510,28 +510,20 @@ export default function MapView({ registerFocus }: Props) {
           scrollWheelZoom={true}
           className="h-[70svh] sm:h-[600px] w-full"
         >
-          {/* Esri "Light Gray Canvas" - muted enough to let the terracotta
-              pins carry the page, and closer to the cream palette than the
-              Topo basemap we tried first.
+          {/* Esri's National Geographic basemap: buff terrain, hill
+              shading and classic serif labels, aged into parchment by the
+              .leaflet-tile-pane filter in index.css. One layer - unlike the
+              Light Gray Canvas we tried before, NatGeo carries its own
+              labels, so there is no separate reference overlay to stack.
 
-              It is TWO layers on purpose. The Base service ships almost no
-              labels; the Reference service is a transparent PNG overlay that
-              adds the town and road names. Base alone renders a beautiful,
-              useless map with no place names on it.
-
-              We were on CartoDB Voyager until CARTO gated their raster
-              basemaps, and the failure was invisible: HTTP 200, a valid PNG,
-              with "API KEY REQUIRED" painted into the image. Esri needs no
-              key. Note the {z}/{y}/{x} order - y before x - and that there is
-              no @2x variant, so no {r} placeholder. OSM's own tiles are NOT a
-              fallback: they serve an "Access blocked" image, also at 200. */}
+              No API key. CARTO gated their raster basemaps and did it
+              invisibly: HTTP 200, a valid PNG, "API KEY REQUIRED" painted
+              into the image. Note {z}/{y}/{x} - y before x - and that there
+              is no @2x variant, so no {r}. Caps at z16. OSM's own tiles are
+              not a fallback; they serve an "Access blocked" image, at 200. */}
           <TileLayer
-            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, and the GIS User Community'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            maxZoom={16}
-          />
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"
             maxZoom={16}
           />
           <MapController pois={allPOIs} markersRef={markersRef} ref={flyRef} />

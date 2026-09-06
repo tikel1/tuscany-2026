@@ -83,14 +83,10 @@ export default function MiniMap({ pois }: { pois: POI[] }) {
         scrollWheelZoom={false}
         className="h-72 sm:h-96 w-full"
       >
-        {/* Same two-layer Esri gray canvas as MapView - see the note there. */}
+        {/* Same NatGeo parchment basemap as MapView - see the note there. */}
         <TileLayer
-          attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, and the GIS User Community'
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-          maxZoom={16}
-        />
-        <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+          attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"
           maxZoom={16}
         />
         <FitBounds pois={pois} />

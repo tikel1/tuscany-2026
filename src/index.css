@@ -237,6 +237,25 @@ html[dir="rtl"] .leaflet-control-attribution {
   background: var(--color-cream-100) !important;
 }
 
+/* Aged-atlas basemap.
+   ------------------------------------------------------------------
+   The tiles underneath are Esri's National Geographic style: buff
+   terrain, hill shading and classic serif labels. This filter ages
+   them into parchment so the map reads like the rest of the magazine
+   instead of like a satnav dropped into it.
+
+   Applied to the tile PANE, not to .leaflet-tile, and deliberately so:
+   the pane holds only basemap imagery, while markers, the route
+   polylines and popups live in sibling panes. Filter the tiles and the
+   terracotta pins would be sepia'd along with the map they sit on.
+
+   Values were tuned by compositing real tiles offline and comparing
+   z8 and z13 against the cream palette. Stronger sepia than this goes
+   monochrome and loses both the sea and the terrain greens. */
+.leaflet-tile-pane {
+  filter: sepia(0.55) saturate(0.7) contrast(0.88) brightness(1.06);
+}
+
 /* "You are here" marker pulse — the inner blue dot stays put while a
    translucent ring expands and fades around it. Reduced-motion users
    get a subtle static halo instead. */
