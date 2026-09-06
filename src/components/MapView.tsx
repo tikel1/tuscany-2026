@@ -510,19 +510,29 @@ export default function MapView({ registerFocus }: Props) {
           scrollWheelZoom={true}
           className="h-[70svh] sm:h-[600px] w-full"
         >
-          {/* Esri World Topo Map. We were on CartoDB Voyager until CARTO
-              started gating their raster basemaps: the tiles kept returning
-              HTTP 200 with a valid PNG that had "API KEY REQUIRED" painted
-              across it, so nothing errored and the map just looked broken.
-              Esri needs no key and still shows towns, roads and terrain.
-              NOTE the {z}/{y}/{x} order - Esri puts y before x - and that
-              there is no @2x variant, so no {r} placeholder here.
-              OSM's own tile server is NOT an option: it serves an
-              "Access blocked" tile to apps under its usage policy. */}
+          {/* Esri "Light Gray Canvas" - muted enough to let the terracotta
+              pins carry the page, and closer to the cream palette than the
+              Topo basemap we tried first.
+
+              It is TWO layers on purpose. The Base service ships almost no
+              labels; the Reference service is a transparent PNG overlay that
+              adds the town and road names. Base alone renders a beautiful,
+              useless map with no place names on it.
+
+              We were on CartoDB Voyager until CARTO gated their raster
+              basemaps, and the failure was invisible: HTTP 200, a valid PNG,
+              with "API KEY REQUIRED" painted into the image. Esri needs no
+              key. Note the {z}/{y}/{x} order - y before x - and that there is
+              no @2x variant, so no {r} placeholder. OSM's own tiles are NOT a
+              fallback: they serve an "Access blocked" image, also at 200. */}
           <TileLayer
-            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
-            maxZoom={19}
+            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, and the GIS User Community'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+            maxZoom={16}
+          />
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+            maxZoom={16}
           />
           <MapController pois={allPOIs} markersRef={markersRef} ref={flyRef} />
 
